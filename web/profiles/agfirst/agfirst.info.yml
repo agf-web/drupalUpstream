@@ -1,0 +1,54 @@
+name: AgFirst
+type: profile
+description: 'AgFirst default Drupal 8 installation profile.'
+version: VERSION
+core: 8.x
+dependencies:
+  - automated_cron
+  - block
+  - breakpoint
+  - ckeditor
+  - config
+  - contact
+  - contextual
+  - block_content
+  - menu_link_content
+  - dblog
+  - field
+  - field_ui
+  - filter
+  - help
+  - history
+  - dynamic_page_cache
+  - page_cache
+  - menu_ui
+  - node
+  - path
+  - quickedit
+  - rdf
+  - search
+  - shortcut
+  - system
+  - taxonomy
+  - editor
+  - update
+  - user
+  - views
+  - views_ui
+  - content_moderation
+  - field_layout
+  - inline_form_errors
+  - layout_discovery
+  - block_place
+  - outside_in
+  - workflows
+  - datetime
+  - file
+  - image
+  - link
+  - options
+  - telephone
+  - text
+themes:
+  - bartik
+  - seven

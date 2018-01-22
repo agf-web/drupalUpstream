@@ -1,0 +1,82 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - filter.format.full_html
+  module:
+    - ckeditor
+format: full_html
+editor: ckeditor
+settings:
+  toolbar:
+    rows:
+      -
+        -
+          name: Undo/Redo
+          items:
+            - Undo
+            - Redo
+            - Copy
+            - Cut
+            - Paste
+        -
+          name: Formatting
+          items:
+            - RemoveFormat
+            - Bold
+            - Italic
+            - Superscript
+            - Subscript
+            - '-'
+            - Outdent
+            - Indent
+        -
+          name: Linking
+          items:
+            - Linkit
+            - DrupalUnlink
+            - Anchor
+        -
+          name: Lists
+          items:
+            - BulletedList
+            - NumberedList
+        -
+          name: Media
+          items:
+            - ImceLink
+            - DrupalImage
+            - video_embed
+            - SpecialChar
+        -
+          name: 'Block Formatting'
+          items:
+            - Blockquote
+            - Styles
+            - Format
+        -
+          name: Tools
+          items:
+            - Source
+  plugins:
+    language:
+      language_list: un
+    stylescombo:
+      styles: "img.float-left|Float left\r\nimg.float-right|Float right"
+    linkit:
+      linkit_profile: cyberwoven_standard
+    video_embed:
+      defaults:
+        children:
+          autoplay: false
+          responsive: true
+          width: '854'
+          height: '480'
+image_upload:
+  status: true
+  scheme: public
+  directory: content-images
+  max_size: ''
+  max_dimensions:
+    width: null
+    height: null
