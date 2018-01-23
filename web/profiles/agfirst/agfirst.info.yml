@@ -4,51 +4,77 @@ description: 'AgFirst default Drupal 8 installation profile.'
 version: VERSION
 core: 8.x
 dependencies:
+  - address
+  - admin_toolbar
+  - admin_toolbar_tools
+  - anchor_link
   - automated_cron
   - block
+  - block_content
   - breakpoint
   - ckeditor
+  - color
   - config
-  - contact
   - contextual
-  - block_content
-  - menu_link_content
+  - crop
+  - ctools
+  - datetime
   - dblog
+  - dynamic_page_cache
+  - editor
+  - editor_advanced_link
+  - entity_reference_revisions
+  - environment_indicator
   - field
+  - field_group
   - field_ui
+  - file
   - filter
   - help
   - history
-  - dynamic_page_cache
-  - page_cache
+  - image
+  - image_url_formatter
+  - image_widget_crop
+  - imce
+  - inline_entity_form
+  - link
+  - linkit
+  - masquerade
+  - menu_block
   - menu_ui
+  - metatag
+  - metatag_open_graph
+  - metatag_verification
+  - module_filter
   - node
+  - options
+  - page_cache
+  - paragraphs
   - path
+  - pathauto
   - quickedit
   - rdf
+  - redirect
+  - reroute_email
   - search
   - shortcut
+  - smart_trim
   - system
   - taxonomy
-  - editor
-  - update
-  - user
-  - views
-  - views_ui
-  - content_moderation
-  - field_layout
-  - inline_form_errors
-  - layout_discovery
-  - block_place
-  - outside_in
-  - workflows
-  - datetime
-  - file
-  - image
-  - link
-  - options
   - telephone
   - text
+  - token
+  - toolbar
+  - update
+  - user
+  - video_embed_field
+  - video_embed_wysiwyg
+  - views_ui
+  - webform
+  - webform_ui
+  - xmlsitemap
+  - menu_link_content
+  - views
 themes:
   - bartik
   - seven
