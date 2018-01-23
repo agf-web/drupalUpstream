@@ -1,0 +1,22 @@
+reroute_email.settings:
+  type: config_object
+  label: 'Reroute Email Settings.'
+  mapping:
+    enable:
+      type: boolean
+      label: 'Enable rerouting.'
+    address:
+      type: string
+      label: 'Rerouting email addresses.'
+    whitelist:
+      type: string
+      label: 'Whitelisted email addresses.'
+    description:
+      type: boolean
+      label: 'Show rerouting description in mail body.'
+    message:
+      type: boolean
+      label: 'Display a Drupal status message after rerouting.'
+    mailkeys:
+      type: string
+      label: 'Filter by mail keys.'

@@ -1,0 +1,19 @@
+name: MailChimp Campaign
+type: module
+description: Create, send and import MailChimp campaigns.
+package: MailChimp
+# core: 8.x
+configure: mailchimp_campaign.overview
+
+files:
+ - tests/mailchimp_campaigns.test
+
+dependencies:
+ - filter
+ - mailchimp_lists
+
+# Information added by Drupal.org packaging script on 2017-12-27
+version: '8.x-1.5'
+core: '8.x'
+project: 'mailchimp'
+datestamp: 1514410990

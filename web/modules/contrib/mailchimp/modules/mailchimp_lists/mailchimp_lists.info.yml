@@ -1,0 +1,17 @@
+name: MailChimp Lists
+type: module
+description: Manage and integrate MailChimp lists.
+package: MailChimp
+# core: 8.x
+configure: mailchimp_lists.overview
+
+dependencies:
+ - field
+ - mailchimp
+ - options
+
+# Information added by Drupal.org packaging script on 2017-12-27
+version: '8.x-1.5'
+core: '8.x'
+project: 'mailchimp'
+datestamp: 1514410990

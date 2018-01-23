@@ -1,0 +1,42 @@
+# Schema for the configuration files of the Search API attachments module.
+
+search_api_attachments.admin_config:
+  type: config_object
+  label: 'Search API attachments settings'
+  mapping:
+    extraction_method:
+      type: string
+      label: 'Extractor Plugin ID'
+    tika_extractor_configuration:
+      type: mapping
+      label: 'Tika extractor configuration'
+      mapping:
+        java_path:
+          type: string
+          label: 'Path to java executable'
+        tika_path:
+          type: string
+          label: 'Path to Tika .jar file'
+    solr_extractor_configuration:
+      type: mapping
+      label: 'Solr extractor configuration'
+      mapping:
+        solr_server:
+          type: string
+          label: 'Solr server'
+    python_pdf2txt_extractor_configuration:
+      type: mapping
+      label: 'Python Pdf2txt extractor configuration'
+      mapping:
+        python_path:
+          type: string
+          label: 'Path to python executable'
+        python_pdf2txt_script:
+          type: string
+          label: 'Full path to the python pdf2txt script'
+    pdftotext_extractor_configuration:
+      type: ignore
+      label: 'Pdftotext extractor configuration'
+    preserve_cache:
+      type: boolean
+      label: 'Preserve cached extractions across cache clears.'
