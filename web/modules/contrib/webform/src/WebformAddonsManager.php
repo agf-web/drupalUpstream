@@ -198,6 +198,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'enhancement',
     ];
 
+    // Integration: Webform HubSpot.
+    $projects['hubspot'] = [
+      'title' => $this->t('Webform HubSpot'),
+      'description' => $this->t('Provides HubSpot leads API integration with Drupal.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/hubspot'),
+      'category' => 'integration',
+    ];
+
     // Integration: Webform iContact.
     $projects['webform_icontact'] = [
       'title' => $this->t('Webform iContact'),
@@ -219,6 +227,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'title' => $this->t('Webform Product'),
       'description' => $this->t('Links commerce products to webform elements.'),
       'url' => Url::fromUri('https://github.com/chx/webform_product'),
+      'category' => 'integration',
+    ];
+
+    // Integrations: Webform Simplenews Handler.
+    $projects['webform_simplenews_handler'] = [
+      'title' => $this->t('Webform Simplenews Handler'),
+      'description' => $this->t('Provides a Webform Handler called "Submission Newsletter" that allows to link webform submission to one or more Simplenews newsletter subscriptions.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_simplenews_handler'),
       'category' => 'integration',
     ];
 

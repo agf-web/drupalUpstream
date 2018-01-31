@@ -10,11 +10,11 @@ dependencies:
   - 'drupal:path'
   - 'drupal:text'
   - 'drupal:user'
-  - 'drupal:webform'
-  - 'drupal:webform_node'
+  - 'webform:webform'
+  - 'webform:webform_node'
 
-# Information added by Drupal.org packaging script on 2017-12-25
-version: '8.x-5.0-rc1'
+# Information added by Drupal.org packaging script on 2018-01-31
+version: '8.x-5.0-rc2'
 core: '8.x'
 project: 'webform'
-datestamp: 1514196498
+datestamp: 1517359392

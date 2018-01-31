@@ -198,6 +198,11 @@ class WebformEntitySettingsFormForm extends WebformEntitySettingsBaseForm {
         'all_description' => $this->t('Client-side validation is disabled for all forms.'),
         'form_description' => $this->t('If checked, the <a href=":href">novalidate</a> attribute, which disables client-side validation, will be added to this form.', [':href' => 'http://www.w3schools.com/tags/att_form_novalidate.asp']),
       ],
+      'form_required' => [
+        'title' => $this->t('Display required indicator'),
+        'all_description' => $this->t('Required indicator is displayed on all forms.'),
+        'form_description' => $this->t('If checked, a required elements indicator will be added to this webform.'),
+      ],
       'form_details_toggle' => [
         'title' => $this->t('Display collapse/expand all details link'),
         'all_description' => $this->t('Expand/collapse all (details) link is automatically added to all forms.'),
@@ -246,7 +251,7 @@ class WebformEntitySettingsFormForm extends WebformEntitySettingsBaseForm {
       '#type' => 'select',
       '#title' => 'Type of source entity to be populated using query string parameters',
       '#weight' => ++$form['form_behaviors']['form_prepopulate_source_entity_required']['#weight'],
-      '#empty_option' => '',
+      '#empty_option' => $this->t('- None -'),
       '#options' => $entity_type_options,
       '#default_value' => $settings['form_prepopulate_source_entity_type'],
       '#states' => [
@@ -313,7 +318,7 @@ class WebformEntitySettingsFormForm extends WebformEntitySettingsBaseForm {
         'name' => $this->t("Page name (?page=contact)"),
         'index' => $this->t("Page index (?page=2)"),
       ],
-      '#empty_option' => '',
+      '#empty_option' => $this->t('- None -'),
       '#default_value' => $settings['wizard_track'],
     ];
 

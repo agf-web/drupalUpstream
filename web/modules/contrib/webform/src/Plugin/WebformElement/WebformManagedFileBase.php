@@ -353,7 +353,7 @@ abstract class WebformManagedFileBase extends WebformElementBase {
       $source_filename = $file->getFileName();
 
       $destination_uri = $source_uri;
-      $destination_filename = $source_filename ;
+      $destination_filename = $source_filename;
 
       // Replace /_sid_/ token with the submission id.
       if (strpos($source_uri, '/_sid_/')) {
@@ -380,7 +380,7 @@ abstract class WebformManagedFileBase extends WebformElementBase {
         }
 
         $destination_filename = $destination_basename . '.' . $destination_extension;
-        $destination_uri = $file_system->dirname($destination_uri) . $destination_filename;
+        $destination_uri = $file_system->dirname($destination_uri) . '/' . $destination_filename;
       }
 
       // Save file if there is a new destination URI.

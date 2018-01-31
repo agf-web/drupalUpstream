@@ -14,7 +14,6 @@ use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Markup;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
@@ -24,6 +23,7 @@ use Drupal\webform\Entity\WebformSubmission;
 use Drupal\webform\Element\WebformMessage;
 use Drupal\webform\Plugin\WebformElement\ManagedFile;
 use Drupal\webform\Utility\WebformArrayHelper;
+use Drupal\webform\Utility\WebformDialogHelper;
 use Drupal\webform\Utility\WebformOptionsHelper;
 use Drupal\webform\WebformInterface;
 use Drupal\webform\WebformSubmissionForm;
@@ -392,7 +392,7 @@ function webform_mail($key, &$message, $params) {
   // value is used instead of site's email address.
   // See: \Drupal\Core\Mail\MailManager::mail.
   if (!empty($params['from_mail'])) {
-    $message['from'] = $message['headers']['From'] = (!empty($params['from_name'])) ? Unicode::mimeHeaderEncode($params['from_name']) . ' <' . $params['from_mail'] . '>' : $params['from_mail'];
+    $message['from'] = $message['headers']['From'] = (!empty($params['from_name'])) ? Unicode::mimeHeaderEncode($params['from_name'], TRUE) . ' <' . $params['from_mail'] . '>' : $params['from_mail'];
   }
 
   // Set header 'Reply-to'.
@@ -415,7 +415,7 @@ function webform_mail($key, &$message, $params) {
   $sender_mail = $params['sender_mail'] ?: \Drupal::config('webform.settings')->get('mail.default_sender_mail') ?: '';
   $sender_name = $params['sender_name'] ?: \Drupal::config('webform.settings')->get('mail.default_sender_name') ?: $params['from_name'] ?: '';
   if ($sender_mail) {
-    $message['headers']['Sender'] = ($sender_name) ? Unicode::mimeHeaderEncode($sender_name) . ' <' . $sender_mail . '>' : $sender_mail;
+    $message['headers']['Sender'] = ($sender_name) ? Unicode::mimeHeaderEncode($sender_name, TRUE) . ' <' . $sender_mail . '>' : $sender_mail;
   }
 
   // Set header 'Cc'.
@@ -544,6 +544,22 @@ function webform_library_info_build() {
  * Implements hook_css_alter().
  */
 function webform_css_alter(&$css, AttachedAssetsInterface $assets) {
+  // Remove the stable.theme's off-canvas CSS reset for webform admin routes.
+  // @see https://www.drupal.org/project/drupal/issues/2826722
+  //
+  // NOTE: Most admin themes correct style jQuery UI dialogs because Drupal's
+  // admin UI, especially Views, relies on them.
+  $use_off_canvas = WebformDialogHelper::useOffCanvas();
+  $is_admin_route = \Drupal::service('router.admin_context')->isAdminRoute();
+  $is_webform_route = preg_match('/(^webform|^entity\.webform|^entity\.node\.webform)/', \Drupal::routeMatch()->getRouteName());
+  if ($use_off_canvas && $is_admin_route && $is_webform_route) {
+    foreach ($css as $key => $item) {
+      if (strpos($key, 'core/themes/stable/css/core/dialog/off-canvas') === 0) {
+        unset($css[$key]);
+      }
+    }
+  }
+
   _webform_asset_alter($css, 'css');
 }
 
@@ -680,8 +696,8 @@ function webform_process_options(&$element, FormStateInterface $form_state, &$co
       }
 
       list($title, $description) = explode(WebformOptionsHelper::DESCRIPTION_DELIMITER, $title);
-      $element[$key]['#title'] = Markup::create($title);
-      $element[$key][$description_property_name] = Markup::create($description);
+      $element[$key]['#title'] = $title;
+      $element[$key][$description_property_name] = $description;
     }
   }
   return $element;

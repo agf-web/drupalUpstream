@@ -18,6 +18,9 @@ webform.handler.action:
     sticky:
       label: 'Flag'
       type: boolean
+    locked:
+      label: 'Locked'
+      type: boolean
     data:
       label: 'Data'
       type: text
@@ -96,7 +99,7 @@ webform.handler.email:
       label: 'Exclude elements'
       sequence:
         type: string
-        label: 'Element name'
+        label: 'Element key'
     ignore_access:
       type: boolean
       label: 'Always include private and restricted access elements.'
@@ -342,7 +345,7 @@ webform.handler.settings:
       label: 'Preview excluded elements'
       sequence:
         type: string
-        label: 'Element name'
+        label: 'Element key'
     preview_exclude_empty:
       type: boolean
       label: 'Preview exclude empty elements'

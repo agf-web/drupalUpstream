@@ -51,6 +51,10 @@ function webform_theme() {
       'variables' => ['webform' => NULL, 'source_entity' => NULL, 'webform_submission' => NULL],
     ],
 
+    'webform_required' => [
+      'variables' => ['label' => NULL],
+    ],
+
     'webform_submission' => [
       'render element' => 'elements',
     ],
@@ -201,12 +205,10 @@ function webform_theme_registry_alter(&$theme_registry) {
  * Applies custom link attributes to local actions.
  * Custom attributes are used to open Webform UI modals.
  *
- * Issue #2897396: Add a Reference Tab to track Webform nodes.
- * @see https://www.drupal.org/node/2897396
- *
  * @see template_preprocess_menu_local_action();
  * @see \Drupal\webform\WebformEntityHandlersForm
  * @see \Drupal\webform_ui\WebformUiEntityEditForm
+ * @see https://www.drupal.org/node/2897396
  */
 function webform_preprocess_menu_local_action(&$variables) {
   $link = $variables['element']['#link'];
@@ -304,6 +306,13 @@ function webform_preprocess_fieldset(&$variables) {
   // Restructure the fieldset's legend title to include #help.
   if (isset($variables['legend']['title'])) {
     _webform_preprocess_help_title($variables['legend']['title'], $element);
+  }
+
+  // Add .js-webform-form-composite class to be used #states API.
+  // @see js/webform.states.js
+  if (isset($element['#type']) && in_array($element['#type'], ['checkboxes', 'radios'])) {
+    $variables['attributes']['class'][] = 'js-webform-type-' . $element['#type'];
+    $variables['attributes']['class'][] = 'webform-type-' . $element['#type'];
   }
 }
 
@@ -631,7 +640,7 @@ function _webform_theme_suggestions(array $variables, $hook) {
       $webform = $webform_submission->getWebform();
     }
     elseif (isset($variables['webform'])) {
-        /** @var \Drupal\webform\WebformInterface $webform */
+      /** @var \Drupal\webform\WebformInterface $webform */
       $webform = $variables['webform'];
     }
 

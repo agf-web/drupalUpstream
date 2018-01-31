@@ -458,8 +458,18 @@ class WebformElementHelper {
    *
    * @return array
    *   The element with validate callback.
+   *
+   * @see \Drupal\webform\Plugin\WebformElementBase::hiddenElementAfterBuild
+   * @see \Drupal\webform\WebformSubmissionConditionsValidator::elementAfterBuild
    */
   public static function setElementValidate(array $element, array $element_validate = [WebformElementHelper::class, 'suppressElementValidate']) {
+    // Element validation can only overridden once so we need to reset
+    // the #eleemnt_validate callback.
+    if (isset($element['#_element_validate'])) {
+      $element['#element_validate'] = $element['#_element_validate'];
+      unset($element['#_element_validate']);
+    }
+
     // Wrap #element_validate so that we suppress validation error messages.
     // This only applies visible elements (#access: TRUE) with
     // #element_validate callbacks which are also conditionally hidden.
@@ -508,6 +518,80 @@ class WebformElementHelper {
 
     // Get the temp webform state's values.
     $form_state->setValues($temp_form_state->getValues());
+  }
+
+  /**
+   * Set form state required error for a specified element.
+   *
+   * @param array $element
+   *   An element.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param string $title
+   *   OPTIONAL. Required error title.
+   */
+  public static function setRequiredError(array $element, FormStateInterface $form_state, $title = NULL) {
+    if (isset($element['#required_error'])) {
+      $form_state->setError($element, $element['#required_error']);
+    }
+    elseif ($title) {
+      $form_state->setError($element, t('@name field is required.', ['@name' => $title]));
+    }
+    elseif (isset($element['#title'])) {
+      $form_state->setError($element, t('@name field is required.', ['@name' => $element['#title']]));
+    }
+    else {
+      $form_state->setError($element);
+    }
+  }
+
+  /**
+   * Get an element's #states.
+   *
+   * @param array $element
+   *   An element.
+   *
+   * @return array
+   *   An associative array containing an element's states.
+   */
+  public static function getStates(array $element) {
+    // Composite and multiple elements use use a custom states wrapper
+    // which will changes '#states' to '#_webform_states'.
+    // @see \Drupal\webform\Utility\WebformElementHelper::fixStatesWrapper
+    if (isset($element['#_webform_states'])) {
+      return $element['#_webform_states'];
+    }
+    elseif (isset($element['#states'])) {
+      return $element['#states'];
+    }
+    else {
+      return [];
+    }
+  }
+
+  /**
+   * Get required #states from an element's visible #states.
+   *
+   * This method allows composite and multiple to conditionally
+   * require sub-elements when they are visible.
+   *
+   * @param array $element
+   *   An element.
+   *
+   * @return array
+   *   An associative array containing 'visible' and 'invisible' selectors
+   *   and triggers.
+   */
+  public static function getRequiredFromVisibleStates(array $element) {
+    $states = WebformElementHelper::getStates($element);
+    $required_states = [];
+    if (!empty($states['visible'])) {
+      $required_states['required'] = $states['visible'];
+    }
+    if (!empty($states['invisible'])) {
+      $required_states['optional'] = $states['invisible'];
+    }
+    return $required_states;
   }
 
 }

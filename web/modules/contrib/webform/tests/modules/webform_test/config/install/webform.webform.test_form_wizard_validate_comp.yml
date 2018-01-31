@@ -127,6 +127,7 @@ settings:
   form_reset: false
   form_disable_autocomplete: false
   form_novalidate: true
+  form_required: false
   form_unsaved: false
   form_disable_back: false
   form_submit_back: false
@@ -140,6 +141,10 @@ settings:
   submission_login: false
   submission_login_message: ''
   submission_exception_message: ''
+  submission_locked_message: ''
+  autofill: false
+  autofill_message: ''
+  autofill_excluded_elements: {  }
   wizard_progress_bar: true
   wizard_progress_pages: true
   wizard_progress_percentage: true

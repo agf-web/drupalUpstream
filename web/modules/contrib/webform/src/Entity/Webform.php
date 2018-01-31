@@ -16,6 +16,7 @@ use Drupal\user\UserInterface;
 use Drupal\webform\Plugin\WebformElement\WebformActions;
 use Drupal\webform\Plugin\WebformElement\WebformManagedFileBase;
 use Drupal\webform\Plugin\WebformElement\WebformWizardPage;
+use Drupal\webform\Plugin\WebformHandlerMessageInterface;
 use Drupal\webform\Utility\WebformElementHelper;
 use Drupal\webform\Utility\WebformReflectionHelper;
 use Drupal\webform\Plugin\WebformHandlerInterface;
@@ -348,12 +349,26 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
   protected $hasConditions = FALSE;
 
   /**
+   * Track if the webform has required elements.
+   *
+   * @var bool
+   */
+  protected $hasRequired = FALSE;
+
+  /**
    * Track if the webform has translations.
    *
    * @var bool
    */
   protected $hasTranslations;
 
+  /**
+   * Track if the webform has message handler.
+   *
+   * @var bool
+   */
+  protected $hasMessagehandler;
+  
   /**
    * {@inheritdoc}
    */
@@ -592,6 +607,14 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
   /**
    * {@inheritdoc}
    */
+  public function hasRequired() {
+    $this->initElements();
+    return $this->hasRequired;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function hasActions() {
     return $this->getNumberOfActions() ? TRUE : FALSE;
   }
@@ -813,6 +836,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       'form_reset' => FALSE,
       'form_disable_autocomplete' => FALSE,
       'form_novalidate' => FALSE,
+      'form_required' => FALSE,
       'form_unsaved' => FALSE,
       'form_disable_back' => FALSE,
       'form_submit_back' => FALSE,
@@ -826,6 +850,10 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       'submission_login' => FALSE,
       'submission_login_message' => '',
       'submission_exception_message' => '',
+      'submission_locked_message' => '',
+      'autofill' => FALSE,
+      'autofill_message' => '',
+      'autofill_excluded_elements' => [],
       'wizard_progress_bar' => TRUE,
       'wizard_progress_pages' => FALSE,
       'wizard_progress_percentage' => FALSE,
@@ -931,8 +959,13 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    * {@inheritdoc}
    */
   public function checkAccessRules($operation, AccountInterface $account, WebformSubmissionInterface $webform_submission = NULL) {
-    // Always grant access to user that can administer webforms and submissions.
-    if ($account->hasPermission('administer webform') || $account->hasPermission('administer webform submission')) {
+    // Always grant access to user that can administer webforms.
+    if ($account->hasPermission('administer webform')) {
+      return TRUE;
+    }
+
+    // Grant user with administer webform submission access to view all webform submissions.
+    if ($account->hasPermission('administer webform submission') && $operation != 'administer') {
       return TRUE;
     }
 
@@ -970,7 +1003,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     if (empty($webform_submission)
       && $operation === 'view_own'
       && $this->checkAccessRule($access_rules[$operation], $account)) {
-        return TRUE;
+      return TRUE;
     }
 
     // If webform submission is set then check the webform submission owner.
@@ -1186,6 +1219,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     $this->hasFlexboxLayout = FALSE;
     $this->hasContainer = FALSE;
     $this->hasConditions = FALSE;
+    $this->hasRequired = FALSE;
     $this->elementsPrepopulate = [];
     $this->elementsActions = [];
     $this->elementsWizardPages = [];
@@ -1243,6 +1277,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     $this->hasFlexboxLayout = NULL;
     $this->hasContainer = NULL;
     $this->hasConditions = NULL;
+    $this->hasRequired = NULL;
     $this->elementsPrepopulate = [];
     $this->elementsActions = [];
     $this->elementsWizardPages = [];
@@ -1295,7 +1330,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       $element['#webform_composite'] = FALSE;
 
       if (!empty($parent)) {
-        $parent_element = $this->elementsInitializedAndFlattened[$parent];
+        $parent_element =& $this->elementsInitializedAndFlattened[$parent];
         // Add element to the parent element's children.
         $parent_element['#webform_children'][$key] = $key;
         // Set #parent_flexbox to TRUE is the parent element is a
@@ -1356,6 +1391,11 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
         // Track conditional.
         if (!empty($element['#states'])) {
           $this->hasConditions = TRUE;
+        }
+
+        // Track required.
+        if (!empty($element['#required']) || (!empty($element['#states']) && (!empty($element['#states']['required']) || !empty($element['#states']['optional'])))) {
+          $this->hasRequired = TRUE;
         }
 
         // Track prepopulated.
@@ -1932,6 +1972,33 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
   }
 
   /**
+   * Reset cached handler settings.
+   */
+  protected function resetHandlers() {
+    $this->hasMessageHandler = NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasMessageHandler() {
+    if (isset($this->hasMessagehandler)) {
+      $this->hasMessagehandler;
+    }
+
+    $this->hasMessagehandler = FALSE;
+    $handlers = $this->getHandlers();
+    foreach ($handlers as $handler) {
+      if ($handler instanceof WebformHandlerMessageInterface) {
+        $this->hasMessagehandler = TRUE;
+        break;
+      }
+    }
+
+    return $this->hasMessagehandler;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getHandler($handler_id) {
@@ -2022,6 +2089,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     $configuration = $handler->getConfiguration();
     $this->getHandlers()->addInstanceId($handler_id, $configuration);
     $this->save();
+    $this->resetHandlers();
     $handler->createHandler();
     return $this;
   }
@@ -2035,6 +2103,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     $configuration = $handler->getConfiguration();
     $this->getHandlers()->setInstanceConfiguration($handler_id, $configuration);
     $this->save();
+    $this->resetHandlers();
     $handler->updateHandler();
     return $this;
   }
@@ -2047,6 +2116,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     $this->getHandlers()->removeInstanceId($handler->getHandlerId());
     $handler->deleteHandler();
     $this->save();
+    $this->resetHandlers();
     return $this;
   }
 

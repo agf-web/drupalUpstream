@@ -6,11 +6,13 @@
  */
 
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Serialization\Yaml;
 use Drupal\Core\Render\Element;
 use Drupal\webform\Entity\Webform;
 use Drupal\webform\Entity\WebformOptions;
+use Drupal\webform\Plugin\WebformHandler\ActionWebformHandler;
 use Drupal\webform\Plugin\WebformHandler\EmailWebformHandler;
 use Drupal\webform\WebformInterface;
 use Drupal\webform\Plugin\WebformHandler\RemotePostWebformHandler;
@@ -1041,9 +1043,9 @@ function _webform_update_8046_convert_data(array $data) {
   if ($actions_element) {
     $elements = Yaml::decode($data['elements']);
     $elements['actions'] = [
-        '#type' => 'webform_actions',
-        '#title' => (string) t('Submit button(s)'),
-      ] + $actions_element;
+      '#type' => 'webform_actions',
+      '#title' => (string) t('Submit button(s)'),
+    ] + $actions_element;
     $data['elements'] = Yaml::encode($elements);
   }
 
@@ -1816,4 +1818,131 @@ function webform_update_8096() {
  */
 function webform_update_8097() {
   _webform_update_webform_handler_configuration(EmailWebformHandler::class);
+}
+
+/**
+ * Issue #2933705: Element Range.
+ */
+function webform_update_8098() {
+  $config_factory = \Drupal::configFactory();
+  foreach ($config_factory->listAll('webform.webform.') as $webform_config_name) {
+    $webform_config = $config_factory->getEditable($webform_config_name);
+    $elements = $webform_config->get('elements');
+    if (strpos($elements, '#range__output') !== FALSE) {
+      // Convert properties.
+      $elements = str_replace(
+        ['#range__output_prefix', '#range__output_suffix', '#range__output'],
+        ['#output__field_prefix', '#output__field_suffix', '#output'],
+        $elements);
+      // Convert '#output': true to '#output': right.
+      $elements = str_replace("'#output': true", "'#output': right", $elements);
+      $webform_config->set('elements', $elements);
+      $webform_config->save(TRUE);
+    }
+  }
+}
+
+/**
+ * Issue #2888862: Provide a mechanism to lock a webform submission.
+ */
+function webform_update_8099() {
+  // Copied from: node_update_8001()
+  //
+  // Install the definition that this field had in
+  // \Drupal\webform\Entity\WebformSubmission::baseFieldDefinitions()
+  // at the time that this update function was written. If/when code is
+  // deployed that changes that definition, the corresponding module must
+  // implement an update function that invokes
+  // \Drupal::entityDefinitionUpdateManager()->updateFieldStorageDefinition()
+  // with the new definition.
+  $storage_definition = BaseFieldDefinition::create('boolean')
+    ->setLabel(t('Locked'))
+    ->setDescription(t('A flag that indicates a locked webform submission.'))
+    ->setDefaultValue(FALSE);
+
+  \Drupal::entityDefinitionUpdateManager()
+    ->installFieldStorageDefinition('locked', 'webform_submission', 'webform', $storage_definition);
+
+  // Set default value.
+  \Drupal::database()->update('webform_submission')
+    ->fields(['locked' => 0])
+    ->execute();
+
+  // Add submission locked message to admin and webform settings.
+  _webform_update_admin_settings();
+  _webform_update_webform_settings();
+}
+
+/**
+ * Issue #2888862: Provide a mechanism to lock a webform submission. Update handlers.
+ */
+function webform_update_8100() {
+  // Add locked to action handler.
+  _webform_update_webform_handler_configuration(ActionWebformHandler::class);
+
+  // Add locked to remote post handler's excluded data.
+  /** @var \Drupal\webform\WebformInterface[] $webforms */
+  $webforms = Webform::loadMultiple();
+  foreach ($webforms as $webform) {
+    $has_handler = FALSE;
+    $handlers = $webform->getHandlers();
+    foreach ($handlers as $handler) {
+      if ($handler instanceof RemotePostWebformHandler) {
+        $has_handler = TRUE;
+        $configuration = $handler->getConfiguration();
+        $settings = $configuration['settings'];
+        if ($settings['excluded_data']) {
+          $settings['excluded_data']['locked'] = 'locked';
+          $configuration['settings'] = $settings;
+          $handler->setConfiguration($configuration);
+        }
+      }
+    }
+    if ($has_handler) {
+      $webform->save();
+    }
+  }
+}
+
+/**
+ * Issue #2935697: Add support for new Off-Canvas dialog tray. Remove quickedit links.
+ */
+function webform_update_8101() {
+  \Drupal::service('cache.discovery')->deleteAll();
+  Cache::invalidateTags(['rendered']);
+}
+
+/**
+ * Issue #2939828: Allow site builder to display required indicator on all webforms or a specified webform.
+ */
+function webform_update_8102() {
+  _webform_update_admin_settings();
+  _webform_update_webform_settings();
+}
+
+/**
+ * Issue #2939948: Date fields should respect #min and #max in test-mode. Remove hard-coded test date values.
+ */
+function webform_update_8103() {
+  $test_date_elements = ['date', 'datetime', 'datelist'];
+  $test_date_values = ['1942-06-18', '1940-07-07', '1943-02-25', '1940-10-09'];
+  $config = \Drupal::configFactory()->getEditable('webform.settings');
+  $data = $config->getRawData();
+  $types = Yaml::decode($data['test']['types']);
+  foreach ($test_date_elements as $test_date_element) {
+    if (isset($types[$test_date_element]) && $types[$test_date_element] === $test_date_values) {
+      unset($types[$test_date_element]);
+    }
+  }
+  $data['test']['types'] = Yaml::encode($types);
+  $config->setData($data);
+  $config->save();
+}
+
+/**
+ * Issue #2940490: Autofill webform with previous submission data.
+ */
+function webform_update_8104() {
+  _webform_update_admin_settings();
+  _webform_update_webform_settings();
 }

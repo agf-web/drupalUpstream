@@ -94,6 +94,12 @@ class WebformEntitySettingsSubmissionsForm extends WebformEntitySettingsBaseForm
       '#description' => $this->t('A message to be displayed if submission handling breaks.'),
       '#default_value' => $settings['submission_exception_message'],
     ];
+    $form['submission_settings']['submission_locked_message'] = [
+      '#type' => 'webform_html_editor',
+      '#title' => $this->t('Submission locked message'),
+      '#description' => $this->t('A message to be displayed if submission is lockec.'),
+      '#default_value' => $settings['submission_locked_message'],
+    ];
     $form['submission_settings']['next_serial'] = [
       '#type' => 'number',
       '#title' => $this->t('Next submission number'),
@@ -111,7 +117,7 @@ class WebformEntitySettingsSubmissionsForm extends WebformEntitySettingsBaseForm
     // @see \Drupal\webform\Form\WebformResultsCustomForm::buildForm
     $available_columns = $webform_submission_storage->getColumns($webform);
     // Remove columns that should never be displayed to users.
-    $available_columns = array_diff_key($available_columns, array_flip(['uuid', 'in_draft', 'entity', 'sticky', 'notes', 'uid', 'operations']));
+    $available_columns = array_diff_key($available_columns, array_flip(['uuid', 'in_draft', 'entity', 'sticky', 'locked', 'notes', 'uid', 'operations']));
     $custom_columns = $webform_submission_storage->getUserColumns($webform);
     // Change sid's # to an actual label.
     $available_columns['sid']['title'] = $this->t('Submission ID');
@@ -138,7 +144,6 @@ class WebformEntitySettingsSubmissionsForm extends WebformEntitySettingsBaseForm
       '#options' => $columns_options,
       '#default_value' => $columns_default_value,
     ];
-
 
     // Submission access denied.
     $form['submission_access_denied'] = [
@@ -432,6 +437,43 @@ class WebformEntitySettingsSubmissionsForm extends WebformEntitySettingsBaseForm
       '#default_value' => $settings['draft_loaded_message'],
     ];
     $form['draft_settings']['draft_container']['token_tree_link'] = $this->tokenManager->buildTreeLink();
+
+    // Autofill settings.
+    $form['autofill_settings'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Autofill settings'),
+      '#open' => TRUE,
+    ];
+    $form['autofill_settings']['autofill'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Autofill with previous submission data'),
+      '#return_value' => TRUE,
+      '#default_value' => $settings['autofill'],
+    ];
+    $form['autofill_settings']['autofill_container'] = [
+      '#type' => 'container',
+      '#states' => [
+        'visible' => [
+          ':input[name="autofill"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+    $form['autofill_settings']['autofill_container']['autofill_message'] = [
+      '#type' => 'webform_html_editor',
+      '#title' => $this->t('Autofill message'),
+      '#description' => $this->t('A message to be displayed when form is autofilled with previous submission data.'),
+      '#default_value' => $settings['autofill_message'],
+    ];
+    $form['autofill_settings']['autofill_container']['elements'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Autofill elements'),
+      '#open' => $settings['autofill_excluded_elements'] ? TRUE : FALSE,
+    ];
+    $form['autofill_settings']['autofill_container']['elements']['autofill_excluded_elements'] = [
+      '#type' => 'webform_excluded_elements',
+      '#webform_id' => $this->getEntity()->id(),
+      '#default_value' => $settings['autofill_excluded_elements'],
+    ];
 
     return parent::form($form, $form_state);
   }

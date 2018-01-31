@@ -128,9 +128,17 @@ interface WebformInterface extends ConfigEntityInterface, EntityWithPluginCollec
    * Determine if the webform has conditional logic (i.e. #states).
    *
    * @return bool
-   *   TRUE if the webform has conditional logic
+   *   TRUE if the webform has conditional logic.
    */
   public function hasConditions();
+
+  /**
+   * Determine if the webform has required elements.
+   *
+   * @return bool
+   *   TRUE if the webform has required elements.
+   */
+  public function hasRequired();
 
   /**
    * Determine if the webform has any custom actions (aka submit buttons).
@@ -572,7 +580,7 @@ interface WebformInterface extends ConfigEntityInterface, EntityWithPluginCollec
    *
    * @return array
    *   Webform raw elements decoded and flattened into an associative array
-   *   keyed by element name. Returns FALSE is elements YAML is invalid.
+   *   keyed by element key. Returns FALSE is elements YAML is invalid.
    */
   public function getElementsDecodedAndFlattened($operation = NULL);
 
@@ -583,7 +591,7 @@ interface WebformInterface extends ConfigEntityInterface, EntityWithPluginCollec
    *   (optional) The operation that is to be performed on the element.
    *
    * @return array
-   *   Webform elements flattened into an associative array keyed by element name.
+   *   Webform elements flattened into an associative array keyed by element key.
    *   Returns FALSE is elements YAML is invalid.
    */
   public function getElementsInitializedAndFlattened($operation = NULL);
@@ -595,7 +603,7 @@ interface WebformInterface extends ConfigEntityInterface, EntityWithPluginCollec
    *   (optional) The operation that is to be performed on the element.
    *
    * @return array
-   *   Webform elements flattened into an associative array keyed by element name.
+   *   Webform elements flattened into an associative array keyed by element key.
    */
   public function getElementsInitializedFlattenedAndHasValue($operation = NULL);
 
@@ -685,6 +693,14 @@ interface WebformInterface extends ConfigEntityInterface, EntityWithPluginCollec
    * Update submit and confirm paths associated with this webform.
    */
   public function deletePaths();
+
+  /**
+   * Determine if the webform has any message handlers.
+   *
+   * @return bool
+   *   TRUE if the webform has any message handlers.
+   */
+  public function hasMessageHandler();
 
   /**
    * Returns a specific webform handler.

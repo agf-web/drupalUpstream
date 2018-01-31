@@ -187,7 +187,7 @@ class WebformSubmissionLimitBlock extends BlockBase implements ContainerFactoryP
     $form['advanced']['entity_type'] = [
       '#type' => 'select',
       '#title' => 'Source entity type',
-      '#empty_option' => '',
+      '#empty_option' => $this->t('- None -'),
       '#options' => $entity_type_options,
       '#default_value' => $this->configuration['entity_type'],
       '#states' => [
@@ -363,7 +363,6 @@ class WebformSubmissionLimitBlock extends BlockBase implements ContainerFactoryP
   protected function getIntervalText() {
     return WebformDateHelper::getIntervalText($this->getInterval());
   }
-
 
   /**
    * Get total number of submissions for selected limit type.

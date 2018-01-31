@@ -83,7 +83,17 @@ class WebformEntityHandlersForm extends EntityForm {
         '#tree' => FALSE,
         'data' => [
           'label' => [
-            '#markup' => '<b>' . $handler->label() . '</b>: ' . $handler->description(),
+            '#type' => 'link',
+            '#title' => $handler->label(),
+            '#url' => Url::fromRoute('entity.webform.handler.edit_form', [
+              'webform' => $this->entity->id(),
+              'webform_handler' => $handler_id,
+            ]),
+            '#attributes' => WebformDialogHelper::getOffCanvasDialogAttributes(),
+          ],
+          'description' => [
+            '#prefix' => '<br/>',
+            '#markup' => $handler->description(),
           ],
         ],
       ];
@@ -120,7 +130,7 @@ class WebformEntityHandlersForm extends EntityForm {
           'webform' => $this->entity->id(),
           'webform_handler' => $handler_id,
         ]),
-        'attributes' => WebformDialogHelper::getModalDialogAttributes(800),
+        'attributes' => WebformDialogHelper::getOffCanvasDialogAttributes(),
       ];
       if ($handler->cardinality() === WebformHandlerInterface::CARDINALITY_UNLIMITED) {
         $operations['duplicate'] = [
@@ -129,7 +139,7 @@ class WebformEntityHandlersForm extends EntityForm {
             'webform' => $this->entity->id(),
             'webform_handler' => $handler_id,
           ]),
-          'attributes' => WebformDialogHelper::getModalDialogAttributes(800),
+          'attributes' => WebformDialogHelper::getOffCanvasDialogAttributes(),
         ];
       }
       $operations['delete'] = [
@@ -138,7 +148,7 @@ class WebformEntityHandlersForm extends EntityForm {
           'webform' => $this->entity->id(),
           'webform_handler' => $handler_id,
         ]),
-        'attributes' => WebformDialogHelper::getModalDialogAttributes(700),
+        'attributes' => WebformDialogHelper::getModalDialogAttributes(WebformDialogHelper::DIALOG_NARROW),
       ];
       $row['operations'] = [
         '#type' => 'operations',
@@ -165,7 +175,7 @@ class WebformEntityHandlersForm extends EntityForm {
         '#link' => [
           'title' => $this->t('Add email'),
           'url' => new Url('entity.webform.handler.add_form', ['webform' => $webform->id(), 'webform_handler' => 'email']),
-          'attributes' => WebformDialogHelper::getModalDialogAttributes(800),
+          'attributes' => WebformDialogHelper::getOffCanvasDialogAttributes(),
         ],
       ];
     }
@@ -176,7 +186,7 @@ class WebformEntityHandlersForm extends EntityForm {
         '#link' => [
           'title' => $this->t('Add handler'),
           'url' => new Url('entity.webform.handler', ['webform' => $webform->id()]),
-          'attributes' => WebformDialogHelper::getModalDialogAttributes(800),
+          'attributes' => WebformDialogHelper::getModalDialogAttributes(),
         ],
       ];
     }

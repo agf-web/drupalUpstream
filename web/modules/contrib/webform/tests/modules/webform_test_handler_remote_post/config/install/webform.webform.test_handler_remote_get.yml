@@ -58,6 +58,7 @@ settings:
   form_reset: false
   form_disable_autocomplete: false
   form_novalidate: false
+  form_required: false
   form_unsaved: false
   form_disable_back: false
   form_submit_back: false
@@ -71,6 +72,10 @@ settings:
   submission_login: false
   submission_login_message: ''
   submission_exception_message: ''
+  submission_locked_message: ''
+  autofill: false
+  autofill_message: ''
+  autofill_excluded_elements: {  }
   wizard_progress_bar: true
   wizard_progress_pages: false
   wizard_progress_percentage: false
@@ -178,6 +183,7 @@ handlers:
         entity_type: entity_type
         entity_id: entity_id
         sticky: sticky
+        locked: locked
         notes: notes
         confirmation_number: confirmation_number
       custom_data: |

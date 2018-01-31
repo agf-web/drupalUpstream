@@ -4,7 +4,6 @@ namespace Drupal\webform\Access;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\webform\Plugin\WebformHandlerMessageInterface;
 use Drupal\webform\WebformSubmissionInterface;
 
 /**
@@ -22,8 +21,7 @@ class WebformSubmissionAccess {
    *   The access result.
    */
   public static function checkWizardPagesAccess(WebformSubmissionInterface $webform_submission) {
-    return AccessResult::allowedIf($webform_submission->getWebform()
-      ->hasWizardPages());
+    return AccessResult::allowedIf($webform_submission->getWebform()->hasWizardPages());
   }
 
   /**
@@ -39,16 +37,10 @@ class WebformSubmissionAccess {
    */
   public static function checkResendAccess(WebformSubmissionInterface $webform_submission, AccountInterface $account) {
     $webform = $webform_submission->getWebform();
-    if ($webform->access('submission_update_any', $account)) {
-      $handlers = $webform->getHandlers();
-      foreach ($handlers as $handler) {
-        if ($handler instanceof WebformHandlerMessageInterface) {
-          return AccessResult::allowed();
-        }
-      }
+    if ($webform->access('submission_update_any', $account) && $webform->hasMessageHandler()) {
+      return AccessResult::allowed();
     }
     return AccessResult::forbidden();
   }
 
 }
-

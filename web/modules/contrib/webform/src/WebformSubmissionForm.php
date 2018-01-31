@@ -188,7 +188,6 @@ class WebformSubmissionForm extends ContentEntityForm {
       $container->get('webform.token_manager'),
       $container->get('webform_submission.conditions_validator'),
       $container->get('webform.entity_reference_manager')
-
     );
   }
 
@@ -230,7 +229,7 @@ class WebformSubmissionForm extends ContentEntityForm {
     // Get the source entity and allow webform submission to be used as a source
     // entity.
     $this->sourceEntity = $this->requestHandler->getCurrentSourceEntity(['webform']);
-    if ($this->sourceEntity == $entity) {
+    if ($this->sourceEntity === $entity) {
       $this->sourceEntity = $this->requestHandler->getCurrentSourceEntity(['webform', 'webform_submission']);
     }
 
@@ -259,6 +258,18 @@ class WebformSubmissionForm extends ContentEntityForm {
           // Else load the most recent draft.
           $entity = $webform_submission_draft;
         }
+      }
+    }
+
+    // Autofill with previous submission.
+    if ($this->operation === 'add' && $entity->isNew() && $webform->getSetting('autofill')) {
+      $account = $entity->getOwner();
+      $options = ['in_draft' => FALSE];
+      $last_submission = $this->storage->getLastSubmission($webform, $source_entity, $account, $options);
+      if ($last_submission) {
+        $excluded_elements = $webform->getSetting('autofill_excluded_elements') ?: [];
+        $last_submission_data = array_diff_key($last_submission->getData(), $excluded_elements);
+        $entity->setData($last_submission_data + $entity->getData());
       }
     }
 
@@ -479,6 +490,15 @@ class WebformSubmissionForm extends ContentEntityForm {
       ];
     }
 
+    // Required indicator
+    $current_page = $this->getCurrentPage($form, $form_state);
+    if ($current_page != 'webform_preview' && $this->getWebformSetting('form_required') && $webform->hasRequired()) {
+      $form['required'] = [
+        '#theme' => 'webform_required',
+        '#label' => $this->getWebformSetting('form_required_label'),
+      ];
+    }
+
     // Append elements to the webform.
     $form['elements'] = $elements;
 
@@ -595,6 +615,11 @@ class WebformSubmissionForm extends ContentEntityForm {
       return $this->getMessageManager()->append($form, WebformMessageManagerInterface::FORM_EXCEPTION, 'warning');
     }
 
+    // Exit if submission is locked.
+    if ($webform_submission->isLocked()) {
+      return $this->getMessageManager()->append($form, WebformMessageManagerInterface::SUBMISSION_LOCKED, 'warning');
+    }
+
     // Check prepopulate source entity required and type.
     if ($webform->getSetting('form_prepopulate_source_entity')) {
       if ($webform->getSetting('form_prepopulate_source_entity_required') && empty($this->getSourceEntity())) {
@@ -707,7 +732,7 @@ class WebformSubmissionForm extends ContentEntityForm {
   }
 
   /**
-   * Display draft and previous submission status messages for this webform submission.
+   * Display draft, previous submission, and autofill status messages for this webform submission.
    *
    * @param array $form
    *   An associative array containing the structure of the form.
@@ -736,9 +761,8 @@ class WebformSubmissionForm extends ContentEntityForm {
         $query['destination'] = $this->requestHandler->getUrl($webform, $source_entity, 'webform.results_submissions')->toString();
         $build = [
           '#type' => 'link',
-          '#title' => $this->t('Generate webform submissions'),
+          '#title' => $this->t('Generate %title submissions', ['%title' => $webform->label()]),
           '#url' => Url::fromRoute('devel_generate.webform_submission', [], ['query' => $query]),
-          '#attributes' => ['class' => ['button', 'button--small']],
         ];
         drupal_set_message($this->renderer->renderPlain($build), 'warning');
       }
@@ -793,6 +817,14 @@ class WebformSubmissionForm extends ContentEntityForm {
       elseif ($webform_submission->id() != $this->storage->getLastSubmission($webform, $this->sourceEntity, $this->currentUser())->id()) {
         $this->getMessageManager()->display(WebformMessageManagerInterface::SUBMISSION_PREVIOUS);
       }
+    }
+
+    // Display autofill message.
+    if ($this->isGet()
+      && $this->operation === 'add'
+      && $webform_submission->isNew()
+      && $webform->getSetting('autofill')) {
+      $this->getMessageManager()->display(WebformMessageManagerInterface::AUTOFILL);
     }
   }
 
@@ -1596,9 +1628,12 @@ class WebformSubmissionForm extends ContentEntityForm {
       $route_options['query'] = $query;
     }
 
-    // Default to displaying a confirmation message on this page.
+    // Default to displaying a confirmation message on this page when submission
+    // is updated or locked (but not just completed).
     $state = $webform_submission->getState();
-    if ($state == WebformSubmissionInterface::STATE_UPDATED) {
+    $is_updated = ($state == WebformSubmissionInterface::STATE_UPDATED);
+    $is_locked = ($state == WebformSubmissionInterface::STATE_LOCKED && $webform_submission->getChangedTime() > $webform_submission->getCompletedTime());
+    if ($is_updated || $is_locked) {
       $this->getMessageManager()->display(WebformMessageManagerInterface::SUBMISSION_UPDATED);
       $form_state->setRedirect($route_name, $route_parameters, $route_options);
       return;
