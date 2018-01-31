@@ -2,6 +2,8 @@ name: AgFirst
 type: profile
 description: 'AgFirst default Drupal 8 installation profile.'
 version: VERSION
+distribution:
+  name: AgFirst Core
 core: 8.x
 dependencies:
   - address
