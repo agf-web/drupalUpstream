@@ -1,0 +1,5 @@
+name: AgFirst Share Handlers
+type: module
+description: 'This module provides some shared services for all sites..'
+package: "AgFirst"
+core: '8.x'
