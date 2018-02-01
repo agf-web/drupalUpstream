@@ -63,4 +63,5 @@ function agfirst_install() {
   user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, ['search content']);
 
   // Enable the admin theme.
-  \Drupal::configFactory()->getEditable('node.settings')->set('use_admin_theme', TRUE)->save(TRUE);}
+  \Drupal::configFactory()->getEditable('node.settings')->set('use_admin_theme', TRUE)->save(TRUE);
+}
