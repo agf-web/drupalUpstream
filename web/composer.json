@@ -41,7 +41,8 @@
         "drupal/xmlsitemap": "^1.0@alpha",
         "webflo/drupal-finder": "^1.0.0",
         "webmozart/path-util": "^2.3",
-        "wikimedia/composer-merge-plugin": "^1.4"
+        "wikimedia/composer-merge-plugin": "^1.4",
+        "drupal/console": "^1.5"
     },
     "replace": {
         "drupal/core": "^8.4"
