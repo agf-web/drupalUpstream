@@ -1,0 +1,7 @@
+core: 8.x
+type: theme
+base theme: stable
+
+name: 'AgFirst base theme'
+description: 'Base theme for AgFirst that provides a very basic theme designed to be extended for partner sites.'
+package: 'AgFirst'
