@@ -1,0 +1,26 @@
+uuid: 516d322b-678f-482a-b88d-3e789fd59e34
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.marketing_page.body
+    - node.type.marketing_page
+  module:
+    - text
+    - user
+id: node.marketing_page.default
+targetEntityType: node
+bundle: marketing_page
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 101
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden: {  }
