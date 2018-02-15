@@ -21,8 +21,6 @@
     "drupal/address": "~1.0",
     "drupal/admin_toolbar": "^1.19",
     "drupal/anchor_link": "^1.5",
-    "drupal/config_installer": "^1.4",
-    "drupal/core": "~8.0",
     "drupal/crop": "^1.2",
     "drupal/devel": "^1.0@RC",
     "drupal/editor_advanced_link": "^1.4",
