@@ -8,7 +8,6 @@ use Drupal\user\Entity\User;
 use Drupal\user\RoleInterface;
 use Drupal\shortcut\Entity\Shortcut;
 
-
 /**
  * Implements hook_install().
  *
@@ -17,7 +16,8 @@ use Drupal\shortcut\Entity\Shortcut;
  * @see \system_install()
  */
 function agfirst_install() {
-  // Initial version take from standard_profile(), then modified to avoid conflicts.
+  // Initial version take from standard_profile(), then modified to avoid
+  // conflicts.
   // Set front page to "node".
   \Drupal::configFactory()->getEditable('system.site')->set('page.front', '/node')->save(TRUE);
 
