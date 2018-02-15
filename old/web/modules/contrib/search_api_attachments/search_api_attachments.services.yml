@@ -1,4 +1,0 @@
-services:
-  plugin.manager.search_api_attachments.text_extractor:
-    class: Drupal\search_api_attachments\TextExtractorPluginManager
-    parent: default_plugin_manager
