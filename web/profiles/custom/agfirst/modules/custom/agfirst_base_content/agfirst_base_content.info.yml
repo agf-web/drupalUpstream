@@ -3,3 +3,9 @@ type: module
 description: 'Provides the base content types for AgFirst sites.'
 package: "AgFirst"
 core: '8.x'
+dependencies:
+  - node
+  - menu_ui
+  - text
+  - path
+  - user
