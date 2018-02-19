@@ -35,22 +35,27 @@ can switch the site to SFTP mode and it will run the process automatically.
 During regular development you may need to add additional modules or libraries. These should be installed with composer
 and handled as dependencies of a custom module or theme of the site itself _not_ of the project's root composer.json. 
 
-Those updates you can in SFTP mode on Pantheon via Terminus or in Git mode locally.
+Those updates you can in SFTP mode on Pantheon via Terminus or in Git mode locally. For any given site you will likely 
+want to use one of these techniques and not the other. Trying to run them in combination is going to cause git conflicts
+in your local environment.  That maybe unavoidable from time to time.  Hopefully Pantheon will continue to improve their
+support of Composer and allow us to simplify this process over time and better integrate with their platform.
 
 ### Update with Terminus
 
 Install [Terminus 1](https://pantheon.io/docs/terminus/) and the 
 [Terminus Composer plugin](https://github.com/pantheon-systems/terminus-composer-plugin).  Then, to update your site, 
 ensure it is in SFTP mode, and then run:
-```
-terminus composer <sitename>.<dev> update
-```
-Other commands will work as well; for example, you may install new modules using 
-`terminus composer <sitename>.<dev> require drupal/pathauto`.
+
+```terminus composer <sitename>.<dev> update```
+
+Other commands will work as well; for example, you may install new modules using:
+
+```terminus composer <sitename>.<dev> require drupal/pathauto```
 
 ### Update on your local machine
 
 You may also place your site in Git mode, clone it locally, and then run composer commands from there.  Commit and push 
-your files back up to Pantheon as usual.
+your files back up to Pantheon. 
+
 
 
