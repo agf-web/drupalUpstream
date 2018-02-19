@@ -18,3 +18,5 @@ dependencies:
   - datetime
   - options
   - video_embed_field
+  - datetime_range
+  - address
