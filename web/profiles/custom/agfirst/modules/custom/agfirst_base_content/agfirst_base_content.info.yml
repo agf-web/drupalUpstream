@@ -20,3 +20,4 @@ dependencies:
   - video_embed_field
   - datetime_range
   - address
+  - taxonomy
