@@ -15,3 +15,6 @@ dependencies:
   - paragraphs
   - file
   - telephone
+  - datetime
+  - options
+  - video_embed_field
