@@ -4,8 +4,14 @@ description: 'Provides the base content types for AgFirst sites.'
 package: "AgFirst"
 core: '8.x'
 dependencies:
+  - entity_reference_revisions
   - node
   - menu_ui
   - text
   - path
   - user
+  - image
+  - link
+  - paragraphs
+  - file
+
