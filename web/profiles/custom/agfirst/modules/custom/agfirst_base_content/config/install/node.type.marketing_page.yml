@@ -1,0 +1,16 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus: {  }
+    parent: ''
+name: 'Marketing Page'
+type: marketing_page
+description: 'This pages are intended as special purpose marketing pages to be tied to marketing campaigns.'
+help: ''
+new_revision: true
+preview_mode: 1
+display_submitted: false
