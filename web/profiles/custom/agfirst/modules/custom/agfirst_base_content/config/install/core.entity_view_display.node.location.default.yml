@@ -1,0 +1,68 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.location.body
+    - field.field.node.location.field_counties_served
+    - field.field.node.location.field_fax
+    - field.field.node.location.field_location
+    - field.field.node.location.field_people
+    - field.field.node.location.field_phone
+    - node.type.location
+  module:
+    - address
+    - text
+    - user
+id: node.location.default
+targetEntityType: node
+bundle: location
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 101
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_counties_served:
+    weight: 105
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_fax:
+    weight: 104
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: basic_string
+    region: content
+  field_location:
+    weight: 107
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: address_default
+    region: content
+  field_people:
+    weight: 106
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+  field_phone:
+    weight: 103
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: basic_string
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden: {  }

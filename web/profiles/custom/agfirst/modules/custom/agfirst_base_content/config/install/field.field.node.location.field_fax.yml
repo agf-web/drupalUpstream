@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_fax
+    - node.type.location
+  module:
+    - telephone
+id: node.location.field_fax
+field_name: field_fax
+entity_type: node
+bundle: location
+label: Fax
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: telephone
