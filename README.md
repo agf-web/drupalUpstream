@@ -4,22 +4,53 @@ This repository is a start state for a Composer-based Drupal workflow with Panth
 
 ## Installation
 
+This Upstream is for internal use of AgFirst only. It cannot be directly installed unless you are a member of that team
+on Pantheon.
 
+1. Log into your Pantheon account.
+1. Click Create New Site
+1. Give the site a name, and assign it to the AgFirst organization (the select field directly below the name).
+1. On the next screen you still see your custom upstream "AgFirst Default Drupal Upstream".  Click the deploy button.
+1. Pantheon's system will then process for a minute or two while it creates a copy of the repository and sets up their 
+environment.
+1. When the deployment process completes, you will be invited to go to your dashboard where you will see an install 
+button which will trigger Drupal's installation process.
+1. The only option you need to select is the language (which defaults to US English).  From there Drupal's installer 
+will take over and install your site.
 
 ## Updating your site
 
-Sites created from this upstream will not use the Pantheon dashboard to update Drupal. Instead, you will manage your updates using Composer. Updates can be applied either through Terminus, or on your local machine.
+Sites created from this upstream will not use the standard Pantheon dashboard-based process to update Drupal. Instead, 
+you will manage your updates using Composer. Updates can be applied either through Terminus, or on your local machine.
 
-#### Update with Terminus
+_Note: This process is still evolving._
 
-Install [Terminus 1](https://pantheon.io/docs/terminus/) and the [Terminus Composer plugin](https://github.com/pantheon-systems/terminus-composer-plugin).  Then, to update your site, ensure it is in SFTP mode, and then run:
+There are two main sources of changes to sites built with this process: the shared upstream materials, and custom 
+development. Changes to the shared modules and versions will be handled through the upstream. As much as possible Drupal 
+contrib modules should be handled as additions to the upstream and not as custom additions to a specific site. When 
+these updates are released, each site must be placed it git mode on the Pantheon dashboard to merge the changes into
+the local repository.  Once that merge is complete you can either use terminus to update and install dependencies or you
+can switch the site to SFTP mode and it will run the process automatically.
+
+During regular development you may need to add additional modules or libraries. These should be installed with composer
+and handled as dependencies of a custom module or theme of the site itself _not_ of the project's root composer.json. 
+
+Those updates you can in SFTP mode on Pantheon via Terminus or in Git mode locally.
+
+### Update with Terminus
+
+Install [Terminus 1](https://pantheon.io/docs/terminus/) and the 
+[Terminus Composer plugin](https://github.com/pantheon-systems/terminus-composer-plugin).  Then, to update your site, 
+ensure it is in SFTP mode, and then run:
 ```
 terminus composer <sitename>.<dev> update
 ```
-Other commands will work as well; for example, you may install new modules using `terminus composer <sitename>.<dev> require drupal/pathauto`.
+Other commands will work as well; for example, you may install new modules using 
+`terminus composer <sitename>.<dev> require drupal/pathauto`.
 
-#### Update on your local machine
+### Update on your local machine
 
-You may also place your site in Git mode, clone it locally, and then run composer commands from there.  Commit and push your files back up to Pantheon as usual.
+You may also place your site in Git mode, clone it locally, and then run composer commands from there.  Commit and push 
+your files back up to Pantheon as usual.
 
 
