@@ -1,6 +1,4 @@
 # Quicksilver Pushback
-This Quicksilver project is used in conjunction with the various suite of [Terminus Build Tools](https://github.com/pantheon-systems/terminus-build-tools-plugin)-based example repositories to push any commits made on the Pantheon dashboard back to the original GitHub repository for the site.
-
 This Quicksilver script only works with Pantheon sites that have been configured to use a GitHub PR workflow.
 
 ### Example composer.json
