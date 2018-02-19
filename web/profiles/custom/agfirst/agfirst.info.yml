@@ -6,7 +6,7 @@ distribution:
   name: AgFirst Core
 core: 8.x
 dependencies:
-  - agfrist_base_content
+  - agfirst_base_content
   - address
   - admin_toolbar
   - admin_toolbar_tools
