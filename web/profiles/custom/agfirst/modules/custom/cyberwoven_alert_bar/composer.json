@@ -1,0 +1,25 @@
+{
+  "name": "cyberwoven/cyberwoven_alert_bar",
+  "type": "drupal-module",
+  "description": "Provides a simple themeable alert bar.",
+  "keywords": ["Drupal"],
+  "homepage": "https://bitbucket.org/cyberwoven/cyberwoven_alert_bar",
+  "license": "GPL-2.0+",
+  "minimum-stability": "dev",
+  "extra": {
+    "branch-alias": {
+      "8.x-1.x": "1.x-dev"
+    }
+  },
+  "support": {
+    "source": "https://bitbucket.org/cyberwoven/cyberwoven_alert_bar.git"
+  },
+  "authors": [
+    {
+      "name": "Danny Cooper (grentastic)",
+      "homepage": "https://www.drupal.org/u/grentastic",
+      "role": "Maintainer"
+    }
+  ],
+  "require": { }
+}
