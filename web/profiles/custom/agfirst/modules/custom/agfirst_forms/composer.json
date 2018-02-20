@@ -1,0 +1,9 @@
+{
+  "name": "agfirst/agfirst_forms",
+  "type": "drupal-module",
+  "description": "Provides embedded form handling for AgFirst sites.",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "minimum-stability": "dev",
+  "require": { }
+}

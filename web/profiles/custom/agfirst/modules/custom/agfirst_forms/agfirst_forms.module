@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * @file
+ * Contains agfirst_forms.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function agfirst_forms_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the agfirst_forms module.
+    case 'help.page.agfirst_forms':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Provides embedded form handling for AgFirst sites.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function agfirst_forms_theme() {
+  return [
+    'agfirst_forms_dynamics' => [
+      'variables' => [
+        'attributes' => [],
+        'content' => [
+          'form_id' => '',
+          'clickdimensions_link' => '',
+        ],
+      ],
+    ],
+  ];
+}

@@ -1,0 +1,7 @@
+dynamics_remote:
+  version: 1.0
+  license:
+    name: Propritary
+    gpl-compatible: false
+  js:
+    https://az124611.vo.msecnd.net/web/v10/CDWidget.js: {  }
