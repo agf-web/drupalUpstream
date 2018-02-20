@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_message_type
+    - paragraphs.paragraphs_type.spotlight
+  module:
+    - options
+id: paragraph.spotlight.field_message_type
+field_name: field_message_type
+entity_type: paragraph
+bundle: spotlight
+label: 'Message Type'
+description: 'Select the type of message you are using to allow the site to provide proper layout.'
+required: true
+translatable: false
+default_value:
+  -
+    value: plain
+default_value_callback: ''
+settings: {  }
+field_type: list_string

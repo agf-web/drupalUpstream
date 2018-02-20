@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: split_content
+label: 'Split Content'
+icon_uuid: null
+description: 'These layers are designed provide two side-by-side boxes of information.'
+behavior_plugins: {  }

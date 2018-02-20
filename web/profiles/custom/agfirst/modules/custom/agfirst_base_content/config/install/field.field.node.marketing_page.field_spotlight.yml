@@ -4,6 +4,7 @@ dependencies:
   config:
     - field.storage.node.field_spotlight
     - node.type.marketing_page
+    - paragraphs.paragraphs_type.spotlight
   module:
     - entity_reference_revisions
 id: node.marketing_page.field_spotlight
@@ -20,5 +21,13 @@ settings:
   handler: 'default:paragraph'
   handler_settings:
     negate: 0
-    target_bundles: null
+    target_bundles:
+      spotlight: spotlight
+    target_bundles_drag_drop:
+      split_content:
+        weight: 3
+        enabled: false
+      spotlight:
+        enabled: true
+        weight: 4
 field_type: entity_reference_revisions

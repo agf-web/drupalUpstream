@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_right_message
+    - paragraphs.paragraphs_type.split_content
+id: paragraph.split_content.field_right_message
+field_name: field_right_message
+entity_type: paragraph
+bundle: split_content
+label: 'Right Message'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

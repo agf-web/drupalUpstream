@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_right_button
+    - paragraphs.paragraphs_type.split_content
+  module:
+    - link
+id: paragraph.split_content.field_right_button
+field_name: field_right_button
+entity_type: paragraph
+bundle: split_content
+label: 'Right Button'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  link_type: 17
+  title: 2
+field_type: link

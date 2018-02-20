@@ -1,0 +1,90 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.split_content.field_left_button
+    - field.field.paragraph.split_content.field_left_headline
+    - field.field.paragraph.split_content.field_left_image
+    - field.field.paragraph.split_content.field_left_message
+    - field.field.paragraph.split_content.field_right_button
+    - field.field.paragraph.split_content.field_right_headline
+    - field.field.paragraph.split_content.field_right_image
+    - field.field.paragraph.split_content.field_right_message
+    - image.style.thumbnail
+    - paragraphs.paragraphs_type.split_content
+  module:
+    - image
+    - link
+id: paragraph.split_content.default
+targetEntityType: paragraph
+bundle: split_content
+mode: default
+content:
+  field_left_button:
+    weight: 3
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+    type: link_default
+    region: content
+  field_left_headline:
+    weight: 1
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_left_image:
+    weight: 0
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+    type: image_image
+    region: content
+  field_left_message:
+    weight: 2
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textarea
+    region: content
+  field_right_button:
+    weight: 5
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+    type: link_default
+    region: content
+  field_right_headline:
+    weight: 6
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_right_image:
+    weight: 4
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+    type: image_image
+    region: content
+  field_right_message:
+    weight: 7
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textarea
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true
