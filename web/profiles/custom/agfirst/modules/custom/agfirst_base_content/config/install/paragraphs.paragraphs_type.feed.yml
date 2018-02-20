@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: feed
+label: Feed
+icon_uuid: null
+description: 'Feed layers provide curated or automated feeds of content from other parts of this site.'
+behavior_plugins: {  }

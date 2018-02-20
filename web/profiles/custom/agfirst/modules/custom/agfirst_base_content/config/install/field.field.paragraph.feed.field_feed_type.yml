@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_feed_type
+    - paragraphs.paragraphs_type.feed
+  module:
+    - options
+id: paragraph.feed.field_feed_type
+field_name: field_feed_type
+entity_type: paragraph
+bundle: feed
+label: 'Feed Type'
+description: 'Manual feeds allow you to select which pages to include. Automatic feeds will display the most recent pages of the selected content type.'
+required: true
+translatable: false
+default_value:
+  -
+    value: manual
+default_value_callback: ''
+settings: {  }
+field_type: list_string

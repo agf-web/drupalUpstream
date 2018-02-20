@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_media_side
+    - paragraphs.paragraphs_type.embedded_form
+  module:
+    - options
+id: paragraph.embedded_form.field_media_side
+field_name: field_media_side
+entity_type: paragraph
+bundle: embedded_form
+label: 'Media Side'
+description: ''
+required: true
+translatable: true
+default_value:
+  -
+    value: left
+default_value_callback: ''
+settings: {  }
+field_type: list_string

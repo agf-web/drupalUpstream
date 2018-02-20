@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: embedded_form
+label: 'Embedded Form'
+icon_uuid: null
+description: 'These layers provide embedded forms that use either Click Dimensions or Microsoft Dynamics. This layer is just designed to display the forms based on their embed codes; you need to create the form itself in one of those two products.'
+behavior_plugins: {  }

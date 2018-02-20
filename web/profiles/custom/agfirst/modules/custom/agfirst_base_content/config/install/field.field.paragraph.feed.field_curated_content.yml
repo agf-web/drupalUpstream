@@ -1,0 +1,40 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_curated_content
+    - node.type.article
+    - node.type.event
+    - node.type.landing_page
+    - node.type.location
+    - node.type.marketing_page
+    - node.type.page
+    - node.type.person_detail
+    - paragraphs.paragraphs_type.feed
+id: paragraph.feed.field_curated_content
+field_name: field_curated_content
+entity_type: paragraph
+bundle: feed
+label: 'Curated Content'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      article: article
+      page: page
+      event: event
+      landing_page: landing_page
+      location: location
+      marketing_page: marketing_page
+      person_detail: person_detail
+    sort:
+      field: type
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: article
+field_type: entity_reference
