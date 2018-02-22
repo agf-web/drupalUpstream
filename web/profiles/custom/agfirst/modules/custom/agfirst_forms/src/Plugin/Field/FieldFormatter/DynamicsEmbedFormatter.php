@@ -44,8 +44,7 @@ class DynamicsEmbedFormatter extends FormatterBase {
    */
   public function settingsSummary() {
     $summary = [];
-    // Implement settings summary.
-
+    // Todo: Implement settings summary.
     return $summary;
   }
 
@@ -54,8 +53,8 @@ class DynamicsEmbedFormatter extends FormatterBase {
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $elements = [];
-
     $config = \Drupal::config('agfirst_forms.configuration');
+    $dynamics_link = $config->get('clickdynamics_location');
 
     foreach ($items as $delta => $item) {
       $elements[$delta] = [
@@ -66,7 +65,7 @@ class DynamicsEmbedFormatter extends FormatterBase {
         ],
         '#content' => [
           'form_id' => $this->viewValue($item),
-          'clickdimensions_link' => $config->get('clickdynamics_location'),
+          'clickdimensions_link' => $dynamics_link,
         ],
         '#libraries' => ['agfirst_forms/dynamics_remote'],
       ];
@@ -85,9 +84,7 @@ class DynamicsEmbedFormatter extends FormatterBase {
    *   The textual output generated.
    */
   protected function viewValue(FieldItemInterface $item) {
-    // The text value has no text format assigned to it, so the user input
-    // should equal the output, including newlines.
-    return nl2br(Html::escape($item->value));
+    return Html::check_plain($item->value);
   }
 
 }
