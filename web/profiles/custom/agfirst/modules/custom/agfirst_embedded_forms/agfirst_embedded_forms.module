@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains agfirst_forms.module.
+ * Contains agfirst_embedded_forms.module.
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -12,8 +12,8 @@ use Drupal\Core\Routing\RouteMatchInterface;
  */
 function agfirst_forms_help($route_name, RouteMatchInterface $route_match) {
   switch ($route_name) {
-    // Main module help for the agfirst_forms module.
-    case 'help.page.agfirst_forms':
+    // Main module help for the agfirst_embedded_forms module.
+    case 'help.page.agfirst_embedded_forms':
       $output = '';
       $output .= '<h3>' . t('About') . '</h3>';
       $output .= '<p>' . t('Provides embedded form handling for AgFirst sites.') . '</p>';
@@ -26,16 +26,16 @@ function agfirst_forms_help($route_name, RouteMatchInterface $route_match) {
 /**
  * Implements hook_theme().
  */
-function agfirst_forms_theme() {
+function agfirst_embedded_forms_theme() {
   return [
-    'agfirst_forms_dynamics' => [
+    'agfirst_embedded_forms_dynamics' => [
       'variables' => [
         'attributes' => [],
         'form_id' => '',
         'clickdimensions_link' => '',
       ],
     ],
-    'agfirst_forms_shortstack' => [
+    'agfirst_embedded_forms_shortstack' => [
       'variables' => [
         'attributes' => [],
         'campaign_id' => '',

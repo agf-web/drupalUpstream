@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\agfirst_forms\Plugin\Field\FieldFormatter;
+namespace Drupal\agfirst_embedded_forms\Plugin\Field\FieldFormatter;
 
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Field\FieldItemInterface;
@@ -9,17 +9,17 @@ use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Plugin implementation of the 'dynamics_embed_formatter' formatter.
+ * Plugin implementation of the 'shortstack_embed_formatter' formatter.
  *
  * @FieldFormatter(
- *   id = "dynamics_embed_formatter",
- *   label = @Translation("Dynamics embed formatter"),
+ *   id = "shortstack_embed_formatter",
+ *   label = @Translation("Short stack embed formatter"),
  *   field_types = {
- *     "dynamics_embed_field"
+ *     "shortstack_embed_field"
  *   }
  * )
  */
-class DynamicsEmbedFormatter extends FormatterBase {
+class ShortStackEmbedFormatter extends FormatterBase {
 
   /**
    * {@inheritdoc}
@@ -44,7 +44,8 @@ class DynamicsEmbedFormatter extends FormatterBase {
    */
   public function settingsSummary() {
     $summary = [];
-    // Todo: Implement settings summary.
+    // Implement settings summary.
+
     return $summary;
   }
 
@@ -53,19 +54,9 @@ class DynamicsEmbedFormatter extends FormatterBase {
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $elements = [];
-    $config = \Drupal::config('agfirst_forms.configuration');
-    $dynamics_link = $config->get('clickdynamics_location');
 
     foreach ($items as $delta => $item) {
-      $elements[$delta] = [
-        '#theme' => 'agfirst_forms_dynamics',
-        '#attributes' => [
-          'class' => ['dynamics-form-wrapper'],
-          'id' => 'dynamics-form-field',
-        ],
-        '#form_id' => $this->viewValue($item),
-        '#clickdimensions_link' => $dynamics_link,
-      ];
+      $elements[$delta] = ['#markup' => $this->viewValue($item)];
     }
 
     return $elements;
@@ -81,7 +72,9 @@ class DynamicsEmbedFormatter extends FormatterBase {
    *   The textual output generated.
    */
   protected function viewValue(FieldItemInterface $item) {
-    return Html::escape($item->value);
+    // The text value has no text format assigned to it, so the user input
+    // should equal the output, including newlines.
+    return nl2br(Html::escape($item->value));
   }
 
 }

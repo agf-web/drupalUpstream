@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\agfirst_forms\Plugin\Field\FieldWidget;
+namespace Drupal\agfirst_embedded_forms\Plugin\Field\FieldWidget;
 
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;

@@ -1,6 +1,6 @@
-agfirst_forms.agfirst_config_form:
+agfirst_embedded_forms.agfirst_config_form:
   title: 'AgFirst Forms Configuration'
-  route_name: agfirst_forms.agfirst_config_form
+  route_name: agfirst_embedded_forms.agfirst_config_form
   description: 'Settings for embedded forms.'
   parent: system.admin_config_system
   weight: 99

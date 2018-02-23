@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\agfirst_forms\Form;
+namespace Drupal\agfirst_embedded_forms\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -15,7 +15,7 @@ class ConfigurationForm extends ConfigFormBase {
    */
   protected function getEditableConfigNames() {
     return [
-      'agfirst_forms.configuration',
+      'agfirst_embedded_forms.configuration',
     ];
   }
 
@@ -30,7 +30,7 @@ class ConfigurationForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $config = $this->config('agfirst_forms.configuration');
+    $config = $this->config('agfirst_embedded_forms.configuration');
     $form['clickdynamics_location'] = [
       '#type' => 'url',
       '#title' => $this->t('ClickDynamics Location'),
@@ -59,7 +59,7 @@ class ConfigurationForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
 
-    $this->config('agfirst_forms.configuration')
+    $this->config('agfirst_embedded_forms.configuration')
       ->set('clickdynamics_location', $form_state->getValue('clickdynamics_location'))
       ->set('shortstack_location', $form_state->getValue('shortstack_location'))
       ->save();

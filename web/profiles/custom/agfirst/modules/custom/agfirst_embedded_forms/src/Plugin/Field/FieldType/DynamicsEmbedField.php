@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\agfirst_forms\Plugin\Field\FieldType;
+namespace Drupal\agfirst_embedded_forms\Plugin\Field\FieldType;
 
 use Drupal\Component\Utility\Random;
 use Drupal\Core\Field\FieldDefinitionInterface;
@@ -11,24 +11,24 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\TypedData\DataDefinition;
 
 /**
- * Plugin implementation of the 'shortstack_embed_field' field type.
+ * Plugin implementation of the 'dynamics_embed_field' field type.
  *
  * @FieldType(
- *   id = "shortstack_embed_field",
- *   label = @Translation("ShortStack Embed"),
- *   description = @Translation("Embed a ShortStart form"),
- *   default_widget = "shortstack_embed_widget",
- *   default_formatter = "shortstack_embed_formatter"
+ *   id = "dynamics_embed_field",
+ *   label = @Translation("MS Dynamics Embed"),
+ *   description = @Translation("Embed a MS Dynamics Form"),
+ *   default_widget = "dynamics_embed_widget",
+ *   default_formatter = "dynamics_embed_formatter"
  * )
  */
-class ShortStackEmbedField extends FieldItemBase {
+class DynamicsEmbedField extends FieldItemBase {
 
   /**
    * {@inheritdoc}
    */
   public static function defaultStorageSettings() {
     return [
-      'max_length' => 255,
+      'max_length' => 127,
       'is_ascii' => TRUE,
       'case_sensitive' => TRUE,
     ] + parent::defaultStorageSettings();
@@ -40,7 +40,7 @@ class ShortStackEmbedField extends FieldItemBase {
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
     // Prevent early t() calls by using the TranslatableMarkup.
     $properties['value'] = DataDefinition::create('string')
-      ->setLabel(new TranslatableMarkup('Campaign ID'))
+      ->setLabel(new TranslatableMarkup('Page ID'))
       ->setSetting('case_sensitive', $field_definition->getSetting('case_sensitive'))
       ->setRequired(TRUE);
 
@@ -76,7 +76,7 @@ class ShortStackEmbedField extends FieldItemBase {
         'value' => [
           'Length' => [
             'max' => $max_length,
-            'maxMessage' => t('%name: may not be longer than @max characters.', [
+            'maxMessage' => t('%name: may not be longer than @max characters. Typically they are 22 characters long.', [
               '%name' => $this->getFieldDefinition()->getLabel(),
               '@max' => $max_length,
             ]),
@@ -93,7 +93,7 @@ class ShortStackEmbedField extends FieldItemBase {
    */
   public static function generateSampleValue(FieldDefinitionInterface $field_definition) {
     $random = new Random();
-    $values['value'] = $random->word(mt_rand(1, $field_definition->getSetting('max_length')));
+    $values['value'] = $random->string(22);
     return $values;
   }
 

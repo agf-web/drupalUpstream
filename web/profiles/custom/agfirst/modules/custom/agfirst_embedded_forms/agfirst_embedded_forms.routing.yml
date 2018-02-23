@@ -1,0 +1,11 @@
+
+agfirst_embedded_forms.agfirst_config_form:
+  path: '/admin/config/agfirst_embedded_forms/configuration'
+  defaults:
+    _form: '\Drupal\agfirst_embedded_forms\Form\ConfigurationForm'
+    _title: 'ConfigurationForm'
+  requirements:
+    _permission: 'access administration pages'
+  options:
+    _admin_route: TRUE
+
