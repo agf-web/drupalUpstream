@@ -31,10 +31,8 @@ function agfirst_forms_theme() {
     'agfirst_forms_dynamics' => [
       'variables' => [
         'attributes' => [],
-        'content' => [
-          'form_id' => '',
-          'clickdimensions_link' => '',
-        ],
+        'form_id' => 'this',
+        'clickdimensions_link' => 'that',
       ],
     ],
   ];
