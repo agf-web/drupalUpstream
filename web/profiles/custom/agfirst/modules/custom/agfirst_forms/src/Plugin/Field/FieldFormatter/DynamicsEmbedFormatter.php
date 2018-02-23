@@ -63,11 +63,8 @@ class DynamicsEmbedFormatter extends FormatterBase {
           'class' => ['dynamics-form-wrapper'],
           'id' => 'dynamics-form-field',
         ],
-        '#content' => [
-          'form_id' => $this->viewValue($item),
-          'clickdimensions_link' => $dynamics_link,
-        ],
-        '#libraries' => ['agfirst_forms/dynamics_remote'],
+        '#form_id' => $this->viewValue($item),
+        '#clickdimensions_link' => $dynamics_link,
       ];
     }
 
@@ -84,7 +81,7 @@ class DynamicsEmbedFormatter extends FormatterBase {
    *   The textual output generated.
    */
   protected function viewValue(FieldItemInterface $item) {
-    return Html::check_plain($item->value);
+    return Html::escape($item->value);
   }
 
 }

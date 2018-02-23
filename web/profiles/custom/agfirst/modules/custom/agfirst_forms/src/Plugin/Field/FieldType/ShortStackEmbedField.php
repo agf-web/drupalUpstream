@@ -29,8 +29,8 @@ class ShortStackEmbedField extends FieldItemBase {
   public static function defaultStorageSettings() {
     return [
       'max_length' => 255,
-      'is_ascii' => FALSE,
-      'case_sensitive' => FALSE,
+      'is_ascii' => TRUE,
+      'case_sensitive' => TRUE,
     ] + parent::defaultStorageSettings();
   }
 
@@ -40,7 +40,7 @@ class ShortStackEmbedField extends FieldItemBase {
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
     // Prevent early t() calls by using the TranslatableMarkup.
     $properties['value'] = DataDefinition::create('string')
-      ->setLabel(new TranslatableMarkup('Text value'))
+      ->setLabel(new TranslatableMarkup('Campaign ID'))
       ->setSetting('case_sensitive', $field_definition->getSetting('case_sensitive'))
       ->setRequired(TRUE);
 
@@ -78,7 +78,7 @@ class ShortStackEmbedField extends FieldItemBase {
             'max' => $max_length,
             'maxMessage' => t('%name: may not be longer than @max characters.', [
               '%name' => $this->getFieldDefinition()->getLabel(),
-              '@max' => $max_length
+              '@max' => $max_length,
             ]),
           ],
         ],
@@ -102,16 +102,6 @@ class ShortStackEmbedField extends FieldItemBase {
    */
   public function storageSettingsForm(array &$form, FormStateInterface $form_state, $has_data) {
     $elements = [];
-
-    $elements['max_length'] = [
-      '#type' => 'number',
-      '#title' => t('Maximum length'),
-      '#default_value' => $this->getSetting('max_length'),
-      '#required' => TRUE,
-      '#description' => t('The maximum length of the field in characters.'),
-      '#min' => 1,
-      '#disabled' => $has_data,
-    ];
 
     return $elements;
   }

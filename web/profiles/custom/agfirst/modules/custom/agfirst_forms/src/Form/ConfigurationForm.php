@@ -37,6 +37,12 @@ class ConfigurationForm extends ConfigFormBase {
       '#description' => $this->t('This is defined in your embed codes as a variable called &quot;loc&quot;.'),
       '#default_value' => $config->get('clickdynamics_location'),
     ];
+    $form['shortstack_location'] = [
+      '#type' => 'url',
+      '#title' => $this->t('ShortStack Frame Source'),
+      '#description' => $this->t('This is defined in your embed codes the source of the iframe that starts an embed..'),
+      '#default_value' => $config->get('shortstack_location'),
+    ];
     return parent::buildForm($form, $form_state);
   }
 
@@ -55,6 +61,7 @@ class ConfigurationForm extends ConfigFormBase {
 
     $this->config('agfirst_forms.configuration')
       ->set('clickdynamics_location', $form_state->getValue('clickdynamics_location'))
+      ->set('shortstack_location', $form_state->getValue('shortstack_location'))
       ->save();
   }
 

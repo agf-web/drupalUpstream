@@ -42,12 +42,6 @@ class ShortStackEmbedWidget extends WidgetBase {
       '#required' => TRUE,
       '#min' => 1,
     ];
-    $elements['placeholder'] = [
-      '#type' => 'textfield',
-      '#title' => t('Placeholder'),
-      '#default_value' => $this->getSetting('placeholder'),
-      '#description' => t('Text that will be shown inside the field until a value is entered. This hint is usually a sample value or a brief description of the expected format.'),
-    ];
 
     return $elements;
   }
@@ -59,9 +53,6 @@ class ShortStackEmbedWidget extends WidgetBase {
     $summary = [];
 
     $summary[] = t('Textfield size: @size', ['@size' => $this->getSetting('size')]);
-    if (!empty($this->getSetting('placeholder'))) {
-      $summary[] = t('Placeholder: @placeholder', ['@placeholder' => $this->getSetting('placeholder')]);
-    }
 
     return $summary;
   }
@@ -74,7 +65,6 @@ class ShortStackEmbedWidget extends WidgetBase {
       '#type' => 'textfield',
       '#default_value' => isset($items[$delta]->value) ? $items[$delta]->value : NULL,
       '#size' => $this->getSetting('size'),
-      '#placeholder' => $this->getSetting('placeholder'),
       '#maxlength' => $this->getFieldSetting('max_length'),
     ];
 

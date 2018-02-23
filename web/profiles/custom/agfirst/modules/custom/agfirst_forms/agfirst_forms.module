@@ -31,8 +31,15 @@ function agfirst_forms_theme() {
     'agfirst_forms_dynamics' => [
       'variables' => [
         'attributes' => [],
-        'form_id' => 'this',
-        'clickdimensions_link' => 'that',
+        'form_id' => '',
+        'clickdimensions_link' => '',
+      ],
+    ],
+    'agfirst_forms_shortstack' => [
+      'variables' => [
+        'attributes' => [],
+        'campaign_id' => '',
+        'framesource' => '',
       ],
     ],
   ];

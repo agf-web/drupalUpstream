@@ -1,0 +1,53 @@
+{#
+/**
+ * @file
+ * Default template for the ShortStack embedded formatter.
+ *
+ * Available variables:
+ *   - campaign_id: The ID entered into the field.
+ *   - framesource: link to the dynamics instance provided as a module setting.
+ *
+ *
+ * @ingroup themeable
+ */
+#}
+
+<iframe class='campaign_embed' style='width:1px;min-width:100%' src='{{- framesource -}}' seamless='seamless'
+        frameborder='0' scrolling='no' allowfullscreen></iframe>
+<script type='text/javascript'>
+  (function () {
+    function loadScript(url, scriptId, callback) {
+      if (document.getElementById(scriptId) != null) {
+        return;
+      }
+      var script = document.createElement('script');
+      script.type = 'text/javascript';
+      if (script.readyState) {
+        script.onreadystatechange = function () {
+          if (script.readyState === 'loaded' || script.readyState === 'complete') {
+            script.onreadystatechange = null;
+            callback();
+          }
+        };
+      }
+      else {
+        script.onload = function () {
+          callback();
+        };
+      }
+      var scriptIdAttr = document.createAttribute('id');
+      scriptIdAttr.value = scriptId;
+      script.setAttributeNode(scriptIdAttr);
+      script.src = url;
+      document.getElementsByTagName('head')[0].appendChild(script);
+    }
+
+    function loadEmbed() {
+      var iframes = document.getElementsByClassName('campaign_embed');
+      for (var i = 0; i < iframes.length; i++) {
+        iFrameResize({enablePublicMethods: true}, iframes[i]);
+      }
+    }
+
+    loadScript('//d2xcq4qphg1ge9.cloudfront.net/javascript/responsive_embed/{{- campaign_id -}}/iframeResizer.min.js', 'campaignEmbedder', loadEmbed);
+  })(); </script>

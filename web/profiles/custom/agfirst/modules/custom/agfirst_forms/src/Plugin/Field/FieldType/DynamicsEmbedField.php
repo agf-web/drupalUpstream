@@ -78,7 +78,7 @@ class DynamicsEmbedField extends FieldItemBase {
             'max' => $max_length,
             'maxMessage' => t('%name: may not be longer than @max characters. Typically they are 22 characters long.', [
               '%name' => $this->getFieldDefinition()->getLabel(),
-              '@max' => $max_length
+              '@max' => $max_length,
             ]),
           ],
         ],
