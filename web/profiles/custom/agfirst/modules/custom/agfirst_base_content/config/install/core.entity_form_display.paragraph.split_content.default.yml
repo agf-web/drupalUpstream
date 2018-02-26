@@ -13,15 +13,48 @@ dependencies:
     - image.style.thumbnail
     - paragraphs.paragraphs_type.split_content
   module:
+    - field_group
     - image
     - link
+third_party_settings:
+  field_group:
+    group_left_side:
+      children:
+        - field_left_headline
+        - field_left_image
+        - field_left_message
+        - field_left_button
+      parent_name: ''
+      weight: 20
+      format_type: fieldset
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Left Side'
+    group_right_side:
+      children:
+        - field_right_headline
+        - field_right_image
+        - field_right_message
+        - field_right_button
+      parent_name: ''
+      weight: 20
+      format_type: fieldset
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Right Side'
 id: paragraph.split_content.default
 targetEntityType: paragraph
 bundle: split_content
 mode: default
 content:
   field_left_button:
-    weight: 3
+    weight: 5
     settings:
       placeholder_url: ''
       placeholder_title: ''
@@ -29,7 +62,7 @@ content:
     type: link_default
     region: content
   field_left_headline:
-    weight: 1
+    weight: 2
     settings:
       size: 60
       placeholder: ''
@@ -37,7 +70,7 @@ content:
     type: string_textfield
     region: content
   field_left_image:
-    weight: 0
+    weight: 3
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail
@@ -45,7 +78,7 @@ content:
     type: image_image
     region: content
   field_left_message:
-    weight: 2
+    weight: 4
     settings:
       rows: 5
       placeholder: ''
@@ -53,7 +86,7 @@ content:
     type: string_textarea
     region: content
   field_right_button:
-    weight: 5
+    weight: 9
     settings:
       placeholder_url: ''
       placeholder_title: ''
@@ -69,7 +102,7 @@ content:
     type: string_textfield
     region: content
   field_right_image:
-    weight: 4
+    weight: 7
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail
@@ -77,7 +110,7 @@ content:
     type: image_image
     region: content
   field_right_message:
-    weight: 7
+    weight: 8
     settings:
       rows: 5
       placeholder: ''
