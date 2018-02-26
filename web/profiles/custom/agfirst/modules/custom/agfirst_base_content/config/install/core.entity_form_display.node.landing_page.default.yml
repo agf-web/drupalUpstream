@@ -10,11 +10,56 @@ dependencies:
     - image.style.thumbnail
     - node.type.landing_page
   module:
+    - field_group
     - image
     - link
     - paragraphs
     - path
     - text
+third_party_settings:
+  field_group:
+    group_tabs:
+      children:
+        - group_main_marketing_area
+        - group_main_content
+      parent_name: ''
+      weight: 2
+      format_type: tabs
+      format_settings:
+        id: ''
+        classes: ''
+        direction: vertical
+      label: tabs
+    group_main_marketing_area:
+      children:
+        - field_image
+        - field_mma_link
+        - body
+      parent_name: group_tabs
+      weight: 6
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Main Marketing Area'
+    group_main_content:
+      children:
+        - field_layers
+      parent_name: group_tabs
+      weight: 7
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Main Content'
+_core:
+  default_config_hash: Zon1qTC1gez02smNtx5sbZfm1UegZvoIXs58PpLObPo
 id: node.landing_page.default
 targetEntityType: node
 bundle: landing_page
@@ -22,7 +67,7 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 121
+    weight: 14
     settings:
       rows: 9
       summary_rows: 3
@@ -31,12 +76,12 @@ content:
     region: content
   created:
     type: datetime_timestamp
-    weight: 10
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
   field_image:
-    weight: 123
+    weight: 12
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail
@@ -45,7 +90,7 @@ content:
     region: content
   field_layers:
     type: entity_reference_paragraphs
-    weight: 125
+    weight: 11
     settings:
       title: Paragraph
       title_plural: Paragraphs
@@ -56,7 +101,7 @@ content:
     third_party_settings: {  }
     region: content
   field_mma_link:
-    weight: 124
+    weight: 13
     settings:
       placeholder_url: ''
       placeholder_title: ''
@@ -64,7 +109,7 @@ content:
     type: link_default
     region: content
   field_mma_title:
-    weight: 122
+    weight: 1
     settings:
       size: 60
       placeholder: ''
@@ -73,7 +118,7 @@ content:
     region: content
   path:
     type: path
-    weight: 30
+    weight: 7
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -81,26 +126,26 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 15
+    weight: 5
     region: content
     third_party_settings: {  }
   status:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 120
+    weight: 9
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 16
+    weight: 6
     region: content
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: -5
+    weight: 0
     region: content
     settings:
       size: 60
@@ -108,7 +153,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 5
+    weight: 3
     settings:
       match_operator: CONTAINS
       size: 60
@@ -116,6 +161,8 @@ content:
     region: content
     third_party_settings: {  }
   url_redirects:
-    weight: 50
+    weight: 8
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden: {  }

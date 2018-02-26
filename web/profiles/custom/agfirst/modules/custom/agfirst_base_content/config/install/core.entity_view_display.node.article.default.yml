@@ -16,7 +16,6 @@ dependencies:
     - datetime
     - entity_reference_revisions
     - image
-    - options
     - text
     - user
     - video_embed_field
@@ -27,14 +26,14 @@ mode: default
 content:
   body:
     type: text_default
-    weight: 0
+    weight: 3
     region: content
     settings: {  }
     third_party_settings: {  }
     label: hidden
   field_image:
     type: image
-    weight: -1
+    weight: 0
     region: content
     settings:
       image_style: large
@@ -42,60 +41,48 @@ content:
     third_party_settings: {  }
     label: hidden
   field_layers:
-    weight: 105
-    label: above
+    type: entity_reference_revisions_entity_view
+    weight: 5
+    region: content
+    label: hidden
     settings:
       view_mode: default
       link: ''
     third_party_settings: {  }
-    type: entity_reference_revisions_entity_view
-    region: content
-  field_media_type:
-    weight: 101
-    label: above
-    settings: {  }
-    third_party_settings: {  }
-    type: list_default
-    region: content
   field_publication_date:
-    weight: 103
-    label: above
-    settings:
-      format_type: medium
-      timezone_override: ''
-    third_party_settings: {  }
-    type: datetime_default
+    type: datetime_time_ago
+    weight: 2
     region: content
+    label: hidden
+    settings:
+      future_format: '@interval hence'
+      past_format: '@interval ago'
+      granularity: 2
+    third_party_settings: {  }
   field_tags:
     type: entity_reference_label
-    weight: 10
+    weight: 4
     region: content
-    label: above
+    label: visually_hidden
     settings:
       link: true
     third_party_settings: {  }
-  field_teaser:
-    weight: 104
-    label: above
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
-    region: content
   field_video:
-    weight: 102
-    label: above
+    type: video_embed_field_video
+    weight: 1
+    region: content
+    label: hidden
     settings:
       responsive: true
       width: 854
       height: 480
       autoplay: true
     third_party_settings: {  }
-    type: video_embed_field_video
-    region: content
   links:
-    weight: 100
+    weight: 6
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
-  field_image: true
-  field_tags: true
+  field_media_type: true
+  field_teaser: true
