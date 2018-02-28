@@ -13,16 +13,63 @@ dependencies:
     - image.style.thumbnail
     - paragraphs.paragraphs_type.spotlight
   module:
+    - field_group
     - image
     - link
     - video_embed_field
+third_party_settings:
+  field_group:
+    group_subtabs:
+      children:
+        - group_media
+        - group_call_out
+      parent_name: ''
+      weight: 1
+      format_type: tabs
+      format_settings:
+        id: ''
+        classes: ''
+        direction: horizontal
+      label: subtabs
+    group_media:
+      children:
+        - field_media_side
+        - field_media_type
+        - field_video
+        - field_image
+      parent_name: group_subtabs
+      weight: 9
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: Media
+    group_call_out:
+      children:
+        - field_title
+        - field_message_type
+        - field_message
+        - field_link
+      parent_name: group_subtabs
+      weight: 10
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Call Out'
 id: paragraph.spotlight.default
 targetEntityType: paragraph
 bundle: spotlight
 mode: default
 content:
   field_image:
-    weight: 4
+    weight: 7
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail
@@ -30,7 +77,7 @@ content:
     type: image_image
     region: content
   field_link:
-    weight: 7
+    weight: 3
     settings:
       placeholder_url: ''
       placeholder_title: ''
@@ -38,19 +85,19 @@ content:
     type: link_default
     region: content
   field_media_side:
-    weight: 1
+    weight: 4
     settings: {  }
     third_party_settings: {  }
     type: options_select
     region: content
   field_media_type:
-    weight: 2
+    weight: 5
     settings: {  }
     third_party_settings: {  }
     type: options_select
     region: content
   field_message:
-    weight: 5
+    weight: 2
     settings:
       rows: 5
       placeholder: ''
@@ -58,7 +105,7 @@ content:
     type: string_textarea
     region: content
   field_message_type:
-    weight: 6
+    weight: 1
     settings: {  }
     third_party_settings: {  }
     type: options_select
@@ -72,7 +119,7 @@ content:
     type: string_textfield
     region: content
   field_video:
-    weight: 3
+    weight: 6
     settings: {  }
     third_party_settings: {  }
     type: video_embed_field_textfield
