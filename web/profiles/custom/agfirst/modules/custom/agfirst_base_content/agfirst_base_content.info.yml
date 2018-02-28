@@ -21,4 +21,5 @@ dependencies:
   - datetime_range
   - address
   - taxonomy
+  - field_group
   - agfirst_embedded_forms
