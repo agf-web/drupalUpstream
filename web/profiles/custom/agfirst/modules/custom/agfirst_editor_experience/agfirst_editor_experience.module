@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_help().
@@ -26,7 +27,7 @@ function agfirst_editor_experience_help($route_name, RouteMatchInterface $route_
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function agfirst_editor_experience_form_node_form_alter(&$form, &$form_state, $form_id) {
+function agfirst_editor_experience_form_node_form_alter(&$form, FormStateInterface &$form_state, $form_id) {
   // Since sites may define their own forms, list supported forms explicity.
   $supported_node_forms = [
     'node_article_form',
@@ -55,8 +56,8 @@ function agfirst_editor_experience_form_node_form_alter(&$form, &$form_state, $f
  *
  * Targets article node forms.
  */
-function agfirst_editor_experience_node_article_form(&$form, &$form_state) {
-  // Media type switch
+function agfirst_editor_experience_node_article_form(&$form, FormStateInterface &$form_state) {
+  // Media type switch.
   $form['field_image']['#states'] = [
     'required' => [
       ':input[name="field_media_type"]' => ['value' => 'image'],
@@ -79,4 +80,11 @@ function agfirst_editor_experience_node_article_form(&$form, &$form_state) {
       ":input[name='field_media_type']" => ['value' => 'video'],
     ],
   ];
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function agfirst_editor_experience_form_BASE_FORM_ID_alter(&$form, FormStateInterface $form_state, $form_id) {
+
 }

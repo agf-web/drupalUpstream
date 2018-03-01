@@ -10,7 +10,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 /**
  * Implements hook_help().
  */
-function agfirst_forms_help($route_name, RouteMatchInterface $route_match) {
+function agfirst_embedded_forms_help($route_name, RouteMatchInterface $route_match) {
   switch ($route_name) {
     // Main module help for the agfirst_embedded_forms module.
     case 'help.page.agfirst_embedded_forms':

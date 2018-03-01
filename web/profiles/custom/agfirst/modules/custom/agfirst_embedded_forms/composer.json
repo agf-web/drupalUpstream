@@ -1,5 +1,5 @@
 {
-  "name": "agfirst/agfirst_forms",
+  "name": "agfirst/agfirst_embedded_forms",
   "type": "drupal-module",
   "description": "Provides embedded form handling for AgFirst sites.",
   "keywords": ["Drupal"],
