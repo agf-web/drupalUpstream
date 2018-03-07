@@ -3,29 +3,27 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
-    - field.field.node.marketing_page.body
-    - field.field.node.marketing_page.field_image
-    - field.field.node.marketing_page.field_spotlight
-    - node.type.marketing_page
+    - field.field.node.page.body
+    - field.field.node.page.field_image
+    - node.type.page
   module:
     - text
     - user
-id: node.marketing_page.teaser
+id: node.page.teaser
 targetEntityType: node
-bundle: marketing_page
+bundle: page
 mode: teaser
 content:
   body:
     label: hidden
     type: text_summary_or_trimmed
-    weight: 101
+    weight: 100
+    region: content
     settings:
       trim_length: 600
     third_party_settings: {  }
-    region: content
   links:
-    weight: 100
+    weight: 101
     region: content
 hidden:
   field_image: true
-  field_spotlight: true

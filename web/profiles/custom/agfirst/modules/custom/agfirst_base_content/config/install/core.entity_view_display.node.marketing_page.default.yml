@@ -4,6 +4,7 @@ dependencies:
   config:
     - field.field.node.marketing_page.body
     - field.field.node.marketing_page.field_image
+    - field.field.node.marketing_page.field_layers
     - field.field.node.marketing_page.field_spotlight
     - node.type.marketing_page
   module:
@@ -31,6 +32,15 @@ content:
       image_link: ''
     third_party_settings: {  }
     type: image
+    region: content
+  field_layers:
+    weight: 104
+    label: above
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    type: entity_reference_revisions_entity_view
     region: content
   field_spotlight:
     type: entity_reference_revisions_entity_view

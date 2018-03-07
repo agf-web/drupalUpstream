@@ -16,6 +16,7 @@ dependencies:
     - datetime
     - field_group
     - image
+    - imce
     - paragraphs
     - path
     - text
@@ -28,18 +29,18 @@ third_party_settings:
         - group_main_content
         - group_additional_layers
       parent_name: ''
-      weight: 1
+      weight: 4
       format_type: tabs
       format_settings:
         id: ''
         classes: ''
         direction: vertical
-      label: tabs
+      label: Tabs
     group_media:
       children:
         - field_media_type
-        - field_video
         - field_image
+        - field_video
       parent_name: group_tabs
       weight: 20
       format_type: tab
@@ -52,17 +53,17 @@ third_party_settings:
       label: Media
     group_main_content:
       children:
-        - field_publication_date
         - field_teaser
         - body
         - field_tags
+        - field_publication_date
       parent_name: group_tabs
       weight: 21
       format_type: tab
       format_settings:
         id: ''
         classes: ''
-        formatter: open
+        formatter: closed
         description: ''
         required_fields: true
       label: 'Main Content'
@@ -79,8 +80,6 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Additional Layers'
-_core:
-  default_config_hash: bZZ0b3pkLpsUdA58xsfqHNtbdCrkcXhfFBJ-TyV2L_Q
 id: node.article.default
 targetEntityType: node
 bundle: article
@@ -88,7 +87,7 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 4
+    weight: 16
     region: content
     settings:
       rows: 9
@@ -97,47 +96,47 @@ content:
     third_party_settings: {  }
   created:
     type: datetime_timestamp
-    weight: 5
+    weight: 6
     region: content
     settings: {  }
     third_party_settings: {  }
   field_image:
     type: image_image
-    weight: 2
+    weight: 14
     region: content
     settings:
-      progress_indicator: throbber
       preview_image_style: thumbnail
-    third_party_settings: {  }
+      progress_indicator: throbber
+    third_party_settings:
+      imce:
+        enabled: true
   field_layers:
-    type: paragraphs
-    weight: 3
+    type: entity_reference_paragraphs
+    weight: 12
     region: content
     settings:
       title: Paragraph
       title_plural: Paragraphs
       edit_mode: open
-      closed_mode: summary
-      autocollapse: none
       add_mode: dropdown
       form_display_mode: default
       default_paragraph_type: ''
     third_party_settings: {  }
   field_media_type:
     type: options_select
-    weight: 0
+    weight: 13
     region: content
     settings: {  }
     third_party_settings: {  }
   field_publication_date:
     type: datetime_default
-    weight: 2
+    weight: 18
     region: content
     settings: {  }
     third_party_settings: {  }
   field_tags:
     type: entity_reference_autocomplete_tags
-    weight: 5
+    weight: 17
     region: content
     settings:
       match_operator: CONTAINS
@@ -146,7 +145,7 @@ content:
     third_party_settings: {  }
   field_teaser:
     type: string_textfield
-    weight: 3
+    weight: 15
     region: content
     settings:
       size: 60
@@ -154,13 +153,13 @@ content:
     third_party_settings: {  }
   field_video:
     type: video_embed_field_textfield
-    weight: 1
+    weight: 15
     region: content
     settings: {  }
     third_party_settings: {  }
   path:
     type: path
-    weight: 8
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -168,21 +167,21 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 6
+    weight: 7
     region: content
     third_party_settings: {  }
   status:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 10
+    weight: 11
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 7
+    weight: 8
     region: content
     third_party_settings: {  }
   title:
@@ -195,7 +194,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 4
+    weight: 5
     region: content
     settings:
       match_operator: CONTAINS
@@ -203,7 +202,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
   url_redirects:
-    weight: 9
+    weight: 10
     region: content
     settings: {  }
     third_party_settings: {  }

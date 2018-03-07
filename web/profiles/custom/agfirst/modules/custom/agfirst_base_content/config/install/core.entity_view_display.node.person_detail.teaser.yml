@@ -4,6 +4,13 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.person_detail.body
+    - field.field.node.person_detail.field_email
+    - field.field.node.person_detail.field_first_name
+    - field.field.node.person_detail.field_image
+    - field.field.node.person_detail.field_job_title
+    - field.field.node.person_detail.field_last_name
+    - field.field.node.person_detail.field_nmls
+    - field.field.node.person_detail.field_phone
     - node.type.person_detail
   module:
     - text
@@ -24,4 +31,11 @@ content:
   links:
     weight: 100
     region: content
-hidden: {  }
+hidden:
+  field_email: true
+  field_first_name: true
+  field_image: true
+  field_job_title: true
+  field_last_name: true
+  field_nmls: true
+  field_phone: true

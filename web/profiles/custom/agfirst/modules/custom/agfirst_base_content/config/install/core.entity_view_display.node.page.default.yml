@@ -4,9 +4,10 @@ dependencies:
   config:
     - field.field.node.page.body
     - field.field.node.page.field_image
+    - field.field.node.page.field_layers
     - node.type.page
   module:
-    - image
+    - entity_reference_revisions
     - text
     - user
 id: node.page.default
@@ -21,16 +22,17 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_image:
+  field_layers:
     weight: 102
     label: above
     settings:
-      image_style: ''
-      image_link: ''
+      view_mode: default
+      link: ''
     third_party_settings: {  }
-    type: image
+    type: entity_reference_revisions_entity_view
     region: content
   links:
     weight: 101
     region: content
-hidden: {  }
+hidden:
+  field_image: true

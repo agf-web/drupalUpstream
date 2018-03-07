@@ -4,6 +4,11 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.location.body
+    - field.field.node.location.field_counties_served
+    - field.field.node.location.field_fax
+    - field.field.node.location.field_location
+    - field.field.node.location.field_people
+    - field.field.node.location.field_phone
     - node.type.location
   module:
     - text
@@ -24,4 +29,9 @@ content:
   links:
     weight: 100
     region: content
-hidden: {  }
+hidden:
+  field_counties_served: true
+  field_fax: true
+  field_location: true
+  field_people: true
+  field_phone: true

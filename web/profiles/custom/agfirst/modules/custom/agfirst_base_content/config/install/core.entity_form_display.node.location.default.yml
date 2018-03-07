@@ -59,8 +59,6 @@ third_party_settings:
         description: ''
         required_fields: true
       label: People
-_core:
-  default_config_hash: cudpS_Fw5uymq5ARStJqbPeRtI16wD1TGcbFyhIPCoU
 id: node.location.default
 targetEntityType: node
 bundle: location

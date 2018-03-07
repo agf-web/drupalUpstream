@@ -18,6 +18,7 @@ dependencies:
     - datetime_range
     - field_group
     - image
+    - imce
     - link
     - paragraphs
     - path
@@ -83,8 +84,6 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Contact Information'
-_core:
-  default_config_hash: E_NrjCY3VqctsjfZebmreLbufZeKmDeHDk2eAi9oqwc
 id: node.event.default
 targetEntityType: node
 bundle: event
@@ -130,9 +129,11 @@ content:
   field_image:
     weight: 123
     settings:
-      progress_indicator: throbber
       preview_image_style: thumbnail
-    third_party_settings: {  }
+      progress_indicator: throbber
+    third_party_settings:
+      imce:
+        enabled: true
     type: image_image
     region: content
   field_layers:
@@ -141,13 +142,11 @@ content:
       title: Paragraph
       title_plural: Paragraphs
       edit_mode: open
-      closed_mode: summary
-      autocollapse: none
       add_mode: dropdown
       form_display_mode: default
       default_paragraph_type: ''
     third_party_settings: {  }
-    type: paragraphs
+    type: entity_reference_paragraphs
     region: content
   field_location:
     weight: 124
