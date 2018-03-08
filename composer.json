@@ -17,7 +17,7 @@
     "drupal/config_installer": "^1.0",
     "drupal/console": "^1",
     "drupal/core": "^8",
-    "drush/drush": "~8",
+    "drush/drush": "^8",
     "drupal/address": "~1.0",
     "drupal/admin_toolbar": "^1.19",
     "drupal/anchor_link": "^1.5",
@@ -136,7 +136,7 @@
     "preferred-install": "dist",
     "sort-packages": true,
     "platform": {
-      "php": "7.0"
+      "php": "7.0.8"
     }
   }
 }
