@@ -7,6 +7,7 @@ distribution:
 core: 8.x
 dependencies:
   - agfirst_base_content
+  - agfirst_editor_experience
   - address
   - admin_toolbar
   - admin_toolbar_tools
