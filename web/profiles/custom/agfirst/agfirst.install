@@ -60,4 +60,7 @@ function agfirst_install() {
 
   // Enable the admin theme.
   \Drupal::configFactory()->getEditable('node.settings')->set('use_admin_theme', TRUE)->save(TRUE);
+
+  // Enable automated cron.
+  \Drupal::configFactory()->getEditable('automated_cron.settings')->set('interval', 3600)->save(TRUE);
 }
