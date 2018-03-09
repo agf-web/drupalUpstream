@@ -24,6 +24,38 @@ $config_directories = array(
 );
 
 /**
+ * Setup Environment Indicator.
+ */
+if (!defined('PANTHEON_ENVIRONMENT')) {
+  $config['environment_indicator.indicator']['name'] = 'Local';
+  $config['environment_indicator.indicator']['bg_color'] = '#48484a';
+  $config['environment_indicator.indicator']['fg_color'] = '#ffffff';
+}
+// Pantheon Env Specific Config.
+if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
+  switch ($_ENV['PANTHEON_ENVIRONMENT']) {
+    case 'dev':
+      $config['environment_indicator.indicator']['name'] = 'Dev';
+      $config['environment_indicator.indicator']['bg_color'] = '#d25e0f';
+      $config['environment_indicator.indicator']['fg_color'] = '#ffffff';
+      break;
+
+    case 'test':
+      $config['environment_indicator.indicator']['name'] = 'Test';
+      $config['environment_indicator.indicator']['bg_color'] = '#f05023';
+      $config['environment_indicator.indicator']['fg_color'] = '#ffffff';
+      break;
+
+    case 'live':
+      $config['environment_indicator.indicator']['name'] = 'Live';
+      $config['environment_indicator.indicator']['bg_color'] = '#808285';
+      $config['environment_indicator.indicator']['fg_color'] = '#ffffff';
+      break;
+
+  }
+}
+
+/**
  * If there is a local settings file, then include it
  */
 $local_settings = __DIR__ . "/settings.local.php";

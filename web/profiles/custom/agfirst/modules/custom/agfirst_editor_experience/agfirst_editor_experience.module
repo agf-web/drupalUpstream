@@ -83,8 +83,96 @@ function agfirst_editor_experience_node_article_form(&$form, FormStateInterface 
 }
 
 /**
- * Implements hook_form_BASE_FORM_ID_alter().
+ * Implements hook_field_widget_form_alter().
  */
-function agfirst_editor_experience_form_BASE_FORM_ID_alter(&$form, FormStateInterface $form_state, $form_id) {
+function agfirst_editor_experience_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+
+  if ($context['widget']->getPluginId() != "entity_reference_paragraphs") {
+    return;
+  }
+
+  // Media type switch.
+  if (!empty($element['subform']['field_media_type'])) {
+
+    $type_selector = ':input[name="field_layers[' . $context['delta'] . '][subform][field_media_type]"]';
+
+    $element['subform']['field_image']['#states'] = [
+      'required' => [
+        $type_selector => ['value' => 'image'],
+      ],
+      'enabled' => [
+        $type_selector => ['value' => 'image'],
+      ],
+      'visible' => [
+        $type_selector => ['value' => 'image'],
+      ],
+    ];
+
+    $element['subform']['field_video']['#states'] = [
+      'required' => [
+        $type_selector => ['value' => 'video'],
+      ],
+      'enabled' => [
+        $type_selector => ['value' => 'video'],
+      ],
+      'visible' => [
+        $type_selector => ['value' => 'video'],
+      ],
+    ];
+
+    $element['subform']['field_media_side']['#states'] = [
+      'required' => [
+        $type_selector => [
+          ['value' => 'video'],
+          ['value' => 'image'],
+        ],
+      ],
+      'enabled' => [
+        $type_selector => [
+          ['value' => 'video'],
+          ['value' => 'image'],
+        ],
+      ],
+      'visible' => [
+        $type_selector => [
+          ['value' => 'video'],
+          ['value' => 'image'],
+        ],
+      ],
+    ];
+
+  }
+
+  // Feed Automation Switch.
+  if (!empty($element['subform']['field_feed_type'])) {
+
+    $type_selector = ':input[name="field_layers[' . $context['delta'] . '][subform][field_feed_type]"]';
+
+    $element['subform']['field_content_type']['#states'] = [
+      'required' => [
+        $type_selector => ['value' => 'auto'],
+      ],
+      'enabled' => [
+        $type_selector => ['value' => 'auto'],
+      ],
+      'visible' => [
+        $type_selector => ['value' => 'auto'],
+      ],
+    ];
+
+    $element['subform']['field_curated_content']['#states'] = [
+      'required' => [
+        $type_selector => ['value' => 'manual'],
+      ],
+      'enabled' => [
+        $type_selector => ['value' => 'manual'],
+      ],
+      'visible' => [
+        $type_selector => ['value' => 'manual'],
+      ],
+    ];
+
+  }
+
 
 }
