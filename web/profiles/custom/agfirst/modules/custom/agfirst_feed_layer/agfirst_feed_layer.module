@@ -1,0 +1,62 @@
+<?php
+
+/**
+ * @file
+ * Contains agfirst_feed_layer.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_help().
+ */
+function agfirst_feed_layer_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the agfirst_feed_layer module.
+    case 'help.page.agfirst_feed_layer':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Provides support for the AgFirst Feed layer') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+
+/**
+ * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ */
+function agfirst_feed_layer_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+  if ($context['widget']->getPluginId() != "entity_reference_paragraphs" || empty($element['subform']['field_feed_type'])) {
+    return;
+  }
+
+  $type_selector = ':input[name="field_layers[' . $context['delta'] . '][subform][field_feed_type]"]';
+
+  $element['subform']['field_content_type']['#states'] = [
+    'required' => [
+      $type_selector => ['value' => 'auto'],
+    ],
+    'enabled' => [
+      $type_selector => ['value' => 'auto'],
+    ],
+    'visible' => [
+      $type_selector => ['value' => 'auto'],
+    ],
+  ];
+
+  $element['subform']['field_curated_content']['#states'] = [
+    'required' => [
+      $type_selector => ['value' => 'manual'],
+    ],
+    'enabled' => [
+      $type_selector => ['value' => 'manual'],
+    ],
+    'visible' => [
+      $type_selector => ['value' => 'manual'],
+    ],
+  ];
+
+}

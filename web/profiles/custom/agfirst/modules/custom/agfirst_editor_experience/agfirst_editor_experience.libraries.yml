@@ -1,0 +1,17 @@
+admin_editor_tweaks:
+  js:
+    js/agfirst_editor_experience.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal
+    - node/drupal.node
+
+admin_editor_person_tweaks:
+  js:
+    js/agfirst_editor_person.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal
+    - node/drupal.node
