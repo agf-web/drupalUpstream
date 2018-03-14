@@ -36,6 +36,7 @@
     "drupal/mailchimp": "^1.2",
     "drupal/masquerade": "^2.0@beta",
     "drupal/menu_block": "^1.4",
+    "drupal/menu_link_attributes": "^1.0",
     "drupal/metatag": "^1.0",
     "drupal/module_filter": "^3.0",
     "drupal/paragraphs": "^1.1",
