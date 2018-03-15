@@ -5,11 +5,12 @@ dependencies:
     - field.field.node.event.body
     - field.field.node.event.field_contact_information
     - field.field.node.event.field_date
-    - field.field.node.event.field_email
+    - field.field.node.event.field_event_contacts
+    - field.field.node.event.field_event_type
     - field.field.node.event.field_image
     - field.field.node.event.field_layers
     - field.field.node.event.field_location
-    - field.field.node.event.field_phone
+    - field.field.node.event.field_metatag
     - field.field.node.event.field_registration_link
     - image.style.thumbnail
     - node.type.event
@@ -20,9 +21,9 @@ dependencies:
     - image
     - imce
     - link
+    - metatag
     - paragraphs
     - path
-    - telephone
     - text
 third_party_settings:
   field_group:
@@ -45,6 +46,7 @@ third_party_settings:
         - field_image
         - field_location
         - body
+        - field_event_type
         - field_registration_link
       parent_name: group_tabs
       weight: 20
@@ -72,6 +74,7 @@ third_party_settings:
     group_contact_i:
       children:
         - field_contact_information
+        - field_event_contacts
         - field_email
         - field_phone
       parent_name: group_tabs
@@ -105,7 +108,7 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_contact_information:
-    weight: 10
+    weight: 129
     settings:
       rows: 5
       placeholder: ''
@@ -118,13 +121,23 @@ content:
     third_party_settings: {  }
     type: daterange_default
     region: content
-  field_email:
-    weight: 11
+  field_event_contacts:
+    type: entity_reference_paragraphs
+    weight: 130
     settings:
-      size: 60
-      placeholder: ''
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: ''
     third_party_settings: {  }
-    type: email_default
+    region: content
+  field_event_type:
+    weight: 126
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
     region: content
   field_image:
     weight: 123
@@ -155,15 +168,14 @@ content:
     third_party_settings: {  }
     type: address_default
     region: content
-  field_phone:
-    weight: 12
-    settings:
-      placeholder: ''
+  field_metatag:
+    weight: 131
+    settings: {  }
     third_party_settings: {  }
-    type: telephone_default
+    type: metatag_firehose
     region: content
   field_registration_link:
-    weight: 126
+    weight: 127
     settings:
       placeholder_url: ''
       placeholder_title: ''

@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: labeled_phone_number
+label: 'Labeled Phone Number'
+icon_uuid: null
+description: ''
+behavior_plugins: {  }

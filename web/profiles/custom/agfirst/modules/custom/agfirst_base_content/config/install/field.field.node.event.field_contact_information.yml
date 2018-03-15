@@ -11,7 +11,7 @@ field_name: field_contact_information
 entity_type: node
 bundle: event
 label: 'Contact Information'
-description: ''
+description: 'Use this space to provide general information about who to contact and how. Structured information like email and phone numbers should use the structures below.'
 required: false
 translatable: false
 default_value: {  }

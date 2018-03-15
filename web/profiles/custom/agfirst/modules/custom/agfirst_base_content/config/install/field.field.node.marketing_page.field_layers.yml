@@ -3,7 +3,8 @@ status: true
 dependencies:
   config:
     - field.storage.node.field_layers
-    - node.type.event
+    - node.type.marketing_page
+    - paragraphs.paragraphs_type.event_contact
   module:
     - entity_reference_revisions
 id: node.marketing_page.field_layers
@@ -19,6 +20,23 @@ default_value_callback: ''
 settings:
   handler: 'default:paragraph'
   handler_settings:
-    negate: 0
-    target_bundles: null
+    negate: 1
+    target_bundles:
+      event_contact: event_contact
+    target_bundles_drag_drop:
+      embedded_form:
+        weight: 5
+        enabled: false
+      event_contact:
+        enabled: true
+        weight: 6
+      feed:
+        weight: 6
+        enabled: false
+      split_content:
+        weight: 7
+        enabled: false
+      spotlight:
+        weight: 8
+        enabled: false
 field_type: entity_reference_revisions

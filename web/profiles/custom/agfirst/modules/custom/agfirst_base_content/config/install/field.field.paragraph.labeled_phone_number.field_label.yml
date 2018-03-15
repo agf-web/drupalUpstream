@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_label
+    - paragraphs.paragraphs_type.labeled_phone_number
+id: paragraph.labeled_phone_number.field_label
+field_name: field_label
+entity_type: paragraph
+bundle: labeled_phone_number
+label: Label
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -13,12 +13,9 @@ mode: default
 content:
   field_content_type:
     weight: 1
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
+    settings: {  }
     third_party_settings: {  }
-    type: entity_reference_autocomplete
+    type: options_select
     region: content
   field_curated_content:
     weight: 2

@@ -15,39 +15,54 @@ dependencies:
   module:
     - field_group
     - image
+    - imce
     - link
 third_party_settings:
   field_group:
-    group_left_side:
+    group_tabs:
+      children:
+        - group_left
+        - group_right
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        id: ''
+        classes: ''
+        direction: horizontal
+      label: tabs
+    group_left:
       children:
         - field_left_headline
         - field_left_image
         - field_left_message
         - field_left_button
-      parent_name: ''
+      parent_name: group_tabs
       weight: 20
-      format_type: fieldset
+      format_type: tab
       format_settings:
         id: ''
         classes: ''
+        formatter: closed
         description: ''
         required_fields: true
-      label: 'Left Side'
-    group_right_side:
+      label: Left
+    group_right:
       children:
         - field_right_headline
         - field_right_image
         - field_right_message
         - field_right_button
-      parent_name: ''
-      weight: 20
-      format_type: fieldset
+      parent_name: group_tabs
+      weight: 21
+      format_type: tab
       format_settings:
         id: ''
         classes: ''
+        formatter: closed
         description: ''
         required_fields: true
-      label: 'Right Side'
+      label: Right
 id: paragraph.split_content.default
 targetEntityType: paragraph
 bundle: split_content
@@ -72,9 +87,11 @@ content:
   field_left_image:
     weight: 3
     settings:
-      progress_indicator: throbber
       preview_image_style: thumbnail
-    third_party_settings: {  }
+      progress_indicator: throbber
+    third_party_settings:
+      imce:
+        enabled: true
     type: image_image
     region: content
   field_left_message:
@@ -104,9 +121,11 @@ content:
   field_right_image:
     weight: 7
     settings:
-      progress_indicator: throbber
       preview_image_style: thumbnail
-    third_party_settings: {  }
+      progress_indicator: throbber
+    third_party_settings:
+      imce:
+        enabled: true
     type: image_image
     region: content
   field_right_message:

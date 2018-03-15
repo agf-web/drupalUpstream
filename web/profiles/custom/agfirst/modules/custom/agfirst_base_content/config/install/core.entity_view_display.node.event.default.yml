@@ -5,11 +5,12 @@ dependencies:
     - field.field.node.event.body
     - field.field.node.event.field_contact_information
     - field.field.node.event.field_date
-    - field.field.node.event.field_email
+    - field.field.node.event.field_event_contacts
+    - field.field.node.event.field_event_type
     - field.field.node.event.field_image
     - field.field.node.event.field_layers
     - field.field.node.event.field_location
-    - field.field.node.event.field_phone
+    - field.field.node.event.field_metatag
     - field.field.node.event.field_registration_link
     - node.type.event
   module:
@@ -18,6 +19,7 @@ dependencies:
     - entity_reference_revisions
     - image
     - link
+    - metatag
     - text
     - user
 id: node.event.default
@@ -28,19 +30,19 @@ content:
   body:
     label: hidden
     type: text_default
-    weight: 101
+    weight: 2
     settings: {  }
     third_party_settings: {  }
     region: content
   field_contact_information:
-    weight: 104
+    weight: 4
     label: above
     settings: {  }
     third_party_settings: {  }
     type: text_default
     region: content
   field_date:
-    weight: 102
+    weight: 1
     label: above
     settings:
       separator: '-'
@@ -49,15 +51,17 @@ content:
     third_party_settings: {  }
     type: daterange_default
     region: content
-  field_email:
-    weight: 105
+  field_event_contacts:
+    type: entity_reference_revisions_entity_view
+    weight: 9
     label: above
-    settings: {  }
+    settings:
+      view_mode: default
+      link: ''
     third_party_settings: {  }
-    type: basic_string
     region: content
   field_image:
-    weight: 107
+    weight: 0
     label: above
     settings:
       image_style: ''
@@ -66,7 +70,7 @@ content:
     type: image
     region: content
   field_layers:
-    weight: 109
+    weight: 8
     label: above
     settings:
       view_mode: default
@@ -75,21 +79,21 @@ content:
     type: entity_reference_revisions_entity_view
     region: content
   field_location:
-    weight: 103
+    weight: 3
     label: above
     settings: {  }
     third_party_settings: {  }
     type: address_default
     region: content
-  field_phone:
-    weight: 106
+  field_metatag:
+    weight: 10
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: basic_string
+    type: metatag_empty_formatter
     region: content
   field_registration_link:
-    weight: 108
+    weight: 7
     label: above
     settings:
       trim_length: 80
@@ -100,7 +104,6 @@ content:
     third_party_settings: {  }
     type: link
     region: content
-  links:
-    weight: 100
-    region: content
-hidden: {  }
+hidden:
+  field_event_type: true
+  links: true

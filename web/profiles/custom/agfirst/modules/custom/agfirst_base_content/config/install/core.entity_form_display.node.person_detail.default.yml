@@ -3,17 +3,20 @@ status: true
 dependencies:
   config:
     - field.field.node.person_detail.body
+    - field.field.node.person_detail.field_categories
     - field.field.node.person_detail.field_email
     - field.field.node.person_detail.field_first_name
     - field.field.node.person_detail.field_image
     - field.field.node.person_detail.field_job_title
     - field.field.node.person_detail.field_last_name
+    - field.field.node.person_detail.field_metatag
     - field.field.node.person_detail.field_nmls
     - field.field.node.person_detail.field_phone
     - image.style.thumbnail
     - node.type.person_detail
   module:
     - image
+    - metatag
     - path
     - telephone
     - text
@@ -33,10 +36,16 @@ content:
     region: content
   created:
     type: datetime_timestamp
-    weight: 10
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_categories:
+    weight: 9
+    settings: {  }
+    third_party_settings: {  }
+    type: options_buttons
+    region: content
   field_email:
     weight: 7
     settings:
@@ -46,7 +55,7 @@ content:
     type: email_default
     region: content
   field_first_name:
-    weight: 2
+    weight: 0
     settings:
       size: 60
       placeholder: ''
@@ -62,7 +71,7 @@ content:
     type: image_image
     region: content
   field_job_title:
-    weight: 1
+    weight: 2
     settings:
       size: 60
       placeholder: ''
@@ -70,12 +79,18 @@ content:
     type: string_textfield
     region: content
   field_last_name:
-    weight: 3
+    weight: 1
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+    region: content
+  field_metatag:
+    weight: 26
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_firehose
     region: content
   field_nmls:
     weight: 8
@@ -94,7 +109,7 @@ content:
     region: content
   path:
     type: path
-    weight: 13
+    weight: 14
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -102,26 +117,26 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 11
+    weight: 12
     region: content
     third_party_settings: {  }
   status:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 15
+    weight: 16
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 12
+    weight: 13
     region: content
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: 0
+    weight: 3
     region: content
     settings:
       size: 60
@@ -129,7 +144,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 9
+    weight: 10
     settings:
       match_operator: CONTAINS
       size: 60
@@ -137,7 +152,7 @@ content:
     region: content
     third_party_settings: {  }
   url_redirects:
-    weight: 14
+    weight: 15
     region: content
     settings: {  }
     third_party_settings: {  }

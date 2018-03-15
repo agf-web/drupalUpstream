@@ -1,0 +1,42 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.event_contact.field_contact_email
+    - field.field.paragraph.event_contact.field_contact_name
+    - field.field.paragraph.event_contact.field_contact_phone_number
+    - paragraphs.paragraphs_type.event_contact
+  module:
+    - telephone
+id: paragraph.event_contact.default
+targetEntityType: paragraph
+bundle: event_contact
+mode: default
+content:
+  field_contact_email:
+    weight: 1
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: email_default
+    region: content
+  field_contact_name:
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_contact_phone_number:
+    weight: 2
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+    type: telephone_default
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

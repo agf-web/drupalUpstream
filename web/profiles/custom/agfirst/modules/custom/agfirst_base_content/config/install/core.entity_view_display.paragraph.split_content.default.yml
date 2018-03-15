@@ -12,16 +12,57 @@ dependencies:
     - field.field.paragraph.split_content.field_right_message
     - paragraphs.paragraphs_type.split_content
   module:
+    - field_group
     - image
     - link
+third_party_settings:
+  field_group:
+    group_left:
+      children:
+        - field_left_image
+        - field_left_headline
+        - field_left_message
+        - field_left_button
+      parent_name: ''
+      weight: 0
+      format_type: html_element
+      format_settings:
+        id: ''
+        classes: ''
+        element: div
+        show_label: false
+        label_element: h3
+        attributes: ''
+        effect: none
+        speed: fast
+      label: Left
+    group_div:
+      children:
+        - field_right_image
+        - field_right_headline
+        - field_right_message
+        - field_right_button
+      parent_name: ''
+      weight: 1
+      format_type: html_element
+      format_settings:
+        id: ''
+        classes: ''
+        element: div
+        show_label: false
+        label_element: h3
+        attributes: ''
+        effect: none
+        speed: fast
+      label: Right
 id: paragraph.split_content.default
 targetEntityType: paragraph
 bundle: split_content
 mode: default
 content:
   field_left_button:
-    weight: 3
-    label: above
+    weight: 4
+    label: hidden
     settings:
       trim_length: 80
       url_only: false
@@ -32,16 +73,16 @@ content:
     type: link
     region: content
   field_left_headline:
-    weight: 1
-    label: above
+    weight: 2
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
     type: string
     region: content
   field_left_image:
-    weight: 0
-    label: above
+    weight: 1
+    label: hidden
     settings:
       image_style: ''
       image_link: ''
@@ -49,15 +90,15 @@ content:
     type: image
     region: content
   field_left_message:
-    weight: 2
-    label: above
+    weight: 3
+    label: hidden
     settings: {  }
     third_party_settings: {  }
     type: basic_string
     region: content
   field_right_button:
     weight: 5
-    label: above
+    label: hidden
     settings:
       trim_length: 80
       url_only: false
@@ -68,16 +109,16 @@ content:
     type: link
     region: content
   field_right_headline:
-    weight: 6
-    label: above
+    weight: 3
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
     type: string
     region: content
   field_right_image:
-    weight: 4
-    label: above
+    weight: 2
+    label: hidden
     settings:
       image_style: ''
       image_link: ''
@@ -85,8 +126,8 @@ content:
     type: image
     region: content
   field_right_message:
-    weight: 7
-    label: above
+    weight: 4
+    label: hidden
     settings: {  }
     third_party_settings: {  }
     type: basic_string

@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+name: 'People Categories'
+vid: people_categories
+description: 'This provides a record type records about people.'
+hierarchy: 0
+weight: 0

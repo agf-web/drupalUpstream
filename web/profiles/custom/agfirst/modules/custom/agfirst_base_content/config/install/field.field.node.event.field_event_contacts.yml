@@ -1,0 +1,42 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_event_contacts
+    - node.type.event
+    - paragraphs.paragraphs_type.event_contact
+  module:
+    - entity_reference_revisions
+id: node.event.field_event_contacts
+field_name: field_event_contacts
+entity_type: node
+bundle: event
+label: 'Event Contacts'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      event_contact: event_contact
+    target_bundles_drag_drop:
+      event_contact:
+        enabled: true
+        weight: 6
+      embedded_form:
+        weight: 7
+        enabled: false
+      feed:
+        weight: 8
+        enabled: false
+      split_content:
+        weight: 9
+        enabled: false
+      spotlight:
+        weight: 10
+        enabled: false
+field_type: entity_reference_revisions

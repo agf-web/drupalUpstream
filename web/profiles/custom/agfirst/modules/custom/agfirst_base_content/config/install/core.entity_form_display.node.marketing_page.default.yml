@@ -5,12 +5,14 @@ dependencies:
     - field.field.node.marketing_page.body
     - field.field.node.marketing_page.field_image
     - field.field.node.marketing_page.field_layers
+    - field.field.node.marketing_page.field_metatag
     - field.field.node.marketing_page.field_spotlight
     - image.style.thumbnail
     - node.type.marketing_page
   module:
     - field_group
     - image
+    - metatag
     - paragraphs
     - path
     - text
@@ -108,6 +110,12 @@ content:
       default_paragraph_type: ''
     third_party_settings: {  }
     type: entity_reference_paragraphs
+    region: content
+  field_metatag:
+    weight: 26
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_firehose
     region: content
   field_spotlight:
     type: entity_reference_paragraphs

@@ -5,6 +5,7 @@ dependencies:
     - field.field.node.landing_page.body
     - field.field.node.landing_page.field_image
     - field.field.node.landing_page.field_layers
+    - field.field.node.landing_page.field_metatag
     - field.field.node.landing_page.field_mma_link
     - field.field.node.landing_page.field_mma_title
     - node.type.landing_page
@@ -12,6 +13,7 @@ dependencies:
     - entity_reference_revisions
     - image
     - link
+    - metatag
     - text
     - user
 id: node.landing_page.default
@@ -43,6 +45,13 @@ content:
       view_mode: default
       link: ''
     third_party_settings: {  }
+    region: content
+  field_metatag:
+    weight: 106
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_empty_formatter
     region: content
   field_mma_link:
     weight: 104

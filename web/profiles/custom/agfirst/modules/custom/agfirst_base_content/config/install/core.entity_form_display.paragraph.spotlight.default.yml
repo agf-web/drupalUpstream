@@ -33,8 +33,8 @@ third_party_settings:
       label: subtabs
     group_media:
       children:
-        - field_media_side
         - field_media_type
+        - field_media_side
         - field_video
         - field_image
       parent_name: group_subtabs
@@ -69,7 +69,7 @@ bundle: spotlight
 mode: default
 content:
   field_image:
-    weight: 7
+    weight: 8
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail
@@ -85,7 +85,7 @@ content:
     type: link_default
     region: content
   field_media_side:
-    weight: 4
+    weight: 6
     settings: {  }
     third_party_settings: {  }
     type: options_select
@@ -119,7 +119,7 @@ content:
     type: string_textfield
     region: content
   field_video:
-    weight: 6
+    weight: 7
     settings: {  }
     third_party_settings: {  }
     type: video_embed_field_textfield

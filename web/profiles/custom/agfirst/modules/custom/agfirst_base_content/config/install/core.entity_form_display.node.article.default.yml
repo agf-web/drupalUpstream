@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.article.field_image
     - field.field.node.article.field_layers
     - field.field.node.article.field_media_type
+    - field.field.node.article.field_metatag
     - field.field.node.article.field_publication_date
     - field.field.node.article.field_tags
     - field.field.node.article.field_teaser
@@ -17,6 +18,7 @@ dependencies:
     - field_group
     - image
     - imce
+    - metatag
     - paragraphs
     - path
     - text
@@ -128,6 +130,12 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_metatag:
+    weight: 26
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_firehose
+    region: content
   field_publication_date:
     type: datetime_default
     weight: 18

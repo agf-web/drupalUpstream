@@ -3,7 +3,8 @@ status: true
 dependencies:
   config:
     - field.storage.node.field_layers
-    - node.type.event
+    - node.type.page
+    - paragraphs.paragraphs_type.embedded_form
   module:
     - entity_reference_revisions
 id: node.page.field_layers
@@ -19,6 +20,23 @@ default_value_callback: ''
 settings:
   handler: 'default:paragraph'
   handler_settings:
-    negate: 0
-    target_bundles: null
+    negate: 1
+    target_bundles:
+      embedded_form: embedded_form
+    target_bundles_drag_drop:
+      embedded_form:
+        enabled: true
+        weight: 5
+      event_contact:
+        weight: 6
+        enabled: false
+      feed:
+        weight: 6
+        enabled: false
+      split_content:
+        weight: 7
+        enabled: false
+      spotlight:
+        weight: 8
+        enabled: false
 field_type: entity_reference_revisions

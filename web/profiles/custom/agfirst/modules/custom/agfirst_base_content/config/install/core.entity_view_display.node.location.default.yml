@@ -4,13 +4,15 @@ dependencies:
   config:
     - field.field.node.location.body
     - field.field.node.location.field_counties_served
-    - field.field.node.location.field_fax
     - field.field.node.location.field_location
+    - field.field.node.location.field_metatag
     - field.field.node.location.field_people
-    - field.field.node.location.field_phone
+    - field.field.node.location.field_phone_numbers
     - node.type.location
   module:
     - address
+    - entity_reference_revisions
+    - metatag
     - text
     - user
 id: node.location.default
@@ -33,19 +35,19 @@ content:
     third_party_settings: {  }
     type: string
     region: content
-  field_fax:
-    weight: 104
-    label: above
-    settings: {  }
-    third_party_settings: {  }
-    type: basic_string
-    region: content
   field_location:
     weight: 107
     label: above
     settings: {  }
     third_party_settings: {  }
     type: address_default
+    region: content
+  field_metatag:
+    weight: 108
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_empty_formatter
     region: content
   field_people:
     weight: 106
@@ -55,14 +57,18 @@ content:
     third_party_settings: {  }
     type: entity_reference_label
     region: content
-  field_phone:
-    weight: 103
+  field_phone_numbers:
+    type: entity_reference_revisions_entity_view
+    weight: 109
     label: above
-    settings: {  }
+    settings:
+      view_mode: default
+      link: ''
     third_party_settings: {  }
-    type: basic_string
     region: content
   links:
     weight: 100
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden: {  }

@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: event_contact
+label: 'Event Contact'
+icon_uuid: null
+description: 'Provides a contact record for an event.'
+behavior_plugins: {  }

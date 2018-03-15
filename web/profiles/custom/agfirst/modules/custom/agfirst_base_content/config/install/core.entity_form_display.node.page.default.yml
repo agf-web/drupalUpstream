@@ -5,11 +5,13 @@ dependencies:
     - field.field.node.page.body
     - field.field.node.page.field_image
     - field.field.node.page.field_layers
+    - field.field.node.page.field_metatag
     - image.style.thumbnail
     - node.type.page
   module:
     - image
     - imce
+    - metatag
     - paragraphs
     - path
     - text
@@ -54,6 +56,12 @@ content:
       default_paragraph_type: ''
     third_party_settings: {  }
     type: entity_reference_paragraphs
+    region: content
+  field_metatag:
+    weight: 26
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_firehose
     region: content
   path:
     type: path

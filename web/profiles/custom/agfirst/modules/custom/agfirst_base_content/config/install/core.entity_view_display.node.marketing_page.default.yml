@@ -5,11 +5,13 @@ dependencies:
     - field.field.node.marketing_page.body
     - field.field.node.marketing_page.field_image
     - field.field.node.marketing_page.field_layers
+    - field.field.node.marketing_page.field_metatag
     - field.field.node.marketing_page.field_spotlight
     - node.type.marketing_page
   module:
     - entity_reference_revisions
     - image
+    - metatag
     - text
     - user
 id: node.marketing_page.default
@@ -41,6 +43,13 @@ content:
       link: ''
     third_party_settings: {  }
     type: entity_reference_revisions_entity_view
+    region: content
+  field_metatag:
+    weight: 105
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_empty_formatter
     region: content
   field_spotlight:
     type: entity_reference_revisions_entity_view
