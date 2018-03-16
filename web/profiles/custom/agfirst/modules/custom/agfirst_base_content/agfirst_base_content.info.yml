@@ -22,4 +22,6 @@ dependencies:
   - address
   - taxonomy
   - field_group
+  - imce
+  - metatag
   - agfirst_embedded_forms
