@@ -8,8 +8,7 @@ workflows:
         type: webphp
         description: 'Run composer prepare-for-pantheon'
         script: private/scripts/deploy_product/prepare-for-pantheon.php
-  sync_code:
-    after:
-      - type: webphp
+      -
+        type: webphp
         description: Re-install composer on sync of lean repo.
         script: private/scripts/deploy_product/composer-install.php
