@@ -1,6 +1,9 @@
 # AgFirst Core
 
-This repository is a start state for a Composer-based Drupal workflow with Pantheon. 
+This repository is a start state for a Composer-based Drupal workflow with Pantheon.
+
+This project is based on Pantheon's example composer drop 8 project:
+https://github.com/pantheon-systems/example-drops-8-composer
 
 ## Installation
 
@@ -56,6 +59,5 @@ Other commands will work as well; for example, you may install new modules using
 
 You may also place your site in Git mode, clone it locally, and then run composer commands from there.  Commit and push 
 your files back up to Pantheon. 
-
 
 
