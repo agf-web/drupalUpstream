@@ -7,8 +7,14 @@ https://github.com/pantheon-systems/example-drops-8-composer
 
 ## Installation
 
-This Upstream is for internal use of AgFirst only. It cannot be directly installed unless you are a member of that team
-on Pantheon.
+_This Upstream is for internal use of AgFirst only. It cannot be directly installed unless you are a member of that team
+on Pantheon._
+
+The most reliable way to install this upstream is using Terminus:
+```terminus site:create --org="AgFirst Farm Credit Bank" agf-test-site "AgFirst Test" agfirst-default-drupal-upstream```
+
+You can try to install it through the web interface, although that hasn't been perfectly reliable due to the number of 
+required composer packages.
 
 1. Log into your Pantheon account.
 1. Click Create New Site
