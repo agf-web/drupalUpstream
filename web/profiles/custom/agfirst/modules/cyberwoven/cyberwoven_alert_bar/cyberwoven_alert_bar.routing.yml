@@ -1,0 +1,8 @@
+
+cyberwoven_alert_bar.settings:
+  path: '/admin/content/cw-alert-bar'
+  defaults:
+    _form: '\Drupal\cyberwoven_alert_bar\Form\CyberwovenAlertBarSettingsForm'
+    _title: 'Manage alert'
+  requirements:
+    _permission: 'administer cyberwoven_alert_bar settings'

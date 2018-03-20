@@ -1,0 +1,7 @@
+cyberwoven_alert_bar.admin:
+  title: 'Manage alert'
+  description: 'Create and manage the alert message.'
+  parent: system.admin_content
+  route_name: cyberwoven_alert_bar.settings
+  weight: 0
+  

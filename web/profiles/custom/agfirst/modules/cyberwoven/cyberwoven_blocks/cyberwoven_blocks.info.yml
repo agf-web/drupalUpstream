@@ -1,0 +1,7 @@
+name: Cyberwoven Blocks
+type: module
+description: Provides a few basic blocks for Cyberwoven projects.
+core: 8.x
+package: Cyberwoven
+dependencies:
+  - block

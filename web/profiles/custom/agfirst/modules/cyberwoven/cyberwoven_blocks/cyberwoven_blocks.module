@@ -1,0 +1,56 @@
+<?php
+
+/**
+ * @file
+ * Contains cyberwoven_blocks.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function cyberwoven_blocks_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the cyberwoven_blocks module.
+    case 'help.page.cyberwoven_blocks':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Provides a few basic blocks for Cyberwoven projects.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function cyberwoven_blocks_theme() {
+  return [
+    'cyberwoven_blocks_copyright' => [
+      'variables' => [
+        'attributes' => [],
+        'year' => '',
+        'copyright_holder' => '',
+      ],
+    ],
+    'cyberwoven_blocks_social_media' => [
+      'variables' => [
+        'attributes' => [],
+        'services' => [
+          'one' => '',
+          'two' => '',
+          'three' => '',
+          'four' => '',
+        ],
+        'urls' => [
+          'one' => '',
+          'two' => '',
+          'three' => '',
+          'four' => '',
+        ],
+      ],
+    ],
+  ];
+}

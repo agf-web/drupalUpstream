@@ -1,0 +1,7 @@
+name: Cyberwoven Alert Bar
+type: module
+description: Create and administer alerts for the site.
+package: Cyberwoven
+core: 8.x
+
+configure: cyberwoven_alert_bar.settings

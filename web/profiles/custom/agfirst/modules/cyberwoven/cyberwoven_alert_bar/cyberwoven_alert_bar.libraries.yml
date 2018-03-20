@@ -1,0 +1,10 @@
+cyberwoven_alert_bar_functions:
+  js:
+    js/cyberwoven_alert_bar.js: {}
+  css:
+    theme:
+      css/cyberwoven_alert_bar.css: { every_page: 1 }
+  dependencies:
+    - core/jquery
+    - core/jquery.cookie
+    - core/jquery.once
