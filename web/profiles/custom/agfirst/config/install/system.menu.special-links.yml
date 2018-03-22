@@ -1,0 +1,7 @@
+langcode: en
+status: true
+dependencies: {  }
+id: special-links
+label: 'Special Links'
+description: 'Special Links that act like mini launch pads in the header.'
+locked: false

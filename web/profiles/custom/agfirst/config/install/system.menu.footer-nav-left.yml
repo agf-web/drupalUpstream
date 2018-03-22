@@ -1,0 +1,7 @@
+langcode: en
+status: true
+dependencies: {  }
+id: footer-nav-left
+label: 'Footer Nav: Left'
+description: 'Navigation in the footer, left side.'
+locked: false

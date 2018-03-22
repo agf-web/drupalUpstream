@@ -1,0 +1,7 @@
+langcode: en
+status: true
+dependencies: {  }
+id: footer-nav-right
+label: 'Footer Nav: Right'
+description: 'Navigation in the footer'
+locked: false

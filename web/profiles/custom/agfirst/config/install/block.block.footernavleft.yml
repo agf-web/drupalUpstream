@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.footer-nav-left
+  module:
+    - menu_block
+  theme:
+    - agfirst_base
+id: footernavleft
+theme: agfirst_base
+region: site_footer_left
+weight: 0
+provider: null
+plugin: 'menu_block:footer-nav-left'
+settings:
+  id: 'menu_block:footer-nav-left'
+  label: 'Footer Nav: Left'
+  provider: menu_block
+  label_display: '0'
+  level: 1
+  depth: 0
+  expand: 0
+  parent: 'footer-nav-left:'
+  suggestion: footer_nav_left
+visibility: {  }

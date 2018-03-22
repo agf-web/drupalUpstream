@@ -1,0 +1,12 @@
+enabled_fonts:
+  - 'https://typekit.com/fonts/futura-pt#n4'
+  - 'https://typekit.com/fonts/futura-pt#i4'
+  - 'https://typekit.com/fonts/futura-pt#n7'
+  - 'https://typekit.com/fonts/futura-pt#i7'
+  - 'https://typekit.com/fonts/futura-pt-bold#n7'
+  - 'https://typekit.com/fonts/futura-pt-bold#i7'
+  - 'https://typekit.com/fonts/myriad-pro#n4'
+  - 'https://typekit.com/fonts/myriad-pro#i4'
+  - 'https://typekit.com/fonts/myriad-pro#n7'
+  - 'https://typekit.com/fonts/myriad-pro#i7'
+load_all_enabled_fonts: 1

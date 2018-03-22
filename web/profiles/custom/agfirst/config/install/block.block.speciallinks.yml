@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.special-links
+  module:
+    - menu_block
+  theme:
+    - agfirst_base
+id: speciallinks
+theme: agfirst_base
+region: site_header_right
+weight: 0
+provider: null
+plugin: 'menu_block:special-links'
+settings:
+  id: 'menu_block:special-links'
+  label: 'Special Links'
+  provider: menu_block
+  label_display: '0'
+  level: 1
+  depth: 0
+  expand: 0
+  parent: 'special-links:'
+  suggestion: special_links
+visibility: {  }

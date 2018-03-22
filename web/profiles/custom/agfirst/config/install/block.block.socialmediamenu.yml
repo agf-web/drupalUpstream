@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.social-media-menu
+  module:
+    - menu_block
+  theme:
+    - agfirst_base
+id: socialmediamenu
+theme: agfirst_base
+region: site_footer_right
+weight: -7
+provider: null
+plugin: 'menu_block:social-media-menu'
+settings:
+  id: 'menu_block:social-media-menu'
+  label: 'Follow Us'
+  provider: menu_block
+  label_display: visible
+  level: 1
+  depth: 0
+  expand: 0
+  parent: 'social-media-menu:'
+  suggestion: social_media_menu
+visibility: {  }

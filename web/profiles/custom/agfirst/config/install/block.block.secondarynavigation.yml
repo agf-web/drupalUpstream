@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.secondary-navigation
+  module:
+    - menu_block
+  theme:
+    - agfirst_base
+id: secondarynavigation
+theme: agfirst_base
+region: site_header_right
+weight: -6
+provider: null
+plugin: 'menu_block:secondary-navigation'
+settings:
+  id: 'menu_block:secondary-navigation'
+  label: 'Secondary Navigation'
+  provider: menu_block
+  label_display: '0'
+  level: 1
+  depth: 0
+  expand: 0
+  parent: 'secondary-navigation:'
+  suggestion: secondary_navigation
+visibility: {  }

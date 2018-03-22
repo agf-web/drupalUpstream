@@ -1,0 +1,7 @@
+langcode: en
+status: true
+dependencies: {  }
+id: social-media-menu
+label: 'Social Media Menu'
+description: 'Social media links'
+locked: false
