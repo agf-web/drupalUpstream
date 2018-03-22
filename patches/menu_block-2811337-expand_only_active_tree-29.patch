@@ -1,0 +1,57 @@
+diff --git a/src/Plugin/Block/MenuBlock.php b/src/Plugin/Block/MenuBlock.php
+index fab522a..bfc9948 100644
+--- a/src/Plugin/Block/MenuBlock.php
++++ b/src/Plugin/Block/MenuBlock.php
+@@ -120,27 +120,50 @@ class MenuBlock extends SystemMenuBlock {
+     $suggestion = $this->configuration['suggestion'];
+
+     $parameters->setMinDepth($level);
+     // When the depth is configured to zero, there is no depth limit. When depth
+     // is non-zero, it indicates the number of levels that must be displayed.
+     // Hence this is a relative depth that we must convert to an actual
+     // (absolute) depth, that may never exceed the maximum depth.
+     if ($depth > 0) {
+       $parameters->setMaxDepth(min($level + $depth - 1, $this->menuTree->maxDepth()));
+     }
++
++    // For menu blocks with start level greater than 1, only show menu items
++    // from the current active trail. Adjust the root according to the current
++    // position in the menu in order to determine if we can show the subtree.
++    // If we're using a fixed parent item, we'll skip this step.
++    $fixed_parent_menu_link_id = str_replace($menu_name . ':', '', $parent);
++    if ($level > 1 && !$fixed_parent_menu_link_id) {
++      if (count($parameters->activeTrail) >= $level) {
++        // Active trail array is child-first. Reverse it, and pull the new menu
++        // root based on the parent of the configured start level.
++        $menu_trail_ids = array_reverse(array_values($parameters->activeTrail));
++        $menu_root = $menu_trail_ids[$level - 1];
++        $parameters->setRoot($menu_root)->setMinDepth(1);
++        if ($depth > 0) {
++          $max_depth = min($level - 1 + $depth - 1, $this->menuTree->maxDepth());
++          $parameters->setMaxDepth($max_depth);
++        }
++      }
++      else {
++        return array();
++      }
++    }
++
+     // If expandedParents is empty, the whole menu tree is built.
+     if ($expand) {
+       $parameters->expandedParents = array();
+     }
+     // When a fixed parent item is set, root the menu tree at the given ID.
+-    if ($menuLinkID = str_replace($menu_name . ':', '', $parent)) {
+-      $parameters->setRoot($menuLinkID);
++    if ($fixed_parent_menu_link_id) {
++      $parameters->setRoot($fixed_parent_menu_link_id);
+
+       // If the starting level is 1, we always want the child links to appear,
+       // but the requested tree may be empty if the tree does not contain the
+       // active trail.
+       if ($level === 1 || $level === '1') {
+         // Check if the tree contains links.
+         $tree = $this->menuTree->load(NULL, $parameters);
+         if (empty($tree)) {
+           // Change the request to expand all children and limit the depth to
+           // the immediate children of the root.

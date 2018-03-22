@@ -1,0 +1,559 @@
+diff --git a/menu_block.module b/menu_block.module
+index 0614e91..c91dc1d 100644
+--- a/menu_block.module
++++ b/menu_block.module
+@@ -1,5 +1,8 @@
+ <?php
+
++use Drupal\Core\Block\BlockPluginInterface;
++use Drupal\menu_block\Plugin\Block\MenuBlock;
++
+ /**
+  * Implements hook_theme_suggestions_HOOK() for "block".
+  */
+@@ -99,3 +102,17 @@ function menu_block_theme_suggestions_menu(array $variables) {
+
+   return $suggestions;
+ }
++
++/**
++ * Implements hook_block_view_alter().
++ * @param array $build
++ * @param \Drupal\Core\Block\BlockPluginInterface $block
++ */
++function menu_block_block_view_alter(array &$build, BlockPluginInterface $block) {
++  if ($block instanceof MenuBlock) {
++    /** @var \Drupal\menu_block\Factory\MenuBlockTitleFactoryInterface $menuBlockTitleFactory */
++    $menuBlockTitleFactory = \Drupal::service('menu_block.title_factory');
++    $menuBlockTitle = $menuBlockTitleFactory->create($block);
++    $build['#configuration']['label'] = $menuBlockTitle->label();
++  }
++}
+diff --git a/menu_block.services.yml b/menu_block.services.yml
+index 983c40a..f6202ea 100644
+--- a/menu_block.services.yml
++++ b/menu_block.services.yml
+@@ -4,3 +4,6 @@ services:
+     arguments: ['@current_route_match']
+     tags:
+       - { name: event_subscriber }
++  menu_block.title_factory:
++    class: Drupal\menu_block\Factory\MenuBlockTitleFactory
++    arguments: ['@entity_type.manager', '@menu.active_trail', '@plugin.manager.menu.link']
+diff --git a/src/Exception/MenuBlockNoActiveTrailFoundException.php b/src/Exception/MenuBlockNoActiveTrailFoundException.php
+new file mode 100644
+index 0000000..2d4bc3e
+--- /dev/null
++++ b/src/Exception/MenuBlockNoActiveTrailFoundException.php
+@@ -0,0 +1,6 @@
++<?php
++
++namespace Drupal\menu_block\Exception;
++
++class MenuBlockNoActiveTrailFoundException extends \Exception {
++}
+diff --git a/src/Exception/MenuBlockNoActiveTrailParentFoundException.php b/src/Exception/MenuBlockNoActiveTrailParentFoundException.php
+new file mode 100644
+index 0000000..75bee2b
+--- /dev/null
++++ b/src/Exception/MenuBlockNoActiveTrailParentFoundException.php
+@@ -0,0 +1,6 @@
++<?php
++
++namespace Drupal\menu_block\Exception;
++
++class MenuBlockNoActiveTrailParentFoundException extends \Exception {
++}
+diff --git a/src/Exception/MenuBlockNonExistingActiveTrailIndex.php b/src/Exception/MenuBlockNonExistingActiveTrailIndex.php
+new file mode 100644
+index 0000000..f4592d7
+--- /dev/null
++++ b/src/Exception/MenuBlockNonExistingActiveTrailIndex.php
+@@ -0,0 +1,6 @@
++<?php
++
++namespace Drupal\menu_block\Exception;
++
++class MenuBlockNonExistingActiveTrailIndex extends \Exception {
++}
+diff --git a/src/Factory/MenuBlockTitleFactory.php b/src/Factory/MenuBlockTitleFactory.php
+new file mode 100644
+index 0000000..557b830
+--- /dev/null
++++ b/src/Factory/MenuBlockTitleFactory.php
+@@ -0,0 +1,125 @@
++<?php
++
++namespace Drupal\menu_block\Factory;
++
++use Drupal\Core\Entity\linkManagerInterface;
++use Drupal\Core\Entity\EntityTypeManagerInterface;
++use Drupal\Core\Menu\MenuActiveTrailInterface;
++use Drupal\Core\Menu\MenuLinkManagerInterface;
++use Drupal\menu_block\Exception\MenuBlockNonExistingActiveTrailIndex;
++use Drupal\menu_block\Plugin\Block\MenuBlock;
++use Drupal\menu_block\Title\MenuBlockActiveTrailActiveItemTitle;
++use Drupal\menu_block\Title\MenuBlockActiveTrailParentItemTitle;
++use Drupal\menu_block\Title\MenuBlockActiveTrailRootItemTitle;
++use Drupal\menu_block\Title\MenuBlockBlockTitle;
++use Drupal\menu_block\Title\MenuBlockEmptyTitle;
++use Drupal\menu_block\Title\MenuBlockInitialMenuItemTitle;
++use Drupal\menu_block\Title\MenuBlockMenuTitle;
++use Exception;
++
++class MenuBlockTitleFactory implements MenuBlockTitleFactoryInterface {
++  /** @var \Drupal\Core\Entity\EntityTypeManagerInterface */
++  private $entityTypeManager;
++  /** @var \Drupal\Core\Menu\MenuActiveTrailInterface */
++  private $menuActiveTrail;
++  /** @var \Drupal\Core\Entity\linkManagerInterface */
++  private $linkManager;
++
++  /**
++   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
++   * @param \Drupal\Core\Menu\MenuActiveTrailInterface $menuActiveTrail
++   * @param \Drupal\Core\Menu\MenuLinkManagerInterface $linkManager
++   */
++  public function __construct(EntityTypeManagerInterface $entityTypeManager, MenuActiveTrailInterface $menuActiveTrail, MenuLinkManagerInterface $linkManager) {
++    $this->entityTypeManager = $entityTypeManager;
++    $this->menuActiveTrail = $menuActiveTrail;
++    $this->linkManager = $linkManager;
++  }
++
++  /**
++   * @param \Drupal\menu_block\Plugin\Block\MenuBlock $menuBlock
++   * @return \Drupal\menu_block\Title\MenuBlockTitleInterface
++   */
++  public function create(MenuBlock $menuBlock) {
++    switch ($this->getLabelType($menuBlock)) {
++      case 'menu':
++        return new MenuBlockMenuTitle($menuBlock, $this->entityTypeManager);
++        break;
++      case 'active_item':
++        return $this->getActiveTrailActiveItemTitle($menuBlock);
++        break;
++      case 'parent':
++        return $this->getActiveTrailParentItemTitle($menuBlock);
++        break;
++      case 'root':
++        return $this->getActiveTrailRootItemTitle($menuBlock);
++        break;
++      case 'initial_menu_item':
++        return $this->getInitialMenuItemTitle($menuBlock);
++        break;
++      case 'block':
++      default:
++        return new MenuBlockBlockTitle($menuBlock);
++    }
++  }
++
++  /**
++   * @param \Drupal\menu_block\Plugin\Block\MenuBlock $menuBlock
++   * @return mixed
++   */
++  private function getLabelType(MenuBlock $menuBlock) {
++    $blockConfiguration = $menuBlock->getConfiguration();
++    return $blockConfiguration['label_type'];
++  }
++
++  /**
++   * @param \Drupal\menu_block\Plugin\Block\MenuBlock $menuBlock
++   * @return \Drupal\menu_block\Title\MenuBlockTitleInterface
++   */
++  private function getActiveTrailActiveItemTitle(MenuBlock $menuBlock) {
++    try {
++      return new MenuBlockActiveTrailActiveItemTitle($menuBlock, $this->menuActiveTrail, $this->linkManager);
++    } catch (Exception $exception) {
++      return new MenuBlockEmptyTitle();
++    }
++  }
++
++  /**
++   * @param \Drupal\menu_block\Plugin\Block\MenuBlock $menuBlock
++   * @return \Drupal\menu_block\Title\MenuBlockTitleInterface
++   */
++  private function getActiveTrailParentItemTitle(MenuBlock $menuBlock) {
++    try {
++      return new MenuBlockActiveTrailParentItemTitle($menuBlock, $this->menuActiveTrail, $this->linkManager);
++    } catch (MenuBlockNonExistingActiveTrailIndex $exception) {
++      return $this->getActiveTrailActiveItemTitle($menuBlock);
++    } catch (Exception $exception) {
++      return new MenuBlockEmptyTitle();
++    }
++  }
++
++  /**
++   * @param \Drupal\menu_block\Plugin\Block\MenuBlock $menuBlock
++   * @return \Drupal\menu_block\Title\MenuBlockTitleInterface
++   */
++  private function getActiveTrailRootItemTitle(MenuBlock $menuBlock) {
++    try {
++      return new MenuBlockActiveTrailRootItemTitle($menuBlock, $this->menuActiveTrail, $this->linkManager);
++    } catch (Exception $exception) {
++      return new MenuBlockEmptyTitle();
++    }
++  }
++
++  /**
++   * @param $menuBlock
++   * @return \Drupal\menu_block\Title\MenuBlockTitleInterface
++   */
++  private function getInitialMenuItemTitle($menuBlock) {
++    try {
++      return new MenuBlockInitialMenuItemTitle($menuBlock, $this->menuActiveTrail, $this->linkManager);
++    } catch (Exception $exception) {
++      return new MenuBlockEmptyTitle();
++    }
++  }
++
++}
+diff --git a/src/Factory/MenuBlockTitleFactoryInterface.php b/src/Factory/MenuBlockTitleFactoryInterface.php
+new file mode 100644
+index 0000000..25a81ca
+--- /dev/null
++++ b/src/Factory/MenuBlockTitleFactoryInterface.php
+@@ -0,0 +1,14 @@
++<?php
++
++namespace Drupal\menu_block\Factory;
++
++use Drupal\menu_block\Plugin\Block\MenuBlock;
++
++interface MenuBlockTitleFactoryInterface {
++
++  /**
++   * @param \Drupal\menu_block\Plugin\Block\MenuBlock $menuBlock
++   * @return \Drupal\menu_block\Title\MenuBlockTitleInterface
++   */
++  public function create(MenuBlock $menuBlock);
++}
+diff --git a/src/Plugin/Block/MenuBlock.php b/src/Plugin/Block/MenuBlock.php
+index fab522a..1665638 100644
+--- a/src/Plugin/Block/MenuBlock.php
++++ b/src/Plugin/Block/MenuBlock.php
+@@ -54,6 +54,25 @@ class MenuBlock extends SystemMenuBlock {
+       '#description' => $this->t('Alter the options in “Menu levels” to be relative to the fixed parent item. The block will only contain children of the selected menu link.'),
+     ];
+
++    $form['advanced']['label_type'] = [
++      '#type' => 'select',
++      '#title' => 'Use the following as title',
++      '#options' => [
++        'block' => $this->t('Block title'),
++        'menu' => $this->t('Menu title'),
++        'active_item' => $this->t('Active item\'s title'),
++        'parent' => $this->t('Active trail\'s parent title'),
++        'root' => $this->t('Active trail\'s root title'),
++        'initial_menu_item' => $this->t('Initial menu item\'s title')
++      ],
++      '#default_value' => $config['label_type'],
++      '#states' => [
++        'visible' => [
++          ':input[name="settings[label_display]"]' => ['checked' => TRUE]
++        ]
++      ]
++    ];
++
+     $form['style'] = [
+       '#type' => 'details',
+       '#title' => $this->t('HTML and style options'),
+@@ -103,6 +122,7 @@ class MenuBlock extends SystemMenuBlock {
+     $this->configuration['expand'] = $form_state->getValue('expand');
+     $this->configuration['parent'] = $form_state->getValue('parent');
+     $this->configuration['suggestion'] = $form_state->getValue('suggestion');
++    $this->configuration['label_type'] = $form_state->getValue('label_type');
+   }
+
+   /**
+@@ -184,6 +204,7 @@ class MenuBlock extends SystemMenuBlock {
+       'depth' => 0,
+       'expand' => 0,
+       'parent' => $this->getDerivativeId() . ':',
++      'label_type' => 'block',
+       'suggestion' => strtr($this->getDerivativeId(), '-', '_'),
+     ];
+   }
+diff --git a/src/Title/MenuBlockActiveTrailActiveItemTitle.php b/src/Title/MenuBlockActiveTrailActiveItemTitle.php
+new file mode 100644
+index 0000000..6ca11d4
+--- /dev/null
++++ b/src/Title/MenuBlockActiveTrailActiveItemTitle.php
+@@ -0,0 +1,13 @@
++<?php
++
++namespace Drupal\menu_block\Title;
++
++class MenuBlockActiveTrailActiveItemTitle extends MenuBlockActiveTrailTitle implements MenuBlockTitleInterface {
++
++  /**
++   * @return int
++   */
++  protected function getItemLevel() {
++    return 1;
++  }
++}
+diff --git a/src/Title/MenuBlockActiveTrailParentItemTitle.php b/src/Title/MenuBlockActiveTrailParentItemTitle.php
+new file mode 100644
+index 0000000..17eb20b
+--- /dev/null
++++ b/src/Title/MenuBlockActiveTrailParentItemTitle.php
+@@ -0,0 +1,16 @@
++<?php
++
++namespace Drupal\menu_block\Title;
++
++use Drupal\menu_block\Exception\MenuBlockNoActiveTrailFoundException;
++use Drupal\menu_block\Exception\MenuBlockNonExistingActiveTrailIndex;
++
++class MenuBlockActiveTrailParentItemTitle extends MenuBlockActiveTrailTitle implements MenuBlockTitleInterface {
++
++  /**
++   * @return int
++   */
++  protected function getItemLevel() {
++    return 2;
++  }
++}
+diff --git a/src/Title/MenuBlockActiveTrailRootItemTitle.php b/src/Title/MenuBlockActiveTrailRootItemTitle.php
+new file mode 100644
+index 0000000..1e824b4
+--- /dev/null
++++ b/src/Title/MenuBlockActiveTrailRootItemTitle.php
+@@ -0,0 +1,23 @@
++<?php
++
++namespace Drupal\menu_block\Title;
++
++class MenuBlockActiveTrailRootItemTitle extends MenuBlockActiveTrailTitle implements MenuBlockTitleInterface {
++
++  /**
++   * Reverse the active trail so that the root item will be on top.
++   *
++   * @return array
++   */
++  protected function getDerivativeActiveTrailIds() {
++    $activeTrailIds = parent::getDerivativeActiveTrailIds();
++    return array_reverse($activeTrailIds);
++  }
++
++  /**
++   * @return int
++   */
++  protected function getItemLevel() {
++    return 1;
++  }
++}
+diff --git a/src/Title/MenuBlockActiveTrailTitle.php b/src/Title/MenuBlockActiveTrailTitle.php
+new file mode 100644
+index 0000000..20888ed
+--- /dev/null
++++ b/src/Title/MenuBlockActiveTrailTitle.php
+@@ -0,0 +1,86 @@
++<?php
++
++namespace Drupal\menu_block\Title;
++
++use Drupal\Core\Entity\EntityRepositoryInterface;
++use Drupal\Core\Menu\MenuLinkManagerInterface;
++use Drupal\Core\Menu\MenuActiveTrailInterface;
++use Drupal\menu_block\Exception\MenuBlockNoActiveTrailFoundException;
++use Drupal\menu_block\Exception\MenuBlockNonExistingActiveTrailIndex;
++use Drupal\menu_block\Plugin\Block\MenuBlock;
++
++abstract class MenuBlockActiveTrailTitle {
++  /** @var \Drupal\menu_block\Plugin\Block\MenuBlock */
++  protected $menuBlock;
++  /** @var \Drupal\Core\Menu\MenuActiveTrailInterface */
++  private $menuActiveTrail;
++  /** @var \Drupal\Core\Menu\MenuLinkManagerInterface */
++  protected $linkManager;
++  /** @var string */
++  protected $label;
++
++  /**
++   * @param \Drupal\menu_block\Plugin\Block\MenuBlock $menuBlock
++   * @param \Drupal\Core\Menu\MenuActiveTrailInterface $menuActiveTrail
++   * @param \Drupal\Core\Menu\MenuLinkManagerInterface $linkManager
++   * @throws \Drupal\menu_block\Exception\MenuBlockNoActiveTrailFoundException
++   */
++  public function __construct(MenuBlock $menuBlock, MenuActiveTrailInterface $menuActiveTrail, MenuLinkManagerInterface $linkManager) {
++    $this->menuBlock = $menuBlock;
++    $this->menuActiveTrail = $menuActiveTrail;
++    $this->linkManager = $linkManager;
++    $this->setLabel();
++  }
++
++  /**
++   * @return string
++   */
++  public function label() {
++    return $this->label;
++  }
++
++  /**
++   * @return string
++   * @throws \Drupal\menu_block\Exception\MenuBlockNoActiveTrailFoundException
++   * @throws \Drupal\menu_block\Exception\MenuBlockNonExistingActiveTrailIndex
++   */
++  protected function setLabel() {
++    if ($activeTrailIds = $this->getDerivativeActiveTrailIds()) {
++      if ($initialMenuLevelItem = array_slice($activeTrailIds, $this->getItemLevel() - 1, 1)) {
++        $this->label = $this->getMenuLinkTitleByPluginId(reset($initialMenuLevelItem));
++      }
++      else {
++        throw new MenuBlockNonExistingActiveTrailIndex("There was no item with a starting level of {$this->getItemLevel()} found in the active trail.");
++      }
++    }
++    else {
++      throw new MenuBlockNoActiveTrailFoundException("The current active trail could not be determined.");
++    }
++  }
++
++  /**
++   * @return int
++   */
++  abstract protected function getItemLevel();
++
++  /**
++   * @return array
++   */
++  protected function getDerivativeActiveTrailIds() {
++    $menuId = $this->menuBlock->getDerivativeId();
++    return array_filter($this->menuActiveTrail->getActiveTrailIds($menuId));
++  }
++
++  /**
++   * @param string $pluginId
++   * @return string
++   */
++  protected function getMenuLinkTitleByPluginId($pluginId) {
++    if ($menuLink = $this->linkManager->createInstance($pluginId)) {
++      return $menuLink->getTitle();
++    }
++
++    return '';
++  }
++
++}
+diff --git a/src/Title/MenuBlockBlockTitle.php b/src/Title/MenuBlockBlockTitle.php
+new file mode 100644
+index 0000000..6e6989c
+--- /dev/null
++++ b/src/Title/MenuBlockBlockTitle.php
+@@ -0,0 +1,24 @@
++<?php
++
++namespace Drupal\menu_block\Title;
++
++use Drupal\menu_block\Plugin\Block\MenuBlock;
++
++class MenuBlockBlockTitle implements MenuBlockTitleInterface {
++  /** @var \Drupal\menu_block\Plugin\Block\MenuBlock */
++  private $menuBlock;
++
++  /**
++   * @param \Drupal\menu_block\Plugin\Block\MenuBlock $menuBlock
++   */
++  public function __construct(MenuBlock $menuBlock) {
++    $this->menuBlock = $menuBlock;
++  }
++
++  /**
++   * @return string
++   */
++  public function label() {
++    return $this->menuBlock->label();
++  }
++}
+diff --git a/src/Title/MenuBlockEmptyTitle.php b/src/Title/MenuBlockEmptyTitle.php
+new file mode 100644
+index 0000000..5b3fc9f
+--- /dev/null
++++ b/src/Title/MenuBlockEmptyTitle.php
+@@ -0,0 +1,13 @@
++<?php
++
++namespace Drupal\menu_block\Title;
++
++class MenuBlockEmptyTitle implements MenuBlockTitleInterface {
++
++  /**
++   * @return string
++   */
++  public function label() {
++    return '';
++  }
++}
+diff --git a/src/Title/MenuBlockInitialMenuItemTitle.php b/src/Title/MenuBlockInitialMenuItemTitle.php
+new file mode 100644
+index 0000000..1f153cc
+--- /dev/null
++++ b/src/Title/MenuBlockInitialMenuItemTitle.php
+@@ -0,0 +1,14 @@
++<?php
++
++namespace Drupal\menu_block\Title;
++
++class MenuBlockInitialMenuItemTitle extends MenuBlockActiveTrailRootItemTitle implements MenuBlockTitleInterface {
++
++  /**
++   * @return int
++   */
++  protected function getItemLevel() {
++    $configuration = $this->menuBlock->getConfiguration();
++    return (int) $configuration['level'];
++  }
++}
+diff --git a/src/Title/MenuBlockMenuTitle.php b/src/Title/MenuBlockMenuTitle.php
+new file mode 100644
+index 0000000..7adc136
+--- /dev/null
++++ b/src/Title/MenuBlockMenuTitle.php
+@@ -0,0 +1,30 @@
++<?php
++
++namespace Drupal\menu_block\Title;
++
++use Drupal\Core\Entity\EntityTypeManagerInterface;
++use Drupal\menu_block\Plugin\Block\MenuBlock;
++
++class MenuBlockMenuTitle implements MenuBlockTitleInterface {
++  /** @var \Drupal\menu_block\Plugin\Block\MenuBlock */
++  private $menuBlock;
++  /** @var \Drupal\Core\Entity\EntityStorageInterface */
++  private $menuStorage;
++
++  /**
++   * @param \Drupal\menu_block\Plugin\Block\MenuBlock $menuBlock
++   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
++   */
++  public function __construct(MenuBlock $menuBlock, EntityTypeManagerInterface $entityTypeManager) {
++    $this->menuBlock = $menuBlock;
++    $this->menuStorage = $entityTypeManager->getStorage('menu');
++  }
++
++  /**
++   * @return string
++   */
++  public function label() {
++    $menu = $this->menuStorage->load($this->menuBlock->getDerivativeId());
++    return $menu->label();
++  }
++}
+diff --git a/src/Title/MenuBlockTitleInterface.php b/src/Title/MenuBlockTitleInterface.php
+new file mode 100644
+index 0000000..4500bf2
+--- /dev/null
++++ b/src/Title/MenuBlockTitleInterface.php
+@@ -0,0 +1,11 @@
++<?php
++
++namespace Drupal\menu_block\Title;
++
++interface MenuBlockTitleInterface {
++
++  /**
++   * @return string
++   */
++  public function label();
++}
