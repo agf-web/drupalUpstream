@@ -49,6 +49,7 @@
     "drupal/search_api_solr": "^1.0@beta",
     "drupal/smart_trim": "^1.0",
     "drupal/video_embed_field": "^1.5",
+    "drupal/viewsreference": "^1.2",
     "drupal/webform": "^5.0@beta",
     "drupal/xmlsitemap": "^1.0@alpha",
     "drush/drush": "^8",
@@ -131,19 +132,6 @@
         ".htaccess",
         "web.config"
       ]
-    },
-    "patches": {
-      "drupal/core": {
-        "Datetime Range Views Integration": "patches/the_views_integration-2786577-202.patch"
-      },
-      "drupal/menu_block": {
-        "Menu parent as block title": "patches/2809699-27.patch",
-        "2+ level menu block not limited to active parent": "patches/menu_block-2811337-expand_only_active_tree-29.patch"
-      },
-      "drupal/field_group": {
-        "HTML5 validation for fields which are currently not part of the visible group": "patches/field_group-validation-2787179-9.patch",
-        "Fields with errors are not visible": "patches/fields_with_errors_are-2894213-3.patch"
-      }
     }
   },
   "config": {
