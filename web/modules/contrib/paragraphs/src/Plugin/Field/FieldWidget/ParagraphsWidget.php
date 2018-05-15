@@ -428,6 +428,7 @@ class ParagraphsWidget extends WidgetBase {
       $element += array(
         '#type' => 'container',
         '#element_validate' => array(array($this, 'elementValidate')),
+        '#paragraph_type' => $paragraphs_entity->bundle(),
         'subform' => array(
           '#type' => 'container',
           '#parents' => $element_parents,

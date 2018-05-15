@@ -80,6 +80,7 @@ class Tabs extends FieldGroupFormatterBase {
       }
     }
 
+    $element['#attached']['library'][] = 'field_group/tabs_validation';
   }
 
   /**

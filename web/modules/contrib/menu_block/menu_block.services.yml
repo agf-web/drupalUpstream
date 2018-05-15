@@ -4,3 +4,6 @@ services:
     arguments: ['@current_route_match']
     tags:
       - { name: event_subscriber }
+  menu_block.title_factory:
+    class: Drupal\menu_block\Factory\MenuBlockTitleFactory
+    arguments: ['@entity_type.manager', '@menu.active_trail', '@plugin.manager.menu.link']

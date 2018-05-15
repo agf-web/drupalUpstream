@@ -14,6 +14,7 @@ use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Symfony\Component\HttpFoundation\Request;
+use Drupal\Core\Template\Attribute;
 
 /**
  * Provides an AJAX/progress aware widget for uploading and saving a file.
@@ -356,8 +357,18 @@ class ManagedFile extends FormElement {
     // with it.
     $element['#id'] = &$element['upload']['#id'];
 
+    // Add states to ajax wrapper so states.js can potentially attach this
+    // element as a Dependent.
+    $attributes = new Attribute(['id' => $ajax_wrapper_id]);
+    if (isset($element['#states']) && !empty($element['#states'])) {
+      $attributes->offsetSet('data-drupal-states', json_encode($element['#states']));
+
+      // Add states to the file form element itself.
+      $element['upload']['#states'] = $element['#states'];
+    }
+
     // Prefix and suffix used for Ajax replacement.
-    $element['#prefix'] = '<div id="' . $ajax_wrapper_id . '">';
+    $element['#prefix'] = '<div' . $attributes . '>';
     $element['#suffix'] = '</div>';
 
     return $element;

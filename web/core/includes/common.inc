@@ -584,7 +584,7 @@ function drupal_process_states(&$elements) {
   // still want to be able to show/hide them. Since there's no actual HTML input
   // element available, setting #attributes does not make sense, but a wrapper
   // is available, so setting #wrapper_attributes makes it work.
-  $key = ($elements['#type'] == 'item') ? '#wrapper_attributes' : '#attributes';
+  $key = (isset($elements['#type']) && $elements['#type'] == 'item') ? '#wrapper_attributes' : '#attributes';
   $elements[$key]['data-drupal-states'] = Json::encode($elements['#states']);
 }
 

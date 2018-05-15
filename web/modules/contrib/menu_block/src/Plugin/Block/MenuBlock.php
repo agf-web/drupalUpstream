@@ -54,6 +54,25 @@ class MenuBlock extends SystemMenuBlock {
       '#description' => $this->t('Alter the options in “Menu levels” to be relative to the fixed parent item. The block will only contain children of the selected menu link.'),
     ];
 
+    $form['advanced']['label_type'] = [
+      '#type' => 'select',
+      '#title' => $this->t("Use the following as title"),
+      '#options' => [
+        'block' => $this->t("Block title"),
+        'menu' => $this->t("Menu title"),
+        'active_item' => $this->t("Active item's title"),
+        'parent' => $this->t("Active trail's parent title"),
+        'root' => $this->t("Active trail's root title"),
+        'initial_menu_item' => $this->t("Initial menu item's title"),
+      ],
+      '#default_value' => $config['label_type'],
+      '#states' => [
+        'visible' => [
+          ':input[name="settings[label_display]"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
     $form['style'] = [
       '#type' => 'details',
       '#title' => $this->t('HTML and style options'),
@@ -104,6 +123,7 @@ class MenuBlock extends SystemMenuBlock {
     $this->configuration['expand'] = $form_state->getValue('expand');
     $this->configuration['parent'] = $form_state->getValue('parent');
     $this->configuration['suggestion'] = $form_state->getValue('suggestion');
+    $this->configuration['label_type'] = $form_state->getValue('label_type');
   }
 
   /**
@@ -212,6 +232,7 @@ class MenuBlock extends SystemMenuBlock {
       'depth' => 0,
       'expand' => 0,
       'parent' => $this->getDerivativeId() . ':',
+      'label_type' => 'block',
       'suggestion' => strtr($this->getDerivativeId(), '-', '_'),
     ];
   }

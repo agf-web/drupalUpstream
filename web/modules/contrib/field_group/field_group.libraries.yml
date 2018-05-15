@@ -11,6 +11,22 @@ field_ui:
     - core/drupal
     - core/drupalSettings
 
+details_validation:
+  header: false
+  version: VERSION
+  js:
+    js/field_group.details_validation.js: {}
+  dependencies:
+    - core/jquery
+
+tabs_validation:
+  header: false
+  version: VERSION
+  js:
+    js/field_group.tabs_validation.js: {}
+  dependencies:
+    - core/jquery
+
 core:
   version: VERSION
   js:

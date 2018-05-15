@@ -3,6 +3,7 @@
 namespace Drupal\field_group\Plugin\field_group\FieldGroupFormatter;
 
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Render\Element;
 use Drupal\field_group\FieldGroupFormatterBase;
 
 /**
@@ -26,10 +27,17 @@ class Details extends FieldGroupFormatterBase {
   public function preRender(&$element, $rendering_object) {
     parent::preRender($element, $rendering_object);
 
+    $is_open = $this->getSetting('open');
+    $children = Element::children($element);
+    foreach ($children as $child) {
+      if (!empty($rendering_object[$element['#group_name']][$child]['#children_errors'])) {
+        $is_open = TRUE;
+      }
+    }
     $element += array(
       '#type' => 'details',
       '#title' => Html::escape($this->t($this->getLabel())),
-      '#open' => $this->getSetting('open')
+      '#open' => $is_open,
     );
 
     if ($this->getSetting('id')) {
@@ -53,6 +61,7 @@ class Details extends FieldGroupFormatterBase {
       $element['#attached']['library'][] = 'field_group/formatter.details';
       $element['#attached']['library'][] = 'field_group/core';
     }
+    $element['#attached']['library'][] = 'field_group/details_validation';
   }
 
   /**

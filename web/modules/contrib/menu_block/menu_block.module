@@ -1,5 +1,8 @@
 <?php
 
+use Drupal\Core\Block\BlockPluginInterface;
+use Drupal\menu_block\Plugin\Block\MenuBlock;
+
 /**
  * Implements hook_theme_suggestions_HOOK() for "block".
  */
@@ -99,4 +102,18 @@ function menu_block_theme_suggestions_menu(array $variables) {
   }
 
   return $suggestions;
+}
+
+/**
+ * Implements hook_block_view_alter().
+ * @param array $build
+ * @param \Drupal\Core\Block\BlockPluginInterface $block
+ */
+function menu_block_block_view_alter(array &$build, BlockPluginInterface $block) {
+  if ($block instanceof MenuBlock) {
+    /** @var \Drupal\menu_block\Factory\MenuBlockTitleFactoryInterface $menuBlockTitleFactory */
+    $menuBlockTitleFactory = \Drupal::service('menu_block.title_factory');
+    $menuBlockTitle = $menuBlockTitleFactory->create($block);
+    $build['#configuration']['label'] = $menuBlockTitle->label();
+  }
 }
