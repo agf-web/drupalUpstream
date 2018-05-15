@@ -20,7 +20,7 @@ mode: default
 content:
   field_layers:
     type: entity_reference_revisions_entity_view
-    weight
+    weight: 0
     label: hidden
     settings:
       view_mode: default

@@ -27,7 +27,7 @@ content:
     third_party_settings: {  }
     region: content
   field_image:
-    weight
+    weight: 0
     label: hidden
     settings:
       image_style: landing_mma
@@ -41,8 +41,8 @@ content:
         bg_image_repeat: no-repeat
         bg_image_background_size: cover
         bg_image_media_query: all
-        bg_image_background_size_ie8
-        bg_image_important
+        bg_image_background_size_ie8: 0
+        bg_image_important: 0
     third_party_settings: {  }
     type: bg_image_formatter
     region: content
@@ -62,8 +62,8 @@ content:
       plugin_types:
         page: page
         block: block
-        default
-        feed
+        default: 0
+        feed: 0
     third_party_settings: {  }
     type: viewsreference_formatter
     region: content

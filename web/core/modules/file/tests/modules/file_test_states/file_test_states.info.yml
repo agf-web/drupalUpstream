@@ -1,0 +1,8 @@
+name: 'File test states'
+type: module
+description: 'Provides a simple form with file fields using states.'
+package: Testing
+version: VERSION
+core: 8.x
+dependencies:
+  - file

@@ -1,0 +1,14 @@
+name: 'Telephone Validation'
+description: 'Validates telephone fields and tel form element'
+# core: 8.x
+dependencies:
+  - telephone
+  - field_ui
+type: module
+configure: telephone_validation.settings
+
+# Information added by Drupal.org packaging script on 2017-09-11
+version: '8.x-2.0'
+core: '8.x'
+project: 'telephone_validation'
+datestamp: 1505164164

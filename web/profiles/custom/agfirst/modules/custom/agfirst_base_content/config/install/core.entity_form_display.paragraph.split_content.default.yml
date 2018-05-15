@@ -156,7 +156,7 @@ content:
     type: string_textarea
     region: content
   field_image_mode:
-    weight
+    weight: 0
     settings: {  }
     third_party_settings: {  }
     type: options_select

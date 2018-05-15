@@ -21,7 +21,7 @@ content:
     type: email_mailto
     region: content
   field_contact_name:
-    weight
+    weight: 0
     label: hidden
     settings:
       link_to_entity: false

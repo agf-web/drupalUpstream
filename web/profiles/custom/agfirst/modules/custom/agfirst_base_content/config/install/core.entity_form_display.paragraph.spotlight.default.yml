@@ -127,7 +127,7 @@ content:
     type: string_textarea
     region: content
   field_title:
-    weight
+    weight: 0
     settings:
       size: 60
       placeholder: ''

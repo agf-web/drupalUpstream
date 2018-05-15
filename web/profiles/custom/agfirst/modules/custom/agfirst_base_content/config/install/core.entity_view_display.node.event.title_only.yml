@@ -24,7 +24,7 @@ mode: title_only
 content:
   field_date:
     type: daterange_default
-    weight
+    weight: 0
     region: content
     label: hidden
     settings:

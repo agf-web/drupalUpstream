@@ -5,24 +5,92 @@ package: "AgFirst"
 core: '8.x'
 dependencies:
   - address
+  - admin_toolbar
+  - admin_toolbar_tools
+  - agfirst_base_content
+  - agfirst_base_theme_support
+  - agfirst_calculators
+  - agfirst_editor_experience
   - agfirst_embedded_forms
+  - agfirst_feed_layer
+  - anchor_link
+  - automated_cron
+  - bg_image_formatter
+  - block
+  - block_content
+  - breakpoint
+  - ckeditor
+  - color
+  - config
+  - contextual
+  - crop
+  - ctools
+  - cyberwoven_blocks
   - datetime
   - datetime_range
+  - dblog
+  - draggableviews
+  - dynamic_page_cache
+  - editor
+  - editor_advanced_link
   - entity_reference_revisions
+  - environment_indicator
+  - field
   - field_group
+  - field_ui
   - file
+  - filter
+  - getfarmcredit_client
+  - google_analytics
+  - help
+  - history
   - image
+  - image_url_formatter
+  - image_widget_crop
   - imce
+  - inline_entity_form
   - link
+  - link_attributes
+  - linkit
+  - masquerade
+  - menu_block
+  - menu_link_attributes
   - menu_ui
   - metatag
+  - metatag_google_plus
+  - metatag_open_graph
+  - metatag_verification
+  - module_filter
   - node
   - options
-  - paragraphs
+  - page_cache
   - path
-  - pathauto
+  - quickedit
+  - rdf
+  - redirect
+  - reroute_email
+  - search_api
+  - search_api_attachments
+  - search_api_pantheon
+  - search_api_solr
+  - shortcut
+  - smart_trim
+  - system
   - taxonomy
   - telephone
   - text
+  - token
+  - toolbar
+  - update
   - user
   - video_embed_field
+  - video_embed_wysiwyg
+  - views_ui
+  - viewsreference
+  - fontyourface
+  - menu_link_content
+  - pathauto
+  - xmlsitemap
+  - typekit_api
+  - views
+  - paragraphs

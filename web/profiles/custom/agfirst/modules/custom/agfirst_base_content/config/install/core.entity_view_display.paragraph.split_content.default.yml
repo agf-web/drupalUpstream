@@ -34,7 +34,7 @@ third_party_settings:
         - field_left_message
         - field_left_button
       parent_name: ''
-      weight
+      weight: 0
       format_type: html_element
       format_settings:
         id: ''

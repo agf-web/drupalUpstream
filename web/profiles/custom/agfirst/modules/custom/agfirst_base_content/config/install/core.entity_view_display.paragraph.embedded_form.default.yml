@@ -60,7 +60,7 @@ content:
     region: content
   field_title:
     type: string
-    weight
+    weight: 0
     region: content
     label: hidden
     settings:

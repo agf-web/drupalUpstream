@@ -1,0 +1,7 @@
+example.form:
+  path: '/file-test-states-form'
+  defaults:
+    _title: 'File test states form'
+    _form: '\Drupal\file_test_states\Form\FileTestStatesForm'
+  requirements:
+    _access: 'TRUE'

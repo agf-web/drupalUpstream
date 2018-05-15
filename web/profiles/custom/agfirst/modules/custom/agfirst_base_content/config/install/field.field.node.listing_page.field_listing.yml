@@ -20,25 +20,25 @@ settings:
   handler: 'default:view'
   handler_settings:
     target_bundles: null
-    auto_create
+    auto_create: 0
   plugin_types:
     page: page
     block: block
-    default
-    feed
+    default: 0
+    feed: 0
   preselect_views:
-    block_content
-    content
-    content_recent
-    files
-    fontyourface_font_manager
-    frontpage
-    landing_page_mma
-    page_field_layers
-    redirect
-    taxonomy_term
-    user_admin_people
-    watchdog
-    who_s_new
-    who_s_online
+    block_content: 0
+    content: 0
+    content_recent: 0
+    files: 0
+    fontyourface_font_manager: 0
+    frontpage: 0
+    landing_page_mma: 0
+    page_field_layers: 0
+    redirect: 0
+    taxonomy_term: 0
+    user_admin_people: 0
+    watchdog: 0
+    who_s_new: 0
+    who_s_online: 0
 field_type: viewsreference

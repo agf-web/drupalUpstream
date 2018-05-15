@@ -22,7 +22,7 @@ content:
     type: email_default
     region: content
   field_contact_name:
-    weight
+    weight: 0
     settings:
       size: 60
       placeholder: ''
