@@ -1,0 +1,7 @@
+loan_calculator:
+  js:
+    js/amortize.js: {}
+    js/loan-calculator.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal

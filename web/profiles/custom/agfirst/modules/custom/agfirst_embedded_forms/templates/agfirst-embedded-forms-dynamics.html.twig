@@ -13,6 +13,8 @@
 #}
 
 <!--Embed Code for the Contact Form -->
-<script type="text/javascript">var loc = "{{- form_id -}}"</script>
-<script type="text/javascript" src="https://az124611.vo.msecnd.net/web/v10/CDWidget.js"></script>
-<div pageID="{{- clickdimensions_link -}}"></div>
+<div{{attributes}}>
+  <script type="text/javascript">var loc = "{{- clickdimensions_link -}}"</script>
+  <script type="text/javascript" src="https://az124611.vo.msecnd.net/web/v10/CDWidget.js"></script>
+  <div pageID="{{- form_id -}}"></div>
+</div>

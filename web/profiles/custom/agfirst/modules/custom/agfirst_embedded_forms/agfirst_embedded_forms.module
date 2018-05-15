@@ -33,13 +33,22 @@ function agfirst_embedded_forms_theme() {
         'attributes' => [],
         'form_id' => '',
         'clickdimensions_link' => '',
+        'form_vendor' => 'dynamics'
+      ],
+    ],
+    'agfirst_embedded_forms_jot' => [
+      'variables' => [
+        'attributes' => [],
+        'jot_id' => '',
+        'form_vendor' => 'jot'
       ],
     ],
     'agfirst_embedded_forms_shortstack' => [
       'variables' => [
         'attributes' => [],
-        'campaign_id' => '',
-        'framesource' => '',
+        'frame_id' => '',
+        'shortstack_location' => '',
+        'form_vendor' => 'shortstack'
       ],
     ],
   ];

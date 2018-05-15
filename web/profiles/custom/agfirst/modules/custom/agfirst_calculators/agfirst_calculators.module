@@ -1,0 +1,37 @@
+<?php
+
+/**
+ * @file
+ * Contains agfirst_calculators.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function agfirst_calculators_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the agfirst_calculators module.
+    case 'help.page.agfirst_calculators':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Provides blocks containing shared calculators for AgFirst sites.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function agfirst_calculators_theme() {
+  return [
+    'agfirst_calculators_loan' => [
+      'variables' => [
+        'attributes' => [],
+      ],
+    ],
+  ];
+}

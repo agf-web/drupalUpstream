@@ -39,8 +39,8 @@ class ConfigurationForm extends ConfigFormBase {
     ];
     $form['shortstack_location'] = [
       '#type' => 'url',
-      '#title' => $this->t('ShortStack Frame Source'),
-      '#description' => $this->t('This is defined in your embed codes the source of the iframe that starts an embed..'),
+      '#title' => $this->t('ShortStack Script Source'),
+      '#description' => $this->t('This is defined in your embed codes as src URL for the script tag.'),
       '#default_value' => $config->get('shortstack_location'),
     ];
     return parent::buildForm($form, $form_state);
@@ -50,6 +50,7 @@ class ConfigurationForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
+    // @todo: Add regex to check form inputs against expected shape.
     parent::validateForm($form, $form_state);
   }
 

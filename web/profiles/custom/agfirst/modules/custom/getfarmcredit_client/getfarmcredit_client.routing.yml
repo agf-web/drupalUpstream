@@ -1,0 +1,7 @@
+getfarmcredit_client.blank_page_controller_empty:
+  path: '/locations'
+  defaults:
+    _controller: '\Drupal\getfarmcredit_client\Controller\BlankPageController::empty'
+    _title: 'Locations'
+  requirements:
+    _permission: 'access content'

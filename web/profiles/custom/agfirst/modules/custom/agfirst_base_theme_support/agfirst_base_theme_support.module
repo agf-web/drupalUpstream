@@ -1,0 +1,105 @@
+<?php
+
+/**
+ * @file
+ * Contains agfirst_base_theme_support.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\NodeTypeInterface;
+
+/**
+ * Implements hook_help().
+ */
+function agfirst_base_theme_support_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the agfirst_base_theme_support module.
+    case 'help.page.agfirst_base_theme_support':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Provides support for the AgFirst base theme and any subthemes.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ *
+ * Add 3rd party settings on the content types to provide section headers.
+ */
+function agfirst_base_theme_support_form_node_type_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Add section name field.
+  $section = '';
+  $nodeType = $form_state->getFormObject()->getEntity();
+  if (!empty($nodeType)) {
+    $section = $nodeType->getThirdPartySetting('agfirst_base_theme_support', 'section_header');
+  }
+
+  $form['agfirst_settings'] = [
+    '#type' => 'details',
+    '#title' => t('AgFirst Settings'),
+    '#group' => 'additional_settings',
+    'agfirst_section' => [
+      '#type' => 'textfield',
+      '#title' => t('AgFirst Theme Section Header'),
+      '#default_value' => $section,
+      '#description' => t('When set, this text displays at the top of the pages for this content type.'),
+    ],
+  ];
+
+  $form['#entity_builders'][] = 'agfirst_base_theme_support_form_node_type_form_submit';
+
+}
+
+/**
+ * An entity builder to support the third party settings interface.
+ *
+ * @param string $entity_type
+ *   The entity type machine name.
+ * @param Drupal\node\NodeTypeInterface $nodeType
+ *   The Node type configuration object.
+ * @param array $form
+ *   Standard Drupal form array.
+ * @param Drupal\Core\Form\FormStateInterface $form_state
+ *   Drupal form state object with current state.
+ */
+function agfirst_base_theme_support_form_node_type_form_submit($entity_type, NodeTypeInterface $nodeType, array &$form, FormStateInterface $form_state) {
+  $section = $form_state->getValue('agfirst_section');
+
+  if (empty($section)) {
+    $nodeType->unsetThirdPartySetting('agfirst_base_theme_support', 'section_header');
+  }
+  else {
+    $nodeType->setThirdPartySetting('agfirst_base_theme_support', 'section_header', $section);
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function agfirst_base_theme_support_theme($existing, $type, $theme, $path) {
+  return [
+    'agfirst_base_theme_support_section_block' => [
+      'variables' => [
+        'attributes' => [
+          'class' => [
+            'page-header',
+            'page-header--small',
+          ],
+        ],
+        'section_name' => '',
+      ],
+    ],
+    'agfirst_base_theme_header_search_block' => [
+      'variables' => [
+        'attributes' => [
+          'class' => [],
+        ],
+      ],
+    ],
+  ];
+
+}

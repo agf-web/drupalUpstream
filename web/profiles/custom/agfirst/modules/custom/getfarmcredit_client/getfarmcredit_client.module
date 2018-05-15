@@ -1,0 +1,37 @@
+<?php
+
+/**
+ * @file
+ * Contains getfarmcredit_client.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function getfarmcredit_client_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the getfarmcredit_client module.
+    case 'help.page.getfarmcredit_client':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Client module for GetFarmCredit locations provider.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function getfarmcredit_client_theme() {
+  return [
+    'getfarmcredit_client_map'     => [
+      'variables' => [
+        'attributes' => [],
+      ],
+    ],
+  ];
+}

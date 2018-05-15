@@ -1,0 +1,5 @@
+name: 'GetFarmCredit Client'
+type: module
+description: 'Client module for GetFarmCredit locations provider.'
+core: 8.x
+package: 'AgFirst'

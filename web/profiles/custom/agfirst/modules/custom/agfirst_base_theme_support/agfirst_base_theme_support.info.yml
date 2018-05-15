@@ -1,0 +1,5 @@
+name: 'AgFirst Base Theme Support'
+type: module
+description: 'Provides support for the AgFirst base theme and any subthemes.'
+core: 8.x
+package: 'AgFirst'

@@ -1,0 +1,5 @@
+map:
+  version: 1.0
+  js:
+    js/map_config.js: {}
+

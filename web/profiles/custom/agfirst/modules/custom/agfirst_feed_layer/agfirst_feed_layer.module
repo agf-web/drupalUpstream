@@ -7,6 +7,10 @@
 
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\NodeInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\node\NodeViewBuilder;
+use Drupal\node\Entity\Node;
 
 /**
  * Implements hook_help().
@@ -24,7 +28,6 @@ function agfirst_feed_layer_help($route_name, RouteMatchInterface $route_match) 
   }
 }
 
-
 /**
  * Implements hook_field_widget_WIDGET_TYPE_form_alter().
  */
@@ -35,7 +38,25 @@ function agfirst_feed_layer_field_widget_form_alter(&$element, FormStateInterfac
 
   $type_selector = ':input[name="field_layers[' . $context['delta'] . '][subform][field_feed_type]"]';
 
+  // Remove extra content types from the list of referenced types.
+  $element['subform']['field_content_type']['widget']['#options'] = [
+    'article' => t('Articles'),
+    'event' => t('Events'),
+  ];
+
+  // Set the form states for the various fields.
   $element['subform']['field_content_type']['#states'] = [
+    'required' => [
+      $type_selector => ['value' => 'auto'],
+    ],
+    'enabled' => [
+      $type_selector => ['value' => 'auto'],
+    ],
+    'visible' => [
+      $type_selector => ['value' => 'auto'],
+    ],
+  ];
+  $element['subform']['field_filter_term']['#states'] = [
     'required' => [
       $type_selector => ['value' => 'auto'],
     ],
@@ -59,4 +80,75 @@ function agfirst_feed_layer_field_widget_form_alter(&$element, FormStateInterfac
     ],
   ];
 
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function agfirst_feed_layer_preprocess_paragraph(array &$variables) {
+
+  $paragraph = $variables['paragraph'];
+  $type = $paragraph->getType();
+  if ($type != 'feed') {
+    return;
+  }
+
+  $mode = $paragraph->field_feed_type->value;
+  $content_type = $paragraph->field_content_type->target_id;
+
+  if ($mode != 'auto' || empty($content_type)) {
+    $sample = $variables['content']['field_curated_content']["0"];
+    return;
+  }
+
+  // We assume three values, but that really should be checked and based on the
+  // field definition.
+  $query = \Drupal::entityQuery('node');
+  $query->condition('type', $content_type)
+    ->condition('status', NodeInterface::PUBLISHED)
+    ->sort('created', 'DESC')
+    ->range(0, 3);
+
+  // If a term is set, try to filter for it too.
+  if (!empty($paragraph->field_filter_term->target_id)) {
+    switch ($content_type) {
+      case 'article':
+        $query->condition('field_tags', $paragraph->field_filter_term->target_id);
+        break;
+
+      case 'event':
+        $query->condition('field_event_type', $paragraph->field_filter_term->target_id);
+        break;
+    }
+  }
+
+  $results = $query->execute();
+
+  if (empty($results)) {
+    return;
+  }
+
+  $field_wrapper = [
+    '#cache' => [
+      'tags' => ['node:list'],
+      'max-age' => '60',
+    ],
+    '#weight' => 0,
+    '#theme' => 'field',
+    '#title' => '',
+    '#label_display' => 'hidden',
+    "#view_mode" => "default",
+    "#language" => "en",
+    "#field_name" => "field_curated_content",
+    "#field_type" => "entity_reference",
+    "#field_translatable" => FALSE,
+    "#entity_type" => "paragraph",
+    "#bundle" => "feed",
+    '#object' => $paragraph,
+    "#is_multiple" => TRUE,
+  ];
+  $nodes = entity_load_multiple('node', $results);
+  $render_arrays = entity_view_multiple($nodes, 'feed_teaser');
+
+  $variables['content']['field_curated_content'] = array_merge($field_wrapper, $render_arrays);
 }

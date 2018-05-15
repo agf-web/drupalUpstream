@@ -1,0 +1,22 @@
+<form>
+    <div class="form-group">
+        <label for="loanAmount">{{"Loan Amount" | t}}</label>
+        <input type="text" id="loanAmount" class="form-control user-input" value="50000">
+    </div>
+    <div class="form-group">
+        <label for="interestRate">{{"Interest Rate" | t}}</label>
+        <input type="text" id="interestRate" class="form-control user-input" value="4.5">
+    </div>
+    <div class="form-group">
+        <label for="years">{{"Years" | t}}</label>
+        <input type="text" id="years" class="form-control user-input" value="30">
+    </div>
+    <div class="form-group">
+        <label for="paymentsPerYear">{{"Payments per year" | t}}</label>
+        <input type="text" id="paymentsPerYear" class="form-control user-input" value="12">
+    </div>
+    <div class="form-group">
+        <div class="calcResult">{{"Your payment amount is" | t}} <span id="paymentAmount"></span></div>
+    </div>
+
+</form>

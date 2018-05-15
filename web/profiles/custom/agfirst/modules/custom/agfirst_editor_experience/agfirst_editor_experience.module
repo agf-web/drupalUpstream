@@ -28,31 +28,68 @@ function agfirst_editor_experience_help($route_name, RouteMatchInterface $route_
  * Implements hook_form_BASE_FORM_ID_alter().
  */
 function agfirst_editor_experience_form_node_form_alter(&$form, FormStateInterface &$form_state, $form_id) {
-  // Since sites may define their own forms, list supported forms explicity.
+  // Since sites may define their own forms, list supported forms explicitly.
   $supported_node_forms = [
-    'node_article_form',
-    'node_page_form',
-    'node_event_form',
-    'node_landing_page_form',
-    'node_location_form',
-    'node_marketing_page_form',
-    'node_person_detail_form',
+    'node_article_form' => 'agfirst_editor_experience_node_article_form',
+    'node_article_edit_form' => 'agfirst_editor_experience_node_article_form',
+    'node_page_form' => '',
+    'node_page_edit_form' => '',
+    'node_event_form' => '',
+    'node_event_edit_form' => '',
+    'node_landing_page_form' => 'agfirst_editor_experience_node_landing_page_form',
+    'node_landing_page_edit_form' => 'agfirst_editor_experience_node_landing_page_form',
+    'node_location_form' => '',
+    'node_location_edit_form' => '',
+    'node_marketing_page_form' => '',
+    'node_marketing_page_edit_form' => '',
+    'node_person_detail_form' => 'agfirst_editor_experience_node_person_detail_form',
+    'node_person_detail_edit_form' => 'agfirst_editor_experience_node_person_detail_form',
   ];
 
-  if (!in_array($form_id, $supported_node_forms)) {
+  if (!array_key_exists($form_id, $supported_node_forms)) {
     return;
   }
 
   // Handle site wide functions like attaching shared libraries.
   $form['#attached']['library'][] = 'agfirst_editor_experience/admin_editor_tweaks';
 
-  // Create more targetted functions for each content type.
-  $function = 'agfirst_editor_experience_' . $form_id;
-
+  $function = $supported_node_forms[$form_id];
   if (function_exists($function)) {
     $function($form, $form_state);
   }
 
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ *
+ * Targets the landing page forms.
+ */
+function agfirst_editor_experience_node_landing_page_form(&$form, FormStateInterface $form_state) {
+  // MMA Style switch.
+  $form['body']['#states'] = [
+    'required' => [
+      ':input[name="field_mma_style"]' => ['value' => 'tall'],
+    ],
+    'enabled' => [
+      ':input[name="field_mma_style"]' => ['value' => 'tall'],
+    ],
+    'visible' => [
+      ':input[name="field_mma_style"]' => ['value' => 'tall'],
+    ],
+  ];
+
+  $form['field_mma_link']['#states'] = [
+    'required' => [
+      ':input[name="field_mma_style"]' => ['value' => 'tall'],
+    ],
+    'enabled' => [
+      ':input[name="field_mma_style"]' => ['value' => 'tall'],
+    ],
+    'visible' => [
+      ':input[name="field_mma_style"]' => ['value' => 'tall'],
+    ],
+  ];
 }
 
 /**
@@ -63,7 +100,6 @@ function agfirst_editor_experience_form_node_form_alter(&$form, FormStateInterfa
 function agfirst_editor_experience_node_person_detail_form(&$form, FormStateInterface $form_state) {
   // Person detail library provides name field handling.
   $form['#attached']['library'][] = 'agfirst_editor_experience/admin_editor_person_tweaks';
-
 }
 
 /**
@@ -74,6 +110,17 @@ function agfirst_editor_experience_node_person_detail_form(&$form, FormStateInte
 function agfirst_editor_experience_node_article_form(&$form, FormStateInterface &$form_state) {
   // Media type switch.
   $form['field_image']['#states'] = [
+    'required' => [
+      ':input[name="field_media_type"]' => ['value' => 'image'],
+    ],
+    'enabled' => [
+      ':input[name="field_media_type"]' => ['value' => 'image'],
+    ],
+    'visible' => [
+      ':input[name="field_media_type"]' => ['value' => 'image'],
+    ],
+  ];
+  $form['field_image_caption']['#states'] = [
     'required' => [
       ':input[name="field_media_type"]' => ['value' => 'image'],
     ],
@@ -107,7 +154,7 @@ function agfirst_editor_experience_field_widget_form_alter(&$element, FormStateI
   // Media type switch.
   if (!empty($element['subform']['field_media_type'])) {
 
-    $type_selector = ':input[name="field_layers[' . $context['delta'] . '][subform][field_media_type]"]';
+    $type_selector = _agfirst_admin_experience_calculate_selector($element, 'field_media_type');
 
     $element['subform']['field_image']['#states'] = [
       'required' => [
@@ -155,5 +202,185 @@ function agfirst_editor_experience_field_widget_form_alter(&$element, FormStateI
     ];
 
   }
+}
+
+/**
+ * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ *
+ * Paragraphs doesn't currently put the bundle in the element or context so we
+ * have to work it out from the fields that we're looking over.
+ * See Also: https://www.drupal.org/project/paragraphs/issues/2868155.
+ *
+ * Paragraphs also have two widget types that generate the same form.
+ * See Also: sonoco_admin_experience_field_widget_paragraphs_form_alter().
+ * See Also: _sonoco_admin_experience_route_paragraph_alter.
+ */
+function agfirst_editor_experience_field_widget_entity_reference_paragraphs_form_alter(&$element, FormStateInterface $form_state, $context) {
+  _agfirst_editor_experience_route_paragraph_alter($element, $form_state, $context);
+}
+
+/**
+ * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ *
+ * Paragraphs has two widget types that generate the same form.
+ * See Also: agfirst_admin_experience_field_widget_paragraphs_form_alter().
+ * See Also: agfirst_admin_experience_field_widget_entity_reference_paragraphs_form_alter().
+ * See Also: https://www.drupal.org/project/paragraphs/issues/2868155.
+ */
+function agfirst_editor_experience_field_widget_paragraphs_form_alter(&$element, FormStateInterface $form_state, $context) {
+  _agfirst_editor_experience_route_paragraph_alter($element, $form_state, $context);
+}
+
+/**
+ * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ *
+ * Paragraphs doesn't currently put the bundle in the element or context by
+ * default. We have submitted a patch for that used here.
+ * See Also: https://www.drupal.org/project/paragraphs/issues/2868155.
+ */
+function _agfirst_editor_experience_route_paragraph_alter(&$element, FormStateInterface $form_state, $context) {
+
+  $paragraph_alters = [
+    'embedded_form' => [],
+    'event_contact' => [],
+    'labeled_phone_number' => [],
+    'quotation' => [],
+    'split_content' => ['_agfirst_admin_experience_split_content'],
+    'spotlight' => ['_agfirst_admin_experience_spotlight'],
+    'spotlight_grid' => [],
+  ];
+
+  if (array_key_exists($element['#paragraph_type'], $paragraph_alters)) {
+    foreach ($paragraph_alters[$element['#paragraph_type']] as $function) {
+      if (function_exists($function)) {
+        $function($element, $form_state, $context);
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ */
+function _agfirst_admin_experience_spotlight(&$element, FormStateInterface $form_state, $context) {
+  // Handle grid context.
+  if ($context['items']->getName() == 'field_spotlights') {
+    // Disable side controls.
+    $element['subform']['field_media_side']['#access'] = FALSE;
+
+    // Disable media options.
+    $element['subform']['field_video']['#access'] = FALSE;
+    $element['subform']['field_media_type']['#access'] = FALSE;
+
+  }
+
+}
+
+/**
+ * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ */
+function _agfirst_admin_experience_split_content(&$element, FormStateInterface $form_state, $context) {
+  if (empty($element['subform']['field_image_mode'])) {
+    return;
+  }
+
+  $mode_selector = _agfirst_admin_experience_calculate_selector($element, 'field_image_mode');
+
+  // Icon Field States.
+  $element['subform']['field_left_icon']['#states'] = [
+    'required' => [
+      $mode_selector => ['value' => 'icon'],
+    ],
+    'visible' => [
+      $mode_selector => ['value' => 'icon'],
+    ],
+    'disabled' => [
+      $mode_selector => ['value' => 'image'],
+    ],
+  ];
+
+  $element['subform']['field_right_icon']['#states'] = [
+    'required' => [
+      $mode_selector => ['value' => 'icon'],
+    ],
+    'visible' => [
+      $mode_selector => ['value' => 'icon'],
+    ],
+    'disabled' => [
+      $mode_selector => ['value' => 'image'],
+    ],
+  ];
+
+  $element['subform']['field_center_icon']['#states'] = [
+    'required' => [
+      $mode_selector => ['value' => 'icon'],
+    ],
+    'visible' => [
+      $mode_selector => ['value' => 'icon'],
+    ],
+    'disabled' => [
+      $mode_selector => ['value' => 'image'],
+    ],
+  ];
+
+  // Image field states.
+  $element['subform']['field_left_image']['#states'] = [
+    'required' => [
+      $mode_selector => ['value' => 'image'],
+    ],
+    'visible' => [
+      $mode_selector => ['value' => 'image'],
+    ],
+    'disabled' => [
+      $mode_selector => ['value' => 'icon'],
+    ],
+  ];
+
+  $element['subform']['field_right_image']['#states'] = [
+    'required' => [
+      $mode_selector => ['value' => 'image'],
+    ],
+    'visible' => [
+      $mode_selector => ['value' => 'image'],
+    ],
+    'disabled' => [
+      $mode_selector => ['value' => 'icon'],
+    ],
+  ];
+
+  $element['subform']['field_center_image']['#states'] = [
+    'required' => [
+      $mode_selector => ['value' => 'image'],
+    ],
+    'visible' => [
+      $mode_selector => ['value' => 'image'],
+    ],
+    'disabled' => [
+      $mode_selector => ['value' => 'icon'],
+    ],
+  ];
+
+}
+
+/**
+ * Helper function to calculate selector names within a paragraph for states.
+ *
+ * @param array $element
+ *   The form element array from form widget alter.
+ * @param string $target_field
+ *   The name of the field we need to target with a selector.
+ *
+ * @returns string
+ */
+function _agfirst_admin_experience_calculate_selector(array $element, $target_field) {
+
+  // Calculate the correct state selector.
+  $field_name = $element['subform']['#parents'][0];
+  for ($i = 1; $i < count($element['subform']['#parents']); $i++) {
+    $field_name .= '[' . $element['subform']['#parents'][$i] . ']';
+  }
+  $selector = ':input[name="' . $field_name . '[' . $target_field . ']"]';
+
+  return $selector;
 
 }
