@@ -1,0 +1,11 @@
+langcode: en
+status: true
+dependencies: {  }
+label: 'Large Square Crop'
+id: large_square_crop
+description: 'Used for Article and Event Images'
+aspect_ratio: '660:660'
+soft_limit_width: 660
+soft_limit_height: 660
+hard_limit_width: null
+hard_limit_height: null

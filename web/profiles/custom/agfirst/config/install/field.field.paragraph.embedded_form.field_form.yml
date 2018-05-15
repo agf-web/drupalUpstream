@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_form
+    - paragraphs.paragraphs_type.embedded_form
+  module:
+    - agfirst_embedded_forms
+id: paragraph.embedded_form.field_form
+field_name: field_form
+entity_type: paragraph
+bundle: embedded_form
+label: 'Inline Form'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: embedded_form_field

@@ -1,0 +1,30 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_filter_term
+    - paragraphs.paragraphs_type.feed
+    - taxonomy.vocabulary.event_type
+    - taxonomy.vocabulary.tags
+id: paragraph.feed.field_filter_term
+field_name: field_filter_term
+entity_type: paragraph
+bundle: feed
+label: 'Filter Term'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      event_type: event_type
+      tags: tags
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: event_type
+field_type: entity_reference

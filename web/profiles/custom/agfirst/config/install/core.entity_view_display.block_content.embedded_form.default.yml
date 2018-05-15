@@ -1,0 +1,30 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.embedded_form
+    - field.field.block_content.embedded_form.body
+    - field.field.block_content.embedded_form.field_form
+  module:
+    - agfirst_embedded_forms
+    - text
+id: block_content.embedded_form.default
+targetEntityType: block_content
+bundle: embedded_form
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_form:
+    weight: 1
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: universal_form_formatter
+    region: content
+hidden: {  }

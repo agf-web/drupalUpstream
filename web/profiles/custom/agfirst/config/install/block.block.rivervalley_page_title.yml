@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - cyberwoven_blocks
+  theme:
+    - rivervalley
+id: rivervalley_page_title
+theme: rivervalley
+region: content_top
+weight: -15
+provider: null
+plugin: page_title_block
+settings:
+  id: page_title_block
+  label: 'Page title'
+  provider: core
+  label_display: '0'
+visibility:
+  cyberwoven_node_type:
+    id: cyberwoven_node_type
+    bundles:
+      listing_page: listing_page
+      marketing_page: marketing_page
+      page: page
+      person_detail: person_detail
+    negate: false
+    all_others: 1
+    context_mapping: {  }

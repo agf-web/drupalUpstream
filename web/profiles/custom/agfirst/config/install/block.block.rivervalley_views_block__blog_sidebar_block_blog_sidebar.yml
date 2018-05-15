@@ -1,0 +1,32 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.blog_sidebar
+  module:
+    - ctools
+    - views
+  theme:
+    - rivervalley
+id: rivervalley_views_block__blog_sidebar_block_blog_sidebar
+theme: rivervalley
+region: sidebar_right_mobile_bottom
+weight: -13
+provider: null
+plugin: 'views_block:blog_sidebar-block_blog_sidebar'
+settings:
+  id: 'views_block:blog_sidebar-block_blog_sidebar'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+  items_per_page: none
+  context_mapping: {  }
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      article: article
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

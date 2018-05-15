@@ -5,6 +5,8 @@ dependencies:
     - field.field.paragraph.feed.field_content_type
     - field.field.paragraph.feed.field_curated_content
     - field.field.paragraph.feed.field_feed_type
+    - field.field.paragraph.feed.field_filter_term
+    - field.field.paragraph.feed.field_title
     - paragraphs.paragraphs_type.feed
 id: paragraph.feed.default
 targetEntityType: paragraph
@@ -12,13 +14,13 @@ bundle: feed
 mode: default
 content:
   field_content_type:
-    weight: 1
+    weight: 2
     settings: {  }
     third_party_settings: {  }
     type: options_select
     region: content
   field_curated_content:
-    weight: 2
+    weight: 4
     settings:
       match_operator: CONTAINS
       size: 60
@@ -27,10 +29,24 @@ content:
     type: entity_reference_autocomplete
     region: content
   field_feed_type:
-    weight: 0
+    weight: 1
     settings: {  }
     third_party_settings: {  }
     type: options_select
+    region: content
+  field_filter_term:
+    weight: 3
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
+    region: content
+  field_title:
+    weight
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
     region: content
 hidden:
   created: true

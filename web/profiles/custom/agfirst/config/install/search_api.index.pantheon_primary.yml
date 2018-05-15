@@ -1,0 +1,188 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - field.storage.paragraph.field_center_headline
+    - field.storage.paragraph.field_left_message
+    - field.storage.paragraph.field_right_message
+    - search_api.server.pantheon
+  module:
+    - search_api
+    - node
+    - paragraphs
+id: pantheon_primary
+name: 'Pantheon Primary'
+description: ''
+read_only: false
+field_settings:
+  rendered_item:
+    label: 'Rendered HTML output'
+    property_path: rendered_item
+    type: text
+    boost: !!float 3
+    configuration:
+      roles:
+        anonymous: anonymous
+      view_mode:
+        'entity:node':
+          article: default
+          event: default
+          landing_page: default
+          listing_page: default
+          location: default
+          marketing_page: default
+          page: default
+          person_detail: default
+        'entity:paragraph':
+          feed: default
+          quotation: default
+          split_content: default
+          spotlight: default
+  node_grants:
+    label: 'Node access information'
+    property_path: search_api_node_grants
+    type: string
+    indexed_locked: true
+    type_locked: true
+    hidden: true
+  url:
+    label: URI
+    property_path: search_api_url
+    type: string
+  body:
+    label: Body
+    datasource_id: 'entity:node'
+    property_path: body
+    type: text
+    boost: !!float 2
+    dependencies:
+      config:
+        - field.storage.node.body
+  promote:
+    label: 'Promoted to front page'
+    datasource_id: 'entity:node'
+    property_path: promote
+    type: boolean
+  status:
+    label: status
+    datasource_id: 'entity:node'
+    property_path: status
+    type: boolean
+    indexed_locked: true
+    type_locked: true
+  uid:
+    label: uid
+    datasource_id: 'entity:node'
+    property_path: uid
+    type: integer
+    indexed_locked: true
+    type_locked: true
+  type:
+    label: 'Content type'
+    datasource_id: 'entity:node'
+    property_path: type
+    type: string
+  field_center_headline:
+    label: 'Center Headline'
+    datasource_id: 'entity:paragraph'
+    property_path: field_center_headline
+    type: string
+    dependencies:
+      config:
+        - field.storage.paragraph.field_center_headline
+  field_left_message:
+    label: 'Left Message'
+    datasource_id: 'entity:paragraph'
+    property_path: field_left_message
+    type: text
+    dependencies:
+      config:
+        - field.storage.paragraph.field_left_message
+  field_right_message:
+    label: 'Right Message'
+    datasource_id: 'entity:paragraph'
+    property_path: field_right_message
+    type: text
+    dependencies:
+      config:
+        - field.storage.paragraph.field_right_message
+datasource_settings:
+  'entity:node':
+    bundles:
+      default: true
+      selected: {  }
+    languages:
+      default: true
+      selected: {  }
+  'entity:paragraph':
+    bundles:
+      default: false
+      selected:
+        - feed
+        - quotation
+        - split_content
+        - spotlight
+    languages:
+      default: true
+      selected: {  }
+processor_settings:
+  html_filter:
+    all_fields: true
+    fields:
+      - rendered_item
+      - url
+      - body
+      - type
+      - field_center_headline
+      - field_left_message
+      - field_right_message
+    title: true
+    alt: true
+    tags:
+      h1: 5
+      h2: 3
+      h3: 2
+      strong: 2
+      b: 2
+      em: 1
+      u: 1
+    weights:
+      preprocess_index: -15
+      preprocess_query: -15
+  type_boost:
+    boosts:
+      'entity:node':
+        datasource_boost: !!float 1
+        bundle_boosts:
+          article: !!float 2
+          event: !!float 1
+          landing_page: !!float 8
+          listing_page: !!float 8
+          location: 0.8
+          marketing_page: !!float 5
+          page: !!float 1
+          person_detail: 0.3
+      'entity:paragraph':
+        datasource_boost: 0.5
+        bundle_boosts:
+          feed: !!float 0
+          quotation: !!float 1
+          split_content: !!float 0
+          spotlight: !!float 1
+    weights:
+      preprocess_index: 0
+  add_url: {  }
+  content_access:
+    weights:
+      preprocess_query: -30
+  entity_status: {  }
+  aggregated_field: {  }
+  rendered_item: {  }
+tracker_settings:
+  default:
+    indexing_order: fifo
+options:
+  index_directly: true
+  cron_limit: 50
+server: pantheon

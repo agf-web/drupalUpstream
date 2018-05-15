@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_center_message
+    - paragraphs.paragraphs_type.split_content
+id: paragraph.split_content.field_center_message
+field_name: field_center_message
+entity_type: paragraph
+bundle: split_content
+label: 'Center Message'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

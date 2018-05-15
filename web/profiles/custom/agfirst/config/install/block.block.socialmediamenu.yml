@@ -23,4 +23,5 @@ settings:
   expand: 0
   parent: 'social-media-menu:'
   suggestion: social_media_menu
+  label_type: block
 visibility: {  }

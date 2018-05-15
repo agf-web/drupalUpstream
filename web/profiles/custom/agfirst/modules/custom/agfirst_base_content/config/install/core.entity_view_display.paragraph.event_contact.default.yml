@@ -6,6 +6,8 @@ dependencies:
     - field.field.paragraph.event_contact.field_contact_name
     - field.field.paragraph.event_contact.field_contact_phone_number
     - paragraphs.paragraphs_type.event_contact
+  module:
+    - telephone
 id: paragraph.event_contact.default
 targetEntityType: paragraph
 bundle: event_contact
@@ -13,24 +15,25 @@ mode: default
 content:
   field_contact_email:
     weight: 1
-    label: above
+    label: hidden
     settings: {  }
     third_party_settings: {  }
-    type: basic_string
+    type: email_mailto
     region: content
   field_contact_name:
-    weight: 0
-    label: above
+    weight
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
     type: string
     region: content
   field_contact_phone_number:
-    weight: 2
-    label: above
-    settings: {  }
+    weight: 3
+    label: hidden
+    settings:
+      title: ''
     third_party_settings: {  }
-    type: basic_string
+    type: telephone_link
     region: content
 hidden: {  }

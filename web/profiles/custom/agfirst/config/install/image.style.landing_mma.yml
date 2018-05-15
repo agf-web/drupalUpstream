@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - crop.type.landing_mma_crop
+  module:
+    - crop
+name: landing_mma
+label: 'Landing MMA'
+effects:
+  75b116cd-9bc2-4874-b778-aa7553e7a986:
+    uuid: 75b116cd-9bc2-4874-b778-aa7553e7a986
+    id: crop_crop
+    weight: 1
+    data:
+      crop_type: landing_mma_crop
+  bbf5d4e0-5251-44ee-8841-d06e1bfac4fb:
+    uuid: bbf5d4e0-5251-44ee-8841-d06e1bfac4fb
+    id: image_scale_and_crop
+    weight: 2
+    data:
+      width: 1400
+      height: 640

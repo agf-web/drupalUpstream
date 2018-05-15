@@ -4,24 +4,25 @@ description: 'Provides the base content types for AgFirst sites.'
 package: "AgFirst"
 core: '8.x'
 dependencies:
-  - entity_reference_revisions
-  - node
-  - menu_ui
-  - text
-  - path
-  - user
-  - image
-  - link
-  - paragraphs
-  - file
-  - telephone
-  - datetime
-  - options
-  - video_embed_field
-  - datetime_range
   - address
-  - taxonomy
-  - field_group
-  - imce
-  - metatag
   - agfirst_embedded_forms
+  - datetime
+  - datetime_range
+  - entity_reference_revisions
+  - field_group
+  - file
+  - image
+  - imce
+  - link
+  - menu_ui
+  - metatag
+  - node
+  - options
+  - paragraphs
+  - path
+  - pathauto
+  - taxonomy
+  - telephone
+  - text
+  - user
+  - video_embed_field

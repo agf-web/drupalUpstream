@@ -1,0 +1,32 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.location_sidebar
+  module:
+    - ctools
+    - views
+  theme:
+    - agfirst_base
+id: views_block__location_sidebar_block_location_sidebar
+theme: agfirst_base
+region: sidebar_right_mobile_top
+weight: 0
+provider: null
+plugin: 'views_block:location_sidebar-block_location_sidebar'
+settings:
+  id: 'views_block:location_sidebar-block_location_sidebar'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+  items_per_page: none
+  context_mapping: {  }
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      location: location
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

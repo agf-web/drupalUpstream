@@ -1,0 +1,61 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_layers
+    - node.type.listing_page
+    - paragraphs.paragraphs_type.embedded_form
+    - paragraphs.paragraphs_type.feed
+    - paragraphs.paragraphs_type.quotation
+    - paragraphs.paragraphs_type.split_content
+    - paragraphs.paragraphs_type.spotlight
+    - paragraphs.paragraphs_type.spotlight_grid
+  module:
+    - entity_reference_revisions
+id: node.listing_page.field_layers
+field_name: field_layers
+entity_type: node
+bundle: listing_page
+label: Layer
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate
+    target_bundles:
+      embedded_form: embedded_form
+      feed: feed
+      quotation: quotation
+      split_content: split_content
+      spotlight: spotlight
+      spotlight_grid: spotlight_grid
+    target_bundles_drag_drop:
+      embedded_form:
+        enabled: true
+        weight: 9
+      event_contact:
+        weight: 10
+        enabled: false
+      feed:
+        enabled: true
+        weight: 11
+      labeled_phone_number:
+        weight: 12
+        enabled: false
+      quotation:
+        enabled: true
+        weight: 13
+      split_content:
+        enabled: true
+        weight: 14
+      spotlight:
+        enabled: true
+        weight: 15
+      spotlight_grid:
+        enabled: true
+        weight: 16
+field_type: entity_reference_revisions

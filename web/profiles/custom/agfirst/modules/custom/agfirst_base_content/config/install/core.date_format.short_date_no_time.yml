@@ -1,0 +1,7 @@
+langcode: en
+status: true
+dependencies: {  }
+id: short_date_no_time
+label: 'Short Date No Time'
+locked: false
+pattern: m/d/Y

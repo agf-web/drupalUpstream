@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_media_side
+    - paragraphs.paragraphs_type.quotation
+  module:
+    - options
+id: paragraph.quotation.field_media_side
+field_name: field_media_side
+entity_type: paragraph
+bundle: quotation
+label: 'Image Side'
+description: ''
+required: true
+translatable: true
+default_value:
+  -
+    value: left
+default_value_callback: ''
+settings: {  }
+field_type: list_string

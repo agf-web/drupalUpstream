@@ -1,0 +1,32 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.location_people
+  module:
+    - node
+    - views
+  theme:
+    - rivervalley
+id: rivervalley_views_block__location_people_block_location_people
+theme: rivervalley
+region: content_bottom
+weight: -13
+provider: null
+plugin: 'views_block:location_people-block_location_people'
+settings:
+  id: 'views_block:location_people-block_location_people'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+  context_mapping: {  }
+visibility:
+  node_type:
+    id: node_type
+    bundles:
+      location: location
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

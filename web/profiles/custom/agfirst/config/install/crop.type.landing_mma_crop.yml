@@ -1,0 +1,11 @@
+langcode: en
+status: true
+dependencies: {  }
+label: 'Landing MMA Crop'
+id: landing_mma_crop
+description: ''
+aspect_ratio: '1400:640'
+soft_limit_width: 1400
+soft_limit_height: 640
+hard_limit_width: null
+hard_limit_height: null

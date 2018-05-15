@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - agfirst_calculators
+    - system
+  theme:
+    - agfirst_base
+id: loancalculator
+theme: agfirst_base
+region: content
+weight: -9
+provider: null
+plugin: loan_calculator
+settings:
+  id: loan_calculator
+  label: 'Loan Payment Calculator'
+  provider: agfirst_calculators
+  label_display: visible
+visibility:
+  request_path:
+    id: request_path
+    pages: /loan-calculator
+    negate: false
+    context_mapping: {  }

@@ -14,8 +14,6 @@ dependencies:
     - field.field.node.person_detail.field_phone
     - node.type.person_detail
   module:
-    - image
-    - metatag
     - text
     - user
 id: node.person_detail.default
@@ -26,81 +24,18 @@ content:
   body:
     label: hidden
     type: text_default
-    weight: 101
+    weight
     settings: {  }
     third_party_settings: {  }
     region: content
-  field_categories:
-    weight: 109
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    type: entity_reference_label
-    region: content
-  field_email:
-    weight: 108
-    label: above
-    settings: {  }
-    third_party_settings: {  }
-    type: basic_string
-    region: content
-  field_first_name:
-    weight: 102
-    label: above
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
-    region: content
-  field_image:
-    weight: 105
-    label: above
-    settings:
-      image_style: ''
-      image_link: ''
-    third_party_settings: {  }
-    type: image
-    region: content
-  field_job_title:
-    weight: 104
-    label: above
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
-    region: content
-  field_last_name:
-    weight: 103
-    label: above
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
-    region: content
-  field_metatag:
-    weight: 110
-    label: above
-    settings: {  }
-    third_party_settings: {  }
-    type: metatag_empty_formatter
-    region: content
-  field_nmls:
-    weight: 106
-    label: above
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
-    region: content
-  field_phone:
-    weight: 107
-    label: above
-    settings: {  }
-    third_party_settings: {  }
-    type: basic_string
-    region: content
-  links:
-    weight: 100
-    region: content
-hidden: {  }
+hidden:
+  field_categories: true
+  field_email: true
+  field_first_name: true
+  field_image: true
+  field_job_title: true
+  field_last_name: true
+  field_metatag: true
+  field_nmls: true
+  field_phone: true
+  links: true

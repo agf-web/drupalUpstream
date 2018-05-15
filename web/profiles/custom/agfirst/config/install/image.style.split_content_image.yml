@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - crop.type.split_content_image_crop
+  module:
+    - crop
+name: split_content_image
+label: 'Split Content Image'
+effects:
+  cb747836-ef8b-4fcf-b403-af98c9f13f4e:
+    uuid: cb747836-ef8b-4fcf-b403-af98c9f13f4e
+    id: crop_crop
+    weight: 1
+    data:
+      crop_type: split_content_image_crop
+  5e6a4d07-9434-40a2-8dc6-300227ef74a1:
+    uuid: 5e6a4d07-9434-40a2-8dc6-300227ef74a1
+    id: image_scale_and_crop
+    weight: 2
+    data:
+      width: 700
+      height: 350

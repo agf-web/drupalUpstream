@@ -10,9 +10,6 @@ dependencies:
     - field.field.node.location.field_phone_numbers
     - node.type.location
   module:
-    - address
-    - entity_reference_revisions
-    - metatag
     - text
     - user
 id: node.location.default
@@ -23,52 +20,14 @@ content:
   body:
     label: hidden
     type: text_default
-    weight: 101
+    weight
     settings: {  }
     third_party_settings: {  }
     region: content
-  field_counties_served:
-    weight: 105
-    label: above
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
-    region: content
-  field_location:
-    weight: 107
-    label: above
-    settings: {  }
-    third_party_settings: {  }
-    type: address_default
-    region: content
-  field_metatag:
-    weight: 108
-    label: above
-    settings: {  }
-    third_party_settings: {  }
-    type: metatag_empty_formatter
-    region: content
-  field_people:
-    weight: 106
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    type: entity_reference_label
-    region: content
-  field_phone_numbers:
-    type: entity_reference_revisions_entity_view
-    weight: 109
-    label: above
-    settings:
-      view_mode: default
-      link: ''
-    third_party_settings: {  }
-    region: content
-  links:
-    weight: 100
-    region: content
-    settings: {  }
-    third_party_settings: {  }
-hidden: {  }
+hidden:
+  field_counties_served: true
+  field_location: true
+  field_metatag: true
+  field_people: true
+  field_phone_numbers: true
+  links: true

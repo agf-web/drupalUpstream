@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.search
+  module:
+    - views
+  theme:
+    - agfirst_base
+id: search_primary
+theme: agfirst_base
+region: site_header_right
+weight: -9
+provider: null
+plugin: 'views_exposed_filter_block:search-page_search'
+settings:
+  id: 'views_exposed_filter_block:search-page_search'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+visibility: {  }

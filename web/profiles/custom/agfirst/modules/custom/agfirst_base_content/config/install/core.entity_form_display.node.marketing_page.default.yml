@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - field.field.node.marketing_page.body
+    - field.field.node.marketing_page.field_form
     - field.field.node.marketing_page.field_image
     - field.field.node.marketing_page.field_layers
     - field.field.node.marketing_page.field_metatag
@@ -10,8 +11,10 @@ dependencies:
     - image.style.thumbnail
     - node.type.marketing_page
   module:
+    - agfirst_embedded_forms
     - field_group
-    - image
+    - image_widget_crop
+    - imce
     - metatag
     - paragraphs
     - path
@@ -34,6 +37,7 @@ third_party_settings:
     group_con:
       children:
         - field_image
+        - field_form
         - body
       parent_name: group_tabs
       weight: 5
@@ -78,7 +82,7 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 3
+    weight: 4
     settings:
       rows: 9
       summary_rows: 3
@@ -87,17 +91,33 @@ content:
     region: content
   created:
     type: datetime_timestamp
-    weight: 7
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_form:
+    weight: 3
+    settings:
+      size: 30
+      placeholder: 'Paste the form ID from the provider embed code'
+    third_party_settings: {  }
+    type: universal_form_widget
+    region: content
   field_image:
     weight: 2
     settings:
-      progress_indicator: throbber
+      show_crop_area: true
+      show_default_crop: true
+      warn_multiple_usages: true
       preview_image_style: thumbnail
-    third_party_settings: {  }
-    type: image_image
+      crop_preview_image_style: crop_thumbnail
+      crop_list:
+        - landing_mma_crop
+      progress_indicator: throbber
+    third_party_settings:
+      imce:
+        enabled: true
+    type: image_widget_crop
     region: content
   field_layers:
     weight: 4
@@ -112,7 +132,7 @@ content:
     type: entity_reference_paragraphs
     region: content
   field_metatag:
-    weight: 26
+    weight: 10
     settings: {  }
     third_party_settings: {  }
     type: metatag_firehose
@@ -131,7 +151,7 @@ content:
     region: content
   path:
     type: path
-    weight: 10
+    weight: 7
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -139,26 +159,26 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 8
+    weight: 5
     region: content
     third_party_settings: {  }
   status:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 12
+    weight: 9
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 9
+    weight: 6
     region: content
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: 0
+    weight
     region: content
     settings:
       size: 60
@@ -166,7 +186,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 6
+    weight: 3
     settings:
       match_operator: CONTAINS
       size: 60
@@ -174,7 +194,7 @@ content:
     region: content
     third_party_settings: {  }
   url_redirects:
-    weight: 11
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }

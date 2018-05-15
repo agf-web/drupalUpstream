@@ -1,0 +1,7 @@
+langcode: en
+status: true
+dependencies: {  }
+id: embedded_form
+label: 'Embedded Form'
+revision: 1
+description: 'Allows for the creation of custom blocks with embedded forms.'

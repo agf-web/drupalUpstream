@@ -1,0 +1,106 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.person_detail.body
+    - field.field.node.person_detail.field_categories
+    - field.field.node.person_detail.field_email
+    - field.field.node.person_detail.field_first_name
+    - field.field.node.person_detail.field_image
+    - field.field.node.person_detail.field_job_title
+    - field.field.node.person_detail.field_last_name
+    - field.field.node.person_detail.field_metatag
+    - field.field.node.person_detail.field_nmls
+    - field.field.node.person_detail.field_phone
+    - image.style.person_listing
+    - node.type.person_detail
+  module:
+    - image
+    - smart_trim
+    - telephone
+    - user
+id: node.person_detail.teaser
+targetEntityType: node
+bundle: person_detail
+mode: teaser
+content:
+  body:
+    type: smart_trim
+    weight: 4
+    region: content
+    label: hidden
+    settings:
+      trim_length: 140
+      trim_type: chars
+      trim_suffix: ''
+      wrap_class: trimmed
+      more_text: More
+      more_class: more-link
+      summary_handler: trim
+      wrap_output: false
+      more_link: false
+      trim_options:
+        text: false
+        trim_zero: false
+    third_party_settings: {  }
+  field_email:
+    type: email_mailto
+    weight: 6
+    region: content
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+  field_first_name:
+    type: string
+    weight: 0
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  field_image:
+    type: image
+    weight: 3
+    region: content
+    label: hidden
+    settings:
+      image_style: person_listing
+      image_link: ''
+    third_party_settings: {  }
+  field_job_title:
+    type: string
+    weight: 2
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  field_last_name:
+    type: string
+    weight: 1
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  field_nmls:
+    type: string
+    weight: 7
+    region: content
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  field_phone:
+    type: telephone_link
+    weight: 5
+    region: content
+    label: above
+    settings:
+      title: ''
+    third_party_settings: {  }
+hidden:
+  field_categories: true
+  field_metatag: true
+  links: true

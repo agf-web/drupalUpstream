@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - crop.type.large_square_crop
+  module:
+    - crop
+name: spotlight_image
+label: 'Spotlight Image'
+effects:
+  63267378-c670-4a60-8f0d-9ca6bfc6d45f:
+    uuid: 63267378-c670-4a60-8f0d-9ca6bfc6d45f
+    id: crop_crop
+    weight: 1
+    data:
+      crop_type: large_square_crop
+  aeaa6773-aeae-4536-90e9-d4b7a79dece6:
+    uuid: aeaa6773-aeae-4536-90e9-d4b7a79dece6
+    id: image_scale_and_crop
+    weight: 2
+    data:
+      width: 660
+      height: 660

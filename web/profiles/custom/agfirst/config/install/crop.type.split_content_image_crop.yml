@@ -1,0 +1,11 @@
+langcode: en
+status: true
+dependencies: {  }
+label: 'Split Content Image Crop'
+id: split_content_image_crop
+description: 'Crop for Paragraph Type "Split Content" Image'
+aspect_ratio: '700:350'
+soft_limit_width: 700
+soft_limit_height: 350
+hard_limit_width: null
+hard_limit_height: null

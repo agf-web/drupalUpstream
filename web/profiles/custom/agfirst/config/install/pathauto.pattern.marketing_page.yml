@@ -1,0 +1,21 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: marketing_page
+label: 'Marketing Page'
+type: 'canonical_entities:node'
+pattern: '[node:title]'
+selection_criteria:
+  449ef552-b9ff-4a01-b17b-239e7788ac23:
+    id: node_type
+    bundles:
+      marketing_page: marketing_page
+    negate: false
+    context_mapping:
+      node: node
+    uuid: 449ef552-b9ff-4a01-b17b-239e7788ac23
+selection_logic: and
+weight: -5
+relationships: {  }

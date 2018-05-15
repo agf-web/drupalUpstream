@@ -16,5 +16,5 @@ settings:
   label: 'Copyright block'
   provider: cyberwoven_blocks
   label_display: '0'
-  copyright_holder: AgFirst
+  copyright_holder: 'River Valley AgCredit, ACA'
 visibility: {  }

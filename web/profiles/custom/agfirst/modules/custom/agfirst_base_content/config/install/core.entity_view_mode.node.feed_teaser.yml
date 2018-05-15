@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.feed_teaser
+label: 'Feed Teaser'
+targetEntityType: node
+cache: true

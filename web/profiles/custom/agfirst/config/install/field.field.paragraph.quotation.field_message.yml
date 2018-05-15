@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_message
+    - paragraphs.paragraphs_type.quotation
+id: paragraph.quotation.field_message
+field_name: field_message
+entity_type: paragraph
+bundle: quotation
+label: 'Quote Text'
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

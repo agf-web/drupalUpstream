@@ -1,0 +1,32 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.events_sidebar
+  module:
+    - ctools
+    - views
+  theme:
+    - agfirst_base
+id: views_block__events_sidebar_block_events_sidebar
+theme: agfirst_base
+region: sidebar_right_mobile_top
+weight: -13
+provider: null
+plugin: 'views_block:events_sidebar-block_events_sidebar'
+settings:
+  id: 'views_block:events_sidebar-block_events_sidebar'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+  items_per_page: none
+  context_mapping: {  }
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      event: event
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

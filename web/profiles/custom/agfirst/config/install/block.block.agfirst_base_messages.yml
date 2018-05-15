@@ -8,7 +8,7 @@ dependencies:
 id: agfirst_base_messages
 theme: agfirst_base
 region: content
-weight: -3
+weight: -15
 provider: null
 plugin: system_messages_block
 settings:

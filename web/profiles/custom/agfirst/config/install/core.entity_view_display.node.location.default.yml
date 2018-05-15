@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.location.body
+    - field.field.node.location.field_counties_served
+    - field.field.node.location.field_location
+    - field.field.node.location.field_metatag
+    - field.field.node.location.field_people
+    - field.field.node.location.field_phone_numbers
+    - node.type.location
+  module:
+    - text
+    - user
+id: node.location.default
+targetEntityType: node
+bundle: location
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden:
+  field_counties_served: true
+  field_location: true
+  field_metatag: true
+  field_people: true
+  field_phone_numbers: true
+  links: true

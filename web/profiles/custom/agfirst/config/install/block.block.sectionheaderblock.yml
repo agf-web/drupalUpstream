@@ -1,0 +1,19 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - agfirst_base_theme_support
+  theme:
+    - agfirst_base
+id: sectionheaderblock
+theme: agfirst_base
+region: content_top
+weight: -16
+provider: null
+plugin: section_header
+settings:
+  id: section_header
+  label: 'Section Header Block'
+  provider: agfirst_base_theme_support
+  label_display: '0'
+visibility: {  }

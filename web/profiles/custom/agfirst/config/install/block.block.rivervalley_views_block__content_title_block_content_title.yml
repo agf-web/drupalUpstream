@@ -1,0 +1,34 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.content_title
+  module:
+    - ctools
+    - views
+  theme:
+    - rivervalley
+id: rivervalley_views_block__content_title_block_content_title
+theme: rivervalley
+region: content_top
+weight: -14
+provider: null
+plugin: 'views_block:content_title-block_content_title'
+settings:
+  id: 'views_block:content_title-block_content_title'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+  items_per_page: none
+  context_mapping: {  }
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      article: article
+      event: event
+      location: location
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

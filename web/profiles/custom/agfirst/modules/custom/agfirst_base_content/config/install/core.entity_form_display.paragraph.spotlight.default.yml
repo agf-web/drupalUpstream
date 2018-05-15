@@ -2,20 +2,21 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.spotlight.field_background_class
     - field.field.paragraph.spotlight.field_image
     - field.field.paragraph.spotlight.field_link
     - field.field.paragraph.spotlight.field_media_side
     - field.field.paragraph.spotlight.field_media_type
     - field.field.paragraph.spotlight.field_message
-    - field.field.paragraph.spotlight.field_message_type
     - field.field.paragraph.spotlight.field_title
     - field.field.paragraph.spotlight.field_video
     - image.style.thumbnail
     - paragraphs.paragraphs_type.spotlight
   module:
     - field_group
-    - image
-    - link
+    - image_widget_crop
+    - imce
+    - link_attributes
     - video_embed_field
 third_party_settings:
   field_group:
@@ -33,6 +34,7 @@ third_party_settings:
       label: subtabs
     group_media:
       children:
+        - field_background_class
         - field_media_type
         - field_media_side
         - field_video
@@ -50,7 +52,6 @@ third_party_settings:
     group_call_out:
       children:
         - field_title
-        - field_message_type
         - field_message
         - field_link
       parent_name: group_subtabs
@@ -68,30 +69,51 @@ targetEntityType: paragraph
 bundle: spotlight
 mode: default
 content:
-  field_image:
-    weight: 8
-    settings:
-      progress_indicator: throbber
-      preview_image_style: thumbnail
+  field_background_class:
+    weight: 21
+    settings: {  }
     third_party_settings: {  }
-    type: image_image
+    type: options_select
+    region: content
+  field_image:
+    weight: 20
+    settings:
+      show_crop_area: true
+      show_default_crop: true
+      warn_multiple_usages: true
+      preview_image_style: thumbnail
+      crop_preview_image_style: crop_thumbnail
+      crop_list:
+        - large_square_crop
+      progress_indicator: throbber
+    third_party_settings:
+      imce:
+        enabled: true
+    type: image_widget_crop
     region: content
   field_link:
     weight: 3
     settings:
       placeholder_url: ''
       placeholder_title: ''
+      enabled_attributes:
+        id: false
+        name: false
+        target: true
+        rel: true
+        class: true
+        accesskey: false
     third_party_settings: {  }
-    type: link_default
+    type: link_attributes
     region: content
   field_media_side:
-    weight: 6
+    weight: 18
     settings: {  }
     third_party_settings: {  }
     type: options_select
     region: content
   field_media_type:
-    weight: 5
+    weight: 17
     settings: {  }
     third_party_settings: {  }
     type: options_select
@@ -104,14 +126,8 @@ content:
     third_party_settings: {  }
     type: string_textarea
     region: content
-  field_message_type:
-    weight: 1
-    settings: {  }
-    third_party_settings: {  }
-    type: options_select
-    region: content
   field_title:
-    weight: 0
+    weight
     settings:
       size: 60
       placeholder: ''
@@ -119,7 +135,7 @@ content:
     type: string_textfield
     region: content
   field_video:
-    weight: 7
+    weight: 19
     settings: {  }
     third_party_settings: {  }
     type: video_embed_field_textfield

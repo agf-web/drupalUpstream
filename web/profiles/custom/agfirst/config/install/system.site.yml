@@ -1,10 +1,10 @@
-name: Site-Install
-mail: admin@example.com
+name: 'River Valley Farm Credit'
+mail: admin@cyberwoven.com
 slogan: ''
 page:
   403: ''
-  404: ''
-  front: /node
+  404: /node/146
+  front: /node/80
 admin_compact_mode: false
 weight_select_max: 100
 langcode: en

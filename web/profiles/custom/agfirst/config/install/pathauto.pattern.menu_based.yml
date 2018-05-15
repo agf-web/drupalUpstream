@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: menu_based
+label: 'Menu Based'
+type: 'canonical_entities:node'
+pattern: '[node:menu-link:parents]/[node:title]'
+selection_criteria:
+  f7c273f6-4236-461a-bd76-b9d1ffebb3e0:
+    id: node_type
+    bundles:
+      landing_page: landing_page
+      listing_page: listing_page
+      page: page
+    negate: false
+    context_mapping:
+      node: node
+    uuid: f7c273f6-4236-461a-bd76-b9d1ffebb3e0
+selection_logic: and
+weight: -5
+relationships: {  }

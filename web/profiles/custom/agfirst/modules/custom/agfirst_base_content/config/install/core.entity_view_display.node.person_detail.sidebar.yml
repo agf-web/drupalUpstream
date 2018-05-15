@@ -1,0 +1,66 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.sidebar
+    - field.field.node.person_detail.body
+    - field.field.node.person_detail.field_categories
+    - field.field.node.person_detail.field_email
+    - field.field.node.person_detail.field_first_name
+    - field.field.node.person_detail.field_image
+    - field.field.node.person_detail.field_job_title
+    - field.field.node.person_detail.field_last_name
+    - field.field.node.person_detail.field_metatag
+    - field.field.node.person_detail.field_nmls
+    - field.field.node.person_detail.field_phone
+    - image.style.person_listing
+    - node.type.person_detail
+  module:
+    - image
+    - telephone
+    - user
+id: node.person_detail.sidebar
+targetEntityType: node
+bundle: person_detail
+mode: sidebar
+content:
+  field_email:
+    weight: 2
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: email_mailto
+    region: content
+  field_image:
+    weight
+    label: above
+    settings:
+      image_style: person_listing
+      image_link: ''
+    third_party_settings: {  }
+    type: image
+    region: content
+  field_nmls:
+    weight: 3
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_phone:
+    weight: 1
+    label: above
+    settings:
+      title: ''
+    third_party_settings: {  }
+    type: telephone_link
+    region: content
+hidden:
+  body: true
+  field_categories: true
+  field_first_name: true
+  field_job_title: true
+  field_last_name: true
+  field_metatag: true
+  links: true

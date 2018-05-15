@@ -11,13 +11,13 @@ field_name: field_image
 entity_type: node
 bundle: article
 label: Image
-description: ''
+description: 'Recommended minimum size is 660x660'
 required: false
 translatable: true
 default_value: {  }
 default_value_callback: ''
 settings:
-  file_directory: '[date:custom:Y]-[date:custom:m]'
+  file_directory: 'articles/[date:custom:Y]-[date:custom:m]'
   file_extensions: 'png gif jpg jpeg'
   max_filesize: ''
   max_resolution: ''

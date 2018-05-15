@@ -1,0 +1,50 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.sidebar
+    - field.field.node.location.body
+    - field.field.node.location.field_counties_served
+    - field.field.node.location.field_location
+    - field.field.node.location.field_metatag
+    - field.field.node.location.field_people
+    - field.field.node.location.field_phone_numbers
+    - node.type.location
+  module:
+    - address
+    - entity_reference_revisions
+    - user
+id: node.location.sidebar
+targetEntityType: node
+bundle: location
+mode: sidebar
+content:
+  field_counties_served:
+    type: string
+    weight: 2
+    region: content
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  field_location:
+    type: address_default
+    weight
+    region: content
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+  field_phone_numbers:
+    type: entity_reference_revisions_entity_view
+    weight: 1
+    region: content
+    label: hidden
+    settings:
+      view_mode: sidebar
+      link: ''
+    third_party_settings: {  }
+hidden:
+  body: true
+  field_metatag: true
+  field_people: true
+  links: true

@@ -1,0 +1,13 @@
+langcode: en
+status: true
+dependencies: {  }
+name: split_content_icon
+label: 'Split Content Icon'
+effects:
+  71451100-bbd3-4619-85da-56068f047e17:
+    uuid: 71451100-bbd3-4619-85da-56068f047e17
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 80
+      height: 80

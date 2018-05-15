@@ -6,13 +6,18 @@ distribution:
   name: AgFirst Core
 core: 8.x
 dependencies:
-  - agfirst_base_content
-  - agfirst_editor_experience
   - address
   - admin_toolbar
   - admin_toolbar_tools
+  - agfirst_base_content
+  - agfirst_base_theme_support
+  - agfirst_calculators
+  - agfirst_editor_experience
+  - agfirst_embedded_forms
+  - agfirst_feed_layer
   - anchor_link
   - automated_cron
+  - bg_image_formatter
   - block
   - block_content
   - breakpoint
@@ -22,8 +27,11 @@ dependencies:
   - contextual
   - crop
   - ctools
+  - cyberwoven_blocks
   - datetime
+  - datetime_range
   - dblog
+  - draggableviews
   - dynamic_page_cache
   - editor
   - editor_advanced_link
@@ -34,7 +42,8 @@ dependencies:
   - field_ui
   - file
   - filter
-  - fontyourface
+  - getfarmcredit_client
+  - google_analytics
   - help
   - history
   - image
@@ -43,25 +52,29 @@ dependencies:
   - imce
   - inline_entity_form
   - link
+  - link_attributes
   - linkit
   - masquerade
   - menu_block
+  - menu_link_attributes
   - menu_ui
   - metatag
+  - metatag_google_plus
   - metatag_open_graph
   - metatag_verification
   - module_filter
   - node
   - options
   - page_cache
-  - paragraphs
   - path
-  - pathauto
   - quickedit
   - rdf
   - redirect
   - reroute_email
-  - search
+  - search_api
+  - search_api_attachments
+  - search_api_pantheon
+  - search_api_solr
   - shortcut
   - smart_trim
   - system
@@ -75,11 +88,14 @@ dependencies:
   - video_embed_field
   - video_embed_wysiwyg
   - views_ui
-  - webform
-  - webform_ui
-  - xmlsitemap
+  - viewsreference
+  - fontyourface
   - menu_link_content
+  - pathauto
+  - xmlsitemap
+  - typekit_api
   - views
+  - paragraphs
 themes:
   - bartik
   - seven

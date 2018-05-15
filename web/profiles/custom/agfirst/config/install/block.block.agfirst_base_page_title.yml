@@ -1,12 +1,14 @@
 langcode: en
 status: true
 dependencies:
+  module:
+    - ctools
   theme:
     - agfirst_base
 id: agfirst_base_page_title
 theme: agfirst_base
-region: content
-weight: -2
+region: content_top
+weight: -15
 provider: null
 plugin: page_title_block
 settings:
@@ -14,4 +16,15 @@ settings:
   label: 'Page title'
   provider: core
   label_display: '0'
-visibility: {  }
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      article: article
+      event: event
+      landing_page: landing_page
+      location: location
+      person_detail: person_detail
+    negate: true
+    context_mapping:
+      node: '@node.node_route_context:node'

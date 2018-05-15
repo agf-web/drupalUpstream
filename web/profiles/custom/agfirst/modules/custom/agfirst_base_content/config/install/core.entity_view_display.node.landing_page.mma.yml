@@ -1,0 +1,83 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.mma
+    - field.field.node.landing_page.body
+    - field.field.node.landing_page.field_image
+    - field.field.node.landing_page.field_layers
+    - field.field.node.landing_page.field_metatag
+    - field.field.node.landing_page.field_mma_link
+    - field.field.node.landing_page.field_mma_style
+    - field.field.node.landing_page.field_mma_title
+    - image.style.landing_mma
+    - node.type.landing_page
+  module:
+    - bg_image_formatter
+    - link
+    - options
+    - text
+    - user
+id: node.landing_page.mma
+targetEntityType: node
+bundle: landing_page
+mode: mma
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 2
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_image:
+    weight: 1
+    label: hidden
+    settings:
+      image_style: landing_mma
+      css_settings:
+        bg_image_selector: .page-header
+        bg_image_z_index: auto
+        bg_image_color: '#FFFFFF'
+        bg_image_x: center
+        bg_image_y: center
+        bg_image_attachment: '0'
+        bg_image_repeat: no-repeat
+        bg_image_background_size: cover
+        bg_image_media_query: all
+        bg_image_background_size_ie8
+        bg_image_important
+    third_party_settings: {  }
+    type: bg_image_formatter
+    region: content
+  field_mma_link:
+    weight: 3
+    label: hidden
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    type: link_separate
+    region: content
+  field_mma_style:
+    type: list_key
+    weight: 4
+    region: content
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+  field_mma_title:
+    weight
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+hidden:
+  field_layers: true
+  field_metatag: true
+  links: true

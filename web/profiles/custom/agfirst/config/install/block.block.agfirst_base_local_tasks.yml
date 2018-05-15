@@ -6,7 +6,7 @@ dependencies:
 id: agfirst_base_local_tasks
 theme: agfirst_base
 region: content
-weight: -1
+weight: -14
 provider: null
 plugin: local_tasks_block
 settings:

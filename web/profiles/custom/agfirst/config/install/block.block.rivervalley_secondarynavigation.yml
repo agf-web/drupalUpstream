@@ -1,0 +1,34 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.secondary-navigation
+  module:
+    - cyberwoven_blocks
+    - menu_block
+  theme:
+    - rivervalley
+id: rivervalley_secondarynavigation
+theme: rivervalley
+region: site_header_right
+weight: -11
+provider: null
+plugin: 'menu_block:secondary-navigation'
+settings:
+  id: 'menu_block:secondary-navigation'
+  label: 'Secondary Navigation'
+  provider: menu_block
+  label_display: '0'
+  level: 1
+  depth: 1
+  expand: 0
+  parent: 'secondary-navigation:'
+  label_type: block
+  suggestion: secondary_navigation
+visibility:
+  cyberwoven_node_type:
+    id: cyberwoven_node_type
+    bundles: {  }
+    negate: false
+    all_others: 0
+    context_mapping: {  }

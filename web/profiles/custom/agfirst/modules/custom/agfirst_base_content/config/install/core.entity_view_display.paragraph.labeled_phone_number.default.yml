@@ -5,13 +5,15 @@ dependencies:
     - field.field.paragraph.labeled_phone_number.field_label
     - field.field.paragraph.labeled_phone_number.field_phone_number
     - paragraphs.paragraphs_type.labeled_phone_number
+  module:
+    - telephone
 id: paragraph.labeled_phone_number.default
 targetEntityType: paragraph
 bundle: labeled_phone_number
 mode: default
 content:
   field_label:
-    weight: 0
+    weight
     label: above
     settings:
       link_to_entity: false
@@ -19,10 +21,11 @@ content:
     type: string
     region: content
   field_phone_number:
-    weight: 1
+    weight: 2
     label: above
-    settings: {  }
+    settings:
+      title: ''
     third_party_settings: {  }
-    type: basic_string
+    type: telephone_link
     region: content
 hidden: {  }

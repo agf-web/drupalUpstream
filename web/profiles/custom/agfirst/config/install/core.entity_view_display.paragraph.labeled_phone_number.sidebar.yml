@@ -1,0 +1,32 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.paragraph.sidebar
+    - field.field.paragraph.labeled_phone_number.field_label
+    - field.field.paragraph.labeled_phone_number.field_phone_number
+    - paragraphs.paragraphs_type.labeled_phone_number
+  module:
+    - telephone
+id: paragraph.labeled_phone_number.sidebar
+targetEntityType: paragraph
+bundle: labeled_phone_number
+mode: sidebar
+content:
+  field_label:
+    type: string
+    weight: 0
+    region: content
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  field_phone_number:
+    weight: 1
+    label: hidden
+    settings:
+      title: ''
+    third_party_settings: {  }
+    type: telephone_link
+    region: content
+hidden: {  }

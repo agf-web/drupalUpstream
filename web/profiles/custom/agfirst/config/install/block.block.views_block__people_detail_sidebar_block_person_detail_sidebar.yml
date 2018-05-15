@@ -1,0 +1,32 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.people_detail_sidebar
+  module:
+    - ctools
+    - views
+  theme:
+    - agfirst_base
+id: views_block__people_detail_sidebar_block_person_detail_sidebar
+theme: agfirst_base
+region: sidebar_right_mobile_top
+weight: -12
+provider: null
+plugin: 'views_block:people_detail_sidebar-block_person_detail_sidebar'
+settings:
+  id: 'views_block:people_detail_sidebar-block_person_detail_sidebar'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+  items_per_page: none
+  context_mapping: {  }
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      person_detail: person_detail
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

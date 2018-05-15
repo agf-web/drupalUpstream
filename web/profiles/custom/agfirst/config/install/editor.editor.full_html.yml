@@ -62,7 +62,7 @@ settings:
     language:
       language_list: un
     stylescombo:
-      styles: "img.float-left|Float left\r\nimg.float-right|Float right"
+      styles: "img.float-left|Float left\r\nimg.float-right|Float right\r\na.button.green|Green Button\r\na.button.brown|Brown Button\r\na.button.green.transparent|Transparent Button"
     linkit:
       linkit_profile: cyberwoven_standard
     video_embed:
@@ -73,7 +73,7 @@ settings:
           width: '854'
           height: '480'
 image_upload:
-  status: true
+  status: false
   scheme: public
   directory: content-images
   max_size: ''

@@ -1,0 +1,7 @@
+langcode: en
+status: true
+dependencies: {  }
+id: blog_date
+label: 'Blog Date'
+locked: false
+pattern: 'F j, Y'

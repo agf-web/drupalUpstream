@@ -1,0 +1,89 @@
+diff --git a/src/Plugin/Field/FieldWidget/InlineParagraphsWidget.php b/src/Plugin/Field/FieldWidget/InlineParagraphsWidget.php
+index 681182f..2216625 100644
+--- a/src/Plugin/Field/FieldWidget/InlineParagraphsWidget.php
++++ b/src/Plugin/Field/FieldWidget/InlineParagraphsWidget.php
+@@ -359,6 +359,7 @@ class InlineParagraphsWidget extends WidgetBase {
+       $element += array(
+         '#type' => 'container',
+         '#element_validate' => array(array($this, 'elementValidate')),
++        '#paragraph_type' => $paragraphs_entity->bundle(),
+         'subform' => array(
+           '#type' => 'container',
+           '#parents' => $element_parents,
+diff --git a/src/Plugin/Field/FieldWidget/ParagraphsWidget.php b/src/Plugin/Field/FieldWidget/ParagraphsWidget.php
+index 45f33cc..34d82e4 100644
+--- a/src/Plugin/Field/FieldWidget/ParagraphsWidget.php
++++ b/src/Plugin/Field/FieldWidget/ParagraphsWidget.php
+@@ -445,6 +445,7 @@ class ParagraphsWidget extends WidgetBase {
+       $element += array(
+         '#type' => 'container',
+         '#element_validate' => array(array($this, 'elementValidate')),
++        '#paragraph_type' => $paragraphs_entity->bundle(),
+         'subform' => array(
+           '#type' => 'container',
+           '#parents' => $element_parents,
+diff --git a/src/Tests/Experimental/ParagraphsExperimentalAlterByTypeTest.php b/src/Tests/Experimental/ParagraphsExperimentalAlterByTypeTest.php
+new file mode 100644
+index 0000000..11bcce9
+--- /dev/null
++++ b/src/Tests/Experimental/ParagraphsExperimentalAlterByTypeTest.php
+@@ -0,0 +1,40 @@
++<?php
++
++namespace Drupal\paragraphs\Tests\Experimental;
++
++/**
++ * Tests paragraphs experimental alter widget by type.
++ *
++ * @group paragraphs
++ */
++class ParagraphsExperimentalAlterByTypeTest extends ParagraphsExperimentalTestBase {
++
++  /**
++   * Modules to enable.
++   *
++   * @var array
++   */
++  public static $modules = [
++    'paragraphs_test',
++  ];
++
++
++  /**
++   * Test widget alter based on paragraph type
++   */
++  public function testAlterBasedOnType() {
++    $this->addParagraphedContentType('paragraphed_test', 'field_paragraphs', 'entity_reference_paragraphs');
++
++    $this->loginAsAdmin(['create paragraphed_test content', 'edit any paragraphed_test content']);
++    // Add a Paragraph type.
++    $paragraph_type = 'altered_paragraph';
++    $this->addParagraphsType($paragraph_type);
++
++    // Add a text field to the altered_paragraph type.
++    static::fieldUIAddNewField('admin/structure/paragraphs_type/' . $paragraph_type, 'text', 'Normal title', 'text_long', [], []);
++
++    // Test the hook_field_widget_WIDGET_TYPE_form_alter hook. Which should alter the title of the text_field of our paragraph.
++    $this->drupalGet('node/add/paragraphed_test');
++    $this->assertText('Altered title');
++  }
++}
+\ No newline at end of file
+diff --git a/tests/modules/paragraphs_test/paragraphs_test.module b/tests/modules/paragraphs_test/paragraphs_test.module
+index 5cc0e0a..c5c345e 100644
+--- a/tests/modules/paragraphs_test/paragraphs_test.module
++++ b/tests/modules/paragraphs_test/paragraphs_test.module
+@@ -41,3 +41,12 @@ function paragraphs_test_paragraph_view(array &$build, ParagraphInterface $entit
+   $parent_field_name = $entity->get('parent_field_name')->value;
+   \Drupal::messenger()->addStatus("Parent: $parent_type/$parent_id/$parent_field_name", TRUE);
+ }
++
++/**
++ * Implements hook_field_widget_WIDGET_TYPE_form_alter().
++ */
++function paragraphs_test_field_widget_entity_reference_paragraphs_form_alter(&$element, &$form_state, $context) {
++  if ($element['#paragraph_type'] == 'altered_paragraph') {
++    $element['subform']['field_text']['widget'][0]['#title'] = 'Altered title';
++  }
++}
+\ No newline at end of file

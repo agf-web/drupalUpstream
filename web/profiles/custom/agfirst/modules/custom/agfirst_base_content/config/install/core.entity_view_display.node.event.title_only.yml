@@ -1,0 +1,45 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.title_only
+    - field.field.node.event.body
+    - field.field.node.event.field_contact_information
+    - field.field.node.event.field_date
+    - field.field.node.event.field_event_contacts
+    - field.field.node.event.field_event_type
+    - field.field.node.event.field_image
+    - field.field.node.event.field_layers
+    - field.field.node.event.field_location
+    - field.field.node.event.field_metatag
+    - field.field.node.event.field_registration_link
+    - node.type.event
+  module:
+    - datetime_range
+    - user
+id: node.event.title_only
+targetEntityType: node
+bundle: event
+mode: title_only
+content:
+  field_date:
+    type: daterange_default
+    weight
+    region: content
+    label: hidden
+    settings:
+      timezone_override: ''
+      format_type: blog_date
+      separator: '-'
+    third_party_settings: {  }
+hidden:
+  body: true
+  field_contact_information: true
+  field_event_contacts: true
+  field_event_type: true
+  field_image: true
+  field_layers: true
+  field_location: true
+  field_metatag: true
+  field_registration_link: true
+  links: true

@@ -13,7 +13,7 @@ bundle: labeled_phone_number
 mode: default
 content:
   field_label:
-    weight: 0
+    weight
     settings:
       size: 10
       placeholder: ''

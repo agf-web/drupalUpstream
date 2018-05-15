@@ -1,0 +1,61 @@
+definitions:
+  entity__menu__edit_form__admin:
+    weight: -49
+    menu_name: admin
+    parent: entity.menu.collection
+    enabled: true
+    expanded: false
+  entity__menu__edit_form__footer-nav-left:
+    weight: -46
+    menu_name: admin
+    parent: entity.menu.collection
+    expanded: false
+    enabled: true
+  entity__menu__edit_form__footer-nav-right:
+    weight: -45
+    menu_name: admin
+    parent: entity.menu.collection
+    expanded: false
+    enabled: true
+  entity__menu__edit_form__footer:
+    weight: -44
+    menu_name: admin
+    parent: entity.menu.collection
+    expanded: false
+    enabled: true
+  entity__menu__edit_form__main:
+    weight: -47
+    menu_name: admin
+    parent: entity.menu.collection
+    expanded: false
+    enabled: true
+  entity__menu__edit_form__secondary-navigation:
+    weight: -48
+    menu_name: admin
+    parent: entity.menu.collection
+    expanded: false
+    enabled: true
+  entity__menu__edit_form__social-media-menu:
+    weight: -43
+    menu_name: admin
+    parent: entity.menu.collection
+    expanded: false
+    enabled: true
+  entity__menu__edit_form__special-links:
+    weight: -42
+    menu_name: admin
+    parent: entity.menu.collection
+    expanded: false
+    enabled: true
+  entity__menu__edit_form__tools:
+    weight: -41
+    menu_name: admin
+    parent: entity.menu.collection
+    expanded: false
+    enabled: true
+  entity__menu__edit_form__account:
+    weight: -40
+    menu_name: admin
+    parent: entity.menu.collection
+    expanded: false
+    enabled: true

@@ -18,9 +18,9 @@ dependencies:
     - address
     - datetime_range
     - field_group
-    - image
+    - image_widget_crop
     - imce
-    - link
+    - link_attributes
     - metatag
     - paragraphs
     - path
@@ -75,8 +75,6 @@ third_party_settings:
       children:
         - field_contact_information
         - field_event_contacts
-        - field_email
-        - field_phone
       parent_name: group_tabs
       weight: 21
       format_type: tab
@@ -142,12 +140,18 @@ content:
   field_image:
     weight: 123
     settings:
+      show_crop_area: true
+      show_default_crop: true
+      warn_multiple_usages: true
       preview_image_style: thumbnail
+      crop_preview_image_style: crop_thumbnail
+      crop_list:
+        - large_square_crop
       progress_indicator: throbber
     third_party_settings:
       imce:
         enabled: true
-    type: image_image
+    type: image_widget_crop
     region: content
   field_layers:
     weight: 15
@@ -179,8 +183,15 @@ content:
     settings:
       placeholder_url: ''
       placeholder_title: ''
+      enabled_attributes:
+        id: false
+        name: false
+        target: true
+        rel: true
+        class: true
+        accesskey: false
     third_party_settings: {  }
-    type: link_default
+    type: link_attributes
     region: content
   path:
     type: path
@@ -211,7 +222,7 @@ content:
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: 0
+    weight
     region: content
     settings:
       size: 60

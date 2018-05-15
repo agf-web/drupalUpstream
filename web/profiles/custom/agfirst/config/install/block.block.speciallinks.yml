@@ -10,7 +10,7 @@ dependencies:
 id: speciallinks
 theme: agfirst_base
 region: site_header_right
-weight: 0
+weight: -10
 provider: null
 plugin: 'menu_block:special-links'
 settings:
@@ -23,4 +23,5 @@ settings:
   expand: 0
   parent: 'special-links:'
   suggestion: special_links
+  label_type: block
 visibility: {  }

@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_view_mode.node.feed_teaser
     - core.entity_view_mode.node.teaser
   module:
     - node
@@ -281,6 +282,7 @@ display:
           relationship: none
           view_mode: default
       display_extenders: {  }
+      enabled: false
     cache_metadata:
       contexts:
         - 'languages:language_interface'
@@ -300,6 +302,23 @@ display:
         options: {  }
       path: taxonomy/term/%
       display_extenders: {  }
+      style:
+        type: html_list
+        options:
+          row_class: ''
+          default_row_class: true
+          uses_fields: false
+          type: ul
+          wrapper_class: item-list
+          class: feed-list
+      defaults:
+        style: false
+        row: false
+      row:
+        type: 'entity:node'
+        options:
+          relationship: none
+          view_mode: feed_teaser
     cache_metadata:
       contexts:
         - 'languages:language_interface'

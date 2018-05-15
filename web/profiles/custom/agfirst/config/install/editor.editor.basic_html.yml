@@ -35,18 +35,30 @@ settings:
           name: 'Block Formatting'
           items:
             - Format
+            - Styles
         -
           name: Tools
           items:
             - Source
   plugins:
+    language:
+      language_list: un
     stylescombo:
-      styles: ''
+      styles: "a.button.green|Green Button\r\na.button.transparent|Transparent Button\r\na.button.outline|Outline Button"
+    linkit:
+      linkit_profile: ''
+    video_embed:
+      defaults:
+        children:
+          autoplay: true
+          responsive: true
+          width: '854'
+          height: '480'
 image_upload:
-  status: true
+  status: false
   scheme: public
   directory: inline-images
   max_size: ''
   max_dimensions:
-    width: 0
-    height: 0
+    width: null
+    height: null

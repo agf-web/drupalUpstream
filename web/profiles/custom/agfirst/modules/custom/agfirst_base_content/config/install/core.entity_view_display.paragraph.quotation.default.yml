@@ -1,0 +1,68 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.quotation.field_eyebrow
+    - field.field.paragraph.quotation.field_image
+    - field.field.paragraph.quotation.field_media_side
+    - field.field.paragraph.quotation.field_message
+    - field.field.paragraph.quotation.field_subtitle
+    - field.field.paragraph.quotation.field_title
+    - image.style.spotlight_image
+    - paragraphs.paragraphs_type.quotation
+  module:
+    - image
+    - options
+id: paragraph.quotation.default
+targetEntityType: paragraph
+bundle: quotation
+mode: default
+content:
+  field_eyebrow:
+    weight
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_image:
+    weight: 1
+    label: hidden
+    settings:
+      image_style: spotlight_image
+      image_link: ''
+    third_party_settings: {  }
+    type: image
+    region: content
+  field_media_side:
+    type: list_default
+    weight: 5
+    region: content
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+  field_message:
+    weight: 2
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: basic_string
+    region: content
+  field_subtitle:
+    weight: 4
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_title:
+    weight: 3
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+hidden: {  }

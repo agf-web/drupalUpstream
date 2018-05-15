@@ -92,7 +92,7 @@ content:
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: 0
+    weight
     region: content
     settings:
       size: 60

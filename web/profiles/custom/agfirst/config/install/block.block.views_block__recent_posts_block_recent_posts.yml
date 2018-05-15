@@ -1,0 +1,32 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.recent_posts
+  module:
+    - node
+    - views
+  theme:
+    - agfirst_base
+id: views_block__recent_posts_block_recent_posts
+theme: agfirst_base
+region: content_bottom
+weight: -11
+provider: null
+plugin: 'views_block:recent_posts-block_recent_posts'
+settings:
+  id: 'views_block:recent_posts-block_recent_posts'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+  items_per_page: none
+  context_mapping: {  }
+visibility:
+  node_type:
+    id: node_type
+    bundles:
+      article: article
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

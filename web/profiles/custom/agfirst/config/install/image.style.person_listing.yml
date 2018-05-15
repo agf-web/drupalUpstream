@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - crop.type.person_listing_crop
+  module:
+    - crop
+name: person_listing
+label: 'Person Listing'
+effects:
+  e76c9411-2a8a-4454-b77c-76514c7543a5:
+    uuid: e76c9411-2a8a-4454-b77c-76514c7543a5
+    id: crop_crop
+    weight: 1
+    data:
+      crop_type: person_listing_crop
+  f66276fa-6a86-48ef-8c9c-d5813deda514:
+    uuid: f66276fa-6a86-48ef-8c9c-d5813deda514
+    id: image_scale_and_crop
+    weight: 2
+    data:
+      width: 425
+      height: 525

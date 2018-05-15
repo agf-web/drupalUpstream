@@ -1,0 +1,32 @@
+langcode: en
+status: false
+dependencies:
+  config:
+    - views.view.basic_page_mma
+  module:
+    - ctools
+    - views
+  theme:
+    - agfirst_base
+id: views_block__basic_page_mma_block_page_mma
+theme: agfirst_base
+region: content
+weight: -8
+provider: null
+plugin: 'views_block:basic_page_mma-block_page_mma'
+settings:
+  id: 'views_block:basic_page_mma-block_page_mma'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+  items_per_page: none
+  context_mapping: {  }
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      page: page
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

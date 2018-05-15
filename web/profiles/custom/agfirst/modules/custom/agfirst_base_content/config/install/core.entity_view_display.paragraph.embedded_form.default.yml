@@ -2,14 +2,17 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.embedded_form.field_form
     - field.field.paragraph.embedded_form.field_image
     - field.field.paragraph.embedded_form.field_media_side
     - field.field.paragraph.embedded_form.field_media_type
     - field.field.paragraph.embedded_form.field_message
     - field.field.paragraph.embedded_form.field_title
     - field.field.paragraph.embedded_form.field_video
+    - image.style.spotlight_image
     - paragraphs.paragraphs_type.embedded_form
   module:
+    - agfirst_embedded_forms
     - image
     - options
     - video_embed_field
@@ -18,53 +21,60 @@ targetEntityType: paragraph
 bundle: embedded_form
 mode: default
 content:
+  field_form:
+    weight: 2
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: universal_form_formatter
+    region: content
   field_image:
-    weight: 4
-    label: above
+    type: image
+    weight: 5
+    region: content
+    label: hidden
     settings:
-      image_style: ''
+      image_style: spotlight_image
       image_link: ''
     third_party_settings: {  }
-    type: image
-    region: content
   field_media_side:
-    weight: 3
-    label: above
+    type: list_default
+    weight: 4
+    region: content
+    label: hidden
     settings: {  }
     third_party_settings: {  }
-    type: list_default
-    region: content
   field_media_type:
-    weight: 2
-    label: above
+    type: list_default
+    weight: 3
+    region: content
+    label: hidden
     settings: {  }
     third_party_settings: {  }
-    type: list_default
-    region: content
   field_message:
     weight: 1
-    label: above
+    label: hidden
     settings: {  }
     third_party_settings: {  }
     type: basic_string
     region: content
   field_title:
-    weight: 0
-    label: above
+    type: string
+    weight
+    region: content
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
-    region: content
   field_video:
-    weight: 5
-    label: above
+    type: video_embed_field_video
+    weight: 6
+    region: content
+    label: hidden
     settings:
       responsive: true
       width: 854
       height: 480
-      autoplay: true
+      autoplay: false
     third_party_settings: {  }
-    type: video_embed_field_video
-    region: content
 hidden: {  }

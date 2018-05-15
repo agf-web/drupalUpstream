@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - crop.type.large_square_crop
+  module:
+    - crop
+name: article_image
+label: 'Article Image'
+effects:
+  c49d94b5-0492-4dae-9bd9-58d3116b4be0:
+    uuid: c49d94b5-0492-4dae-9bd9-58d3116b4be0
+    id: crop_crop
+    weight: 1
+    data:
+      crop_type: large_square_crop
+  9433a9a9-89d4-47d0-9644-d85da21cbd7a:
+    uuid: 9433a9a9-89d4-47d0-9644-d85da21cbd7a
+    id: image_scale_and_crop
+    weight: 2
+    data:
+      width: 660
+      height: 660

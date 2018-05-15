@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_image_mode
+    - paragraphs.paragraphs_type.split_content
+  module:
+    - options
+id: paragraph.split_content.field_image_mode
+field_name: field_image_mode
+entity_type: paragraph
+bundle: split_content
+label: 'Image Mode'
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: image
+default_value_callback: ''
+settings: {  }
+field_type: list_string

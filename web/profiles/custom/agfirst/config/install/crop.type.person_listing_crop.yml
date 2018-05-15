@@ -1,0 +1,11 @@
+langcode: en
+status: true
+dependencies: {  }
+label: 'Person Listing Crop'
+id: person_listing_crop
+description: ''
+aspect_ratio: '425:525'
+soft_limit_width: 425
+soft_limit_height: 525
+hard_limit_width: null
+hard_limit_height: null

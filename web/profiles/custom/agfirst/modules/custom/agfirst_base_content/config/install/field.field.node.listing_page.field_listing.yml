@@ -1,0 +1,44 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_listing
+    - node.type.listing_page
+  module:
+    - viewsreference
+id: node.listing_page.field_listing
+field_name: field_listing
+entity_type: node
+bundle: listing_page
+label: Listing
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:view'
+  handler_settings:
+    target_bundles: null
+    auto_create
+  plugin_types:
+    page: page
+    block: block
+    default
+    feed
+  preselect_views:
+    block_content
+    content
+    content_recent
+    files
+    fontyourface_font_manager
+    frontpage
+    landing_page_mma
+    page_field_layers
+    redirect
+    taxonomy_term
+    user_admin_people
+    watchdog
+    who_s_new
+    who_s_online
+field_type: viewsreference

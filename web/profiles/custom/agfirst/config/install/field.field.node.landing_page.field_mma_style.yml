@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_mma_style
+    - node.type.landing_page
+  module:
+    - options
+id: node.landing_page.field_mma_style
+field_name: field_mma_style
+entity_type: node
+bundle: landing_page
+label: 'MMA Style'
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: small
+default_value_callback: ''
+settings: {  }
+field_type: list_string
