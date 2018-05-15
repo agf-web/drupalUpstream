@@ -53,7 +53,7 @@ content:
     third_party_settings: {  }
   field_first_name:
     type: string
-    weight
+    weight: 0
     region: content
     label: hidden
     settings:

@@ -23,7 +23,7 @@ content:
     type: entity_reference_entity_view
     region: content
   field_title:
-    weight
+    weight: 0
     label: hidden
     settings:
       link_to_entity: false

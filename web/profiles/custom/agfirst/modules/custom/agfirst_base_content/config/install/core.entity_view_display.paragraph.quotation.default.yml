@@ -19,7 +19,7 @@ bundle: quotation
 mode: default
 content:
   field_eyebrow:
-    weight
+    weight: 0
     label: hidden
     settings:
       link_to_entity: false

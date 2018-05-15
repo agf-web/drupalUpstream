@@ -31,7 +31,7 @@ content:
     label: hidden
   field_image:
     type: image
-    weight
+    weight: 0
     region: content
     settings:
       image_style: large

@@ -15,7 +15,7 @@ mode: sidebar
 content:
   field_label:
     type: string
-    weight
+    weight: 0
     region: content
     label: above
     settings:

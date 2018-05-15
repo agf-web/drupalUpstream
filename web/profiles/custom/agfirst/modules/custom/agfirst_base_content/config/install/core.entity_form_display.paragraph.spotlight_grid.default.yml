@@ -13,7 +13,7 @@ mode: default
 content:
   field_spotlights:
     type: entity_reference_paragraphs
-    weight
+    weight: 0
     settings:
       title: Paragraph
       title_plural: Paragraphs

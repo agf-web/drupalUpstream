@@ -82,7 +82,7 @@ content:
     third_party_settings: {  }
     region: content
   links:
-    weight
+    weight: 0
     region: content
     settings: {  }
     third_party_settings: {  }

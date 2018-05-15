@@ -25,7 +25,7 @@ content:
   body:
     label: hidden
     type: smart_trim
-    weight
+    weight: 0
     settings:
       trim_length: 50
       trim_type: words

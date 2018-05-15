@@ -29,7 +29,7 @@ content:
     third_party_settings: {  }
   field_location:
     type: address_default
-    weight
+    weight: 0
     region: content
     label: above
     settings: {  }

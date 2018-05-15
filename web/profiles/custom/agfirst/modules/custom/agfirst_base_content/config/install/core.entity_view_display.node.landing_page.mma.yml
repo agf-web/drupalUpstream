@@ -70,7 +70,7 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_mma_title:
-    weight
+    weight: 0
     label: hidden
     settings:
       link_to_entity: false

@@ -5,4 +5,4 @@ name: 'Event Type'
 vid: event_type
 description: ''
 hierarchy
-weight
+weight: 0

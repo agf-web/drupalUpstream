@@ -23,7 +23,7 @@ mode: teaser
 content:
   body:
     type: text_summary_or_trimmed
-    weight
+    weight: 0
     region: content
     settings:
       trim_length: 600

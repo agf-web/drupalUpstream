@@ -21,7 +21,7 @@ mode: search_index
 content:
   body:
     type: smart_trim
-    weight
+    weight: 0
     region: content
     label: hidden
     settings:
