@@ -12,6 +12,8 @@ dependencies:
   - field_group
   - file
   - image
+  - image_url_formatter
+  - image_widget_crop
   - imce
   - link
   - menu_ui
