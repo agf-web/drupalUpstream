@@ -228,7 +228,7 @@ index 0000000..25a81ca
 +  public function create(MenuBlock $menuBlock);
 +}
 diff --git a/src/Plugin/Block/MenuBlock.php b/src/Plugin/Block/MenuBlock.php
-index fab522a..1665638 100644
+index fab522a..f17ce65 100644
 --- a/src/Plugin/Block/MenuBlock.php
 +++ b/src/Plugin/Block/MenuBlock.php
 @@ -54,6 +54,25 @@ class MenuBlock extends SystemMenuBlock {
@@ -237,21 +237,21 @@ index fab522a..1665638 100644
 
 +    $form['advanced']['label_type'] = [
 +      '#type' => 'select',
-+      '#title' => 'Use the following as title',
++      '#title' => $this->t("Use the following as title"),
 +      '#options' => [
-+        'block' => $this->t('Block title'),
-+        'menu' => $this->t('Menu title'),
-+        'active_item' => $this->t('Active item\'s title'),
-+        'parent' => $this->t('Active trail\'s parent title'),
-+        'root' => $this->t('Active trail\'s root title'),
-+        'initial_menu_item' => $this->t('Initial menu item\'s title')
++        'block' => $this->t("Block title"),
++        'menu' => $this->t("Menu title"),
++        'active_item' => $this->t("Active item's title"),
++        'parent' => $this->t("Active trail's parent title"),
++        'root' => $this->t("Active trail's root title"),
++        'initial_menu_item' => $this->t("Initial menu item's title"),
 +      ],
 +      '#default_value' => $config['label_type'],
 +      '#states' => [
 +        'visible' => [
-+          ':input[name="settings[label_display]"]' => ['checked' => TRUE]
-+        ]
-+      ]
++          ':input[name="settings[label_display]"]' => ['checked' => TRUE],
++        ],
++      ],
 +    ];
 +
      $form['style'] = [

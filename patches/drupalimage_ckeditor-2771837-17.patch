@@ -1,0 +1,42 @@
+diff --git a/core/modules/ckeditor/js/plugins/drupalimage/plugin.js b/core/modules/ckeditor/js/plugins/drupalimage/plugin.js
+index b1751c2..5ac64fd 100644
+--- a/core/modules/ckeditor/js/plugins/drupalimage/plugin.js
++++ b/core/modules/ckeditor/js/plugins/drupalimage/plugin.js
+@@ -38,10 +38,6 @@
+           }
+         });
+ 
+-        var requiredContent = widgetDefinition.requiredContent.getDefinition();
+-        requiredContent.attributes['data-entity-type'] = '';
+-        requiredContent.attributes['data-entity-uuid'] = '';
+-        widgetDefinition.requiredContent = new CKEDITOR.style(requiredContent);
+         widgetDefinition.allowedContent.img.attributes['!data-entity-type'] = true;
+         widgetDefinition.allowedContent.img.attributes['!data-entity-uuid'] = true;
+ 
+@@ -249,4 +245,4 @@
+   CKEDITOR.plugins.drupalimage = {
+     getFocusedWidget: getFocusedWidget
+   };
+-})(jQuery, Drupal, CKEDITOR);
+\ No newline at end of file
++})(jQuery, Drupal, CKEDITOR);
+diff --git a/core/modules/ckeditor/js/plugins/drupalimagecaption/plugin.js b/core/modules/ckeditor/js/plugins/drupalimagecaption/plugin.js
+index c9c9427..fac24db 100644
+--- a/core/modules/ckeditor/js/plugins/drupalimagecaption/plugin.js
++++ b/core/modules/ckeditor/js/plugins/drupalimagecaption/plugin.js
+@@ -70,7 +70,7 @@
+ 
+         var originalUpcast = widgetDefinition.upcast;
+         widgetDefinition.upcast = function (element, data) {
+-          if (element.name !== 'img' || !element.attributes['data-entity-type'] || !element.attributes['data-entity-uuid']) {
++          if (element.name !== 'img') {
+             return;
+           } else if (element.attributes['data-cke-realelement']) {
+               return;
+@@ -208,4 +208,4 @@
+     }, CKEDITOR.NODE_ELEMENT);
+     return found;
+   }
+-})(CKEDITOR);
+\ No newline at end of file
++})(CKEDITOR);
