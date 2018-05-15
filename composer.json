@@ -16,17 +16,21 @@
     "drupal/address": "~1.0",
     "drupal/admin_toolbar": "^1.19",
     "drupal/anchor_link": "^1.5",
+    "drupal/bg_image_formatter": "^1.1",
     "drupal/config_direct_save": "^1.0",
     "drupal/config_installer": "^1.0",
     "drupal/console": "^1",
     "drupal/core": "^8",
     "drupal/crop": "^1.2",
     "drupal/devel": "^1.0@RC",
+    "drupal/draggableviews": "1.x-dev",
     "drupal/editor_advanced_link": "^1.4",
     "drupal/environment_indicator": "^3.0",
     "drupal/field_group": "^1.0@RC",
     "drupal/fontyourface": "^3.2",
-    "drupal/honeypot": "^1.24",
+    "drupal/google_analytics": "^2.2",
+    "drupal/google_tag": "^1.0",
+    "drupal/honeypot": "^1.27",
     "drupal/image_url_formatter": "^1.0@beta",
     "drupal/image_widget_crop": "^2.0",
     "drupal/imce": "^1.5",
@@ -35,7 +39,7 @@
     "drupal/linkit": "^4.3",
     "drupal/mailchimp": "^1.2",
     "drupal/masquerade": "^2.0@beta",
-    "drupal/menu_block": "^1.4",
+    "drupal/menu_block": "1.x-dev",
     "drupal/menu_link_attributes": "^1.0",
     "drupal/metatag": "^1.0",
     "drupal/module_filter": "^3.0",
@@ -46,8 +50,11 @@
     "drupal/reroute_email": "^1.0@beta",
     "drupal/search_api": "^1.0",
     "drupal/search_api_attachments": "^1.0@beta",
+    "drupal/search_api_pantheon": "~1.0",
     "drupal/search_api_solr": "^1.0@beta",
     "drupal/smart_trim": "^1.0",
+    "drupal/telephone_formatter": "^1.0@beta",
+    "drupal/telephone_validation": "^2.0",
     "drupal/video_embed_field": "^1.5",
     "drupal/viewsreference": "^1.2",
     "drupal/webform": "^5.0@beta",
@@ -132,6 +139,26 @@
         ".htaccess",
         "web.config"
       ]
+    },
+    "patches": {
+      "drupal/core": {
+        "Notice: Undefined index: type in drupal_process_states()": "patches/2700667-29.patch",
+        "Files widget with states": "patches/states_not_affecting-2847425-24.patch",
+        "Image handling patch": "patches/drupalimage_ckeditor-2771837-17.patch"
+      },
+      "drupal/draggableviews": {
+        "Allow sort handler to select the view that stored the order": "patches/2767437-36.patch"
+      },
+      "drupal/menu_block": {
+        "Menu parent as block title": "patches/menu_block-label_configuration-2809699-51.patch"
+      },
+      "drupal/field_group": {
+        "HTML5 validation for fields which are currently not part of the visible group": "patches/field_group-validation-2787179-9.patch",
+        "Fields with errors are not visible": "patches/fields_with_errors_are-2894213-3.patch"
+      },
+      "drupal/paragraphs": {
+        "Add paragraph bundle to widget forms to allow easier editing of paragraph forms": "patches/add-paragraph-bundle-to-form-alter-including-tests-2868155-67.patch"
+      }
     }
   },
   "config": {

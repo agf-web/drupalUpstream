@@ -1,0 +1,215 @@
+diff --git a/draggableviews.module b/draggableviews.module
+index 0950a5a..a2eccc0 100644
+--- a/draggableviews.module
++++ b/draggableviews.module
+@@ -10,10 +10,12 @@ use Drupal\Core\Form\FormStateInterface;
+ use Drupal\Core\Database\Database;
+ use Drupal\Core\Cache\Cache;
+ 
+-/**
+- * Implements hook_views_data_alter().
+- */
+-function draggableviews_views_data_alter(&$data) {
++function draggableviews_views_data() {
++  $data = [];
++  $data['draggableviews_structure'] = [];
++  $data['draggableviews_structure']['table'] = [];
++  $data['draggableviews_structure']['table']['group'] = t('Draggableviews');
++
+   $data['draggableviews_structure']['weight'] = [
+     'title' => t('DraggableViews Weight'),
+     'group' => t('Draggableviews'),
+@@ -48,12 +50,23 @@ function draggableviews_views_data_alter(&$data) {
+     ],
+   ];
+ 
+-  foreach (\Drupal::entityTypeManager()->getDefinitions() as $entity_type) {
++  return $data;
++}
++
++
++/**
++ * Implements hook_views_data_alter().
++ */
++function draggableviews_views_data_alter(&$data) {
++  foreach (\Drupal::entityTypeManager()->getDefinitions() as $entity_type_id => $entity_type) {
+     $base_table = $entity_type->getDataTable() ?: $entity_type->getBaseTable();
+     $entity_keys = $entity_type->getKeys();
++    $args = ['@label' => $entity_type->getLabel()];
++
+     if ($base_table && isset($data[$base_table]['table'])) {
+       $data[$base_table]['draggableviews'] = [
+         'title' => $data[$base_table]['table']['group'],
++        'label' => t('Draggableviews'),
+         'group' => t('Draggableviews'),
+         'help' => t('Provide a draggable functionality.'),
+         'entity field' => $entity_keys['id'],
+@@ -61,15 +74,17 @@ function draggableviews_views_data_alter(&$data) {
+           'id' => 'draggable_views_field',
+           'click sortable' => FALSE,
+         ],
+-      ];
+-      // Explain to every entity how to join with draggableviews_structure
+-      // table.
+-      $data['draggableviews_structure']['table']['join'][$base_table] = [
+-        'handler' => 'draggableviews_join_handler',
+-        // Because this is a direct link it could be left out.
+-        'left_table' => $base_table,
+-        'left_field' => $entity_keys['id'],
+-        'field' => 'entity_id',
++        'relationship' => [
++          'title' => t('Draggableviews information related to @label', $args),
++          'label' => t('Draggableviews: @label', $args),
++          'group' => $entity_type->getLabel(),
++          'help' => t('Allows you to set different sorting for @label', $args),
++          'id' => 'draggableviews',
++          'base' => 'draggableviews_structure',
++          'entity type' => $entity_type->id(),
++          'base field' => 'entity_id',
++          'relationship field' => $entity_type->getKey('id'),
++        ],
+       ];
+     }
+   }
+diff --git a/modules/draggableviews_demo/config/install/views.view.draggableviews_demo.yml b/modules/draggableviews_demo/config/install/views.view.draggableviews_demo.yml
+index 4bb7c4d..c8f2c4a 100644
+--- a/modules/draggableviews_demo/config/install/views.view.draggableviews_demo.yml
++++ b/modules/draggableviews_demo/config/install/views.view.draggableviews_demo.yml
+@@ -290,7 +290,7 @@ display:
+           id: weight
+           table: draggableviews_structure
+           field: weight
+-          relationship: none
++          relationship: draggableviews
+           group_type: group
+           admin_label: ''
+           order: ASC
+@@ -317,7 +317,19 @@ display:
+       header: {  }
+       footer: {  }
+       empty: {  }
+-      relationships: {  }
++      relationships:
++        draggableviews:
++          id: draggableviews
++          table: node_field_data
++          field: draggableviews
++          relationship: none
++          group_type: group
++          admin_label: 'Draggableviews: Content'
++          required: false
++          source: draggableviews_demo|draggableviews_demo_order
++          entity_type: node
++          entity_field: nid
++          plugin_id: draggableviews
+       arguments: {  }
+       display_extenders: {  }
+     cache_metadata:
+diff --git a/src/Plugin/views/relationship/DraggableViewsRelationship.php b/src/Plugin/views/relationship/DraggableViewsRelationship.php
+new file mode 100644
+index 0000000..e74ebe7
+--- /dev/null
++++ b/src/Plugin/views/relationship/DraggableViewsRelationship.php
+@@ -0,0 +1,102 @@
++<?php
++
++namespace Drupal\draggableviews\Plugin\views\relationship;
++
++use Drupal\Core\Form\FormStateInterface;
++use Drupal\views\Plugin\ViewsHandlerManager;
++use Drupal\views\Plugin\views\relationship\RelationshipPluginBase;
++use Drupal\views\Views;
++
++/**
++ * A relationship handlers which reverse entity references.
++ *
++ * @ingroup views_relationship_handlers
++ *
++ * @ViewsRelationship("draggableviews")
++ */
++class DraggableViewsRelationship extends RelationshipPluginBase {
++
++  protected function defineOptions() {
++    $options = parent::defineOptions();
++    $options['source'] = ['default' => ''];
++    return $options;
++  }
++
++  /**
++   * Shortcut to display the value form.
++   */
++  public function buildOptionsForm(&$form, FormStateInterface $form_state) {
++    parent::buildOptionsForm($form, $form_state);
++
++    $views = Views::getEnabledViews();
++    $draggableviews = ['' => t('Please select')];
++    $master = FALSE;
++
++
++    foreach ($this->view->displayHandlers as $display) {
++      /** @var \Drupal\views\Plugin\views\display\DisplayPluginInterface $display */
++      if ($display->display['id'] == 'default' && array_key_exists('draggableviews', $display->options['fields'])) {
++        $master = TRUE;
++      }
++      if ($display->display['id'] != 'default' && array_key_exists('draggableviews', $display->options['fields'])) {
++        $draggableviews[$this->view->id() . '|' . $display->display['id']] = $this->t('@view (@display)', ['@view' => $this->t('Current view'), '@display' => $display->display['display_title']]);
++      }
++      if ($master && empty($display->options['fields'])) {
++        $draggableviews[$this->view->id() . '|' . $display->display['id']] = $this->t('@view (@display)', ['@view' => $this->t('Current view'), '@display' => $display->display['display_title']]);
++      }
++    }
++
++    $draggableviews_config = [];
++    foreach ($views as $view) {
++      if ($view->id() == $this->view->id()) {
++        continue;
++      }
++
++      $config = \Drupal::config('views.view.' . $view->id());
++      $rawData = $config->getRawData();
++
++      $master = FALSE;
++      foreach ($rawData['display'] as $display_key => $display) {
++        if ($display_key == 'default' && array_key_exists('draggableviews', $display['display_options']['fields'])) {
++          $master = TRUE;
++        }
++        if ($display_key != 'default' && array_key_exists('draggableviews', $display['display_options']['fields'])) {
++          $draggableviews_config[$view->id() . '|' . $display_key] = $this->t('@view (@display)', ['@view' => $view->label(), '@display' => $display['display_title']]);
++        }
++        if ($master && empty($display['display_options']['fields'])) {
++          $draggableviews_config[$view->id() . '|' . $display_key] = $this->t('@view (@display)', ['@view' => $view->label(), '@display' => $display['display_title']]);
++        }
++      }
++    }
++
++    asort($draggableviews_config);
++
++    $form['source'] = array(
++      '#type' => 'select',
++      '#title' => $this->t('Draggableviews source'),
++      '#options' => $draggableviews + $draggableviews_config,
++      '#default_value' => $this->options['source'],
++      '#required' => TRUE,
++      '#description' => $this->t('Only views and displays with a draggableview field are displayed here.'),
++    );
++
++  }
++
++  /**
++   * Called to implement a relationship in a query.
++   */
++  public function query() {
++
++    if (!empty($this->options['source'])) {
++      list($view_name, $view_display) = explode('|', $this->options['source']);
++      if (empty($this->definition['extra'])) {
++        $this->definition['extra'] = [];
++      }
++      $this->definition['extra'][] = ['field' => 'view_name', 'value' => $view_name];
++      $this->definition['extra'][] = ['field' => 'view_display', 'value' => $view_display];
++    }
++
++    return parent::query();
++  }
++
++}
