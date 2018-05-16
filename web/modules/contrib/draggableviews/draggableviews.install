@@ -1,0 +1,113 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the draggableviews module.
+ */
+
+use Drupal\views\Views;
+
+/**
+ * Implements hook_schema().
+ */
+function draggableviews_schema() {
+  $schema['draggableviews_structure'] = [
+    'description' => 'Saves the order settings of a draggableview view.',
+    'fields' => [
+      'dvid' => [
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The primary identifier.',
+      ],
+      'view_name' => [
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'Makes the order unique for each view.',
+      ],
+      'view_display' => [
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'Makes the order unique for each view display.',
+      ],
+      'args' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'default' => '',
+        'description' => 'Makes the order unique for a given set of arguments',
+      ],
+      'entity_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Id of the entity that we are sorting (node, user, etc.).',
+      ],
+      'weight' => [
+        'type' => 'int',
+        'unsigned' => FALSE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'The order weight.',
+      ],
+      'parent' => [
+        'type' => 'int',
+        'unsigned' => FALSE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'The id of the parent.',
+      ],
+    ],
+    'indexes' => [
+      'view' => ['view_name', 'view_display', 'args', 'entity_id'],
+      'weight' => ['weight'],
+      'entity_id' => ['entity_id'],
+    ],
+    'primary key' => ['dvid'],
+  ];
+
+  return $schema;
+}
+
+/**
+ * Implements hook_update().
+ */
+function draggableviews_update_8104(&$sandbox) {
+  $views = Views::getEnabledViews();
+  foreach ($views as $view) {
+    $source_value = '';
+    $config = \Drupal::config('views.view.' . $view->id());
+    $rawData = $config->getRawData();
+
+    $master = FALSE;
+    // Get the display with the draggableviews field.
+    // It is a little tricky because the 'default' display is the master.
+    foreach ($rawData['display'] as $display_key => $display) {
+      $field = isset($display['display_options']['fields']) ? $display['display_options']['fields'] : [];
+      if ($display_key == 'default' && array_key_exists('draggableviews', $field)) {
+        $master = TRUE;
+      }
+      if ($display_key != 'default' && array_key_exists('draggableviews', $field)) {
+        $source_value = $view->id() . '|' . $display_key;
+      }
+      if ($master && empty($display['display_options']['fields'])) {
+        $source_value = $view->id() . '|' . $display_key;
+      }
+    }
+    if ($source_value) {
+      // Save the view with the source value in the sort handler.
+      foreach ($rawData['display'] as $display_key => $display) {
+        $sorts = isset($display['display_options']['sorts']) ? $display['display_options']['sorts'] : [];
+        if (array_key_exists('weight', $sorts)) {
+          $view_exec = Views::getView($view->id());
+          $view_exec->setHandlerOption($display_key, 'sort', 'weight', 'source', $source_value);
+          $view_exec->save();
+        }
+      }
+    }
+  }
+}
