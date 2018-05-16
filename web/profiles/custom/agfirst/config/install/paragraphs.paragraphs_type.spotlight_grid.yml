@@ -1,8 +1,0 @@
-langcode: en
-status: true
-dependencies: {  }
-id: spotlight_grid
-label: 'Spotlight Grid'
-icon_uuid: null
-description: ''
-behavior_plugins: {  }
