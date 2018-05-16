@@ -2925,6 +2925,7 @@
         "require-dev": {
             "drupal/draggableviews_demo": "*"
         },
+        "time": "2017-10-20T17:59:39+00:00",
         "type": "drupal-module",
         "extra": {
             "branch-alias": {
