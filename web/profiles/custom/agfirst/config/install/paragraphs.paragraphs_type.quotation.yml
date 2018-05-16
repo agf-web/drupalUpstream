@@ -1,8 +1,0 @@
-langcode: en
-status: true
-dependencies: {  }
-id: quotation
-label: Quotation
-icon_uuid: null
-description: ''
-behavior_plugins: {  }

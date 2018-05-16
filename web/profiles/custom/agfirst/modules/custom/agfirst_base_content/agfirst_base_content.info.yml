@@ -16,7 +16,6 @@ dependencies:
   - block
   - block_content
   - ckeditor
-  - color
   - config
   - contextual
   - crop
@@ -25,7 +24,6 @@ dependencies:
   - datetime
   - datetime_range
   - draggableviews
-  - dynamic_page_cache
   - editor
   - editor_advanced_link
   - entity_reference_revisions
@@ -64,7 +62,6 @@ dependencies:
   - search_api_solr
   - shortcut
   - smart_trim
-  - system
   - taxonomy
   - telephone
   - text
