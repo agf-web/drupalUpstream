@@ -226,7 +226,7 @@ display:
       relationships: {  }
       arguments: {  }
       display_extenders: {  }
-      css_class: rivervalley--blog-tag-list
+      css_class: agfirst--blog-tag-list
     cache_metadata:
       max-age: -1
       contexts:

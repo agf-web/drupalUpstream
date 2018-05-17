@@ -6,9 +6,9 @@ dependencies:
   module:
     - system
   theme:
-    - rivervalley
-id: rivervalley_main_menu
-theme: rivervalley
+    - agfirst_base
+id: agfirst_base_main_menu
+theme: agfirst_base
 region: site_header_right
 weight: -12
 provider: null

@@ -4,16 +4,16 @@ dependencies:
   module:
     - system
   theme:
-    - rivervalley
-id: rivervalley_content
-theme: rivervalley
+    - agfirst_base
+id: agfirst_base_messages
+theme: agfirst_base
 region: content
-weight: -10
+weight: -15
 provider: null
-plugin: system_main_block
+plugin: system_messages_block
 settings:
-  id: system_main_block
-  label: 'Main page content'
+  id: system_messages_block
+  label: 'Status messages'
   provider: system
   label_display: '0'
 visibility: {  }

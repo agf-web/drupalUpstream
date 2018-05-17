@@ -2,11 +2,11 @@ langcode: en
 status: true
 dependencies:
   theme:
-    - bartik
-id: bartik_local_tasks
-theme: bartik
+    - agfirst_base
+id: agfirst_base_local_tasks
+theme: agfirst_base
 region: content
-weight: -40
+weight: -14
 provider: null
 plugin: local_tasks_block
 settings:

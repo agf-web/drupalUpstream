@@ -5,9 +5,9 @@ dependencies:
     - getfarmcredit_client
     - system
   theme:
-    - rivervalley
+    - agfirst_base
 id: getfarmcreditmap
-theme: rivervalley
+theme: agfirst_base
 region: content
 weight: -13
 provider: null

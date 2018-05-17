@@ -2,9 +2,9 @@ langcode: en
 status: true
 dependencies:
   theme:
-    - rivervalley
-id: rivervalley_local_actions
-theme: rivervalley
+    - agfirst_base
+id: agfirst_base_local_actions
+theme: agfirst_base
 region: content
 weight: -12
 provider: null

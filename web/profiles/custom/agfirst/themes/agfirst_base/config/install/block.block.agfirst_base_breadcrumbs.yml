@@ -5,9 +5,9 @@ dependencies:
     - ctools
     - system
   theme:
-    - rivervalley
-id: rivervalley_breadcrumbs
-theme: rivervalley
+    - agfirst_base
+id: agfirst_base_breadcrumbs
+theme: agfirst_base
 region: content
 weight: -7
 provider: null

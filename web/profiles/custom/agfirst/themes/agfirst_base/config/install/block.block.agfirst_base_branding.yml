@@ -4,11 +4,11 @@ dependencies:
   module:
     - system
   theme:
-    - bartik
-id: bartik_branding
-theme: bartik
-region: header
-weight: 0
+    - agfirst_base
+id: agfirst_base_branding
+theme: agfirst_base
+region: site_header_left
+weight: -7
 provider: null
 plugin: system_branding_block
 settings:
