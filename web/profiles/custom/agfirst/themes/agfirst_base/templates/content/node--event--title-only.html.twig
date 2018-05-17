@@ -1,0 +1,31 @@
+{#
+  Type:           Block View (placed into Main Content Region)
+  Content Type:   Article
+  View Mode:      title_only
+#}
+
+{%
+  set classes = [
+    'article-event-header',
+    view_mode ? 'node--view-mode-' ~ view_mode|clean_class,
+  ]
+%}
+
+{% set createdDate = node.getCreatedTime|format_date('blog_date') %}
+{% set title_attributes = create_attribute() %}
+
+<div{{ attributes.addClass(classes) }}>
+  <a href="/events" class="button green transparent">Back to Events</a>
+
+  <p class="article-event-header__date">
+    {{ content.field_date.0 }}
+    {# {% if logged_in %}
+      {% trans %}( Submitted by {{ author_name }} ){% endtrans %}
+    {% endif %} #}
+  </p>
+  
+  {{ metadata }}
+  <h1{{ title_attributes.addClass('article-event-header__title') }}>
+    {{ label }}
+  </h1>
+</div>

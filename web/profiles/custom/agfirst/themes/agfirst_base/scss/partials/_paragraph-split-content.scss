@@ -1,0 +1,75 @@
+/*=============================================
+  Paragraph Type: Split-Content
+=============================================*/
+
+.paragraph {
+  @include font-smoothing;
+  &--type--split-content {
+    color: #fff;
+    @include bp($medium) {
+      display: flex;
+    }
+  }
+}
+
+.split-content {
+  // &.split-content-columns--3 {
+  //   .split-content-item {
+  //     flex: 1 1 33%;
+  //   }
+  // }
+
+  &.split-image-mode--icon {
+    .split-content-item__type-image {
+      margin-top: -1rem;
+    }
+
+    .split-content-item {
+      text-align: center;
+    }
+  }
+
+  &-item {
+    background: $green-dark;
+    padding: 2rem;
+    flex: 1 1 50%;
+    &:nth-child(even) {
+      background: $green;
+    }
+    @include bp($medium) {
+      text-align: center;
+    }
+  
+    &__type-image {
+      margin: -2rem -2rem 1rem;
+  
+      img {
+        display: block;
+        margin: 0 auto;
+      }
+    }
+  
+    &__type-string,
+    &__type-string-long { //<p>
+      margin-top: 0;
+    }
+  
+    &__type-link {
+      @extend .button;
+      @extend .transparent.button;
+    }
+  
+    &__field-left-headline,
+    &__field-right-headline,
+    &__field-center-headline {
+      color: #fff;
+      line-height: 1.2;
+      margin: 0 auto 1rem;
+      @include fout(vertical);
+      @include bp($large, 'max-width') {
+        font-size: 1.75rem;
+      }
+    }
+  
+  }
+}

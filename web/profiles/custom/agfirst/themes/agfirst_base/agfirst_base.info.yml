@@ -5,3 +5,36 @@ base theme: stable
 name: 'AgFirst base theme'
 description: 'Base theme for AgFirst that provides a very basic theme designed to be extended for partner sites.'
 package: 'AgFirst'
+
+libraries:
+  - agfirst_base/aglib_styles
+  - agfirst_base/aglib_js_mobile
+  # - agfirst_base/scripts
+
+ckeditor_stylesheets:
+  - css/agfirstCkEditor.css
+
+regions:
+  site_header: Site Header
+  site_header_left: Site Header - left
+  site_header_right: Site Header - Right
+
+  content_top_full: Content - Top Full Width
+  
+
+  sidebar_left_mobile_top: Sidebar - Left - Mobile Top
+  sidebar_right_mobile_top: Sidebar - Right - Mobile Top
+
+  content_top: Content - Top
+  content: Content - Main
+  content_bottom: Content - Bottom
+
+  sidebar_left_mobile_bottom: Sidebar - Left - Mobile Bottom
+  sidebar_right_mobile_bottom: Sidebar - Right - Mobile Bottom
+
+  
+  content_bottom_full: Content - Bottom Full Width
+
+  site_footer_left: Site Footer - Left
+  site_footer_right: Site Footer - Right
+  site_footer_bottom: Site Footer - Bottom

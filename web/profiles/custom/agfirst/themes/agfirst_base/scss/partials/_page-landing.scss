@@ -1,0 +1,104 @@
+
+/*=============================================
+  Page: Landing
+=============================================*/
+
+.page-header {
+  @include font-smoothing;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-color: $green-dark;
+  color: #fff;
+  padding: 4rem 1rem;
+  text-align: center;
+  position: relative;
+  // width: 100%;
+  margin: 0 -1rem;
+
+  &:before {
+    content: '';
+    background: rgba(0, 0, 0, .35);
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+
+  h1,
+  &__title {
+    font-size: $h2;
+    font-family: $futura;
+    max-width: rem(960px);
+    margin: 0 auto;
+    text-transform: uppercase;
+    line-height: 1;
+    position: relative;
+    font-weight: 700;
+
+    @include fout(horizontal);
+    @include bp($medium) {
+      font-size: $h1;
+    }
+  }
+
+  &__content {
+    max-width: rem(720px);
+    margin: 0 auto 2rem;
+    position: relative;
+  }
+
+  &--tall {
+    h1,
+    .page-header__title {
+      margin: 0 auto 1rem;
+    }
+    @include bp($medium) {
+      height: 40rem;
+      display: flex;
+      flex-flow: column nowrap;
+      justify-content: center;
+      align-items: center;
+    }
+
+    p {
+      @include bp($large) {
+        font-size: rem(20px);
+      }
+    }
+  }
+
+  &--small {
+    padding: 0;
+
+    @include bp($medium) {
+      text-align: left;
+    }
+
+    h1,
+    .page-header__title {
+      font-size: $h2;
+      background: $green;
+      padding: 2rem;
+      margin: 2rem;
+      text-align: center;
+      display: inline-block;
+      line-height: 1.2;
+      @include bp($medium) {
+        text-align: left;
+        max-width: 50%;
+        margin: 0;
+        padding: 2.75rem 3rem;
+      }
+      @include bp($large) {
+        padding: 2.75rem 6rem;
+      }
+    }
+  }
+
+  .button {
+    position: relative;
+    @extend .green.button;
+    min-width: rem(190px);
+  }
+}

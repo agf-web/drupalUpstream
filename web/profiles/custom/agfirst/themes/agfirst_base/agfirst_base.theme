@@ -8,6 +8,11 @@
  * several commonly used hooks.
  */
 
+use Drupal\block_content\BlockContentInterface;
+use Drupal\file\Entity\File;
+use Drupal\image\Entity\ImageStyle;
+use Drupal\Component\Utility\Html;
+
 /**
  * Implements hook_preprocess_HOOK() for html.html.twig.
  */
@@ -44,23 +49,6 @@ function agfirst_base_preprocess_page(array &$variables) {
 
 }
 
-/**
- * Implements hook_theme_suggestions_page_alter().
- */
-function agfirst_base_theme_suggestions_page_alter(array &$suggestions, array $variables) {
-
-}
-
-/**
- * Implements hook_theme_suggestions_node_alter().
- */
-function agfirst_base_theme_suggestions_node_alter(array &$suggestions, array $variables) {
-  /*$node = $variables['elements']['#node'];
-
-  if ($variables['elements']['#view_mode'] == "full") {
-
-  }*/
-}
 
 /**
  * Implements hook_preprocess_HOOK() for Block document templates.
@@ -70,39 +58,84 @@ function agfirst_base_preprocess_block(array &$variables) {
 }
 
 /**
- * Implements hook_theme_suggestions_field_alter().
- */
-function agfirst_base_theme_suggestions_field_alter(array &$suggestions, array $variables) {
-  /*$element = $variables['element'];
-  $suggestions[] = 'field__' . $element['#view_mode'];
-  $suggestions[] = 'field__' . $element['#view_mode'] . '__' . $element['#field_name'];*/
-}
-
-/**
- * Implements hook_theme_suggestions_field_alter().
- */
-function agfirst_base_theme_suggestions_fieldset_alter(array &$suggestions, array $variables) {
-  /*$element = $variables['element'];
-  if (isset($element['#attributes']['class']) && in_array('form-composite', $element['#attributes']['class'])) {
-    $suggestions[] = 'fieldset__form_composite';
-  }*/
-}
-
-/**
  * Implements hook_preprocess_node().
  */
 function agfirst_base_preprocess_node(array &$variables) {
-  // Default to turning off byline/submitted.
-  //$variables['display_submitted'] = FALSE;
+
+  switch ($variables['node']->getType()) {
+    case 'article':
+      if ($variables['view_mode'] == 'title_only') {
+        if (!empty($variables['node']->field_publication_date)) {
+          $variables['content']['field_publication_date'][0]['#attributes']['class'][] = 'article-event-header__date';
+        }
+      }
+      break;
+
+    case 'landing_page':
+      if (!empty($variables['node']->field_mma_style)) {
+        $variables['MmaStyle'] = $variables['node']->field_mma_style->value;
+        $variables['isTallMma'] = $variables['MmaStyle'] == 'tall';
+      }
+      break;
+  }
+
 }
 
 /**
- * Implements hook_theme_suggestions_views_view_alter().
+ * Implements hook_preprocess_HOOK().
  */
-function agfirst_base_theme_suggestions_views_view_alter(array &$suggestions, array $variables) {
+function agfirst_base_preprocess_paragraph(array &$variables) {
+
+  // For specific paragraph types, drill in a little deeper.
+  $functions = [
+    'split_content' => '_agfirst_base_preprocess_split_content',
+    'spotlight' => '_agfirst_base_preprocess_spotlight',
+  ];
+
+  $type = $variables['paragraph']->getType();
+
+  if (isset($functions[$type]) && function_exists($functions[$type])) {
+    $functions[$type]($variables);
+  }
 
 }
 
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function _agfirst_base_preprocess_split_content(&$variables) {
+  $paragraph = $variables['paragraph'];
+  $image_mode = empty($paragraph->field_image_mode->value) ? ' image' : $paragraph->field_image_mode->value;
+
+  $variables['attributes']['class'][] = Html::cleanCssIdentifier('split-image-mode--' . $image_mode);
+  $variables['image-mode'] = $image_mode;
+
+  // If there are values in the center column, setup to show it.
+  if (!empty($paragraph->field_center_headline->value) ||
+      !empty($paragraph->field_center_button->value) ||
+      !empty($paragraph->field_center_message->value)) {
+    $variables['attributes']['class'][] = 'split-content-columns--3';
+    $variables['column-count'] = 3;
+  }
+  else {
+    $variables['attributes']['class'][] = 'split-content-columns--2';
+    $variables['column-count'] = 2;
+  }
+
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function _agfirst_base_preprocess_spotlight(&$variables) {
+  $paragraph = $variables['paragraph'];
+  $background = empty($paragraph->field_background_class) ? 'default' : $paragraph->field_background_class->value;
+
+  if ($background !== 'default') {
+    $variables['attributes']['class'][] = 'agf-bg';
+    $variables['attributes']['class'][] = Html::cleanCssIdentifier('agf-bg--' . $background);
+  }
+}
 /**
  * Implements hook_preprocess_form().
  */
@@ -134,13 +167,6 @@ function agfirst_base_preprocess_details(array &$variables) {
 }
 
 /**
- * Implements hook_theme_suggestions_details_alter().
- */
-function agfirst_base_theme_suggestions_details_alter(array &$suggestions, array $variables) {
-
-}
-
-/**
  * Implements hook_preprocess_menu_local_task().
  */
 function agfirst_base_preprocess_menu_local_task(array &$variables) {
@@ -169,4 +195,184 @@ function agfirst_base_css_alter(&$css) {
       }
     }
   }
+}
+
+/* ================= Theme Suggestion Alters ==================== */
+
+/**
+ * Implements hook_theme_suggestions_page_alter().
+ *
+ * @see https://www.drupal.org/node/2363987
+ */
+function agfirst_base_theme_suggestions_page_alter(array &$suggestions, array $variables) {
+  $http_error_suggestions = [
+    'system.401' => 'page__401',
+    'system.403' => 'page__403',
+    'system.404' => 'page__404',
+  ];
+  $route_name = Drupal::routeMatch()->getRouteName();
+  if (isset($http_error_suggestions[$route_name])) {
+    $suggestions[] = $http_error_suggestions[$route_name];
+  }
+
+  $node = \Drupal::routeMatch()->getParameter('node');
+  if (!empty($node)) {
+    $suggestions[] = 'page__' . $node->bundle();
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_node_alter().
+ */
+function agfirst_base_theme_suggestions_node_alter(array &$suggestions, array $variables) {
+  /*$node = $variables['elements']['#node'];
+
+  if ($variables['elements']['#view_mode'] == "full") {
+
+  }*/
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter() for image_style().
+ *
+ * Add image style suggestions detailed image formatter theme suggestions.
+ */
+function agfirst_base_theme_suggestions_image_style_alter(array &$suggestions, array $vars) {
+  $sanitized_style = strtr($vars['style_name'], '.', '_');
+  $suggestions[] = 'image_style__' . $sanitized_style;
+
+}
+
+function agfirst_base_theme_suggestions_field_alter(array &$suggestions, array $variables) {
+  $element = $variables['element'];
+
+  // $suggestions[] = 'field__' . $element['#view_mode'];
+  // $suggestions[] = 'field__' . $element['#view_mode'] . '__' . $element['#field_name'];
+  // $suggestions[] = 'field__' . $element['#view_mode'] . '__' . $element['#field_type'];
+
+  $key = array_search('field__' . $element['#entity_type'] . '__' . $element['#bundle'], $suggestions);
+
+  if ($key === FALSE) {
+    $suggestions[] = 'field__' . $element['#entity_type'] . '__' . $element['#field_type'];
+    $suggestions[] = 'field__' . $element['#entity_type'] . '__' . $element['#bundle'] . '__' . $element['#field_type'];
+  }
+  else {
+    array_splice($suggestions, $key + 1, 0, [
+      'field__' . $element['#entity_type'] . '__' . $element['#field_type'],
+      'field__' . $element['#entity_type'] . '__' . $element['#bundle'] . '__' . $element['#field_type']
+    ]);
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_block_alter().
+ *
+ * Adds an additional theme suggestion for the custom block types that are less
+ * specific than the suggestion for the block id but more than all blocks.
+ *
+ */
+function agfirst_base_theme_suggestions_block_alter(array &$suggestions, array $vars) {
+
+  $content = $vars['elements']['content'];
+  $id = $vars['elements']['#id'];
+  if (isset($content['#block_content']) && $content['#block_content'] instanceof BlockContentInterface
+  ) {
+    $key = array_search('block__' . $id, $suggestions);
+    if ($key === FALSE) {
+      $suggestions[] = 'block__custom_type__' .
+        $content['#block_content']->bundle();
+    }
+    else {
+      array_splice($suggestions, $key, 0, [
+        'block__custom_type__' . $content['#block_content']->bundle(),
+      ]);
+    }
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_details_alter().
+ */
+function agfirst_base_theme_suggestions_details_alter(array &$suggestions, array $variables) {
+
+}
+
+/**
+ * Implements hook_theme_suggestions_field_alter().
+ */
+function agfirst_base_theme_suggestions_fieldset_alter(array &$suggestions, array $variables) {
+  /*$element = $variables['element'];
+  if (isset($element['#attributes']['class']) && in_array('form-composite', $element['#attributes']['class'])) {
+    $suggestions[] = 'fieldset__form_composite';
+  }*/
+}
+
+/**
+ * Implements hook_theme_suggestions_views_view_alter().
+ */
+function agfirst_base_theme_suggestions_views_view_alter(array &$suggestions, array $variables) {
+
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter() for views_view_field().
+ *
+ * Add more detailed views field theme suggestions.
+ */
+function agfirst_base_theme_suggestions_views_view_fields_alter(array &$suggestions, array $vars) {
+
+  if (empty($vars['field']) || empty(($vars['view']))) {
+    return;
+  }
+
+  $view = $vars['view'];
+  $display = isset($view->display_handler) ? $view->display_handler->display : NULL;
+  $field = $vars['field'];
+
+  $stem = 'views-view-fields--' . $view->id();
+  $stem .= empty($display) ? '' : '--' . $display['id'];
+
+  $suggestions = array_merge(
+    $suggestions, [
+      $stem . '--' . str_replace('_', '-', $field->field),
+    ]
+  );
+
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function agfirst_base_theme_suggestions_taxonomy_term_alter(array &$suggestions, array $variables) {
+  if (empty($variables['elements']['#taxonomy_term'])) {
+    return;
+  }
+  $term = $variables['elements']['#taxonomy_term'];
+
+  $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
+  $suggestions = array_merge($suggestions, [
+    'taxonomy_term__' . $term->bundle() . '__' . $sanitized_view_mode,
+  ]);
+}
+
+/**
+ * Implements hook_theme_suggestions_page_title_alter().
+ *
+ * Adds an additional theme suggestion for the custom title handling in code
+ * and templates.
+ */
+function agfirst_base_theme_suggestions_page_title_alter(array &$suggestions, array $vars) {
+  // Are we looking at a node?
+  $node = \Drupal::routeMatch()->getParameter('node');
+  // Object check required, sometimes it's a string, yes, really. Who knew?
+  if (!empty($node) && is_object($node)) {
+    array_splice($suggestions, 1, 0, 'page_title__' . $node->getType());
+  }
+
+  $term = \Drupal::routeMatch()->getParameter('taxonomy_term');
+  if (!empty($term) && is_object($term)) {
+    $suggestions[] = 'page_title__terms';
+    $suggestions[] = 'page_title__' . $term->getVocabularyId();
+  }
+
 }

@@ -1,0 +1,61 @@
+
+/*=============================================
+  Buttons
+=============================================*/
+
+.button {
+  display: inline-block;
+  font-family: $futura;
+  font-size: rem(14px);
+  font-weight: 900;
+  padding: .875rem 2rem;
+  transition: all .25s ease;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: $white;
+  cursor: pointer;
+
+  @include fout(horizontal);
+
+  &.green {
+    background-color: $green;
+    color: $white;
+    &:hover {
+      background-color: darken($green, 5%);
+    }
+  }
+
+  &.brown {
+    background-color: $brown-dark;
+    color: $white;
+    &:hover {
+      background-color: lighten($brown-dark, 10%);
+    }
+  }
+
+  &.transparent {
+    background-color: transparent;
+    border: 2px solid $white;
+
+    &.green {
+      color: $green;
+      border-color: $green;
+      &:hover {
+        // color: darken($green, 5%);
+        color: $white;
+        border-color: darken($green, 5%);
+      }
+    }
+
+    &.brown {
+      color: $brown-dark;
+      border-color: $brown-dark;
+      &:hover {
+        // color: lighten($brown-dark, 10%);
+        color: $white;
+        border-color: lighten($brown-dark, 10%);
+      }
+    }
+  }
+}

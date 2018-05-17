@@ -1,0 +1,16 @@
+/*=============================================
+  Forms
+=============================================*/
+
+textarea,
+input[type="text"],
+input[type="password"],
+input[type="search"] {
+  padding: .5rem 1rem;
+}
+
+input[type="submit"] {
+  @extend .button;
+  @extend .button.green;
+  border: 0;
+}

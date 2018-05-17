@@ -1,0 +1,63 @@
+/*=============================================
+  Base Styles
+=============================================*/
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  color: $defaultTextColor;
+}
+
+img {
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  display: inline-block;
+  margin-bottom: 1em;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 0;
+
+  tbody {
+    border: none;
+  }
+
+  th {
+    text-align: left;
+    text-transform: uppercase;
+    padding: 0 1em;
+    border: none;
+  }
+
+  td {
+    padding: .833rem;
+    // border-color: #bdbdbd;
+    border: 1px solid #bdbdbd;
+  }
+}
+
+figure {
+  margin: 1rem;
+
+  figcaption {
+    p {
+      font-size: rem(14px);
+    }
+  }
+}
+
+blockquote {
+  p {
+    font-size: $h3;
+    font-family: $futura;
+    text-transform: uppercase;
+    color: $green-dark;
+    font-weight: 700;
+    margin: 0 auto;
+  }
+}

@@ -1,0 +1,175 @@
+/*=============================================
+  Page: Layout
+=============================================*/
+
+.layout {
+  &-container {
+    overflow: hidden;
+    position: relative;
+  }
+
+  &-content {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.region {
+  &--content-top,
+  &--content-bottom {
+    width: 100%;
+  }
+}
+
+.block-system-main-block {
+  padding-top: 1rem;
+
+  .page-node-type-landing-page & {
+    padding-top: 0;
+  }
+}
+
+.main {
+  @include font-smoothing;
+
+  &--has-sidebar {
+    & > .container {
+      @include bp($medium) {
+        display: flex;
+      }
+    }
+  }
+
+  &.main--sidebar-right {
+    & > .container {
+      padding: 0 1rem 2rem;
+      @include bp($medium) {
+        padding: 0 2rem 2rem;
+      }
+      @include bp($large) {
+        padding: 0 5rem 2rem;
+      }
+      @include bp($xlarge) {
+        padding: 0 10rem 2rem;
+      }
+    }
+  }
+
+  & > .container {
+    // padding: 1rem;
+    .main__content {
+      padding: 1rem;
+    }
+  }
+
+  &__content {
+    .main--sidebar-left &,
+    .main--sidebar-right & {
+      max-width: $siteWrapper;
+      margin: 0 auto;
+      flex: 0 0 auto;
+      order: 0;
+    }
+
+    .main--sidebar-left & {
+      @include bp($medium) {
+        width: 70%;
+      }
+    }
+
+    .main--sidebar-right & {
+      @include bp($medium) {
+        width: 50%;
+      }
+    }
+  }
+
+  &__sidebar {
+    &-left,
+    &-right {
+      @include bp($medium) {
+        flex: 0 0 auto;
+      }
+    }
+
+    &-left {
+      order: -1;
+      padding-top: 1rem;
+      @include bp($medium) {
+        width: 30%;
+        padding: 1rem 3rem 0 2rem;
+      }
+    }
+
+    &-right {
+      order: 1;
+      @include bp($medium) {
+        width: 50%;
+        padding: 0 0 0 1rem;
+      }
+    }
+  }
+}
+
+.layers {
+  margin: 0 -1rem;
+}
+
+.main__top {
+  .title-only-header {
+    // max-width: $siteWrapper;
+    padding: 2rem 1rem 0;
+    @include bp($medium) {
+      padding: 2rem 2rem 0;
+    }
+    @include bp($large) {
+      padding: 2rem 5rem 0;
+    }
+    @include bp($xlarge) {
+      padding: 2rem 10rem 0;
+    }
+  }
+}
+
+.title-only-header {
+  padding: 1rem;
+
+  &__date {
+    font-weight: 700;
+    font-size: 1rem;
+    text-transform: uppercase;
+    font-family: $futura;
+    margin: 0 auto 1rem;
+  }
+
+  &__title {
+    color: $green-dark;
+    text-transform: uppercase;
+    font-size: $h3;
+    font-weight: 700;
+    margin: 0 0 2rem 0;
+    line-height: 1.2;
+
+    @include fout(horizontal-reverse);
+  }
+
+  .button {
+    padding-left: 1rem;
+    margin: 0 auto 1.5rem;
+    &:before {
+      content: '';
+      display: inline-block;
+      height: 1rem;
+      width: 1rem;
+      margin-right: .5rem;
+      background: url('../img/ui-chevron-left.svg') center center no-repeat;
+      background-size: contain;
+      vertical-align: middle;
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{#
+  Type:           Node
+  Content Type:   (any)
+  View Mode:      feed_teaser
+#}
+{%
+  set classes = [
+    'node--type-' ~ node.bundle|clean_class,
+    view_mode ? 'node--view-mode-' ~ view_mode|clean_class,
+    'feed-item',
+  ]
+%}
+{# {{ attach_library('classy/node') }} #}
+{% set createdDate = node.getCreatedTime|format_date('blog_date') %}
+
+<article{{ attributes.addClass(classes) }}>
+  {% if content.field_publication_date %}
+    <div class="feed-item__date">{{ content.field_publication_date }}</div>
+  {% else %}
+    <p class="feed-item__date">{{ createdDate }}</p>
+  {% endif %}
+  <h3 class="feed-item__title">
+    <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+  </h3>
+
+  <div{{ content_attributes.addClass('feed-item__content') }}>
+    {{ content|without('field_publication_date') }}
+  </div>
+
+  <a href="{{ url }}" rel="bookmark" class="feed-item__learn-more">Learn More</a>
+</article>

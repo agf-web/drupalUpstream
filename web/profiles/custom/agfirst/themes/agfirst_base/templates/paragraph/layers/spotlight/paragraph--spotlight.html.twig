@@ -1,0 +1,30 @@
+{% extends "paragraph.html.twig" %}
+{% set spotlight_media = content.field_media_type.0['#markup']|lower %}
+{% set spotlight_title = content.field_title.0['#context']['value'] %}
+{% set spotlight_media_align = content.field_media_side.0['#markup']|lower %}
+{% set has_spotlight_image = content.field_image.0 %}
+{% set has_spotlight_video = content.field_video.0 %}
+{%
+  set spotlightClasses = [
+    'spotlight',
+    'spotlight--media-align-' ~ spotlight_media_align,
+    (has_spotlight_image is empty) and (has_spotlight_video is empty) ? 'spotlight--no-media',
+  ]
+%}
+
+{% block paragraph %}
+  <section{{ attributes.addClass(classes, spotlightClasses) }}>
+    {% block content %}
+      {% if spotlight_media is same as('image') %}
+        {{ content.field_image }}
+      {% elseif spotlight_media is same as('video') %}
+        {{ content.field_video }}
+      {% endif %}
+      <div class="spotlight__content">
+        {{ content.field_title }}
+        {{ content.field_message }}
+        {{ content.field_link }}
+      </div>
+    {% endblock %}
+  </section>
+{% endblock paragraph %}

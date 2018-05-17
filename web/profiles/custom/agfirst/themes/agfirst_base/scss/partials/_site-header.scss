@@ -1,0 +1,109 @@
+/*=============================================
+  SITE HEADER
+=============================================*/
+
+.site-header {
+  background: $white;
+  position: relative;
+  z-index: 1;
+  padding: 0 1rem;
+
+  // &.is-active--mobile-drawer {
+  // }
+
+  @include bp($large) {
+    padding: 1rem;
+    height: 8.125em;
+  }
+
+  &__split {
+    @include bp($large) {
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+
+  .region {
+    // &--site-header-left {
+    //   padding: 0 1rem;
+    // }
+
+    // mobile drawer
+    &--site-header-right {
+      position: absolute;
+      background: $white;
+      z-index: 1;
+      padding: 1rem;
+      width: 100%;
+      // transition: 
+      //   max-height .25s ease,
+      //   padding 0s ease .20s;
+      right: 0;
+      transition: transform .5s ease;
+      transform: translate3d(100%, 0, 0);
+      @include bp($medium) {
+        max-width: 50%;
+      }
+      @include bp($large) {
+        display: flex;
+        padding: 0;
+        position: relative;
+        transform: none;
+        max-width: none;
+
+        align-items: center;
+        height: 3rem;
+        justify-content: flex-end;
+      }
+
+      &.is-active {
+        // transition:
+        //   max-height .25s ease,
+        //   padding 0s ease 0s;
+
+        transform: translate3d(0, 0, 0);
+        max-height: 50rem;
+      }
+
+      & > * {
+        & + * {
+          margin-top: 2rem;
+          @include bp($large) {
+            margin: 0 0 0 1.5rem;
+          }
+        }
+      }
+    } // end `.region--site-header-right`
+  }
+}
+
+.block-system-branding-block {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  & > .contextual {
+    right: 3rem;
+  }
+}
+
+.logo {
+  display: inline-block;
+  text-indent: -9999px;
+  background-repeat: no-repeat;
+  background-size: contain;
+
+  width: 8rem;
+  height: 3rem; // 80px
+
+  @include bp($large) {
+    width: 13.125rem; // 210px
+    height: 5rem; // 80px
+  }
+}
+
+.hamburger {
+  @include bp($large) {
+    display: none;
+  }
+}

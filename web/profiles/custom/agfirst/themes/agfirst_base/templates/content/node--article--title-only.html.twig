@@ -1,0 +1,23 @@
+{#
+  Type:           Block View (placed into Main Content Region)
+  Content Type:   Article
+  View Mode:      title_only
+#}
+
+{%
+  set classes = [
+    'article-event-header',
+    view_mode ? 'node--view-mode-' ~ view_mode|clean_class,
+  ]
+%}
+
+{% set title_attributes = create_attribute() %}
+
+<div{{ attributes.addClass(classes) }}>
+  <a href="/blog" class="button green transparent">Back to Blog</a>
+    {{ content.field_publication_date }}
+
+  <h1{{ title_attributes.addClass('article-event-header__title') }}>
+    {{ label }}
+  </h1>
+</div>

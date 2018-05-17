@@ -1,0 +1,121 @@
+/*=============================================
+  Page: Listing
+=============================================*/
+
+.page {
+  &-node-type-listing-page {
+    .block-page-title-block {
+      @extend .page-header;
+      @extend .page-header--small;
+    }    
+  }
+}
+
+.feed-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 1rem 0;
+  @include bp($large) {
+    display: flex;
+    justify-content: center;
+    flex-flow: row wrap;
+    // &:after {
+    //   content: '';
+    //   flex: auto;
+    //   width: 0;
+    // }
+  }
+
+  li {
+    margin-bottom: 1rem;
+    @include bp($large) {
+      flex: 1 1 auto;
+      width: calc(33.333% - .75rem);
+      margin: 0 .5rem 1.25rem;
+
+      &:nth-child(3n + 1) {
+        margin-left: 0;
+      }
+      &:nth-child(3n + 3) {
+        margin-right: 0;
+      }
+      &:first-child {
+        margin-left: 0;
+      }
+      &:last-child {
+        margin-right: 0;
+      }
+      // &:nth-last-child(2) {
+      //   flex: 0 1 auto;
+      // }
+    }
+  }
+}
+
+.node--type-listing-page {
+  .feed-list {
+    margin: 0 -1rem;
+  }
+}
+
+.pager {
+  &__items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    flex-flow: row wrap;
+  }
+
+  &__item {
+    flex: 0 0 auto;
+    height: 2rem;
+    width: 2rem;
+    text-align: center;
+
+    &:hover {
+      a {
+        background: $green-light;
+      }
+    }
+
+    &--first,
+    &--previous,
+    &--next,
+    &--last {
+      width: 100%;
+      padding: 0 .5rem;
+      @include bp($small) {
+        width: auto;
+      }
+      &:hover {
+        a {
+          color: inherit;
+          background: transparent;
+          text-decoration: underline;
+        }
+      }
+    }
+
+    &--ellipsis {
+      width: auto;
+    }
+
+    &.is-active {
+      a {
+        background: $green;
+        color: $white;
+      }
+    }
+
+    a {
+      display: block;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-decoration: none;
+    }
+  }
+}

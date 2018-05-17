@@ -1,0 +1,246 @@
+/*=============================================
+  Paragraph Type: Spotlight
+=============================================*/
+
+// .paragraph {
+//   &--type--spotlight {
+//     padding: 2rem;
+//   }
+// }
+
+.spotlight {
+  @include font-smoothing;
+  padding: 2rem;
+  @include bp(600px) {
+    display: flex;
+    justify-content: space-between;
+
+    &__content,
+    &__field-image {
+      width: 50%;
+      flex: 0 0 auto;
+    }
+  }
+
+  &.spotlight--no-media {
+    @include bp(600px) {
+      justify-content: center;
+  
+      .spotlight__content {
+        width: 100%;
+      }
+    }
+  }
+
+  &__content {
+    padding: 1rem;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    @include bp(600px) {
+      padding: 1rem 2rem;
+    }
+    @include bp($medium) {
+      text-align: center;
+    }
+
+    p {
+      width: 100%;
+    }
+
+    // .spotlight--media-align-left & {
+    //   @include bp($small) {
+    //     padding-left: 2rem;
+    //   }
+    // }
+    // .spotlight--media-align-right & {
+    //   @include bp($small) {
+    //     padding-right: 2rem;
+    //   }
+    // }
+  }
+
+  .field--type-image,
+  &__field-image {
+    margin: 0 auto 1rem;
+    @include bp(600px) {
+      margin: 0 auto;
+      flex: 1 1 50%;
+
+      .spotlight--quotation.spotlight--media-align-right & {
+        &:before {
+          top: 50%;
+          left: 0;
+          transform: translateY(-50%) rotate(-90deg);
+        }
+      }
+  
+      .spotlight--quotation.spotlight--media-align-left & {
+        &:before {
+          top: 50%;
+          left: auto;
+          right: 0;
+          transform: translateY(-50%) rotate(90deg);
+        }
+      }
+    }
+
+    .spotlight--media-align-left & {
+      order: -1;
+    }
+    .spotlight--media-align-right & {
+      order: 1;
+    }
+
+    img {
+      margin: 0 auto;
+      display: block;
+    }
+  }
+
+  &__date {
+    font-family: $futura;
+    margin: 0 auto;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  &__field-title {
+    color: $green-dark;
+    text-transform: uppercase;
+    margin: 0 auto .5rem;
+    line-height: 1.2;
+    @include fout(vertical);
+
+    a {
+      transition: color .25s ease;
+      text-decoration: none;
+      &:hover {
+        color: $green;
+      }
+    }
+  }
+
+  &__field-link {
+    margin-top: 1rem;
+    @extend .button;
+    @extend .green.button;
+  }
+
+  &__field-video {
+    height: 100%;
+    width: 100%;
+
+    .spotlight--media-align-left & {
+      order: -1;
+    }
+    .spotlight--media-align-right & {
+      order: 1;
+    }
+
+    @include bp(600px) {
+      width: 50%;
+    }
+  }
+}
+
+// this is for .spotlight--featured (used in article, blog, and person detail listing views)
+.field--type-image {
+  .spotlight--media-align-left & {
+    order: -1;
+  }
+  .spotlight--media-align-right & {
+    order: 1;
+  }
+}
+
+/*=============================================
+  Paragraph Type: Spotlight Grid
+=============================================*/
+
+.spotlight-grid {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+
+  .spotlight {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .field__items {
+    .field__item {
+      margin-bottom: 2rem;
+      @include bp($medium) {
+        margin-bottom: 0;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      &:nth-child(odd) {
+        .spotlight {
+          .spotlight__field-image {
+            order: 1;
+          }
+        }
+      }
+      &:nth-child(even) {
+        .spotlight {
+          .spotlight__field-image {
+            order: -1;
+          }
+        }
+      }
+    }
+  }
+}
+
+.agf-bg {
+  &--color {
+    background-image: none;
+    &--white {
+      @extend .agf-bg--color;
+      background-color: $white;
+    }
+    &--blue {
+      @extend .agf-bg--color;
+      background-color: $blue;
+    }
+    &--brown {
+      @extend .agf-bg--color;
+      background-color: $brown-dark;
+    }
+    &--light-green {
+      @extend .agf-bg--color;
+      background-color: $green-light;
+    }
+    &--green {
+      @extend .agf-bg--color;
+      background-color: $green;
+    }
+    &--dark-green {
+      @extend .agf-bg--color;
+      background-color: $green-dark;
+    }
+  }
+  &--pattern {
+    &--cross-hatch {
+      background-size: 10rem;
+      background-image: url('../img/bg-patterns/itchy-scratchy.png');
+      &--light-green {
+        @extend .agf-bg--pattern--cross-hatch;
+        background-color: $green-light;
+      }
+      &--green {
+        @extend .agf-bg--pattern--cross-hatch;
+        background-color: $green;
+      }
+      &--dark-green {
+        @extend .agf-bg--pattern--cross-hatch;
+        background-color: $green-dark;
+      }
+    }
+  }
+}
