@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - getfarmcredit_client
+    - system
+  theme:
+    - agfirst_base
+id: getfarmcreditmap
+theme: agfirst_base
+region: content
+weight: -13
+provider: null
+plugin: getfarmcredit_map
+settings:
+  id: getfarmcredit_map
+  label: 'GetFarmCredit Map'
+  provider: getfarmcredit_client
+  label_display: '0'
+  coming_soon: ''
+visibility:
+  request_path:
+    id: request_path
+    pages: /locations
+    negate: false
+    context_mapping: {  }

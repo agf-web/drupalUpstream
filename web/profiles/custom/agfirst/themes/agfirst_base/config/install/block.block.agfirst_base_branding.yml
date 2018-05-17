@@ -4,9 +4,9 @@ dependencies:
   module:
     - system
   theme:
-    - rivervalley
-id: rivervalley_branding
-theme: rivervalley
+    - agfirst_base
+id: agfirst_base_branding
+theme: agfirst_base
 region: site_header_left
 weight: -7
 provider: null

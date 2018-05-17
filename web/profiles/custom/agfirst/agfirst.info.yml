@@ -97,5 +97,5 @@ dependencies:
   - views
   - paragraphs
 themes:
-  - bartik
+  - agfirst_base
   - seven

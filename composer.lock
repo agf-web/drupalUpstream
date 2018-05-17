@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "c20b35de9f668f6995744135902f3c81",
+    "content-hash": "3a0632312153dec768024dfdffe95f19",
     "packages": [
         {
             "name": "alchemy/zippy",
@@ -4106,6 +4106,58 @@
                 "issues": "https://www.drupal.org/project/issues/search_api_solr",
                 "irc": "irc://irc.freenode.org/drupal-search-api"
             }
+        },
+        {
+            "name": "drupal/simple_gmap",
+            "version": "dev-1.x",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupal.org/project/simple_gmap",
+                "reference": "180e2a5d674b88ff176ac6ba88f35864b922211a"
+            },
+            "require": {
+                "drupal/core": "*"
+            },
+            "require-dev": {
+                "drupal/address": "*"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-1.x": "1.x-dev"
+                },
+                "drupal": {
+                    "version": "8.x-1.4+2-dev",
+                    "datestamp": "1513628584",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Dev releases are not covered by Drupal security advisories."
+                    }
+                },
+                "patches_applied": {
+                    "Address Field Support": "patches/simple_gmap-address-formatter-2863979-30.patch"
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "jhodgdon",
+                    "homepage": "https://www.drupal.org/user/155601"
+                },
+                {
+                    "name": "martin107",
+                    "homepage": "https://www.drupal.org/user/2659379"
+                }
+            ],
+            "description": "Provides a Google Maps link/map formatter for simple Text fields.",
+            "homepage": "https://www.drupal.org/project/simple_gmap",
+            "support": {
+                "source": "http://cgit.drupalcode.org/simple_gmap"
+            },
+            "time": "2018-05-02T20:29:37+00:00"
         },
         {
             "name": "drupal/smart_trim",
@@ -9908,6 +9960,7 @@
         "drupal/reroute_email": 10,
         "drupal/search_api_attachments": 10,
         "drupal/search_api_solr": 10,
+        "drupal/simple_gmap": 20,
         "drupal/telephone_formatter": 10,
         "drupal/webform": 10,
         "drupal/xmlsitemap": 15
@@ -9917,6 +9970,6 @@
     "platform": [],
     "platform-dev": [],
     "platform-overrides": {
-        "php": "7.0.8"
+        "php": "7.0.9"
     }
 }

@@ -52,6 +52,7 @@
     "drupal/search_api_attachments": "^1.0@beta",
     "drupal/search_api_pantheon": "~1.0",
     "drupal/search_api_solr": "^1.0@beta",
+    "drupal/simple_gmap": "1.x-dev",
     "drupal/smart_trim": "^1.0",
     "drupal/telephone_formatter": "^1.0@beta",
     "drupal/telephone_validation": "^2.0",
@@ -78,7 +79,7 @@
     "symfony/css-selector": "^2.8"
   },
   "conflict": {
-      "drupal/drupal": "*"
+    "drupal/drupal": "*"
   },
   "minimum-stability": "alpha",
   "prefer-stable": true,
@@ -111,11 +112,21 @@
   },
   "extra": {
     "installer-paths": {
-      "web/core": ["type:drupal-core"],
-      "web/modules/contrib/{$name}": ["type:drupal-module"],
-      "web/profiles/contrib/{$name}": ["type:drupal-profile"],
-      "web/themes/contrib/{$name}": ["type:drupal-theme"],
-      "drush/contrib/{$name}": ["type:drupal-drush"]
+      "web/core": [
+        "type:drupal-core"
+      ],
+      "web/modules/contrib/{$name}": [
+        "type:drupal-module"
+      ],
+      "web/profiles/contrib/{$name}": [
+        "type:drupal-profile"
+      ],
+      "web/themes/contrib/{$name}": [
+        "type:drupal-theme"
+      ],
+      "drush/contrib/{$name}": [
+        "type:drupal-drush"
+      ]
     },
     "build-env": {
       "install-cms": [
@@ -149,6 +160,9 @@
       "drupal/draggableviews": {
         "Allow sort handler to select the view that stored the order": "patches/2767437-36.patch"
       },
+      "drupal/simple_gmap": {
+        "Address Field Support": "patches/simple_gmap-address-formatter-2863979-30.patch"
+      },
       "drupal/menu_block": {
         "Menu parent as block title": "patches/menu_block-label_configuration-2809699-51.patch"
       },
@@ -166,7 +180,7 @@
     "preferred-install": "dist",
     "sort-packages": true,
     "platform": {
-      "php": "7.0.8"
+      "php": "7.0.9"
     }
   }
 }
