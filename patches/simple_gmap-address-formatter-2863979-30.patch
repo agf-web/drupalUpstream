@@ -1,0 +1,998 @@
+diff --git a/config/schema/simple_gmap.schema.yml b/config/schema/simple_gmap.schema.yml
+index 40c65b0..1127757 100644
+--- a/config/schema/simple_gmap.schema.yml
++++ b/config/schema/simple_gmap.schema.yml
+@@ -45,3 +45,51 @@ field.formatter.settings.simple_gmap:
+     apikey:
+       type: string
+       label: 'A Google Maps API key, needed for static maps'
++
++field.formatter.settings.simple_gmap_address:
++  type: mapping
++  label: 'Simple Google Map from Address field formatter settings'
++  mapping:
++    include_map:
++      type: boolean
++      label: 'Whether to include a dynamic map'
++    include_static_map:
++      type: boolean
++      label: 'Whether to include a static map'
++    include_link:
++      type: boolean
++      label: 'Whether to include a link to the Google Map'
++    include_text:
++      type: boolean
++      label: 'Whether to include text with the map'
++    iframe_height:
++      type: string
++      label: 'Height of embedded map'
++    iframe_width:
++      type: string
++      label: 'Width of embedded map'
++    iframe_title:
++      type: string
++      label: 'A title for describing the iframe for accessibility reasons'
++    static_scale:
++      type: integer
++      label: 'Whether to scale static map image for retina displays'
++    zoom_level:
++      type: integer
++      label: 'Zoom level'
++    information_bubble:
++      type: boolean
++      label: 'Whether to include an information bubble'
++    link_text:
++      type: label
++      label: 'The text for the link to the Google Map'
++    map_type:
++      type: string
++      label: 'Map type for embedded and linked maps'
++    langcode:
++      type: label
++      label: 'The language in which the map should be displayed'
++      translation context: 'Google Maps language code'
++    apikey:
++      type: string
++      label: 'A Google Maps API key, needed for static maps'
+diff --git a/src/Plugin/Field/FieldFormatter/SimpleGMapAddressFormatter.php b/src/Plugin/Field/FieldFormatter/SimpleGMapAddressFormatter.php
+new file mode 100644
+index 0000000..f7f93ba
+--- /dev/null
++++ b/src/Plugin/Field/FieldFormatter/SimpleGMapAddressFormatter.php
+@@ -0,0 +1,53 @@
++<?php
++
++namespace Drupal\simple_gmap\Plugin\Field\FieldFormatter;
++
++use Drupal\address\Plugin\Field\FieldFormatter\AddressDefaultFormatter;
++use Drupal\Core\Field\FieldItemListInterface;
++
++/**
++ * Plugin implementation of the 'simple_gmap_address' formatter.
++ *
++ * @FieldFormatter(
++ *   id = "simple_gmap_address",
++ *   label = @Translation("Google Map from Address field"),
++ *   field_types = {
++ *     "address",
++ *   }
++ * )
++ */
++class SimpleGMapAddressFormatter extends AddressDefaultFormatter {
++
++  use SimpleGMapTrait {
++    viewElements as simpleGmapViewElements;
++  }
++
++  /**
++   * {@inheritdoc}
++   */
++  public function viewElements(FieldItemListInterface $items, $langcode) {
++    $elements = parent::viewElements($items, $langcode);
++    $mapElements = $this->simpleGmapViewElements($items, $langcode);
++
++    foreach ($items as $delta => $item) {
++      $elements[$delta]['#post_render'][] = [static::class, 'mapPostRender'];
++      $elements[$delta]['#map_elements'] = $mapElements[$delta];
++      $elements[$delta]['#prefix'] = '';
++      $elements[$delta]['#suffix'] = '';
++    }
++
++    return $elements;
++  }
++
++  /**
++   * Post render callback.
++   */
++  public static function mapPostRender($content, $element) {
++    $addressString = html_entity_decode(str_replace("\n", ',', strip_tags($content)), ENT_QUOTES);
++    $map = $element['#map_elements'];
++    $map['#address_text'] = $addressString;
++    $map['#url_suffix'] = urlencode($addressString);
++    return \Drupal::service('renderer')->renderRoot($map);
++  }
++
++}
+diff --git a/src/Plugin/Field/FieldFormatter/SimpleGMapFormatter.php b/src/Plugin/Field/FieldFormatter/SimpleGMapFormatter.php
+index b67e33a..b013d9b 100644
+--- a/src/Plugin/Field/FieldFormatter/SimpleGMapFormatter.php
++++ b/src/Plugin/Field/FieldFormatter/SimpleGMapFormatter.php
+@@ -2,9 +2,7 @@
+ 
+ namespace Drupal\simple_gmap\Plugin\Field\FieldFormatter;
+ 
+-use Drupal\Core\Field\FieldItemListInterface;
+ use Drupal\Core\Field\FormatterBase;
+-use Drupal\Core\Form\FormStateInterface;
+ 
+ /**
+  * Plugin implementation of the 'simple_gmap' formatter.
+@@ -21,279 +19,6 @@ use Drupal\Core\Form\FormStateInterface;
+  */
+ class SimpleGMapFormatter extends FormatterBase {
+ 
+-  /**
+-   * {@inheritdoc}
+-   */
+-  public static function defaultSettings() {
+-    return [
+-      "include_map" => TRUE,
+-      "include_static_map" => FALSE,
+-      "include_link" => FALSE,
+-      "include_text" => FALSE,
+-      "iframe_height" => "200",
+-      "iframe_width" => "200",
+-      "iframe_title" => "",
+-      "static_scale" => 1,
+-      "zoom_level" => "14",
+-      "link_text" => "View larger map",
+-      "map_type" => "m",
+-      "langcode" => "en",
+-      "apikey" => "",
+-    ] + parent::defaultSettings();
+-  }
+-
+-  /**
+-   * {@inheritdoc}
+-   */
+-  public function settingsForm(array $form, FormStateInterface $form_state) {
+-    $elements = parent::settingsForm($form, $form_state);
+-
+-    $elements['embedded_label'] = [
+-      '#type' => 'markup',
+-      '#markup' => '<h3>' . $this->t('Embedded map') . '</h3>',
+-    ];
+-    $elements['include_map'] = [
+-      '#type' => 'checkbox',
+-      '#title' => $this->t('Include embedded dynamic map'),
+-      '#default_value' => $this->getSetting('include_map'),
+-    ];
+-    $elements['include_static_map'] = [
+-      '#type' => 'checkbox',
+-      '#title' => $this->t('Include embedded static map'),
+-      '#default_value' => $this->getSetting('include_static_map'),
+-    ];
+-    $elements['apikey'] = [
+-      '#type' => 'textfield',
+-      '#title' => $this->t('Google Maps API key'),
+-      '#default_value' => $this->getSetting('apikey'),
+-      '#description' => $this->t('Static Maps will not work without an API key. See the <a href="https://developers.google.com/maps/documentation/static-maps" target="_blank">Static Maps API page</a> to learn more and obtain a key.'),
+-      '#states' => [
+-        'visible' => [
+-          ":input[name*='include_static_map']" => ['checked' => TRUE],
+-        ],
+-        'required' => [
+-          ':input[name*="include_static_map"]' => ['checked' => TRUE],
+-        ],
+-      ],
+-    ];
+-    $elements['iframe_width'] = [
+-      '#type' => 'textfield',
+-      '#title' => $this->t('Width of embedded map'),
+-      '#default_value' => $this->getSetting('iframe_width'),
+-      '#description' => $this->t('You can set sizes in px or percent (ex: 600px or 100%). Note that static maps only accept sizes in pixels, without the suffix px (ex: 600).'),
+-      '#size' => 10,
+-    ];
+-    $elements['iframe_height'] = [
+-      '#type' => 'textfield',
+-      '#title' => $this->t('Height of embedded map'),
+-      '#default_value' => $this->getSetting('iframe_height'),
+-      '#description' => $this->t('You can set sizes in px or percent (ex: 600px or 100%). Note that static maps only accept sizes in pixels, without the suffix px (ex: 600).'),
+-      '#size' => 10,
+-    ];
+-    $elements['iframe_title'] = [
+-      '#type' => 'textfield',
+-      '#title' => $this->t('Title of the iframe for embedded map'),
+-      '#default_value' => $this->getSetting('iframe_title'),
+-      '#description' => $this->t('The embedded map is in an iframe HTML tag, which should have a title attribute for screen readers (not shown on the page). Use [address] to insert the address text in the title.'),
+-    ];
+-    $elements['static_scale'] = [
+-      '#title' => $this->t('Load Retina sized static image'),
+-      '#type' => 'select',
+-      '#description' => $this->t('Choose "Yes" to double the width and height of the static image for use on retina displays. (Only applicable to static map)'),
+-      '#options' => [
+-        1 => $this->t('No'),
+-        2 => $this->t('Yes'),
+-      ],
+-      '#default_value' => (int) $this->getSetting('static_scale'),
+-    ];
+-    $elements['link_label'] = [
+-      '#type' => 'markup',
+-      '#markup' => '<h3>' . $this->t('Link to map') . '</h3>',
+-    ];
+-    $elements['include_link'] = [
+-      '#type' => 'checkbox',
+-      '#title' => $this->t('Include link to map'),
+-      '#default_value' => $this->getSetting('include_link'),
+-    ];
+-    $elements['link_text'] = [
+-      '#type' => 'textfield',
+-      '#title' => $this->t('Link text'),
+-      '#default_value' => $this->getSetting('link_text'),
+-      '#description' => $this->t("Enter the text to use for the link to the map, or enter 'use_address' (without the quotes) to use the entered address text as the link text"),
+-    ];
+-    $elements['generic_label'] = [
+-      '#type' => 'markup',
+-      '#markup' => '<h3>' . $this->t('General settings') . '</h3>',
+-    ];
+-    $elements['zoom_level'] = [
+-      '#type' => 'select',
+-      '#options' => [
+-        1 => $this->t('1 - Minimum'),
+-        2 => 2,
+-        3 => 3,
+-        4 => 4,
+-        5 => 5,
+-        6 => 6,
+-        7 => 7,
+-        8 => 8,
+-        9 => 9,
+-        10 => 10,
+-        11 => 11,
+-        12 => 12,
+-        13 => 13,
+-        14 => $this->t('14 - Default'),
+-        15 => 15,
+-        16 => 16,
+-        17 => 17,
+-        18 => 18,
+-        19 => 19,
+-        20 => $this->t('20 - Maximum'),
+-      ],
+-      '#title' => $this->t('Zoom level'),
+-      '#default_value' => $this->getSetting('zoom_level'),
+-    ];
+-    $elements['include_text'] = [
+-      '#type' => 'checkbox',
+-      '#title' => $this->t('Include original address text'),
+-      '#default_value' => $this->getSetting('include_text'),
+-    ];
+-    $elements['map_type'] = [
+-      '#type' => 'select',
+-      '#title' => $this->t('Map type'),
+-      '#description' => $this->t('Choose a default map type for embedded and linked maps'),
+-      '#options' => [
+-        'm' => $this->t('Map'),
+-        'k' => $this->t('Satellite'),
+-        'h' => $this->t('Hybrid'),
+-        'p' => $this->t('Terrain'),
+-      ],
+-      '#default_value' => $this->getSetting('map_type'),
+-    ];
+-    $elements['langcode'] = [
+-      '#type' => 'textfield',
+-      '#title' => $this->t('Language'),
+-      '#default_value' => $this->getSetting('langcode'),
+-      '#description' => $this->t("Enter a two-letter language code that Google Maps can recognize, or enter 'page' (without the quotes) to use the current page's language code"),
+-    ];
+-    return $elements;
+-  }
+-
+-  /**
+-   * {@inheritdoc}
+-   */
+-  public function settingsSummary() {
+-    $summary = [];
+-
+-    $map_types = [
+-      'm' => $this->t('Map'),
+-      'k' => $this->t('Satellite'),
+-      'h' => $this->t('Hybrid'),
+-      'p' => $this->t('Terrain'),
+-    ];
+-    $map_type = $this->getSetting('map_type') ? $this->getSetting('map_type') : 'm';
+-    $map_type = isset($map_types[$map_type]) ? $map_types[$map_type] : $map_types['m'];
+-
+-    $include_map = $this->getSetting('include_map');
+-    if ($include_map) {
+-      $summary[] = $this->t('Dynamic map: @width x @height', [
+-        '@width' => $this->getSetting('iframe_width'),
+-        '@height' => $this->getSetting('iframe_height'),
+-      ]);
+-      $summary[] = $this->t('Title of the iframe: @title', [
+-        '@title' => $this->getSetting('iframe_title'),
+-      ]);
+-    }
+-
+-    $include_static_map = $this->getSetting('include_static_map');
+-    if ($include_static_map) {
+-      $summary[] = $this->t('Static map: @width x @height, Scale: @static_scale', [
+-        '@width' => $this->getSetting('iframe_width'),
+-        '@height' => $this->getSetting('iframe_height'),
+-        '@static_scale' => $this->getSetting('static_scale'),
+-      ]);
+-    }
+-
+-    $include_link = $this->getSetting('include_link');
+-    if ($include_link) {
+-      $summary[] = $this->t('Map link: @link_text', [
+-        '@link_text' => $this->getSetting('link_text'),
+-      ]);
+-    }
+-
+-    if ($include_link || $include_map || $include_static_map) {
+-      $summary[] = $this->t('Map Type: @map_type', ['@map_type' => $map_type]);
+-      $summary[] = $this->t('Zoom Level: @zoom_level', ['@zoom_level' => $this->getSetting('zoom_level')]);
+-      $summary[] = $this->t('Language: @language', ['@language' => $this->getSetting('langcode')]);
+-    }
+-    $include_text = $this->getSetting('include_text');
+-    if ($include_text) {
+-      $summary[] = $this->t('Original text displayed');
+-    }
+-
+-    return $summary;
+-  }
+-
+-  /**
+-   * {@inheritdoc}
+-   */
+-  public function viewElements(FieldItemListInterface $items, $langcode) {
+-    $element = [];
+-    $settings = $this->getSettings();
+-
+-    $include_text = $settings['include_text'];
+-    $zoom_level = (int) $settings['zoom_level'];
+-
+-    // For some reason, static gmaps accepts a different value for map type.
+-    $static_map_types = [
+-      'm' => 'roadmap',
+-      'k' => 'satellite',
+-      'h' => 'hybrid',
+-      'p' => 'terrain',
+-    ];
+-
+-    $map_type = $settings['map_type'];
+-
+-    // Figure out a language code to use. Google cannot recognize 'und'.
+-    if ($settings['langcode'] == 'page') {
+-      $lang_to_use = $langcode;
+-    }
+-    else {
+-      $lang_to_use = ['#plain_text' => $settings['langcode']];
+-    }
+-
+-    foreach ($items as $delta => $item) {
+-      $url_value = urlencode($item->value);
+-      $address_value = $item->value;
+-      $address = $include_text ? $address_value : '';
+-      $text_for_link = ($settings['link_text'] == 'use_address') ? $address_value : $settings['link_text'];
+-      $link_text = ['#plain_text' => $text_for_link];
+-      $iframe_title = $settings['iframe_title'];
+-      $iframe_title_value = [
+-        '#plain_text' => str_replace('[address]', $address_value, $iframe_title),
+-      ];
+-
+-      $element[$delta] = [
+-        '#theme' => 'simple_gmap_output',
+-        '#include_map' => $settings['include_map'],
+-        '#include_static_map' => $settings['include_static_map'],
+-        '#include_link' => $settings['include_link'],
+-        '#include_text' => $settings['include_text'],
+-        '#width' => ['#plain_text' => $settings['iframe_width']],
+-        '#height' => ['#plain_text' => $settings['iframe_height']],
+-        '#iframe_title' => $iframe_title_value,
+-        '#static_scale' => (int) $settings['static_scale'],
+-        '#url_suffix' => $url_value,
+-        '#zoom' => $zoom_level,
+-        '#link_text' => $link_text,
+-        '#address_text' => $address,
+-        '#map_type' => $map_type,
+-        '#langcode' => $lang_to_use,
+-        '#static_map_type' => $static_map_types[$map_type],
+-        '#apikey' => $settings['apikey'],
+-      ];
+-    }
+-
+-    return $element;
+-  }
++  use SimpleGMapTrait;
+ 
+ }
+diff --git a/src/Plugin/Field/FieldFormatter/SimpleGMapTrait.php b/src/Plugin/Field/FieldFormatter/SimpleGMapTrait.php
+new file mode 100644
+index 0000000..c0e6b73
+--- /dev/null
++++ b/src/Plugin/Field/FieldFormatter/SimpleGMapTrait.php
+@@ -0,0 +1,288 @@
++<?php
++
++namespace Drupal\simple_gmap\Plugin\Field\FieldFormatter;
++
++use Drupal\Core\Field\FieldItemListInterface;
++use Drupal\Core\Form\FormStateInterface;
++
++/**
++ * Trait to share common functionality between Simple GMap formatters.
++ */
++trait SimpleGMapTrait {
++
++  /**
++   * {@inheritdoc}
++   */
++  public static function defaultSettings() {
++    return [
++      "include_map" => TRUE,
++      "include_static_map" => FALSE,
++      "include_link" => FALSE,
++      "include_text" => FALSE,
++      "iframe_height" => "200",
++      "iframe_width" => "200",
++      "iframe_title" => "",
++      "static_scale" => 1,
++      "zoom_level" => "14",
++      "link_text" => "View larger map",
++      "map_type" => "m",
++      "langcode" => "en",
++      "apikey" => "",
++    ] + parent::defaultSettings();
++  }
++
++  /**
++   * {@inheritdoc}
++   */
++  public function settingsForm(array $form, FormStateInterface $form_state) {
++    $elements = parent::settingsForm($form, $form_state);
++
++    $elements['embedded_label'] = [
++      '#type' => 'markup',
++      '#markup' => '<h3>' . $this->t('Embedded map') . '</h3>',
++    ];
++    $elements['include_map'] = [
++      '#type' => 'checkbox',
++      '#title' => $this->t('Include embedded dynamic map'),
++      '#default_value' => $this->getSetting('include_map'),
++    ];
++    $elements['include_static_map'] = [
++      '#type' => 'checkbox',
++      '#title' => $this->t('Include embedded static map'),
++      '#default_value' => $this->getSetting('include_static_map'),
++    ];
++    $elements['apikey'] = [
++      '#type' => 'textfield',
++      '#title' => $this->t('Google Maps API key'),
++      '#default_value' => $this->getSetting('apikey'),
++      '#description' => $this->t('Static Maps will not work without an API key. See the <a href="https://developers.google.com/maps/documentation/static-maps" target="_blank">Static Maps API page</a> to learn more and obtain a key.'),
++      '#states' => [
++        'visible' => [
++          ":input[name*='include_static_map']" => ['checked' => TRUE],
++        ],
++        'required' => [
++          ':input[name*="include_static_map"]' => ['checked' => TRUE],
++        ],
++      ],
++    ];
++    $elements['iframe_width'] = [
++      '#type' => 'textfield',
++      '#title' => $this->t('Width of embedded map'),
++      '#default_value' => $this->getSetting('iframe_width'),
++      '#description' => $this->t('You can set sizes in px or percent (ex: 600px or 100%). Note that static maps only accept sizes in pixels, without the suffix px (ex: 600).'),
++      '#size' => 10,
++    ];
++    $elements['iframe_height'] = [
++      '#type' => 'textfield',
++      '#title' => $this->t('Height of embedded map'),
++      '#default_value' => $this->getSetting('iframe_height'),
++      '#description' => $this->t('You can set sizes in px or percent (ex: 600px or 100%). Note that static maps only accept sizes in pixels, without the suffix px (ex: 600).'),
++      '#size' => 10,
++    ];
++    $elements['iframe_title'] = [
++      '#type' => 'textfield',
++      '#title' => $this->t('Title of the iframe for embedded map'),
++      '#default_value' => $this->getSetting('iframe_title'),
++      '#description' => $this->t('The embedded map is in an iframe HTML tag, which should have a title attribute for screen readers (not shown on the page). Use [address] to insert the address text in the title.'),
++    ];
++    $elements['static_scale'] = [
++      '#title' => $this->t('Load Retina sized static image'),
++      '#type' => 'select',
++      '#description' => $this->t('Choose "Yes" to double the width and height of the static image for use on retina displays. (Only applicable to static map)'),
++      '#options' => [
++        1 => $this->t('No'),
++        2 => $this->t('Yes'),
++      ],
++      '#default_value' => (int) $this->getSetting('static_scale'),
++    ];
++    $elements['link_label'] = [
++      '#type' => 'markup',
++      '#markup' => '<h3>' . $this->t('Link to map') . '</h3>',
++    ];
++    $elements['include_link'] = [
++      '#type' => 'checkbox',
++      '#title' => $this->t('Include link to map'),
++      '#default_value' => $this->getSetting('include_link'),
++    ];
++    $elements['link_text'] = [
++      '#type' => 'textfield',
++      '#title' => $this->t('Link text'),
++      '#default_value' => $this->getSetting('link_text'),
++      '#description' => $this->t("Enter the text to use for the link to the map, or enter 'use_address' (without the quotes) to use the entered address text as the link text"),
++    ];
++    $elements['generic_label'] = [
++      '#type' => 'markup',
++      '#markup' => '<h3>' . $this->t('General settings') . '</h3>',
++    ];
++    $elements['zoom_level'] = [
++      '#type' => 'select',
++      '#options' => [
++        1 => $this->t('1 - Minimum'),
++        2 => 2,
++        3 => 3,
++        4 => 4,
++        5 => 5,
++        6 => 6,
++        7 => 7,
++        8 => 8,
++        9 => 9,
++        10 => 10,
++        11 => 11,
++        12 => 12,
++        13 => 13,
++        14 => $this->t('14 - Default'),
++        15 => 15,
++        16 => 16,
++        17 => 17,
++        18 => 18,
++        19 => 19,
++        20 => $this->t('20 - Maximum'),
++      ],
++      '#title' => $this->t('Zoom level'),
++      '#default_value' => $this->getSetting('zoom_level'),
++    ];
++    $elements['include_text'] = [
++      '#type' => 'checkbox',
++      '#title' => $this->t('Include original address text'),
++      '#default_value' => $this->getSetting('include_text'),
++    ];
++    $elements['map_type'] = [
++      '#type' => 'select',
++      '#title' => $this->t('Map type'),
++      '#description' => $this->t('Choose a default map type for embedded and linked maps'),
++      '#options' => [
++        'm' => $this->t('Map'),
++        'k' => $this->t('Satellite'),
++        'h' => $this->t('Hybrid'),
++        'p' => $this->t('Terrain'),
++      ],
++      '#default_value' => $this->getSetting('map_type'),
++    ];
++    $elements['langcode'] = [
++      '#type' => 'textfield',
++      '#title' => $this->t('Language'),
++      '#default_value' => $this->getSetting('langcode'),
++      '#description' => $this->t("Enter a two-letter language code that Google Maps can recognize, or enter 'page' (without the quotes) to use the current page's language code"),
++    ];
++    return $elements;
++  }
++
++  /**
++   * {@inheritdoc}
++   */
++  public function settingsSummary() {
++    $summary = [];
++
++    $map_types = [
++      'm' => $this->t('Map'),
++      'k' => $this->t('Satellite'),
++      'h' => $this->t('Hybrid'),
++      'p' => $this->t('Terrain'),
++    ];
++    $map_type = $this->getSetting('map_type') ? $this->getSetting('map_type') : 'm';
++    $map_type = isset($map_types[$map_type]) ? $map_types[$map_type] : $map_types['m'];
++
++    $include_map = $this->getSetting('include_map');
++    if ($include_map) {
++      $summary[] = $this->t('Dynamic map: @width x @height', [
++        '@width' => $this->getSetting('iframe_width'),
++        '@height' => $this->getSetting('iframe_height'),
++      ]);
++      $summary[] = $this->t('Title of the iframe: @title', [
++        '@title' => $this->getSetting('iframe_title'),
++      ]);
++    }
++
++    $include_static_map = $this->getSetting('include_static_map');
++    if ($include_static_map) {
++      $summary[] = $this->t('Static map: @width x @height, Scale: @static_scale', [
++        '@width' => $this->getSetting('iframe_width'),
++        '@height' => $this->getSetting('iframe_height'),
++        '@static_scale' => $this->getSetting('static_scale'),
++      ]);
++    }
++
++    $include_link = $this->getSetting('include_link');
++    if ($include_link) {
++      $summary[] = $this->t('Map link: @link_text', [
++        '@link_text' => $this->getSetting('link_text'),
++      ]);
++    }
++
++    if ($include_link || $include_map || $include_static_map) {
++      $summary[] = $this->t('Map Type: @map_type', ['@map_type' => $map_type]);
++      $summary[] = $this->t('Zoom Level: @zoom_level', ['@zoom_level' => $this->getSetting('zoom_level')]);
++      $summary[] = $this->t('Language: @language', ['@language' => $this->getSetting('langcode')]);
++    }
++    $include_text = $this->getSetting('include_text');
++    if ($include_text) {
++      $summary[] = $this->t('Original text displayed');
++    }
++
++    return $summary;
++  }
++
++  /**
++   * {@inheritdoc}
++   */
++  public function viewElements(FieldItemListInterface $items, $langcode) {
++    $element = [];
++    $settings = $this->getSettings();
++
++    $include_text = $settings['include_text'];
++    $zoom_level = (int) $settings['zoom_level'];
++
++    // For some reason, static gmaps accepts a different value for map type.
++    $static_map_types = [
++      'm' => 'roadmap',
++      'k' => 'satellite',
++      'h' => 'hybrid',
++      'p' => 'terrain',
++    ];
++
++    $map_type = $settings['map_type'];
++
++    // Figure out a language code to use. Google cannot recognize 'und'.
++    if ($settings['langcode'] == 'page') {
++      $lang_to_use = $langcode;
++    }
++    else {
++      $lang_to_use = ['#plain_text' => $settings['langcode']];
++    }
++
++    foreach ($items as $delta => $item) {
++      $url_value = urlencode($item->value);
++      $address_value = $item->value;
++      $address = $include_text ? $address_value : '';
++      $text_for_link = ($settings['link_text'] == 'use_address') ? $address_value : $settings['link_text'];
++      $link_text = ['#plain_text' => $text_for_link];
++      $iframe_title = $settings['iframe_title'];
++      $iframe_title_value = [
++        '#plain_text' => str_replace('[address]', $address_value, $iframe_title),
++      ];
++
++      $element[$delta] = [
++        '#theme' => 'simple_gmap_output',
++        '#include_map' => $settings['include_map'],
++        '#include_static_map' => $settings['include_static_map'],
++        '#include_link' => $settings['include_link'],
++        '#include_text' => $settings['include_text'],
++        '#width' => ['#plain_text' => $settings['iframe_width']],
++        '#height' => ['#plain_text' => $settings['iframe_height']],
++        '#iframe_title' => $iframe_title_value,
++        '#static_scale' => (int) $settings['static_scale'],
++        '#url_suffix' => $url_value,
++        '#zoom' => $zoom_level,
++        '#link_text' => $link_text,
++        '#address_text' => $address,
++        '#map_type' => $map_type,
++        '#langcode' => $lang_to_use,
++        '#static_map_type' => $static_map_types[$map_type],
++        '#apikey' => $settings['apikey'],
++      ];
++    }
++
++    return $element;
++  }
++
++}
+diff --git a/templates/simple-gmap-output.html.twig b/templates/simple-gmap-output.html.twig
+index 0bb551b..a61b82a 100644
+--- a/templates/simple-gmap-output.html.twig
++++ b/templates/simple-gmap-output.html.twig
+@@ -38,6 +38,6 @@
+ {% if include_link %}
+   <p class="simple-gmap-link"><a href="https://maps.google.com/maps?q={{ url_suffix }}&amp;hl={{ langcode }}&amp;t={{ map_type }}&amp;z={{ zoom }}" target="_blank">{{ link_text }}</a></p>
+ {% endif %}
+-{% if address_text is not empty %}
++{% if include_text and (address_text is not empty) %}
+   <p class="simple-gmap-address">{{ address_text }}</p>
+ {% endif %}
+diff --git a/tests/src/Kernel/FormatterTestBase.php b/tests/src/Kernel/FormatterTestBase.php
+new file mode 100644
+index 0000000..2d5207e
+--- /dev/null
++++ b/tests/src/Kernel/FormatterTestBase.php
+@@ -0,0 +1,189 @@
++<?php
++
++namespace Drupal\Tests\simple_gmap\Kernel;
++
++use Drupal\Component\Utility\Unicode;
++use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
++use Drupal\Core\Entity\FieldableEntityInterface;
++use Drupal\entity_test\Entity\EntityTest;
++use Drupal\field\Entity\FieldConfig;
++use Drupal\field\Entity\FieldStorageConfig;
++use Drupal\KernelTests\KernelTestBase;
++use Drupal\simple_gmap\Plugin\Field\FieldFormatter\SimpleGMapFormatter;
++
++/**
++ * Base class for formatter tests.
++ */
++abstract class FormatterTestBase extends KernelTestBase {
++
++  /**
++   * Modules to enable.
++   *
++   * @var array
++   */
++  public static $modules = [
++    'system',
++    'field',
++    'text',
++    'filter',
++    'entity_test',
++    'user',
++    'simple_gmap',
++  ];
++
++  /**
++   * The generated field name.
++   *
++   * @var string
++   */
++  protected $fieldName;
++
++  /**
++   * The entity display.
++   *
++   * @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface
++   */
++  protected $display;
++
++  /**
++   * {@inheritdoc}
++   */
++  public function setUp() {
++    parent::setUp();
++
++    $this->installConfig(['field']);
++    $this->installEntitySchema('entity_test');
++
++    $this->fieldName = Unicode::strtolower($this->randomMachineName());
++  }
++
++  /**
++   * Creates an entity_test field of the given type.
++   *
++   * @param string $field_type
++   *   The field type.
++   * @param string $formatter_id
++   *   The formatter ID.
++   */
++  protected function createField($field_type, $formatter_id) {
++    $field_storage = FieldStorageConfig::create([
++      'field_name' => $this->fieldName,
++      'entity_type' => 'entity_test',
++      'type' => $field_type,
++    ]);
++    $field_storage->save();
++
++    $field = FieldConfig::create([
++      'field_storage' => $field_storage,
++      'bundle' => 'entity_test',
++      'label' => $this->randomMachineName(),
++    ]);
++    $field->save();
++
++    $this->display = entity_get_display('entity_test', 'entity_test', 'default');
++    $this->display->setComponent($this->fieldName, [
++      'type' => $formatter_id,
++      'settings' => [],
++    ]);
++    $this->display->save();
++  }
++
++  /**
++   * Returns the default address to use for the test.
++   *
++   * @return array
++   *   The value for the field.
++   */
++  protected function getDefaultAddress() {
++    return [
++      'value' => "Place de l'Université-du-Québec, boulevard Charest Est, Québec, QC G1K",
++    ];
++  }
++
++  /**
++   * Returns the default address HTML output.
++   *
++   * @return string
++   *   The HTML output for the field.
++   */
++  protected function getDefaultAddressOutput() {
++    return "Place de l&#039;Université-du-Québec, boulevard Charest Est, Québec, QC G1K";
++  }
++
++  /**
++   * Renders fields of a given entity with a given display.
++   *
++   * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
++   *   The entity object with attached fields to render.
++   * @param \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display
++   *   The display to render the fields in.
++   *
++   * @return string
++   *   The rendered entity fields.
++   */
++  protected function renderEntityFields(FieldableEntityInterface $entity, EntityViewDisplayInterface $display) {
++    $content = $display->build($entity);
++    $content = $this->render($content);
++    return $content;
++  }
++
++  /**
++   * Tests outputting a gmap with various settings.
++   *
++   * @param string $raw
++   *   The raw text to assert.
++   * @param array $settings
++   *   The formatter settings.
++   * @param bool $is_expected
++   *   (optional) Whether or not the raw text is expected.
++   *   Defaults to true.
++   * @param mixed $address
++   *   (optional) The address to test with. If not provided, the default address
++   *   will be used.
++   *
++   * @dataProvider settingsProvider
++   */
++  public function testSettings($raw, array $settings, $is_expected = TRUE, $address = NULL) {
++    if (empty($address)) {
++      $address = $this->getDefaultAddress();
++    }
++
++    $component = $this->display->getComponent($this->fieldName);
++    $component['settings'] = $settings + SimpleGMapFormatter::defaultSettings();
++    $this->display->setComponent($this->fieldName, $component);
++
++    $entity = EntityTest::create([]);
++    $entity->{$this->fieldName} = $address;
++    $entity->save();
++
++    $this->renderEntityFields($entity, $this->display);
++    if ($is_expected) {
++      $this->assertRaw($raw);
++    }
++    else {
++      $this->assertNoRaw($raw);
++    }
++  }
++
++  /**
++   * Data provider for ::testSettings().
++   */
++  public function settingsProvider() {
++    return [
++      'include_text_enabled' => [
++        '<p class="simple-gmap-address">' . $this->getDefaultAddressOutput() . '</p>',
++        [
++          'include_text' => TRUE,
++        ],
++      ],
++      'include_text_disabled' => [
++        '<p class="simple-gmap-address">' . $this->getDefaultAddressOutput() . '</p>',
++        [
++          'include_text' => FALSE,
++        ],
++        FALSE,
++      ],
++    ];
++  }
++
++}
+diff --git a/tests/src/Kernel/SimpleGMapAddressFormatterTest.php b/tests/src/Kernel/SimpleGMapAddressFormatterTest.php
+new file mode 100644
+index 0000000..eddf997
+--- /dev/null
++++ b/tests/src/Kernel/SimpleGMapAddressFormatterTest.php
+@@ -0,0 +1,54 @@
++<?php
++
++namespace Drupal\Tests\simple_gmap\Kernel;
++
++/**
++ * Tests the field formatter 'simple_gmap_address'.
++ *
++ * @group simple_gmap
++ */
++class SimpleGMapAddressFormatterTest extends FormatterTestBase {
++
++  /**
++   * Modules to enable.
++   *
++   * @var array
++   */
++  public static $modules = [
++    'system',
++    'field',
++    'language',
++    'text',
++    'entity_test',
++    'user',
++    'simple_gmap',
++    'address',
++  ];
++
++  /**
++   * {@inheritdoc}
++   */
++  public function setUp() {
++    parent::setUp();
++
++    $this->installConfig(['system']);
++    $this->installConfig(['text']);
++    $this->installConfig(['address']);
++
++    $this->createField('address', 'simple_gmap_address');
++  }
++
++  /**
++   * {@inheritdoc}
++   */
++  protected function getDefaultAddress() {
++    return [
++      'country_code' => 'CA',
++      'locality' => 'Québec',
++      'postal_code' => 'QC G1K',
++      'address_line1' => "Place de l'Université-du-Québec",
++      'address_line2' => 'boulevard Charest Est',
++    ];
++  }
++
++}
+diff --git a/tests/src/Kernel/SimpleGMapFormatterTest.php b/tests/src/Kernel/SimpleGMapFormatterTest.php
+new file mode 100644
+index 0000000..d4f4073
+--- /dev/null
++++ b/tests/src/Kernel/SimpleGMapFormatterTest.php
+@@ -0,0 +1,21 @@
++<?php
++
++namespace Drupal\Tests\simple_gmap\Kernel;
++
++/**
++ * Tests the field formatter 'simple_gmap'.
++ *
++ * @group simple_gmap
++ */
++class SimpleGMapFormatterTest extends FormatterTestBase {
++
++  /**
++   * {@inheritdoc}
++   */
++  public function setUp() {
++    parent::setUp();
++
++    $this->createField('string', 'simple_gmap');
++  }
++
++}
