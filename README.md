@@ -67,3 +67,7 @@ You may also place your site in Git mode, clone it locally, and then run compose
 your files back up to Pantheon. 
 
 
+## Ways to improve workflows
+
+Pantheon provides a number of example scripts that can be used as jumping off points for useful workflow integrations 
+improvements: https://github.com/pantheon-systems/quicksilver-examples
