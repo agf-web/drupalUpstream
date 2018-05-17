@@ -58,7 +58,6 @@ dependencies:
   - redirect
   - search_api
   - search_api_attachments
-  - search_api_pantheon
   - search_api_solr
   - shortcut
   - smart_trim
