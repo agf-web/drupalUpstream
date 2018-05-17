@@ -1,0 +1,39 @@
+{#
+  Type:           Block View (placed into Main Content Region)
+  Content Type:   Landing Page
+  View Mode:      mma
+#}
+{% set mma_style = content.field_mma_style.0['#markup']|lower %}
+{% set isMmaTall = mma_style is same as('tall') %}
+{%
+  set classes = [
+    'node--type-' ~ node.bundle|clean_class,
+    view_mode ? 'node--view-mode-' ~ view_mode|clean_class,
+  ]
+%}
+{% set landing_mma_classes = [
+    'page-header',
+    isMmaTall ? 'page-header--tall' : 'page-header--small'
+  ]
+%}
+
+{# This is needed for the image to render as bg (using `background images` module) #}
+{% set image_url %}
+  {{ content.field_image }}
+{% endset %}
+
+<section{{ attributes.addClass(classes, landing_mma_classes) }}>
+  <h1 class="page-header__title">{{ content.field_mma_title.0 }}</h1>
+  
+  {% if isMmaTall %}
+    <div class="page-header__content">
+      {{ content.body.0 }}
+    </div>
+
+    {% if content.field_mma_link.0 %}
+      <a href="{{ content.field_mma_link.0['#url'] }}" class="button">
+        {{ content.field_mma_link.0['#title'] }}
+      </a>
+    {% endif %}
+  {% endif %}
+</section>

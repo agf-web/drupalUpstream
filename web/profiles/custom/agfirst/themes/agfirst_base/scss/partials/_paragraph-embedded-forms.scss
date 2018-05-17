@@ -1,0 +1,96 @@
+/*=============================================
+  Paragraph Type: Embedded Forms
+=============================================*/
+
+.embedded-form {
+  &__head {
+    text-align: center;
+    padding: 1rem;
+  }
+
+  &__body {
+    
+  }
+
+  &__field-title {
+    font-family: $futura;
+    font-size: $h2;
+    margin: 0 auto;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  &--media-type--video,
+  &--media-type--image {
+    .embedded-form__body {
+      @include bp($medium) {
+        display: flex;
+        align-items: center;
+      }
+
+      .field--type-image,
+      .field--type-video-embed-field,
+      .field--type-embedded-form-field {
+        @include bp($medium) {
+          width: 50%;
+        }
+      }
+    }
+  }
+
+  &--media-align--right {
+    .field--type-image,
+    .field--type-video-embed-field {
+      order: 1;
+    }
+  }
+
+  &--media-align--left {
+    .field--type-image,
+    .field--type-video-embed-field {
+      order: -1;
+    }
+  }
+
+  .field--type-embedded-form-field {
+    // Vendor: Click Dynamics
+    div[pageid] {
+      // background: $brown-dark;
+      // padding: 4rem 1rem;
+
+      .clickdform.mainDiv {
+        float: none;
+        max-width: 1000px;
+        margin: 0 auto !important;
+      }
+    }
+  }
+
+  .field--type-image,
+  .field--type-video-embed-field {
+    padding: 1rem;
+  }
+}
+
+
+// .block-custom--form--dynamics {
+//   background: $brown-dark;
+//   padding: 4rem 1rem;
+
+//   h2 {
+//     margin: 0;
+//     text-align: center;
+//     color: $white;
+//   }
+// }
+
+// .dynamics-form-wrapper {
+//   div[pageid] {
+//     .clickdform.mainDiv {
+//       float: none;
+//       max-width: 1000px;
+//       padding: 0 !important;
+//       margin: 0 auto !important;
+//     }
+//   }
+// }

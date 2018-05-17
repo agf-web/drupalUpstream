@@ -1,0 +1,87 @@
+
+/*=============================================
+  Page: Article
+=============================================*/
+
+.page {
+  &-node-type-article {
+    figure {
+      margin: 0;
+
+      figcaption {
+        p {
+          font-size: rem(14px);
+        }
+      }
+    }
+
+    .main__top {
+      .article-event-header {
+        // max-width: $siteWrapper;
+        padding: 2rem 1rem 0;
+        @include bp($medium) {
+          padding: 2rem 2rem 0;
+        }
+        @include bp($large) {
+          padding: 2rem 5rem 0;
+        }
+        @include bp($xlarge) {
+          padding: 2rem 10rem 0;
+        }
+      }
+    }
+  }
+}
+
+.node {
+  &--type-article {
+    padding-bottom: 2rem;
+  }
+}
+
+.article-event-header {
+  padding: 1rem;
+
+  &__date {
+    font-weight: 700;
+    font-size: 1rem;
+    text-transform: uppercase;
+    font-family: $futura;
+    margin: 0 auto 1rem;
+  }
+
+  &__title {
+    color: $green-dark;
+    text-transform: uppercase;
+    font-size: $h3;
+    font-weight: 700;
+    margin: 0 0 2rem 0;
+    line-height: 1.2;
+  }
+
+  .button {
+    padding-left: 1rem;
+    margin: 0 auto 1.5rem;
+    &:before {
+      content: '';
+      display: inline-block;
+      height: 1rem;
+      width: 1rem;
+      margin-right: .5rem;
+      background: url('../img/ui-chevron-left.svg') center center no-repeat;
+      background-size: contain;
+      vertical-align: middle;
+    }
+  }
+}
+
+// view block of `field-layers`
+.block-views-blockpage-field-layers-block-page-layers {
+  .views-row {
+    & > ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+  }
+}

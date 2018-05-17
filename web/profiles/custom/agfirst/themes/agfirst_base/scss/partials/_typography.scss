@@ -1,0 +1,146 @@
+/* ==========================================================================
+	Typography
+========================================================================== */
+
+// https://www.smashingmagazine.com/2016/11/css-inheritance-cascade-global-scope-new-old-worst-best-friends/
+* {
+  color: inherit;
+  line-height: inherit;
+  font-family: inherit;
+}
+
+html {
+  color: $defaultTextColor;
+  font-family: $myriad;
+  line-height: 1.4;
+}
+
+h1,
+.h1 {
+  font-family: $futura;
+  font-size: $h1;
+}
+
+h2,
+.h2 {
+  font-family: $futura;
+  font-size: $h2;
+}
+
+h3,
+.h3 {
+  font-family: $futura;
+  font-size: $h3;
+}
+
+h4,
+.h4 {
+  font-family: $myriad;
+  font-size: $h4;
+}
+
+h5,
+.h5 {
+  font-family: $futura;
+  font-size: $h5;
+}
+
+h6,
+.h6 {
+  font-family: $futura;
+  font-size: $h6;
+}
+
+h1,
+.h1,
+h2,
+.h2,
+h3,
+.h3,
+h4,
+.h4,
+h5,
+.h5,
+h6,
+.h6 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+p {
+  font-size: 1rem;
+  margin-top: 0;
+
+  &.small {
+    font-size: .875rem
+  }
+
+  &.large {
+    font-size: 1.25rem
+  }
+
+  &.intro {
+    font-family: $futura;
+    font-size: rem(20px);
+    margin: 0 auto 2.5rem;
+  }
+}
+
+a {
+  transition: color .25s ease;
+  color: $green;
+  &:hover {
+    text-decoration: none;
+    color: $green-dark;
+  }
+}
+
+// wysiwyg
+.region {
+  &--content {
+    .field--name-body {
+      h2, h3, h4, h5, h6 {
+        // color: $green-dark;
+        text-transform: uppercase;
+        @include fout(vertical);
+      }
+
+      ul,
+      ol {
+        padding: 0 0 0 1rem;
+        li {
+          padding: .5rem 0;
+        }
+      }
+    }
+  }
+}
+
+.align {
+  &-right,
+  &-left {
+    margin: 1rem;
+    width: 50%;
+  }
+
+  &-right {
+    float: right;
+    margin-right: 0;
+    text-align: right;
+  }
+  &-left {
+    float: left;
+    margin-left: 0;
+  }
+
+  &-center {
+    display: flex;
+    flex-flow: column nowrap;
+
+    * {
+      margin-left: auto;
+      margin-right: auto;
+      align-self: center;
+    }
+  }
+}

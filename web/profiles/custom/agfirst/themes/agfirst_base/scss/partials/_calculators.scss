@@ -1,0 +1,53 @@
+/*=============================================
+  Calculators
+=============================================*/
+
+.block-agfirst-calculators {
+  .form-group {
+    margin: 0 auto 1rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .calcResult {
+    text-align: right;
+    background: $green-extra-light;
+    padding: 1rem;
+    font-family: $futura;
+    font-size: 1.25rem;
+  }
+  
+  #paymentAmount {
+    color: $green;
+    font-weight: 700;
+  }
+}
+
+.block-loan-calculator {
+  form {
+    background: $brown-extra-light;
+    padding: 1rem;
+    max-width: 22rem;
+    margin: 0 auto;
+    @include bp($medium) {
+      margin: 0;
+    }
+  }
+  .form-group {
+    label {
+      width: 10rem;
+      display: inline-block;
+      font-family: $futura;
+      text-align: right;
+      margin-right: 1rem;
+    }
+
+    input {
+      flex: 0 0 auto;
+      width: 8rem;
+      border: 1px solid $grey;
+      text-align: right;
+    }
+  }
+}

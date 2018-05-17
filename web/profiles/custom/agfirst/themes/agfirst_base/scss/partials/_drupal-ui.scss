@@ -1,0 +1,136 @@
+/*=============================================
+  Drupal UI
+=============================================*/
+
+.block {
+  &-local-tasks-block {
+    padding: 1rem;
+    background: $green-light;
+    margin: 0 auto 1rem;
+
+    & > ul {
+      display: flex;
+      flex-flow: row wrap;
+      list-style: none;
+      padding: 0;
+      margin: 0 auto;
+
+      li {
+        display: block;
+        margin: 0 1rem;
+      }
+    }
+
+    & > ul {
+      background: #f3f3f3;
+      list-style: none;
+      margin: 0 auto;
+      padding: 0;
+      text-align: left;
+      box-shadow: 0px 9px 6px -6px rgba(0, 0, 0, .5);
+      max-width: 1240px;
+      li {
+        padding: 0;
+        margin: 0;
+        display: inline-block;
+        a {
+          text-decoration: none;
+          display: block;
+          padding: .5em 1em;
+          &:hover,
+          &.is-active {
+            background: #e3e3e3; //box-shadow: 0px 9px 6px -6px rgba(0,0,0,.5);
+          }
+
+          &.is-active {
+            font-weight: 700;
+          }
+        }
+      }
+    }
+  }  
+}
+
+.drupal-status-messages {
+  padding: 1rem;
+  background: $green-extra-light;
+  border: 1px solid $green-light;
+
+  .messages {
+    max-width: $siteWrapper;
+    margin: 0 auto;
+  }
+}
+
+// Tabs for VIEW - EDIT - DELETE - DEVEL
+#block-edt-local-tasks {
+  //padding: 0 1em;
+  margin: 1em auto;
+  ul {
+    background: #f3f3f3;
+    list-style: none;
+    margin: 0 auto;
+    padding: 0;
+    text-align: left;
+    box-shadow: 0px 9px 6px -6px rgba(0, 0, 0, .5);
+    max-width: 1240px;
+    li {
+      padding: 0;
+      margin: 0;
+      display: inline-block;
+      a {
+        text-decoration: none;
+        display: block;
+        padding: .5em 1em;
+        &:hover {
+          background: #e3e3e3; //box-shadow: 0px 9px 6px -6px rgba(0,0,0,.5);
+        }
+      }
+    }
+  }
+}
+
+// // status messages from drupal
+// div[role='contentinfo'] {
+//   background: #d9edf7;
+//   padding: 0.5em 1em;
+//   margin: 0;
+//   &[aria-label*='Error'] {
+//       color: #a94442;
+//       background-color: #f2dede;
+//       border: 1px solid #ebccd1;
+//   }
+//   ul {
+//       margin: 0;
+//   }
+// }
+
+// // // Drupal Status Messages (clear cache, error/success, etc.)
+// // .drupal8-statusMsg {
+// //     //padding: 0 1em;
+// //     margin: 1em auto;
+// //     div[role='contentinfo'] { // status messages from drupal
+// //         background: #d9edf7;
+// //         padding: 0.5em 1em;
+// //         margin: 0;
+// //         &[aria-label*='Error'] {
+// //             color: #a94442;
+// //             background-color: #f2dede;
+// //             border: 1px solid #ebccd1;
+// //         }
+// //         ul {
+// //             margin: 0;
+// //         }
+// //     }
+// // }
+
+// debug from var_dump() in *.theme file or dump() in *.twig files
+.xdebug-var-dump {
+  font-size: 12px;
+  height: 350px;
+  overflow: scroll;
+  padding: 10px;
+  border: 10px solid #000;
+  margin: 0;
+  text-align: left;
+}

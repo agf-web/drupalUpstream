@@ -1,0 +1,202 @@
+/*=============================================
+  Content Type: Person Detail
+=============================================*/
+
+.person {
+  display: block;
+  position: relative;
+  text-align: center;
+
+  // &:hover {
+  //   .person__hover {
+  //     opacity: .86;
+  //   }
+  // }
+
+  // &__hover {
+  //   transition: opacity .25s ease;
+  //   position: absolute;
+  //   top: 0;
+  //   right: 0;
+  //   bottom: 0;
+  //   left: 0;
+  //   background: $green-extra-light;
+  //   opacity: .5;
+  //   display: flex;
+  //   justify-content: center;
+  //   align-items: center;
+  //   opacity: 0;
+  //   padding: 1rem;
+  // }
+
+  &__name {
+    position: relative;
+    display: block;
+    font-family: $futura;
+    margin: 0 auto;
+    line-height: 1.2;
+  }
+
+  &__title {
+    font-weight: 400;
+    margin: 0 auto;
+  }
+
+  &__contacts {
+    margin: 1rem 0;
+
+    p {
+      margin: 0 auto;
+      font-family: $futura;
+
+      a {
+        color: $green;
+        text-decoration: none;
+        &:focus,
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  &__link {
+    font-family: $futura;
+    color: $green;
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  img {
+    margin: 0 auto .5rem;
+    display: block;
+  }
+}
+
+.person-detail {
+  border: 1px solid $grey;
+  padding: 1rem;
+  
+  @include bp($medium) {
+    padding: 2rem;
+    margin: 0 1rem;
+  }
+  @include bp($large) {
+    padding: 4rem;
+    margin: 0 2rem;
+  }
+
+  &__name {
+    text-transform: uppercase;
+    color: $green-dark;
+    line-height: 1.2;
+    @include fout(horizontal);
+  }
+
+  &__label {
+    margin: 0 auto .5rem;
+    font-family: $futura;
+    font-weight: 200;
+    text-transform: uppercase;
+    font-size: rem(10px);
+    letter-spacing: 2px;
+    @include fout(horizontal);
+  }
+
+  &__field {
+    margin: 0 auto 1.5rem;
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    &--event-contacts {
+      .field--name-field-event-contacts {
+        & > .field__item {
+          margin: 0 auto 1rem;
+          p {
+            margin: 0 auto;
+          }
+          a {
+            text-decoration: none;
+            word-wrap: break-word;
+
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.people-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0 auto;
+
+  @include bp($small) {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+
+    // &:after {
+    //   content: '';
+    //   flex: 0 0 auto;
+    //   width: auto;
+    //   height: 0;
+    //   @include bp($small) {
+    //     width: calc(50% - .5rem);
+    //   }
+    //   @include bp($medium) {
+    //     width: calc(33% - .5rem);
+    //   }
+    //   @include bp($large) {
+    //     width: calc(25% - .75rem);
+    //   }
+    // }
+  }
+
+  li {
+    margin: 0 0 1rem 0;
+    flex: 0 0 auto;
+    @include bp($small) {
+      width: calc(50% - .5rem);
+      @include bp(767px, 'max-width') {
+        margin: 0 .5rem 1rem;
+        &:nth-child(odd) {
+          margin-left: 0;
+        }
+        &:nth-child(even) {
+          margin-right: 0;
+        }
+      }
+    }
+
+    @include bp($medium) {
+      width: calc(33% - .5rem);
+      @include bp(1023px, 'max-width') {
+        margin: 0 .4875rem 1rem;
+        &:nth-child(3n + 1) {
+          margin-left: 0;
+        }
+        &:nth-child(3n + 3) {
+          margin-right: 0;
+        }
+      }
+    }
+    
+    @include bp($large) {
+      width: calc(25% - .75rem);
+      margin: 0 .5rem 1rem;
+      &:nth-child(4n + 1) {
+        margin-left: 0;
+      }
+
+      &:nth-child(4n + 4) {
+        margin-right: 0;
+      }
+    }
+  }
+}

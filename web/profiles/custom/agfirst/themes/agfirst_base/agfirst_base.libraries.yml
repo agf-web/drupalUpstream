@@ -1,1 +1,19 @@
 # This is a placeholder file until we have libraries to define.
+
+# CSS
+aglib_styles:
+  version: 0.1
+  css:
+    theme:
+      css/styles.css: {}
+
+# JS
+aglib_js_mobile:
+  version: 0.1
+  js:
+    js/behaviors/mobileToggle.js: {}
+    js/behaviors/menuDetectChildren.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal

@@ -1,0 +1,20 @@
+{#
+  Type:           Block View (placed into Sidebar Right Region)
+  Content Type:   Article
+  View Mode:      sidebar
+#}
+
+<aside{{ attributes.addClass(classes) }}>
+  {% if content.field_image.0 %}
+    <figure>
+      {{ content.field_image.0 }}
+      <figcaption>
+        {{ content.field_image_caption }}
+      </figcaption>
+    </figure>
+  {% endif %}
+
+  {% if content.field_video %}
+    {{ content.field_video }}
+  {% endif %}
+</aside>

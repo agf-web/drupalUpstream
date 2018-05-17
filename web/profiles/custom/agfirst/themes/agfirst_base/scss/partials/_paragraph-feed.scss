@@ -1,0 +1,99 @@
+/*=============================================
+  Paragraph Type: Feed
+=============================================*/
+
+.paragraph--type--feed,
+.feed {
+  margin: 1rem auto;
+
+  .field__items {
+    width: 100%;
+    @include bp($large) {
+      display: flex;
+      justify-content: center;
+    }
+    & > .field__item {
+      margin-bottom: 1rem;
+      @include bp($large) {
+        width: calc(33.333% - .75rem);
+        flex: 0 1 auto;
+        margin: 0 .6rem;
+
+        &:first-child {
+          margin-left: 0;
+        }
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+    }
+  }
+
+  &__field-title {
+    font-size: $h3;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-family: $futura;
+    max-width: $large;
+    text-align: center;
+    margin: 0 auto 1.5rem;
+  }
+
+  &-item {
+    text-align: center;
+    background: $green-extra-light;
+    padding: 2rem;
+    height: 100%;
+
+    &__date {
+      font-weight: 700;
+      text-transform: uppercase;
+      font-family: $futura;
+    }
+
+    &__title {
+      margin: 0 auto 1rem;
+      line-height: 1.2;
+      @include fout(vertical);
+
+      a {
+        transition: all .25s ease;
+        text-decoration: none;
+        color: $brown-extra-dark;
+        opacity: 0.6;
+
+        &:hover {
+          opacity: 1;
+        }
+      }
+    }
+
+    &__content {
+      margin-bottom: 1.5rem;
+    }
+
+    &__learn-more {
+      color: $green-dark;
+      text-decoration: none;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+// used on Content Types: Article, Event
+.field--name-field-tags {
+  a {
+    @extend .button;
+    @extend .button.green;
+    @extend .button.transparent;
+    padding: .5rem 1rem;
+    font-size: rem(14px);
+  }
+
+  .field__item {
+    display: inline-block;
+    margin: 0 auto .5rem;
+  }
+}

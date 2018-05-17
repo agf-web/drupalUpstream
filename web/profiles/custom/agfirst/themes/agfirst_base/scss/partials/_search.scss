@@ -1,0 +1,110 @@
+/*=============================================
+  Search
+=============================================*/
+
+.block-views-exposed-filter-blocksearch-page-search {
+  margin: 1.5rem auto;
+
+  // @include bp($large) {
+  //   margin: 0 !important;
+  // }
+
+  .site-header & {
+    margin: 1rem auto;
+
+    @include bp($large) {
+      margin: 0 0 0 1px;
+    }
+
+    &:hover {
+      .form-item-keyword {
+        width: 16rem;
+      }
+    }
+
+    .form-item-keyword {
+      @include bp($large) {
+        width: 0;
+        position: absolute;
+        right: 100%;
+      }
+    }
+  }
+
+  form {
+    display: flex;
+    position: relative;
+
+    .form-item-keyword {
+      transition: all .25s ease;
+      overflow: hidden;
+      flex: 1 1 auto;
+
+      label {
+        display: none;
+      }
+      input[type="text"] {
+        padding: .5rem 1rem;
+        border: 1px solid $brown-extra-dark;
+        height: rem(35px);
+        width: 100%;
+      }      
+    }
+
+    .form-actions {
+      input[type="submit"] {
+        background-image: url('../img/ui-search-reverse.svg');
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-color: $brown-extra-dark;
+        background-size: rem(18px);
+        text-indent: -9999px;
+        // border: 1px solid $brown-extra-dark;
+        cursor: pointer;
+        height: rem(35px);
+        padding: 1rem;
+      }
+    }
+  }
+}
+
+.search-result {
+  margin-bottom: 2rem;
+
+  &__link {
+    text-decoration: none;
+    &:hover {
+      .search-result__title {
+        // text-decoration: underline;
+        color: $green;
+      }
+    }
+  }
+
+  &__title {
+    margin: 0 auto;
+    line-height: 1.2;
+    color: $green-dark;
+    font-family: $futura;
+  }
+
+  &__content {
+    margin: 0 auto .5rem;
+  }
+
+  &__meta {
+    font-size: rem(12px);
+    margin: 0 auto;
+  }
+  
+  &__url {
+    color: $grey;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__date {
+    margin-right: 1rem;
+  }
+}

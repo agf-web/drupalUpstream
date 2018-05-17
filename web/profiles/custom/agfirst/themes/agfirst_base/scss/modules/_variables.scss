@@ -1,0 +1,61 @@
+/* ==========================================================================
+	Variables
+========================================================================== */
+
+// units
+$siteWrapper: 87.500em; // 1400px
+
+// Fonts
+$sans-serif: "futura-pt", Arial, "Helvetica Neue", Helvetica, sans-serif;
+$serif: Georgia, Times, "Times New Roman", serif;
+
+$futura: "futura-pt", Arial, "Helvetica Neue", Helvetica, sans-serif;
+$myriad: "myriad-pro", Arial, "Helvetica Neue", Helvetica, sans-serif;
+
+// Heading Font Sizes
+$h1: 5rem;      // 80px
+$h2: 2.813rem;  // 45px
+$h3: 2.25rem;   // 36px
+$h4: 1.25rem;   // 20px
+$h5: 1rem;      // 16px
+$h6: .625rem;   // 10px
+
+// Neutral Colors
+$black:             #2B241E;
+$white:             #fff;
+
+$grey: #979797;
+
+// Greys
+$brown-extra-light:  #FAF6F1;
+$brown-light:        #FAEFDD;
+$brown:              #EACFA0;
+$brown-dark:         #956123;
+$brown-extra-dark:   #3C3322;
+
+// Greens
+$green-extra-light: #F3F7ED;
+$green-light:       #DBE8C2;
+$green:             #5b8f22;
+$green-dark:        #335C22;
+$green-extra-dark:  #2C4009;
+
+// Blues
+$blue-extra-light:  #E2ECF2;
+$blue-light:        #AFC1CE;
+$blue:              #527690;
+$blue-dark:         #16476B;
+$blue-extra-dark:   #003359;
+
+
+// Color Assignments
+$defaultTextColor: $black;
+$link-color:       $green;
+
+// Media Query Breakpoints
+$xsmall:      20em;  // 320px
+$small:       30em;  // 480px
+$medium:      48em;  // 768px
+$large:       64em;  // 1024px
+$xlarge:      80em;  // 1280px
+$xxlarge:     90em;  // 1440px
