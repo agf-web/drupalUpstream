@@ -30,6 +30,7 @@ files
 
 # Ignore PHPStorm project directory
 .idea/
+.DS_Store
 
 # Ignore Cyberwoven internals.
 htpasswd
