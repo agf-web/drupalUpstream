@@ -39,11 +39,11 @@
 <html{{ html_attributes }}>
   <head>
     <title>{{ head_title|safe_join(' | ') }}</title>
-    <link rel="apple-touch-icon" sizes="180x180" href="/themes/edt/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/themes/edt/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/themes/edt/favicon-16x16.png">
-    <link rel="manifest" href="/themes/edt/manifest.json">
-    <link rel="mask-icon" href="/themes/edt/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ theme_directory }}/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ theme_directory }}/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ theme_directory }}/favicon-16x16.png">
+    <link rel="manifest" href="{{ theme_directory }}/manifest.json">
+    <link rel="mask-icon" href="{{ theme_directory }}/safari-pinned-tab.svg" color="#5bbad5">
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -53,21 +53,24 @@
 
     <js-placeholder token="{{ placeholder_token|raw }}">
 
+    {% if gtm_id %}
     <!-- Google Tag Manager -->
-	{# <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-	new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-	j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-	'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-	})(window,document,'script','dataLayer','GTM-MVQ62NT');</script> #}
-	<!-- End Google Tag Manager -->
+  	<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  	new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  	j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  	'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  	})(window,document,'script','dataLayer','{{ gtm_id }}');</script>
+  	<!-- End Google Tag Manager -->
+    {% endif %}
 
   </head>
   <body{{ attributes.addClass(body_classes) }}>
 
+    {% if gtm_id %}
   	<!-- Google Tag Manager (noscript) -->
-	<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MVQ62NT"
-	height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-	<!-- End Google Tag Manager (noscript) -->
+  	<noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ gtm_id }}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  	<!-- End Google Tag Manager (noscript) -->
+    {% endif %}
 
     {#
       Keyboard navigation/accessibility link to main content section in
