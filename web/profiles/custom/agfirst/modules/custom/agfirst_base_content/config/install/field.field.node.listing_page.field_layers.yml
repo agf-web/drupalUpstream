@@ -25,7 +25,7 @@ default_value_callback: ''
 settings:
   handler: 'default:paragraph'
   handler_settings:
-    negate
+    negate: 0
     target_bundles:
       embedded_form: embedded_form
       feed: feed

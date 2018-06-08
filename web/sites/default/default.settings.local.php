@@ -18,9 +18,10 @@ $config['environment_indicator.indicator']['fg_color'] = '#ffffff';
 
 //$settings['container_yamls'][] = DRUPAL_ROOT . '/sites/development.services.yml';
 
-$settings['trusted_host_patterns'] = array(
-  '^.+\.pantheon$',
-);
+$settings['trusted_host_patterns'] = [
+  '.test',
+  '.pantheon',
+];
 
 //$settings['cache']['bins']['render'] = 'cache.backend.null';
 //$settings['cache']['bins']['dynamic_page_cache'] = 'cache.backend.null';
