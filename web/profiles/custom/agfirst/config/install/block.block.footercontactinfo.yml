@@ -5,6 +5,7 @@ dependencies:
     - 'block_content:basic:f07bb3e1-0aba-4910-a494-1a6bd9806f57'
   module:
     - block_content
+    - cyberwoven_blocks
   theme:
     - agfirst_base
 id: footercontactinfo

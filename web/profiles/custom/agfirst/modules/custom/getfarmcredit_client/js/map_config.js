@@ -6,7 +6,7 @@ window.AGF_CONFIG = {
   disableLogo: true,
   customLogo: {
     useCustomLogo: false,
-    url: '/themes/custom/rivervalley/img/logo.jpg'
+    url: ''
   },
   customIntro: {
     useCustomIntro: false,

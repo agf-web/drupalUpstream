@@ -20,7 +20,7 @@ default_value_callback: ''
 settings:
   handler: 'default:paragraph'
   handler_settings:
-    negate
+    negate: 0
     target_bundles:
       labeled_phone_number: labeled_phone_number
     target_bundles_drag_drop:
