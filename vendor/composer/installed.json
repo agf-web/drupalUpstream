@@ -2433,17 +2433,17 @@
     },
     {
         "name": "drupal/core",
-        "version": "8.5.3",
-        "version_normalized": "8.5.3.0",
+        "version": "8.5.4",
+        "version_normalized": "8.5.4.0",
         "source": {
             "type": "git",
             "url": "https://github.com/drupal/core.git",
-            "reference": "b012f0ae51504880e920f2c6efdbdf03b6fe2129"
+            "reference": "6b4dc1cf3347761f63152a31786b4680b8ac7781"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/drupal/core/zipball/b012f0ae51504880e920f2c6efdbdf03b6fe2129",
-            "reference": "b012f0ae51504880e920f2c6efdbdf03b6fe2129",
+            "url": "https://api.github.com/repos/drupal/core/zipball/6b4dc1cf3347761f63152a31786b4680b8ac7781",
+            "reference": "6b4dc1cf3347761f63152a31786b4680b8ac7781",
             "shasum": ""
         },
         "require": {
@@ -2612,7 +2612,7 @@
             "symfony/debug": "^3.4.0",
             "symfony/phpunit-bridge": "^3.4.3"
         },
-        "time": "2018-04-25T15:39:01+00:00",
+        "time": "2018-06-06T21:02:51+00:00",
         "type": "drupal-core",
         "extra": {
             "merge-plugin": {
@@ -4938,6 +4938,60 @@
             "source": "http://git.drupal.org/project/search_api_solr.git",
             "issues": "https://www.drupal.org/project/issues/search_api_solr",
             "irc": "irc://irc.freenode.org/drupal-search-api"
+        }
+    },
+    {
+        "name": "drupal/simple_gmap",
+        "version": "dev-1.x",
+        "version_normalized": "dev-1.x",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupal.org/project/simple_gmap",
+            "reference": "180e2a5d674b88ff176ac6ba88f35864b922211a"
+        },
+        "require": {
+            "drupal/core": "*"
+        },
+        "require-dev": {
+            "drupal/address": "*"
+        },
+        "time": "2018-05-02T20:29:37+00:00",
+        "type": "drupal-module",
+        "extra": {
+            "branch-alias": {
+                "dev-1.x": "1.x-dev"
+            },
+            "drupal": {
+                "version": "8.x-1.4+2-dev",
+                "datestamp": "1513628584",
+                "security-coverage": {
+                    "status": "not-covered",
+                    "message": "Dev releases are not covered by Drupal security advisories."
+                }
+            },
+            "patches_applied": {
+                "Address Field Support": "patches/simple_gmap-address-formatter-2863979-30.patch"
+            }
+        },
+        "installation-source": "source",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0-or-later"
+        ],
+        "authors": [
+            {
+                "name": "jhodgdon",
+                "homepage": "https://www.drupal.org/user/155601"
+            },
+            {
+                "name": "martin107",
+                "homepage": "https://www.drupal.org/user/2659379"
+            }
+        ],
+        "description": "Provides a Google Maps link/map formatter for simple Text fields.",
+        "homepage": "https://www.drupal.org/project/simple_gmap",
+        "support": {
+            "source": "http://cgit.drupalcode.org/simple_gmap"
         }
     },
     {
