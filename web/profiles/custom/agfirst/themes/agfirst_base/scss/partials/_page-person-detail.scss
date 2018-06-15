@@ -137,32 +137,19 @@
   padding: 0;
   margin: 0 auto;
 
-  @include bp($small) {
+  @include bp($medium) {
     display: flex;
     flex-flow: row wrap;
     justify-content: flex-start;
-
-    // &:after {
-    //   content: '';
-    //   flex: 0 0 auto;
-    //   width: auto;
-    //   height: 0;
-    //   @include bp($small) {
-    //     width: calc(50% - .5rem);
-    //   }
-    //   @include bp($medium) {
-    //     width: calc(33% - .5rem);
-    //   }
-    //   @include bp($large) {
-    //     width: calc(25% - .75rem);
-    //   }
-    // }
   }
 
   li {
-    margin: 0 0 1rem 0;
+    margin: 0 auto 2rem;
     flex: 0 0 auto;
-    @include bp($small) {
+    max-width: rem(343px);
+
+    @include bp($medium) {
+      max-width: rem(425px);
       width: calc(50% - .5rem);
       @include bp(767px, 'max-width') {
         margin: 0 .5rem 1rem;
@@ -175,7 +162,8 @@
       }
     }
 
-    @include bp($medium) {
+    // 3 per row
+    @include bp($large) {
       width: calc(33% - .5rem);
       @include bp(1023px, 'max-width') {
         margin: 0 .4875rem 1rem;
@@ -188,7 +176,8 @@
       }
     }
     
-    @include bp($large) {
+    // 4 per row
+    @include bp($xlarge) {
       width: calc(25% - .75rem);
       margin: 0 .5rem 1rem;
       &:nth-child(4n + 1) {
