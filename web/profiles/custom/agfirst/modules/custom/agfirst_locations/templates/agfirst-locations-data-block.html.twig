@@ -1,0 +1,66 @@
+{% if attributes.data.address|trim or attributes.data.city|trim or attributes.data.state|trim or attributes.data.zip|trim or attributes.data.phone1|trim or attributes.data.phone2|trim or attributes.data.fax|trim %}
+	<section>
+		<div class="views-row">
+			<article class=" node--type-location node--view-mode-sidebar sidebar-info">
+				<div class="node__content">
+					{% if attributes.data.address|trim or attributes.data.city|trim or attributes.data.state|trim or attributes.data.zip|trim %}
+						<div class="field field--name-field-location field--type-address field--label-above">
+							<div class="field__label">Address</div>
+							<div class="field__item">
+								<p class="address" translate="no">
+									{% if attributes.data.address|trim %}<span class="address-line1">{{ attributes.data.address }}</span><br>{% endif %}
+									{% if attributes.data.city|trim %}<span class="locality">{{ attributes.data.city }}</span>, {% endif %}{% if attributes.data.state|trim %}<span class="administrative-area">{{ attributes.data.state }}</span> {% endif %}{% if attributes.data.zip|trim %}<span class="postal-code">{{ attributes.data.zip }}</span>{% endif %}<br>
+									<span class="country">United States</span>
+								</p>
+							</div>
+		      			</div>
+	      			{% endif %}
+	      			{% if attributes.data.phone1|trim or attributes.data.phone2|trim or attributes.data.fax|trim %}
+		  				<div class="field field--name-field-phone-numbers field--type-entity-reference-revisions field--label-hidden field__items">
+		  					{% if attributes.data.phone1|trim %}
+			          			<div class="field__item">
+										<section class="paragraph paragraph--type--labeled-phone-number paragraph--view-mode--sidebar labeled-phone-number">
+										<p class="labeled-phone-number__field-label labeled-phone-number__string">Phone</p>
+			        					<div class="field field--name-field-phone-number field--type-telephone field--label-hidden field__item">
+			        						<a href="tel:{{ attributes.data.phone1 }}">{{ attributes.data.phone1 }}</a>
+			        					</div>
+			  						</section>
+								</div>
+							{% endif %}
+							{% if attributes.data.phone2|trim %}
+			          			<div class="field__item">
+										<section class="paragraph paragraph--type--labeled-phone-number paragraph--view-mode--sidebar labeled-phone-number">
+										<p class="labeled-phone-number__field-label labeled-phone-number__string">Phone</p>
+			        					<div class="field field--name-field-phone-number field--type-telephone field--label-hidden field__item">
+			        						<a href="tel:{{ attributes.data.phone2 }}">{{ attributes.data.phone2 }}</a>
+			        					</div>
+			  						</section>
+								</div>
+							{% endif %}
+							{% if attributes.data.fax|trim %}
+			          			<div class="field__item">
+										<section class="paragraph paragraph--type--labeled-phone-number paragraph--view-mode--sidebar labeled-phone-number">
+										<p class="labeled-phone-number__field-label labeled-phone-number__string">Fax</p>
+			        					<div class="field field--name-field-phone-number field--type-telephone field--label-hidden field__item">
+			        						<a href="tel:{{ attributes.data.fax }}">{{ attributes.data.fax }}</a>
+			        					</div>
+			  						</section>
+								</div>
+							{% endif %}
+		      			</div>
+	      			{% endif %}
+	      			{% if attributes.data.counties is not empty %}
+						<div class="field field--name-field-counties-served field--type-string field--label-above">
+							<div class="field__label">Counties Served</div>
+		      				<div class="field__items">
+		      					{% for item in attributes.data.counties %}
+			          				<div class="field__item">{{ item }}</div>
+						        {% endfor %}
+		          			</div>
+		  				</div>
+	  				{% endif %}
+				</div>
+			</article>
+		</div>
+	</section>
+{% endif %}

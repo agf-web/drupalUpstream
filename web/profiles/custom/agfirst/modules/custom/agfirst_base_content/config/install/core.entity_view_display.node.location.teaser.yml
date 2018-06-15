@@ -4,11 +4,9 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.location.body
-    - field.field.node.location.field_counties_served
-    - field.field.node.location.field_location
+    - field.field.node.location.field_get_farm_credit_id
     - field.field.node.location.field_metatag
     - field.field.node.location.field_people
-    - field.field.node.location.field_phone_numbers
     - node.type.location
   module:
     - text
@@ -30,8 +28,6 @@ content:
     weight: 100
     region: content
 hidden:
-  field_counties_served: true
-  field_location: true
+  field_get_farm_credit_id: true
   field_metatag: true
   field_people: true
-  field_phone_numbers: true

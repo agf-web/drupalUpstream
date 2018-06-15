@@ -11,7 +11,7 @@ dependencies:
 id: views_block__landing_page_mma_block_landing_mma
 theme: agfirst_base
 region: content
-weight: -13
+weight: -12
 provider: null
 plugin: 'views_block:landing_page_mma-block_landing_mma'
 settings:

@@ -1,0 +1,34 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - agfirst_locations
+    - cyberwoven_blocks
+    - node
+  theme:
+    - agfirst_base
+id: locationsmapblock
+theme: agfirst_base
+region: sidebar_right_mobile_top
+weight: 0
+provider: null
+plugin: locations_map_block
+settings:
+  id: locations_map_block
+  label: 'Locations Map block'
+  provider: agfirst_locations
+  label_display: '0'
+visibility:
+  cyberwoven_node_type:
+    id: cyberwoven_node_type
+    bundles: {  }
+    negate: false
+    all_others: 0
+    context_mapping: {  }
+  node_type:
+    id: node_type
+    bundles:
+      location: location
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

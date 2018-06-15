@@ -15,6 +15,7 @@ dependencies:
   - agfirst_editor_experience
   - agfirst_embedded_forms
   - agfirst_feed_layer
+  - agfirst_locations
   - anchor_link
   - automated_cron
   - bg_image_formatter
