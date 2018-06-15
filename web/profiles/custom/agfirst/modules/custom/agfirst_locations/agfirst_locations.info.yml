@@ -1,0 +1,5 @@
+name: Agfirst Locations
+type: module
+description: Locations Data and Blocks
+core: 8.x
+package: Cyberwoven

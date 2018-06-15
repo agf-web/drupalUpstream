@@ -1,0 +1,32 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - agfirst_locations
+    - cyberwoven_blocks
+    - system
+  theme:
+    - agfirst_base
+id: locationsextrasblock
+theme: agfirst_base
+region: content
+weight: -14
+provider: null
+plugin: locations_extras_block
+settings:
+  id: locations_extras_block
+  label: 'Locations Extras block'
+  provider: agfirst_locations
+  label_display: '0'
+visibility:
+  cyberwoven_node_type:
+    id: cyberwoven_node_type
+    bundles: {  }
+    negate: false
+    all_others: 0
+    context_mapping: {  }
+  request_path:
+    id: request_path
+    pages: /locations
+    negate: false
+    context_mapping: {  }

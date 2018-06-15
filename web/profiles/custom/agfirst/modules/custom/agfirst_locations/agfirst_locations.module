@@ -1,0 +1,34 @@
+<?php
+
+/**
+ * @file
+ * Contains agfirst_locations.module..
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+
+/**
+ * Implements hook_theme().
+ */
+function agfirst_locations_theme($existing, $type, $theme, $path) {
+  return [
+    'agfirst_locations_data_block'     => [
+      'variables' => [
+        'attributes' => [],
+      ],
+    ],
+    'agfirst_locations_map_block' => [
+      'variables' => [
+        'attributes' => [],
+      ],
+    ],
+    'agfirst_locations_extras_block' => [
+      'variables' => [
+        'attributes' => [],
+        'jsondata' => "",
+      ],
+    ],
+  ];
+}
+
