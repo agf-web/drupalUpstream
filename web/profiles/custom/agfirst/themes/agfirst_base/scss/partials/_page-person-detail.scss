@@ -71,6 +71,7 @@
   img {
     margin: 0 auto .5rem;
     display: block;
+    flex-shrink: 0; // https://stackoverflow.com/questions/36822370/flexbox-on-ie11-image-stretched-for-no-reason
   }
 }
 
