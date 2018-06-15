@@ -46,10 +46,10 @@
 
 {% set main_content_attributes = create_attribute() %}
 
-{% set has_sidebar_lmt_content = render_var(page.sidebar_left_mobile_top)|striptags('<iframe>')|trim|length > 0  %}
-{% set has_sidebar_lmb_content = render_var(page.sidebar_left_mobile_bottom)|striptags('<iframe>')|trim|length > 0  %}
-{% set has_sidebar_rmt_content = render_var(page.sidebar_right_mobile_top)|striptags('<iframe>')|trim|length > 0  %}
-{% set has_sidebar_rmb_content = render_var(page.sidebar_right_mobile_bottom)|striptags('<iframe>')|trim|length > 0  %}
+{% set has_sidebar_lmt_content = render_var(page.sidebar_left_mobile_top)|striptags('<iframe><figure>')|trim|length > 0  %}
+{% set has_sidebar_lmb_content = render_var(page.sidebar_left_mobile_bottom)|striptags('<iframe><figure>')|trim|length > 0  %}
+{% set has_sidebar_rmt_content = render_var(page.sidebar_right_mobile_top)|striptags('<iframe><figure>')|trim|length > 0  %}
+{% set has_sidebar_rmb_content = render_var(page.sidebar_right_mobile_bottom)|striptags('<iframe><figure>')|trim|length > 0  %}
 {% set has_sidebar_content = has_sidebar_lmb_content or has_sidebar_lmt_content or has_sidebar_rmb_content or has_sidebar_rmt_content %}
 
 {% 

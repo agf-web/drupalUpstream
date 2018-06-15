@@ -7,19 +7,19 @@
   "license": "MIT",
   "main": "gulpfile.js",
   "devDependencies": {
-    "bourbon": "^5.0.0",
+    "bourbon": "^5.0.1",
     "bourbon-neat": "^1.9.0",
-    "browser-sync": "^2.23.6",
+    "browser-sync": "^2.24.4",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^5.0.0",
     "gulp-plumber": "^1.2.0",
-    "gulp-sass": "^3.1.0",
+    "gulp-sass": "^3.2.1",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-stylelint": "^7.0.0",
     "hamburgers": "^0.9.3",
     "node-datetime": "^2.0.6",
     "sass-rem": "^2.0.1",
-    "stylelint": "^9.1.1",
+    "stylelint": "^9.3.0",
     "stylelint-config-standard": "^18.2.0"
   },
   "dependencies": {}

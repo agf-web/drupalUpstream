@@ -36,3 +36,4 @@ files
 htpasswd
 pub/.well-known
 data/
+node_modules
