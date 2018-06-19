@@ -49,6 +49,52 @@ function agfirst_base_page_attachments_alter(array &$page) {
  */
 function agfirst_base_preprocess_page(array &$variables) {
 
+  $pageRegions = $variables['page'];
+
+  // $pageRegions = array_diff_key($pageRegions,
+  //   [
+  //     '#type'            => 'remove this',
+  //     '#cache'           => 'remove this',
+  //     '#attached'        => 'remove this',
+  //     '#title'           => 'remove this',
+  //     '#printed'         => 'remove this',
+  //     '#theme'           => 'remove this',
+  //     '#theme_wrappers'  => 'remove this',
+  //     '#defaults_loaded' => 'remove this',
+  //     '#children'        => 'remove this',
+  //     '#render_children' => 'remove this',
+  //   ]
+  // );
+
+  $sidebar_left_mobile_top     = sizeof($pageRegions['sidebar_left_mobile_top']);
+  $sidebar_left_mobile_bottom  = sizeof($pageRegions['sidebar_left_mobile_bottom']);
+  $sidebar_right_mobile_top    = sizeof($pageRegions['sidebar_right_mobile_top']);
+  $sidebar_right_mobile_bottom = sizeof($pageRegions['sidebar_right_mobile_bottom']);
+
+  // $sidebar_left_mobile_top = array_diff_key($sidebar_left_mobile_top,
+  //   [
+  //     '#sorted'         => 'remove this',
+  //     '#theme_wrappers' => 'remove this',
+  //     '#region'         => 'remove this',
+  //   ]
+  // );
+
+  $variables['has_sidebar']['left_top']     = $sidebar_left_mobile_top > 0;
+  $variables['has_sidebar']['left_bottom']  = $sidebar_left_mobile_bottom > 0;
+  $variables['has_sidebar']['right_top']    = $sidebar_right_mobile_top > 0;
+  $variables['has_sidebar']['right_bottom'] = $sidebar_right_mobile_bottom > 0;
+
+  $variables['has_sidebar_content_left'] = 
+    $variables['has_sidebar']['left_top'] ||
+    $variables['has_sidebar']['left_bottom'];
+
+  $variables['has_sidebar_content_right'] = 
+    $variables['has_sidebar']['right_top'] ||
+    $variables['has_sidebar']['right_bottom'];
+    
+  $variables['has_sidebar_content'] = 
+    $variables['has_sidebar_content_left'] ||
+    $variables['has_sidebar_content_right'];
 }
 
 

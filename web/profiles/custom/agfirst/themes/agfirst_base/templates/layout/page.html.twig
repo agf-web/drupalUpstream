@@ -46,23 +46,12 @@
 
 {% set main_content_attributes = create_attribute() %}
 
-{% set has_sidebar_lmt_content = render_var(page.sidebar_left_mobile_top)|striptags('<iframe><figure>')|trim|length > 0  %}
-{% set has_sidebar_lmb_content = render_var(page.sidebar_left_mobile_bottom)|striptags('<iframe><figure>')|trim|length > 0  %}
-{% set has_sidebar_rmt_content = render_var(page.sidebar_right_mobile_top)|striptags('<iframe><figure>')|length > 0  %}
-{% set has_sidebar_rmb_content = render_var(page.sidebar_right_mobile_bottom)|striptags('<iframe><figure>')|trim|length > 0  %}
-{% set has_sidebar_content = has_sidebar_lmb_content or has_sidebar_lmt_content or has_sidebar_rmb_content or has_sidebar_rmt_content %}
-
 {% 
   set main_content_classes = [
     'main',
-    (
-      (page.sidebar_left_mobile_top or
-      page.sidebar_left_mobile_bottom or
-      page.sidebar_right_mobile_top or
-      page.sidebar_right_mobile_bottom) and has_sidebar_content
-    ) ? 'main--has-sidebar',
-    (page.sidebar_left_mobile_top or page.sidebar_left_mobile_bottom) and has_sidebar_content ? 'main--sidebar-left',
-    (page.sidebar_right_mobile_top or page.sidebar_right_mobile_bottom) and has_sidebar_content ? 'main--sidebar-right',
+    has_sidebar_content ? 'main--has-sidebar',
+    has_sidebar_content_left ? 'main--sidebar-left',
+    has_sidebar_content_right  ? 'main--sidebar-right',
   ]
 %}
 
@@ -103,13 +92,13 @@
     {% endif %}
 
     <div class="container">
-      {% if page.sidebar_left_mobile_top %}
+      {% if page.sidebar_left_mobile_top and has_sidebar_content_left %}
         <aside class="main__sidebar-left" role="complementary">
           {{ page.sidebar_left_mobile_top }}
         </aside>
       {% endif %}
 
-      {% if page.sidebar_right_mobile_top %}
+      {% if page.sidebar_right_mobile_top and has_sidebar_content_right %}
         <aside class="main__sidebar-right" role="complementary">
           {{ page.sidebar_right_mobile_top }}
         </aside>
@@ -119,13 +108,13 @@
         {{ page.content }}
       </div>{# /.layout-content #}
 
-      {% if page.sidebar_left_mobile_bottom %}
+      {% if page.sidebar_left_mobile_bottom and has_sidebar_content_left %}
         <aside class="main__sidebar-left" role="complementary">
           {{ page.sidebar_left_mobile_bottom }}
         </aside>
       {% endif %}
 
-      {% if page.sidebar_right_mobile_bottom %}
+      {% if page.sidebar_right_mobile_bottom and has_sidebar_content_right %}
         <aside class="main__sidebar-right" role="complementary">
           {{ page.sidebar_right_mobile_bottom }}
         </aside>
