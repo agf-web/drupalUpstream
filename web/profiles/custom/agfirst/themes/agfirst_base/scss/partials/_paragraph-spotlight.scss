@@ -10,7 +10,7 @@
 
 .spotlight {
   @include font-smoothing;
-  padding: 2rem;
+  padding: 2rem 0;
   @include bp(600px) {
     display: flex;
     justify-content: space-between;
@@ -183,6 +183,9 @@
         .spotlight {
           .spotlight__field-image {
             order: 1;
+            img {
+              margin: 0 0 0 auto;
+            }
           }
         }
       }
@@ -190,6 +193,9 @@
         .spotlight {
           .spotlight__field-image {
             order: -1;
+            img {
+              margin: 0 auto 0 0;
+            }
           }
         }
       }
