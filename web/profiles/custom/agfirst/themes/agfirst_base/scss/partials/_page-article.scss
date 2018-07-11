@@ -36,6 +36,23 @@
 .node {
   &--type-article {
     padding-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column-reverse;
+    @include bp($large) {
+      flex-direction: row;
+    }
+
+    .node__content {
+      flex: 1;
+    }
+
+    aside {
+      @include bp($large) {
+        flex: 1;
+        padding-left: 30px;
+      }
+    }
   }
 }
 
