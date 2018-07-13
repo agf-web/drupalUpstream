@@ -33,5 +33,11 @@ function agfirst_calculators_theme() {
         'attributes' => [],
       ],
     ],
+    'agfirst_calculators_patronage' => [
+      'variables' => [
+        'attributes'=> [],
+        'patronage_percent' => 19.24
+      ]
+    ]
   ];
 }

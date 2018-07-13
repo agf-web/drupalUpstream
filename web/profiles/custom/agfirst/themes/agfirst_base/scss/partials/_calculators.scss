@@ -10,17 +10,24 @@
     align-items: center;
   }
 
-  .calcResult {
-    text-align: right;
-    background: $green-extra-light;
-    padding: 1rem;
-    font-family: $futura;
-    font-size: 1.25rem;
+  .form-input {
+    &--has-prefix,
+    &--has-suffix {
+      display: flex;
+    }
+
+    &__prefix,
+    &__suffix {
+      align-self: center;
+      padding: .5rem 1rem;
+    }
   }
-  
-  #paymentAmount {
-    color: $green;
-    font-weight: 700;
+
+  .form-actions {
+    @include bp($medium) {
+      display: flex;
+      justify-content: space-between;
+    }
   }
 }
 
@@ -49,5 +56,41 @@
       border: 1px solid $grey;
       text-align: right;
     }
+  }
+
+  .calcResult {
+    text-align: right;
+    background: $green-extra-light;
+    padding: 1rem;
+    font-family: $futura;
+    font-size: 1.25rem;
+  }
+
+  #paymentAmount {
+    color: $green;
+    font-weight: 700;
+  }
+}
+
+.block-patronage-calculator {
+  form {
+    background: $brown-extra-light;
+    padding: 1rem;
+    max-width: 24rem;
+    margin: 0 auto;
+    @include bp($medium) {
+      margin: 0;
+    }
+  }
+
+  .form-group {
+    label {
+      width: 10rem;
+      flex: 1 1 20%;
+    }
+  }
+
+  .button {
+    border: 0;
   }
 }
