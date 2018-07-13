@@ -1,0 +1,4 @@
+administer calculator settings:
+  title: 'Administer Calculator Settings'
+  description: 'Allow to access the AG First Calculators settings .'
+  restrict access: true
