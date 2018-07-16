@@ -5,9 +5,12 @@
 .block-agfirst-calculators {
   .form-group {
     margin: 0 auto 1rem;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
+
+    @include bp($medium) {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
   }
 
   .form-input {
@@ -19,15 +22,13 @@
     &__prefix,
     &__suffix {
       align-self: center;
-      padding: .5rem 1rem;
+      padding: .5rem;
     }
   }
 
   .form-actions {
-    @include bp($medium) {
-      display: flex;
-      justify-content: space-between;
-    }
+    display: flex;
+    justify-content: space-between;
   }
 }
 
@@ -46,8 +47,10 @@
       width: 10rem;
       display: inline-block;
       font-family: $futura;
-      text-align: right;
       margin-right: 1rem;
+      @include bp($medium) {
+        text-align: right;
+      }
     }
 
     input {
@@ -85,8 +88,25 @@
 
   .form-group {
     label {
-      width: 10rem;
-      flex: 1 1 20%;
+      flex: 0 0 7rem;
+    }
+
+    .form-input {
+      &--has-prefix,
+      &--has-suffix {
+        display: flex;
+        flex: 1 1 4rem;
+
+        input {
+          flex: 1 1 auto;
+          width: 100%;
+        }
+      }
+  
+      &__prefix,
+      &__suffix {
+        flex: 0 0 .5rem;
+      }
     }
   }
 
