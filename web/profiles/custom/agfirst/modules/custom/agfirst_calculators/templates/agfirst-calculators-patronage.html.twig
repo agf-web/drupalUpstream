@@ -1,0 +1,63 @@
+<!--Form Starts Here -->
+
+{% if patronage_percent %}
+  <script>
+    window.agf_calc_patronage_percent = {{ patronage_percent }};
+  </script>
+{% endif %}
+
+<form>
+  <div class="form-group">
+    <label for="tbxLoanAmount">Loan Amount</label>
+    <div class="form-input--has-prefix">
+      <span class="form-input__prefix">$</span>
+      <input class="form-control" id="tbxLoanAmount" placeholder="Amount" runat="server" type="text" />
+      <span class="form-input__suffix" style="visibility: hidden;">%</span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="tbxAnnualRate">Annual Rate</label>
+    <div class="form-input--has-suffix">
+      <span class="form-input__prefix" style="visibility: hidden;">$</span>
+      <input class="form-control" id="tbxAnnualRate" placeholder="Annual Rate" runat="server" type="text" />
+      <span class="form-input__suffix">%</span>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button class="button green" id="btnSubmit" runat="server" type="submit">Submit</button>
+    <button class="button brown" id="clearForm" runat="server" type="reset">Reset</button>
+  </div>
+</form>
+<!--Form Ends Here -->
+
+<!--Results Start Here -->
+<div class="calculator-results">
+  <p>Here is your estimated Patronage Distribution:
+    <strong>
+      <span data-id="estimated-patronage">ESTIMATED PATRONAGE</span>
+    </strong>
+  </p>
+
+  <p>After receipt of your distribution, patronage effectively lowers your total interest cost for the first year of your loan
+    from <strong>$<span data-id="loan-amount">XXXXX</span></strong> to:
+    <strong>
+      <span data-id="effective-interest-expense">EFFECTIVE INTEREST EXPENSE</span>
+    </strong>
+  </p>
+
+  <p>This effectively lowers your interest rate from
+    <strong>
+      <span data-id="annual-rate">XXXX</span>
+    </strong> to:
+    <strong>
+      <span data-id="effective-interest-rate">EFFECTIVE INTEREST RATE</span>
+    </strong>
+  </p>
+
+  <p>*Results based on 10-year average refund totals. Past performance not a guarantee of future payouts. Calculations do not
+    account for time value of money or distinguish between returns made in cash and in allocated surplus. Talk to a loan
+    officer for details.</p>
+</div>
+<!--Results End Here -->

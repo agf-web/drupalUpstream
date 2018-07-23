@@ -5,22 +5,30 @@
 .block-agfirst-calculators {
   .form-group {
     margin: 0 auto 1rem;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
+
+    @include bp($medium) {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
   }
 
-  .calcResult {
-    text-align: right;
-    background: $green-extra-light;
-    padding: 1rem;
-    font-family: $futura;
-    font-size: 1.25rem;
+  .form-input {
+    &--has-prefix,
+    &--has-suffix {
+      display: flex;
+    }
+
+    &__prefix,
+    &__suffix {
+      align-self: center;
+      padding: .5rem;
+    }
   }
-  
-  #paymentAmount {
-    color: $green;
-    font-weight: 700;
+
+  .form-actions {
+    display: flex;
+    justify-content: space-between;
   }
 }
 
@@ -39,8 +47,10 @@
       width: 10rem;
       display: inline-block;
       font-family: $futura;
-      text-align: right;
       margin-right: 1rem;
+      @include bp($medium) {
+        text-align: right;
+      }
     }
 
     input {
@@ -49,5 +59,58 @@
       border: 1px solid $grey;
       text-align: right;
     }
+  }
+
+  .calcResult {
+    text-align: right;
+    background: $green-extra-light;
+    padding: 1rem;
+    font-family: $futura;
+    font-size: 1.25rem;
+  }
+
+  #paymentAmount {
+    color: $green;
+    font-weight: 700;
+  }
+}
+
+.block-patronage-calculator {
+  form {
+    background: $brown-extra-light;
+    padding: 1rem;
+    max-width: 24rem;
+    margin: 0 auto;
+    @include bp($medium) {
+      margin: 0;
+    }
+  }
+
+  .form-group {
+    label {
+      flex: 0 0 7rem;
+    }
+
+    .form-input {
+      &--has-prefix,
+      &--has-suffix {
+        display: flex;
+        flex: 1 1 4rem;
+
+        input {
+          flex: 1 1 auto;
+          width: 100%;
+        }
+      }
+  
+      &__prefix,
+      &__suffix {
+        flex: 0 0 .5rem;
+      }
+    }
+  }
+
+  .button {
+    border: 0;
   }
 }

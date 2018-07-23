@@ -5,3 +5,13 @@ loan_calculator:
   dependencies:
     - core/jquery
     - core/drupal
+
+patronage_calculator:
+  js:
+    js/calculator-patronage.js: {}
+  css:
+    component: 
+      css/calculator-patronage.css : {}
+  dependencies:
+    - core/jquery
+    - core/drupal

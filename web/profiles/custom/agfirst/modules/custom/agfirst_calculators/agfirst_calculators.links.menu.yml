@@ -1,0 +1,6 @@
+agfirst_calculators.calculators_config_form:
+  title: 'Calculators Settings'
+  description: 'AG First Calculators Settings'
+  parent: system.admin_config
+  route_name: agfirst_calculators.calculators_config_form
+  weight: -42

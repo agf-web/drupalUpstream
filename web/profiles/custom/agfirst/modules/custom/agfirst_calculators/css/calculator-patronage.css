@@ -1,0 +1,12 @@
+/*
+  Patronage Calculator Styles from AGF
+*/
+.calculator-results {
+  display: none;
+  transition: 0.33s display ease;
+}
+
+.reveal {
+  display: block;
+  margin-top: 2em;
+}
