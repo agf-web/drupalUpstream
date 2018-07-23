@@ -2,12 +2,18 @@
   Search
 =============================================*/
 
-.block-views-exposed-filter-blocksearch-page-search {
+.block-views-exposed-filter-blocksearch-page-search,
+.block-views-exposed-filter-blockmysql-search-page-local-search {
   margin: 1.5rem auto;
 
   // @include bp($large) {
   //   margin: 0 !important;
   // }
+
+  form {
+    display: flex;
+    position: relative;
+  }
 
   .site-header & {
     margin: 1rem auto;
@@ -46,7 +52,7 @@
       input[type="text"] {
         padding: .5rem 1rem;
         border: 1px solid $brown-extra-dark;
-        height: rem(35px);
+        height: rem(38px);
         width: 100%;
       }      
     }
@@ -61,50 +67,59 @@
         text-indent: -9999px;
         // border: 1px solid $brown-extra-dark;
         cursor: pointer;
-        height: rem(35px);
-        padding: 1rem;
+        height: rem(38px);
+        padding: rem(12px) rem(22px);
       }
     }
   }
 }
 
-.search-result {
-  margin-bottom: 2rem;
+.local-search {
+  margin-bottom: 1.5em;
 
-  &__link {
-    text-decoration: none;
-    &:hover {
-      .search-result__title {
-        // text-decoration: underline;
-        color: $green;
-      }
+  .views-field-title {
+    a {
+      font-weight: 600;
     }
   }
+}
+// .search-result {
+//   margin-bottom: 2rem;
 
-  &__title {
-    margin: 0 auto;
-    line-height: 1.2;
-    color: $green-dark;
-    font-family: $futura;
-  }
+//   &__link {
+//     text-decoration: none;
+//     &:hover {
+//       .search-result__title {
+//         // text-decoration: underline;
+//         color: $green;
+//       }
+//     }
+//   }
 
-  &__content {
-    margin: 0 auto .5rem;
-  }
+//   &__title {
+//     margin: 0 auto;
+//     line-height: 1.2;
+//     color: $green-dark;
+//     font-family: $futura;
+//   }
 
-  &__meta {
-    font-size: rem(12px);
-    margin: 0 auto;
-  }
+//   &__content {
+//     margin: 0 auto .5rem;
+//   }
+
+//   &__meta {
+//     font-size: rem(12px);
+//     margin: 0 auto;
+//   }
   
-  &__url {
-    color: $grey;
-    &:hover {
-      text-decoration: underline;
-    }
-  }
+//   &__url {
+//     color: $grey;
+//     &:hover {
+//       text-decoration: underline;
+//     }
+//   }
 
-  &__date {
-    margin-right: 1rem;
-  }
-}
+//   &__date {
+//     margin-right: 1rem;
+//   }
+// }
