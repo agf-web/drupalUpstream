@@ -2433,17 +2433,17 @@
     },
     {
         "name": "drupal/core",
-        "version": "8.5.4",
-        "version_normalized": "8.5.4.0",
+        "version": "8.5.5",
+        "version_normalized": "8.5.5.0",
         "source": {
             "type": "git",
             "url": "https://github.com/drupal/core.git",
-            "reference": "6b4dc1cf3347761f63152a31786b4680b8ac7781"
+            "reference": "900c28f19d4b5643f43c1cf046684046402eaac4"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/drupal/core/zipball/6b4dc1cf3347761f63152a31786b4680b8ac7781",
-            "reference": "6b4dc1cf3347761f63152a31786b4680b8ac7781",
+            "url": "https://api.github.com/repos/drupal/core/zipball/900c28f19d4b5643f43c1cf046684046402eaac4",
+            "reference": "900c28f19d4b5643f43c1cf046684046402eaac4",
             "shasum": ""
         },
         "require": {
@@ -2612,7 +2612,7 @@
             "symfony/debug": "^3.4.0",
             "symfony/phpunit-bridge": "^3.4.3"
         },
-        "time": "2018-06-06T21:02:51+00:00",
+        "time": "2018-07-04T21:08:11+00:00",
         "type": "drupal-core",
         "extra": {
             "merge-plugin": {
