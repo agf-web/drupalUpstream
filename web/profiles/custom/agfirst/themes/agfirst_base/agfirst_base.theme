@@ -18,7 +18,7 @@ use Drupal\Component\Utility\Html;
  */
 function agfirst_base_preprocess_html(array &$variables) {
   $variables['theme_directory'] = base_path() . $variables['directory'];
-  $variables['gtm_id'] = '';
+  $variables['gtm_ids'] = [];
   /* Add class to html tag */
   //$variables['html_attributes']->addClass('no-js');
 
