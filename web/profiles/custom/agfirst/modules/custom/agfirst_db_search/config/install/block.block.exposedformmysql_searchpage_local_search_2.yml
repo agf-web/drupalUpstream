@@ -1,0 +1,35 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.mysql_search
+  module:
+    - cyberwoven_blocks
+    - system
+    - views
+  theme:
+    - agfirst_base
+id: exposedformmysql_searchpage_local_search_2
+theme: agfirst_base
+region: content
+weight: -11
+provider: null
+plugin: 'views_exposed_filter_block:mysql_search-page_local_search'
+settings:
+  id: 'views_exposed_filter_block:mysql_search-page_local_search'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+visibility:
+  cyberwoven_node_type:
+    id: cyberwoven_node_type
+    bundles: {  }
+    negate: false
+    all_others: 0
+    context_mapping: {  }
+  request_path:
+    id: request_path
+    pages: /search
+    negate: false
+    context_mapping: {  }

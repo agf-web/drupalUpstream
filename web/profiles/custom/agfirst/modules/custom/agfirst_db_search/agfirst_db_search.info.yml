@@ -1,0 +1,8 @@
+name: 'AgFirst Database Search'
+type: module
+description: 'Provides configuration for MySQL-indexed search.'
+core: 8.x
+package: 'AgFirst'
+dependencies:
+  - search_api
+  - search_api_db
