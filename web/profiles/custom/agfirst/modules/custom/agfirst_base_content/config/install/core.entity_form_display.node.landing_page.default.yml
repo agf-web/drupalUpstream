@@ -93,6 +93,7 @@ content:
       crop_preview_image_style: crop_thumbnail
       crop_list:
         - landing_mma_crop
+        - narrow_mma_crop
       progress_indicator: throbber
     third_party_settings:
       imce:
