@@ -126,12 +126,6 @@ datasource_settings:
       default: true
       selected: {  }
 processor_settings:
-  add_url: {  }
-  aggregated_field: {  }
-  content_access:
-    weights:
-      preprocess_query: -30
-  entity_status: {  }
   html_filter:
     all_fields: true
     fields:
@@ -150,12 +144,10 @@ processor_settings:
       h3: 2
       strong: 2
       b: 2
-      em: 1
-      u: 1
     weights:
       preprocess_index: -15
       preprocess_query: -15
-  rendered_item: {  }
+  entity_status: {  }
   type_boost:
     boosts:
       'entity:node':
@@ -172,12 +164,46 @@ processor_settings:
       'entity:paragraph':
         datasource_boost: 0.5
         bundle_boosts:
-          embedded_form: !!float 0
           event_contact: !!float 1
-          labeled_phone_number: !!float 0
+          feed: !!float 0
+          quotation: !!float 0
+          split_content: !!float 0
+          spotlight: !!float 0
           spotlight_grid: !!float 1
     weights:
       preprocess_index: 0
+  add_url: {  }
+  content_access:
+    weights:
+      preprocess_query: -30
+  aggregated_field: {  }
+  rendered_item: {  }
+  stemmer:
+    all_fields: false
+    fields:
+      - rendered_item
+      - body
+      - field_left_message
+      - field_right_message
+    exceptions:
+      texan: texa
+      mexican: mexic
+    weights:
+      preprocess_index: 0
+      preprocess_query: 0
+  ignorecase:
+    all_fields: false
+    fields:
+      - rendered_item
+      - url
+      - body
+      - type
+      - field_center_headline
+      - field_left_message
+      - field_right_message
+    weights:
+      preprocess_index: -20
+      preprocess_query: -20
 tracker_settings:
   default:
     indexing_order: fifo
