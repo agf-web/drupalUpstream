@@ -17,12 +17,7 @@
   ]
 %}
 
-{# This is needed for the image to render as bg (using `background images` module) #}
-{% set image_url %}
-  {{ content.field_image }}
-{% endset %}
-
-<section{{ attributes.addClass(classes, landing_mma_classes) }}>
+<section{{ attributes.addClass(classes, landing_mma_classes) }} style="background-position: center center;background-repeat: no-repeat;background-image: url({{ image_url }})">
   <h1 class="page-header__title">{{ content.field_mma_title.0 }}</h1>
   
   {% if isMmaTall %}

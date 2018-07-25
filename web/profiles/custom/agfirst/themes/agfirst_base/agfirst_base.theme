@@ -124,6 +124,19 @@ function agfirst_base_preprocess_node(array &$variables) {
         $variables['MmaStyle'] = $variables['node']->field_mma_style->value;
         $variables['isTallMma'] = $variables['MmaStyle'] == 'tall';
       }
+
+      if ($variables['elements']['#view_mode'] == 'mma') {
+        $image_style = $variables['node']->field_mma_style->value == 'tall' ? 'landing_mma': 'narrow_mma';
+        $variables['image_url'] = '';
+        if (!empty($variables['node']->field_image->entity)) {
+          $image_uri = $variables['node']->field_image->entity->getFileUri();
+          $style = ImageStyle::load($image_style);
+          if (!empty($style)) {
+            $variables['image_url'] = $style->buildUrl($image_uri);
+          }
+        }
+      }
+
       break;
   }
 

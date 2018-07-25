@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - crop.type.narrow_mma_crop
+  module:
+    - crop
+name: narrow_mma
+label: 'Narrow MMA'
+effects:
+  e370cb8b-65a7-46bb-a5d6-724fa8ae6d6e:
+    uuid: e370cb8b-65a7-46bb-a5d6-724fa8ae6d6e
+    id: crop_crop
+    weight: 1
+    data:
+      crop_type: narrow_mma_crop
+  1c65ec3f-dd12-45f4-bbea-890f5ddb4f8e:
+    uuid: 1c65ec3f-dd12-45f4-bbea-890f5ddb4f8e
+    id: image_scale_and_crop
+    weight: 2
+    data:
+      width: 1400
+      height: 142

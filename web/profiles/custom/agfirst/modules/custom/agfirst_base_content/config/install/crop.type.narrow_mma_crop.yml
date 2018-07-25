@@ -1,0 +1,11 @@
+langcode: en
+status: true
+dependencies: {  }
+label: 'Narrow MMA Crop'
+id: narrow_mma_crop
+description: ''
+aspect_ratio: '1400:142'
+soft_limit_width: null
+soft_limit_height: null
+hard_limit_width: null
+hard_limit_height: null
