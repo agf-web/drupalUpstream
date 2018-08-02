@@ -100,6 +100,11 @@ function agfirst_base_theme_support_theme($existing, $type, $theme, $path) {
         ],
       ],
     ],
+    'agfirst_base_theme_equal_housing_lender_block' => [
+      'variables' => [
+        'logo' => '/' . drupal_get_path('module', 'agfirst_base_theme_support') . '/img/equal-housing-lender-logo.png',
+      ],
+    ],
   ];
 
 }
