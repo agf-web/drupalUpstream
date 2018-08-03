@@ -36,6 +36,12 @@ class JobsBlock extends BlockBase {
         $rss = simplexml_load_string($response->getBody()); 
         $jobs = $rss->channel->item;
 
+        $acceptable_tags = '<a> <b> <strong> <ul> <li> <i> <em> <br> <p>';
+
+        foreach($jobs as $job) {
+          $job->description = strip_tags(html_entity_decode($job->description), $acceptable_tags);
+        }
+
     } catch (RequestException $e) {
         watchdog_exception('agfirst_careers', $e->getMessage());
     }
