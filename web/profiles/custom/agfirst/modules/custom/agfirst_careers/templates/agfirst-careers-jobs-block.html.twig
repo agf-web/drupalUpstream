@@ -1,0 +1,11 @@
+<section class="job-list">
+  {% for job in jobs %}
+    <article class="job-detail">
+      <h3>{{ job.title }}</h3> 
+      <a class="job-link" href="{{ job.link }}">{{ job.link }}</a>
+      <p class="job-description">{% autoescape false %}{{ job.description|raw }}{% endautoescape %}</p>
+    </article>
+  {% else %}
+      <p class="no-jobs">{{ no_jobs_message }}</p>
+  {% endfor %}
+</section>

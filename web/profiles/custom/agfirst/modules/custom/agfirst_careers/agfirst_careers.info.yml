@@ -1,0 +1,5 @@
+name: 'AgFirst Careers'
+type: module
+description: 'Provides a block that outputs a cached RSS feed from a configured RSS url.'
+core: 8.x
+package: 'AgFirst'

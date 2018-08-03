@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * Implements hook_theme().
+ */
+function agfirst_careers_theme($existing, $type, $theme, $path) {
+  return [
+    'agfirst_careers_jobs_block' => [
+      'variables' => [
+        'jobs' => '',
+        'no_jobs_message' => '',
+      ],
+    ],
+  ];
+
+}

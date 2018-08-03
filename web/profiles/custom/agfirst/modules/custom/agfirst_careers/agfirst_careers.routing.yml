@@ -1,0 +1,9 @@
+agfirst_careers.rss_form:
+  path: '/admin/config/agfirst-careers'
+  defaults:
+    _form: 'Drupal\agfirst_careers\Form\RssForm'
+    _title: 'Careers RSS Settings'
+  requirements:
+    _permission: 'administer agfirst rss settings'
+  options:
+    _admin_route: TRUE
