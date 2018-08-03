@@ -1,0 +1,5 @@
+ckeditor_accordion.settings:
+  title: CKEditor Accordion
+  description: Manage CKEditor accordion
+  parent: system.admin_config_content
+  route_name: ckeditor_accordion.settings

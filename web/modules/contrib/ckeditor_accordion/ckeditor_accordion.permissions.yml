@@ -1,0 +1,4 @@
+administer ckeditor accordion:
+  title: Adminster CKEditor Accordion
+  description: Adminster CKEditor Accordion configuration
+  restrict access: TRUE

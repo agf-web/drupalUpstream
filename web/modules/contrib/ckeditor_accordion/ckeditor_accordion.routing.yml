@@ -1,0 +1,7 @@
+ckeditor_accordion.settings:
+  path: /admin/config/content/ckeditor-accordion
+  defaults:
+    _form: Drupal\ckeditor_accordion\Form\CkeditorAccordionSettingsForm
+    _title: CKEditor Accordion Configuration
+  requirements:
+    _permission: administer ckeditor accordion

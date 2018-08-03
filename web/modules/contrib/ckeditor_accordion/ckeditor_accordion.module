@@ -1,0 +1,18 @@
+<?php
+/**
+ * @file
+ * Functions to support creating CKEditor Accordion.
+ */
+
+/**
+ * Implements hook_page_attachments_alter().
+ */
+function ckeditor_accordion_page_attachments_alter(array &$page) {
+  $config = \Drupal::config('ckeditor_accordion.settings');
+
+  // Attaches css assets globally.
+  $page['#attached']['library'][] = 'ckeditor_accordion/accordion_style';
+
+  // Pass settings to JavaScript.
+  $page['#attached']['drupalSettings']['ckeditorAccordion']['accordionStyle']['collapseAll'] = $config->get('collapse_all');
+}
