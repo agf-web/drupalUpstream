@@ -1,0 +1,4 @@
+administer agfirst rss settings:
+  title: 'Administer Careers RSS Settings'
+  description: 'Allow to access the AgFirst Careers RSS settings.'
+  restrict access: true

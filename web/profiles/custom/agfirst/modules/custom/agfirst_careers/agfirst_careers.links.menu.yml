@@ -1,0 +1,6 @@
+agfirst_careers.rss_form:
+  title: 'Careers RSS Settings'
+  description: 'AG First Careers RSS Settings'
+  parent: system.admin_config
+  route_name: agfirst_careers.rss_form
+  weight: -45
