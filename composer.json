@@ -17,6 +17,7 @@
     "drupal/admin_toolbar": "^1.19",
     "drupal/anchor_link": "^1.5",
     "drupal/bg_image_formatter": "^1.1",
+    "drupal/ckeditor_accordion": "^1.1",
     "drupal/config_direct_save": "^1.0",
     "drupal/config_installer": "^1.0",
     "drupal/console": "^1",
