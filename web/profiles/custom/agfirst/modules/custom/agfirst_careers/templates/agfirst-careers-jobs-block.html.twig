@@ -2,8 +2,7 @@
   {% for job in jobs %}
     <article class="job-detail">
       <h3>{{ job.title }}</h3> 
-      <a class="job-link button green" href="{{ job.link }}">Apply Now</a>
-      <p class="job-description">{% autoescape false %}{{ job.description|raw }}{% endautoescape %}</p>
+      <a class="job-link button green" href="{{ job.link }}">View Details</a>
     </article>
   {% else %}
       <p class="no-jobs">{{ no_jobs_message }}</p>
