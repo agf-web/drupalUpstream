@@ -1,0 +1,10 @@
+uuid: 44e54f7c-10ef-4ad6-be12-b443fcb312a0
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.people
+label: People
+targetEntityType: node
+cache: true

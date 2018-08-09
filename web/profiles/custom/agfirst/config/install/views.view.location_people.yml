@@ -1,12 +1,16 @@
+uuid: 75800350-a6ec-4865-a896-3943dfa9748f
 langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_view_mode.node.people
     - field.storage.node.field_people
     - node.type.location
   module:
     - node
     - user
+_core:
+  default_config_hash: rfhxwjbWNQI9ID45joIBnGPN4M2xbn5K-GSoQ2VDCcM
 id: location_people
 label: 'Location People'
 module: views
@@ -62,12 +66,10 @@ display:
           wrapper_class: item-list
           class: people-list
       row:
-        type: fields
+        type: 'entity:node'
         options:
-          default_field_elements: false
-          inline: {  }
-          separator: ''
-          hide_empty: false
+          relationship: none
+          view_mode: people
       fields:
         field_people:
           id: field_people
