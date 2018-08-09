@@ -10,4 +10,68 @@
   .item-list {
     padding: 0 1rem;
   }
+
+  .people-list {
+    li {
+      max-width: 100%;
+      width: 100%;
+    }
+
+    .node__content {
+      .field--name-field-people {
+        @include bp($medium) {
+          display: flex;
+          flex-flow: row wrap;
+          justify-content: flex-start;
+        }
+      }
+    }
+
+    .field__item {
+      margin: 0 auto 2rem;
+      flex: 0 0 auto;
+      max-width: rem(343px);
+  
+      @include bp($medium) {
+        max-width: rem(425px);
+        width: calc(50% - .5rem);
+        @include bp(767px, 'max-width') {
+          margin: 0 .5rem 1rem;
+          &:nth-child(odd) {
+            margin-left: 0;
+          }
+          &:nth-child(even) {
+            margin-right: 0;
+          }
+        }
+      }
+  
+      // 3 per row
+      @include bp($large) {
+        width: calc(33% - .5rem);
+        @include bp(1023px, 'max-width') {
+          margin: 0 .4875rem 1rem;
+          &:nth-child(3n + 1) {
+            margin-left: 0;
+          }
+          &:nth-child(3n + 3) {
+            margin-right: 0;
+          }
+        }
+      }
+      
+      // 4 per row
+      @include bp($xlarge) {
+        width: calc(25% - .75rem);
+        margin: 0 .5rem 1rem;
+        &:nth-child(4n + 1) {
+          margin-left: 0;
+        }
+  
+        &:nth-child(4n + 4) {
+          margin-right: 0;
+        }
+      }
+    }
+  }
 }
