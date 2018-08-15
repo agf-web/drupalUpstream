@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
+use \Drupal\image\Entity\ImageStyle;
 
 /**
  * Implements hook_help().
