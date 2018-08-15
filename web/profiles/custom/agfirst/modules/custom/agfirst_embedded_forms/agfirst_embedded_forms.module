@@ -53,3 +53,22 @@ function agfirst_embedded_forms_theme() {
     ],
   ];
 }
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function agfirst_embedded_forms_preprocess_paragraph(array &$vars) {
+  $p = $vars['paragraph'];
+  if ($p->getType() != 'embedded_form') {
+    return;
+  }
+
+  $vars['image_url'] = '';
+  if (!empty($p->field_image->entity) && isset($vars['elements']['field_image'][0]['#image_style'])) {
+    $style = ImageStyle::load($vars['elements']['field_image'][0]['#image_style']);
+    if (!empty($style)) {
+      $image_uri = $p->field_image->entity->getFileUri();
+      $vars['image_url'] = $style->buildUrl($image_uri);
+    }
+  }
+}
