@@ -15,6 +15,7 @@
     "drupal-composer/drupal-scaffold": "^2.0.1",
     "drupal/address": "~1.0",
     "drupal/admin_toolbar": "^1.19",
+    "drupal/allowed_formats": "^1.1",
     "drupal/anchor_link": "^1.5",
     "drupal/bg_image_formatter": "^1.1",
     "drupal/ckeditor_accordion": "^1.1",
