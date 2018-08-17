@@ -1,0 +1,13 @@
+name: Link Field Autocomplete Filter
+type: module
+description: Adds a Link Field configuration for filtering the content types in the autocomplete field.
+# core: 8.x
+
+dependencies:
+  - drupal:link
+
+# Information added by Drupal.org packaging script on 2018-03-19
+version: '8.x-1.6'
+core: '8.x'
+project: 'link_field_autocomplete_filter'
+datestamp: 1521503887

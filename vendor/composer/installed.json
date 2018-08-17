@@ -3978,6 +3978,59 @@
         }
     },
     {
+        "name": "drupal/link_field_autocomplete_filter",
+        "version": "1.6.0",
+        "version_normalized": "1.6.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupal.org/project/link_field_autocomplete_filter",
+            "reference": "8.x-1.6"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/link_field_autocomplete_filter-8.x-1.6.zip",
+            "reference": "8.x-1.6",
+            "shasum": "acb1d98a5a7adc60322f90224f7f53438ce2a8d1"
+        },
+        "require": {
+            "drupal/core": "*"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "branch-alias": {
+                "dev-1.x": "1.x-dev"
+            },
+            "drupal": {
+                "version": "8.x-1.6",
+                "datestamp": "1521503884",
+                "security-coverage": {
+                    "status": "not-covered",
+                    "message": "Project has not opted into security advisory coverage!"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "jmuxf",
+                "homepage": "https://www.drupal.org/user/1275704"
+            }
+        ],
+        "description": "Link Field Autocomplete Filter",
+        "homepage": "https://www.drupal.org/project/link_field_autocomplete_filter",
+        "keywords": [
+            "Drupal"
+        ],
+        "support": {
+            "source": "http://cgit.drupalcode.org/link_field_autocomplete_filter",
+            "issues": "https://www.drupal.org/project/issues/link_field_autocomplete_filter"
+        }
+    },
+    {
         "name": "drupal/linkit",
         "version": "4.3.0",
         "version_normalized": "4.3.0.0",
