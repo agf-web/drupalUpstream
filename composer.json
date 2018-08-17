@@ -38,6 +38,7 @@
     "drupal/imce": "^1.5",
     "drupal/inline_entity_form": "^1.0@beta",
     "drupal/link_attributes": "^1.2",
+    "drupal/link_field_autocomplete_filter": "^1.6",
     "drupal/linkit": "^4.3",
     "drupal/mailchimp": "^1.2",
     "drupal/masquerade": "^2.0@beta",
