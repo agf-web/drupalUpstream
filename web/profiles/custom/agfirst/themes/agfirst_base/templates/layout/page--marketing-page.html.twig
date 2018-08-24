@@ -48,29 +48,9 @@
 {% set main_content_classes = ['main'] %}
 
 <div class="layout-container">
-  <header role="banner" class="site-header">
-    <div class="container">
-      {{ page.site_header_left }}
-    </div>
-  </header>
 
   <main role="main"{{ main_content_attributes.addClass(main_content_classes) }}>
     <span id="main-content" tabindex="-1"></span>{# link is in html.html.twig #}
-    {% if page.content_top_full %}
-      <div class="main__top--full">
-        <div class="container">
-          {{ page.content_top_full }}
-        </div>
-      </div>
-    {% endif %}
-
-    {% if page.content_top %}
-      <div class="main__top">
-        <div class="container">
-          {{ page.content_top }}
-        </div>
-      </div>
-    {% endif %}
 
     <div class="container">
       <div class="main__content">
@@ -86,20 +66,29 @@
       </div>
     {% endif %}
 
-    {% if page.content_bottom_full %}
-      <div class="main__bottom--full">
-        {{ page.content_bottom_full }}
-      </div>
-    {% endif %}
   </main>
 
-  <footer class="site-footer" role="contentinfo">
-    <div class="container">
-      <div class="site-footer__bottom">
-        {% if page.site_footer_bottom %}
-          {{ page.site_footer_bottom }}
-        {% endif %}
+
+  {% if page.site_footer_left or page.site_footer_right %}
+    <footer class="site-footer" role="contentinfo">
+      <div class="container">
+        <div class="site-footer__split">
+          {% if page.site_footer_left %}
+            {{ page.site_footer_left }}
+          {% endif %}
+
+          {% if page.site_footer_right %}
+            {{ page.site_footer_right}}
+          {% endif %}
+        </div>
+
+        <div class="site-footer__bottom">
+          {% if page.site_footer_bottom %}
+            {{ page.site_footer_bottom }}
+          {% endif %}
+        </div>
       </div>
-    </div>
-  </footer>
+    </footer>
+  {% endif %}
+
 </div>{# /.layout-container #}
