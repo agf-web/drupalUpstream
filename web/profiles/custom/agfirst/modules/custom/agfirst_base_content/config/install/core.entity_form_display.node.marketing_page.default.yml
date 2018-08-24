@@ -2,12 +2,11 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.marketing_page.body
     - field.field.node.marketing_page.field_form
     - field.field.node.marketing_page.field_image
     - field.field.node.marketing_page.field_layers
     - field.field.node.marketing_page.field_metatag
-    - field.field.node.marketing_page.field_spotlight
+    - field.field.node.marketing_page.field_text
     - image.style.thumbnail
     - node.type.marketing_page
   module:
@@ -18,7 +17,6 @@ dependencies:
     - metatag
     - paragraphs
     - path
-    - text
 third_party_settings:
   field_group:
     group_tabs:
@@ -37,8 +35,8 @@ third_party_settings:
     group_con:
       children:
         - field_image
+        - field_text
         - field_form
-        - body
       parent_name: group_tabs
       weight: 5
       format_type: tab
@@ -63,8 +61,7 @@ third_party_settings:
         required_fields: true
       label: 'Additional Layers'
     group_spotlight:
-      children:
-        - field_spotlight
+      children: {  }
       parent_name: group_tabs
       weight: 4
       format_type: tab
@@ -80,15 +77,6 @@ targetEntityType: node
 bundle: marketing_page
 mode: default
 content:
-  body:
-    type: text_textarea_with_summary
-    weight: 4
-    settings:
-      rows: 9
-      summary_rows: 3
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
   created:
     type: datetime_timestamp
     weight: 4
@@ -96,7 +84,7 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_form:
-    weight: 3
+    weight: 4
     settings:
       size: 30
       placeholder: 'Paste the form ID from the provider embed code'
@@ -137,17 +125,13 @@ content:
     third_party_settings: {  }
     type: metatag_firehose
     region: content
-  field_spotlight:
-    type: entity_reference_paragraphs
+  field_text:
     weight: 3
     settings:
-      title: Paragraph
-      title_plural: Paragraphs
-      edit_mode: open
-      add_mode: dropdown
-      form_display_mode: default
-      default_paragraph_type: ''
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
+    type: string_textfield
     region: content
   path:
     type: path
