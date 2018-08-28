@@ -70,51 +70,36 @@ function agfirst_editor_experience_node_landing_page_form(&$form, FormStateInter
   $form['body']['#states'] = [
     'required' => [
       [':input[name="field_mma_style"]' => ['value' => 'tall']],
-      [':input[name="field_mma_style"]' => ['value' => 'video']],
     ],
     'enabled' => [
       [':input[name="field_mma_style"]' => ['value' => 'tall']],
-      [':input[name="field_mma_style"]' => ['value' => 'video']],
     ],
     'visible' => [
       [':input[name="field_mma_style"]' => ['value' => 'tall']],
-      [':input[name="field_mma_style"]' => ['value' => 'video']],
     ],
   ];
 
   $form['field_mma_link']['#states'] = [
     'required' => [
       [':input[name="field_mma_style"]' => ['value' => 'tall']],
-      [':input[name="field_mma_style"]' => ['value' => 'video']],
     ],
     'enabled' => [
       [':input[name="field_mma_style"]' => ['value' => 'tall']],
-      [':input[name="field_mma_style"]' => ['value' => 'video']],
     ],
     'visible' => [
       [':input[name="field_mma_style"]' => ['value' => 'tall']],
-      [':input[name="field_mma_style"]' => ['value' => 'video']],
-    ],
-  ];
-
-  /**
-   * Video mma style? hide the image field, show the video field
-   */
-  $form['field_image']['#states'] = [
-    'invisible' => [
-      ':input[name="field_mma_style"]' => ['value' => 'video'],
     ],
   ];
 
   $form['field_video']['#states'] = [
     'required' => [
-      ':input[name="field_mma_style"]' => ['value' => 'video'],
+      ':input[name="field_mma_style"]' => ['value' => 'tall'],
     ],
     'enabled' => [
-      ':input[name="field_mma_style"]' => ['value' => 'video'],
+      ':input[name="field_mma_style"]' => ['value' => 'tall'],
     ],
     'visible' => [
-      ':input[name="field_mma_style"]' => ['value' => 'video'],
+      ':input[name="field_mma_style"]' => ['value' => 'tall'],
     ],
   ];
 
