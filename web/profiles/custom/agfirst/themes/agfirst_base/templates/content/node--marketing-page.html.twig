@@ -84,7 +84,7 @@
 {{ attach_library('classy/node') }}
 <article{{ attributes.addClass(classes) }}>
 
-  <div class="marketing-mma" style="background-image: url({{ content.field_image|render|striptags|trim }})">
+  <div class="marketing-mma" style="background-image: url({{ content.field_image|render|striptags|raw }})">
     <div class="marketing-wrapper">
       <h1 class="marketing-logo" style="background-image: url(/{{ directory }}/img/logo-white.png)">{{ 'Cape Fear Farm Credit'|t}}</h1>
       <div class="marketing-content">
