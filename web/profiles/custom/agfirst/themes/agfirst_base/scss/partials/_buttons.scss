@@ -34,6 +34,30 @@
     }
   }
 
+  &.orange {
+    color: #fff;
+    background:$orange-gradient;
+
+    &:hover {
+      opacity: .8;
+      color: #fff;
+      text-decoration: none;
+      transition: all 0.25s ease;
+    }
+            
+    &.transparent {
+      border-color: $orange;
+      color: $orange;
+      background: transparent;
+
+      &:hover {
+        opacity: 1;
+        background-color: $orange;
+        color: #fff;
+      }
+    }
+  }
+
   &.transparent {
     background-color: transparent;
     border: 2px solid $white;
