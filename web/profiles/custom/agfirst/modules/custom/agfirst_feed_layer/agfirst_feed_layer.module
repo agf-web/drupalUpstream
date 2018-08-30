@@ -10,6 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\node\NodeViewBuilder;
+use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\node\Entity\Node;
 
 /**
@@ -106,20 +107,30 @@ function agfirst_feed_layer_preprocess_paragraph(array &$variables) {
   $query = \Drupal::entityQuery('node');
   $query->condition('type', $content_type)
     ->condition('status', NodeInterface::PUBLISHED)
-    ->sort('created', 'DESC')
     ->range(0, 3);
 
-  // If a term is set, try to filter for it too.
-  if (!empty($paragraph->field_filter_term->target_id)) {
-    switch ($content_type) {
-      case 'article':
+  switch ($content_type) {
+    case 'article':
+      if (!empty($paragraph->field_filter_term->target_id)) {
         $query->condition('field_tags', $paragraph->field_filter_term->target_id);
-        break;
+      }
+      $query->sort('field_publication_date', DESC);
+      break;
 
-      case 'event':
+    case 'event':
+      if (!empty($paragraph->field_filter_term->target_id)) {
         $query->condition('field_event_type', $paragraph->field_filter_term->target_id);
-        break;
-    }
+      }
+      $date = new DrupalDateTime('yesterday');
+      $date->setTimezone(new \DateTimezone(DATETIME_STORAGE_TIMEZONE));
+      $formatted = $date->format(DATETIME_DATETIME_STORAGE_FORMAT);
+      $query->condition('field_date.value', $formatted, '>=');
+      $query->sort('field_date.value', ASC);
+      break;
+
+    default:
+      $query->sort('created', DESC);
+      break;
   }
 
   $results = $query->execute();
