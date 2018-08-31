@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.modal_message.body
+    - field.field.node.modal_message.field_display_condition
+    - node.type.modal_message
+  module:
+    - text
+    - user
+id: node.modal_message.default
+targetEntityType: node
+bundle: modal_message
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden:
+  field_display_condition: true
+  links: true

@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.modal_message.body
+    - field.field.node.modal_message.field_display_condition
+    - node.type.modal_message
+  module:
+    - text
+    - user
+id: node.modal_message.teaser
+targetEntityType: node
+bundle: modal_message
+mode: teaser
+content:
+  body:
+    label: hidden
+    type: text_summary_or_trimmed
+    weight: 101
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden:
+  field_display_condition: true
