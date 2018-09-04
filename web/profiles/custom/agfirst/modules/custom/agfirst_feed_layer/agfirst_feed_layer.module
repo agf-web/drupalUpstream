@@ -114,7 +114,7 @@ function agfirst_feed_layer_preprocess_paragraph(array &$variables) {
       if (!empty($paragraph->field_filter_term->target_id)) {
         $query->condition('field_tags', $paragraph->field_filter_term->target_id);
       }
-      $query->sort('field_publication_date', DESC);
+      $query->sort('field_publication_date', 'DESC');
       break;
 
     case 'event':
@@ -125,11 +125,11 @@ function agfirst_feed_layer_preprocess_paragraph(array &$variables) {
       $date->setTimezone(new \DateTimezone(DATETIME_STORAGE_TIMEZONE));
       $formatted = $date->format(DATETIME_DATETIME_STORAGE_FORMAT);
       $query->condition('field_date.value', $formatted, '>=');
-      $query->sort('field_date.value', ASC);
+      $query->sort('field_date.value', 'ASC');
       break;
 
     default:
-      $query->sort('created', DESC);
+      $query->sort('created', 'DESC');
       break;
   }
 
