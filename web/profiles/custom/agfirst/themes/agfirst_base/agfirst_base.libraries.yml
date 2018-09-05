@@ -17,3 +17,11 @@ aglib_js_mobile:
     - core/jquery
     - core/jquery.once
     - core/drupal
+
+fancybox:
+  version: 0.1
+  js:
+    js/jquery.fancybox.min.js: {}
+  dependencies:
+    - core/jquery
+
