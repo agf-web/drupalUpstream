@@ -95,7 +95,7 @@ abstract class WebformSubmissionsDeleteFormBase extends ConfirmFormBase {
     $form_state->setRedirectUrl($this->getCancelUrl());
     if ($this->submissionStorage->getTotal($this->webform, $this->sourceEntity) < $this->getBatchLimit()) {
       $this->submissionStorage->deleteAll($this->webform, $this->sourceEntity);
-      drupal_set_message($this->getFinishedMessage());
+      $this->messenger()->addStatus($this->getFinishedMessage());
     }
     else {
       $this->batchSet($this->webform, $this->sourceEntity);
@@ -180,7 +180,7 @@ abstract class WebformSubmissionsDeleteFormBase extends ConfirmFormBase {
     // Track progress.
     $context['sandbox']['progress'] += $this->submissionStorage->deleteAll($webform, $entity, $this->getBatchLimit(), $max_sid);
 
-    $context['message'] = $this->t('Deleting @count of @total submissions...', ['@count' => $context['sandbox']['progress'], '@total' => $context['sandbox']['max']]);
+    $context['message'] = $this->t('Deleting @count of @total submissions…', ['@count' => $context['sandbox']['progress'], '@total' => $context['sandbox']['max']]);
 
     // Track finished.
     if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
@@ -200,10 +200,10 @@ abstract class WebformSubmissionsDeleteFormBase extends ConfirmFormBase {
    */
   public function batchFinish($success = FALSE, array $results, array $operations) {
     if (!$success) {
-      drupal_set_message($this->t('Finished with an error.'));
+      $this->messenger()->addStatus($this->t('Finished with an error.'));
     }
     else {
-      drupal_set_message($this->getFinishedMessage());
+      $this->messenger()->addStatus($this->getFinishedMessage());
     }
   }
 

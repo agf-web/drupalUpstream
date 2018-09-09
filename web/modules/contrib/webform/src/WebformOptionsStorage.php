@@ -3,13 +3,13 @@
 namespace Drupal\webform;
 
 use Drupal\Component\Render\FormattableMarkup;
-use Drupal\Component\Serialization\Yaml;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\Entity\ConfigEntityStorage;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Render\ElementInfoManagerInterface;
+use Drupal\Core\Serialization\Yaml;
 use Drupal\webform\Element\WebformCompositeBase;
 use Drupal\webform\Plugin\WebformElementManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -144,7 +144,9 @@ class WebformOptionsStorage extends ConfigEntityStorage implements WebformOption
       foreach (array_keys($definitions) as $plugin_id) {
         /** @var \Drupal\Core\Render\Element\ElementInterface $element */
         $element = $this->elementInfo->createInstance($plugin_id);
-        if (!$element instanceof WebformCompositeBase) {
+        // Make sure element is composite and not provided by the
+        // webform_composite.module.
+        if (!$element instanceof WebformCompositeBase || in_array($plugin_id, ['webform_composite'])) {
           continue;
         }
 
@@ -191,8 +193,8 @@ class WebformOptionsStorage extends ConfigEntityStorage implements WebformOption
         $config = $this->configFactory->get($webform_config_name);
         $element_data = Yaml::encode($config->get('elements'));
         if (preg_match_all('/(?:options|answers)\'\: ([a-z_]+)/', $element_data, $matches)) {
-          $webform_id  = $config->get('id');
-          $webform_title  = $config->get('title');
+          $webform_id = $config->get('id');
+          $webform_title = $config->get('title');
           foreach ($matches[1] as $options_id) {
             $this->usedByWebforms[$options_id][$webform_id] = $webform_title;
           }

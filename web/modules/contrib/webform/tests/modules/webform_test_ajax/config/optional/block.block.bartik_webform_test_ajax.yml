@@ -18,8 +18,4 @@ settings:
   provider: webform_test_ajax
   label_display: visible
 visibility:
-  request_path:
-    id: request_path
-    pages: '<front>'
-    negate: false
-    context_mapping: {  }
+  request_path: {  }

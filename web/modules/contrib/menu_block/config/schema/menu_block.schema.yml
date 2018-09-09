@@ -8,7 +8,7 @@ block.settings.menu_block:*:
     depth:
       type: integer
       label: 'Maximum number of levels'
-    expanded:
+    expand:
       type: boolean
       label: 'Expand all menu links'
     parent:

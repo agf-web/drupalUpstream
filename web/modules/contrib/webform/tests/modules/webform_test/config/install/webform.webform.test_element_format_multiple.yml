@@ -6,8 +6,10 @@ dependencies:
       - webform_test
 open: null
 close: null
+weight: 0
 uid: null
 template: false
+archive: false
 id: test_element_format_multiple
 title: 'Test: Element: Format multiple values'
 description: 'Test element formatting with multiple value.'
@@ -1476,9 +1478,9 @@ elements: |
         '#vocabulary': tags
         '#multiple': true
         '#default_value':
-          - 41
-          - 48
-          - 43
+          - Loremipsum
+          - Oratione
+          - Dixisset
         '#format_items': comma
       webform_term_checkboxes_semicolon:
         '#type': webform_term_checkboxes
@@ -1486,9 +1488,9 @@ elements: |
         '#vocabulary': tags
         '#multiple': true
         '#default_value':
-          - 41
-          - 48
-          - 43
+          - Loremipsum
+          - Oratione
+          - Dixisset
         '#format_items': semicolon
       webform_term_checkboxes_and:
         '#type': webform_term_checkboxes
@@ -1496,9 +1498,9 @@ elements: |
         '#vocabulary': tags
         '#multiple': true
         '#default_value':
-          - 41
-          - 48
-          - 43
+          - Loremipsum
+          - Oratione
+          - Dixisset
         '#format_items': and
       webform_term_checkboxes_ol:
         '#type': webform_term_checkboxes
@@ -1506,9 +1508,9 @@ elements: |
         '#vocabulary': tags
         '#multiple': true
         '#default_value':
-          - 41
-          - 48
-          - 43
+          - Loremipsum
+          - Oratione
+          - Dixisset
         '#format_items': ol
       webform_term_checkboxes_ul:
         '#type': webform_term_checkboxes
@@ -1516,9 +1518,9 @@ elements: |
         '#vocabulary': tags
         '#multiple': true
         '#default_value':
-          - 41
-          - 48
-          - 43
+          - Loremipsum
+          - Oratione
+          - Dixisset
         '#format_items': ul
     webform_term_select:
       '#type': details
@@ -1529,9 +1531,9 @@ elements: |
         '#vocabulary': tags
         '#multiple': true
         '#default_value':
-          - 41
-          - 48
-          - 43
+          - Loremipsum
+          - Oratione
+          - Dixisset
         '#format_items': comma
       webform_term_select_semicolon:
         '#type': webform_term_select
@@ -1539,9 +1541,9 @@ elements: |
         '#vocabulary': tags
         '#multiple': true
         '#default_value':
-          - 41
-          - 48
-          - 43
+          - Loremipsum
+          - Oratione
+          - Dixisset
         '#format_items': semicolon
       webform_term_select_and:
         '#type': webform_term_select
@@ -1549,9 +1551,9 @@ elements: |
         '#vocabulary': tags
         '#multiple': true
         '#default_value':
-          - 41
-          - 48
-          - 43
+          - Loremipsum
+          - Oratione
+          - Dixisset
         '#format_items': and
       webform_term_select_ol:
         '#type': webform_term_select
@@ -1559,9 +1561,9 @@ elements: |
         '#vocabulary': tags
         '#multiple': true
         '#default_value':
-          - 41
-          - 48
-          - 43
+          - Loremipsum
+          - Oratione
+          - Dixisset
         '#format_items': ol
       webform_term_select_ul:
         '#type': webform_term_select
@@ -1569,10 +1571,48 @@ elements: |
         '#vocabulary': tags
         '#multiple': true
         '#default_value':
-          - 41
-          - 48
-          - 43
+          - Loremipsum
+          - Oratione
+          - Dixisset
         '#format_items': ul
+  file_upload_elements:
+    '#type': details
+    '#title': 'File upload elements'
+    '#open': true
+    managed_file:
+      '#type': details
+      '#title': File
+      managed_file_comma:
+        '#type': managed_file
+        '#title': 'File (Comma)'
+        '#multiple': true
+        '#file_extensions': txt
+        '#format_items': comma
+      managed_file_semicolon:
+        '#type': managed_file
+        '#title': 'File (Semicolon)'
+        '#multiple': true
+        '#file_extensions': txt
+        '#format_items': semicolon
+      managed_file_and:
+        '#type': managed_file
+        '#title': 'File (And)'
+        '#multiple': true
+        '#file_extensions': txt
+        '#format_items': and
+      managed_file_ol:
+        '#type': managed_file
+        '#title': 'File (Ordered list)'
+        '#multiple': true
+        '#file_extensions': txt
+        '#format_items': ol
+      managed_file_ul:
+        '#type': managed_file
+        '#title': 'File (Unordered list)'
+        '#multiple': true
+        '#file_extensions': txt
+        '#format_items': ul
+  
 css: ''
 javascript: ''
 settings:
@@ -1603,22 +1643,33 @@ settings:
   form_submit_back: false
   form_autofocus: false
   form_details_toggle: false
-  form_login: false
-  form_login_message: ''
+  form_access_denied: default
+  form_access_denied_title: ''
+  form_access_denied_message: ''
+  form_access_denied_attributes: {  }
   submission_label: ''
   submission_log: false
+  submission_views: {  }
+  submission_views_replace: {  }
   submission_user_columns: {  }
-  submission_login: false
-  submission_login_message: ''
+  submission_user_duplicate: false
+  submission_access_denied: default
+  submission_access_denied_title: ''
+  submission_access_denied_message: ''
+  submission_access_denied_attributes: {  }
   submission_exception_message: ''
   submission_locked_message: ''
+  previous_submission_message: ''
+  previous_submissions_message: ''
   autofill: false
   autofill_message: ''
   autofill_excluded_elements: {  }
   wizard_progress_bar: true
   wizard_progress_pages: false
   wizard_progress_percentage: false
+  wizard_progress_link: false
   wizard_start_label: ''
+  wizard_preview_link: false
   wizard_confirmation: true
   wizard_confirmation_label: ''
   wizard_track: ''
@@ -1629,6 +1680,7 @@ settings:
   preview_attributes: {  }
   preview_excluded_elements: {  }
   preview_exclude_empty: true
+  preview_exclude_empty_checkbox: false
   draft: none
   draft_multiple: false
   draft_auto_save: false
@@ -1713,23 +1765,25 @@ handlers:
     settings:
       states:
         - completed
-      to_mail: default
+      to_mail: _default
       to_options: {  }
       cc_mail: ''
       cc_options: {  }
       bcc_mail: ''
       bcc_options: {  }
-      from_mail: default
+      from_mail: _default
       from_options: {  }
-      from_name: default
-      subject: default
-      body: default
+      from_name: _default
+      subject: _default
+      body: _default
       excluded_elements: {  }
       ignore_access: false
       exclude_empty: true
+      exclude_empty_checkbox: false
       html: false
       attachments: false
       twig: false
+      theme: ''
       debug: true
       reply_to: ''
       return_path: ''
@@ -1745,23 +1799,25 @@ handlers:
     settings:
       states:
         - completed
-      to_mail: default
+      to_mail: _default
       to_options: {  }
       cc_mail: ''
       cc_options: {  }
       bcc_mail: ''
       bcc_options: {  }
-      from_mail: default
+      from_mail: _default
       from_options: {  }
-      from_name: default
-      subject: default
-      body: default
+      from_name: _default
+      subject: _default
+      body: _default
       excluded_elements: {  }
       ignore_access: false
       exclude_empty: true
+      exclude_empty_checkbox: false
       html: true
       attachments: false
       twig: false
+      theme: ''
       debug: true
       reply_to: ''
       return_path: ''

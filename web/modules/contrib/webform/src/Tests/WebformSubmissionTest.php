@@ -44,17 +44,17 @@ class WebformSubmissionTest extends WebformTestBase {
     // Check get webform.
     $this->assertEqual($webform_submission->getWebform()->id(), $webform->id());
 
-    // Check that YAML source entity is NULL.
+    // Check that source entity is NULL.
     $this->assertNull($webform_submission->getSourceEntity());
 
-    // Check get YAML source URL without uri, which will still return
+    // Check getting source URL without uri, which will still return
     // the webform.
     $webform_submission
       ->set('uri', NULL)
       ->save();
     $this->assertEqual($webform_submission->getSourceUrl()->toString(), $webform->toUrl('canonical', ['absolute' => TRUE])->toString());
 
-    // Check get YAML source URL set to user 1.
+    // Check get source URL set to user 1.
     $this->createUsers();
     $webform_submission
       ->set('entity_type', 'user')
@@ -78,6 +78,14 @@ class WebformSubmissionTest extends WebformTestBase {
     // Check submission label.
     $webform_submission->save();
     $this->assertEqual($webform_submission->label(), $webform->label() . ': Submission #' . $webform_submission->serial());
+
+    // Check test submission URI.
+    // @see \Drupal\webform\WebformSubmissionForm::save
+    $this->drupalLogin($this->rootUser);
+    $sid = $this->postSubmissionTest($webform);
+    $webform_submission = WebformSubmission::load($sid);
+    $this->assertEqual($webform_submission->getSourceUrl()->toString(), $webform->toUrl('canonical', ['absolute' => TRUE])->toString());
+    $this->drupalLogout();
   }
 
   /**

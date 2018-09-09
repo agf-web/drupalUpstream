@@ -95,7 +95,7 @@ class WebformResultsExportController extends ControllerBase implements Container
         $route_name = $this->requestHandler->getRouteName($webform, $source_entity, 'webform.results_export_file');
         $route_parameters = $this->requestHandler->getRouteParameters($webform, $source_entity) + ['filename' => $query['filename']];
         $file_url = Url::fromRoute($route_name, $route_parameters, ['absolute' => TRUE])->toString();
-        drupal_set_message($this->t('Export creation complete. Your download should begin now. If it does not start, <a href=":href">download the file here</a>. This file may only be downloaded once.', [':href' => $file_url]));
+        $this->messenger()->addStatus($this->t('Export creation complete. Your download should begin now. If it does not start, <a href=":href">download the file here</a>. This file may only be downloaded once.', [':href' => $file_url]));
         $build['#attached']['html_head'][] = [
           [
             '#tag' => 'meta',
@@ -110,7 +110,7 @@ class WebformResultsExportController extends ControllerBase implements Container
 
       return $build;
     }
-    elseif ($query && empty($query['ajax_form'])) {
+    elseif ($query && empty($query['ajax_form']) && isset($query['download'])) {
       $default_options = $this->submissionExporter->getDefaultExportOptions();
       foreach ($query as $key => $value) {
         if (isset($default_options[$key]) && is_array($default_options[$key]) && is_string($value)) {
@@ -279,7 +279,7 @@ class WebformResultsExportController extends ControllerBase implements Container
     $context['sandbox']['progress'] += count($webform_submissions);
     $context['sandbox']['current_sid'] = ($webform_submissions) ? end($webform_submissions)->id() : 0;
 
-    $context['message'] = t('Exported @count of @total submissions...', ['@count' => $context['sandbox']['progress'], '@total' => $context['sandbox']['max']]);
+    $context['message'] = t('Exported @count of @total submissions…', ['@count' => $context['sandbox']['progress'], '@total' => $context['sandbox']['max']]);
 
     // Track finished.
     if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
@@ -323,7 +323,7 @@ class WebformResultsExportController extends ControllerBase implements Container
       @unlink($file_path);
       $archive_path = $submission_exporter->getArchiveFilePath();
       @unlink($archive_path);
-      drupal_set_message(t('Finished with an error.'));
+      \Drupal::messenger()->addStatus(t('Finished with an error.'));
     }
     else {
       $submission_exporter->writeFooter();

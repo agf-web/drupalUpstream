@@ -189,6 +189,62 @@ function hook_webform_third_party_settings_form_alter(array &$form, \Drupal\Core
 }
 
 /**
+ * Act on a webform handler when a method is invoked.
+ *
+ * Allows module developers to implement custom logic that can executed before
+ * any webform handler method is invoked.
+ *
+ * This hook can be used to…
+ * - Conditionally enable or disable a handler.
+ * - Alter a handler's configuration.
+ * - Preprocess submission data being passed to a webform handler.
+ *
+ * @param \Drupal\webform\Plugin\WebformHandlerInterface $handler
+ *   A webform handler attached to a webform.
+ * @param string $method_name
+ *   The invoked method name converted to snake case.
+ * @param array $args
+ *   Argument being passed to the handler's method.
+ *
+ * @see \Drupal\webform\Plugin\WebformHandlerInterface
+ */
+function webform_test_handler_invoke_alter_webform_handler_invoke_alter(\Drupal\webform\Plugin\WebformHandlerInterface $handler, $method_name, array &$args) {
+  $webform = $handler->getWebform();
+  $webform_submission = $handler->getWebformSubmission();
+
+  $webform_id = $handler->getWebform()->id();
+  $handler_id = $handler->getHandlerId();
+  $state = $webform_submission->getState();
+}
+
+/**
+ * Act on a webform handler when a specific method is invoked.
+ *
+ * Allows module developers to implement custom logic that can executed before
+ * a specified webform handler method is invoked.
+ *
+ * This hook can be used to…
+ * - Conditionally enable or disable a handler.
+ * - Alter a handler's configuration.
+ * - Preprocess submission data being passed to a webform handler.
+ *
+ * @param \Drupal\webform\Plugin\WebformHandlerInterface $handler
+ *   A webform handler attached to a webform.
+ * @param array $args
+ *   Argument being passed to the handler's method.
+ *
+ * @see \Drupal\webform\Plugin\WebformHandlerInterface
+ */
+function hook_webform_handler_invoke_METHOD_NAME_alter(\Drupal\webform\Plugin\WebformHandlerInterface $handler, array &$args) {
+  $webform = $handler->getWebform();
+  $webform_submission = $handler->getWebformSubmission();
+
+  $webform_id = $handler->getWebform()->id();
+  $handler_id = $handler->getHandlerId();
+  $state = $webform_submission->getState();
+}
+
+/**
  * Return information about external webform libraries.
  *
  * @internal
@@ -294,11 +350,10 @@ function hook_webform_help_info_alter(array &$help) {
  *   closed: Returns TRUE if the message is closed.
  *   close: Sets the message's state to closed.
  *   reset: Resets the message's closed state.
- *
  * @param string $id
  *   The message id.
  *
- * @return mixed|boolean
+ * @return mixed|bool
  *   TRUE if message is closed, else NULL
  *
  * @internal

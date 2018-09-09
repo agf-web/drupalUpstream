@@ -37,6 +37,7 @@ class WebformMapping extends WebformElementBase {
       'default_value' => [],
       // Description/Help.
       'help' => '',
+      'help_title' => '',
       'description' => '',
       'more' => '',
       'more_title' => '',
@@ -61,6 +62,7 @@ class WebformMapping extends WebformElementBase {
       'destination__description' => '',
       // Attributes.
       'wrapper_attributes' => [],
+      'label_attributes' => [],
     ] + $this->getDefaultBaseProperties();
   }
 

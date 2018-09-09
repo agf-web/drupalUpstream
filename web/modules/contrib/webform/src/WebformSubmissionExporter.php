@@ -264,7 +264,13 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
       'files' => FALSE,
     ];
 
-    // Append element handler default options.
+    // Append webform exporter default options.
+    $exporter_plugins = $this->exporterManager->getInstances();
+    foreach ($exporter_plugins as $element_type => $element_plugin) {
+      $this->defaultOptions += $element_plugin->defaultConfiguration();
+    }
+
+    // Append webform element default options.
     $element_types = $this->getWebformElementTypes();
     $element_plugins = $this->elementManager->getInstances();
     foreach ($element_plugins as $element_type => $element_plugin) {
@@ -793,6 +799,7 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
     if ($export_options['range_type'] == 'latest' && $export_options['range_latest']) {
       // Clone the query and use it to get latest sid starting sid.
       $latest_query = clone $query;
+      $latest_query->sort('created', 'DESC');
       $latest_query->sort('sid', 'DESC');
       $latest_query->range(0, (int) $export_options['range_latest']);
       if ($latest_query_entity_ids = $latest_query->execute()) {
@@ -800,7 +807,8 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
       }
     }
     else {
-      // Sort by sid in ASC or DESC order.
+      // Sort by created and sid in ASC or DESC order.
+      $query->sort('created', isset($export_options['order']) ? $export_options['order'] : 'ASC');
       $query->sort('sid', isset($export_options['order']) ? $export_options['order'] : 'ASC');
     }
 
@@ -866,7 +874,7 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
    * {@inheritdoc}
    */
   public function getFileTempDirectory() {
-    return file_directory_temp();
+    return $this->configFactory->get('webform.settings')->get('export.temp_directory') ?: file_directory_temp();
   }
 
   /**

@@ -6,8 +6,10 @@ dependencies:
       - webform_templates
 open: null
 close: null
+weight: 0
 uid: null
 template: true
+archive: false
 id: template_job_application
 title: 'Job Application'
 description: 'A job application webform template.'
@@ -15,7 +17,7 @@ category: ''
 elements: |
   information:
     '#title': 'Your Information'
-    '#type': fieldset
+    '#type': webform_section
     first_name:
       '#title': 'First Name'
       '#type': textfield
@@ -31,7 +33,7 @@ elements: |
       '#required': true
   contact_information:
     '#title': 'Contact Information'
-    '#type': fieldset
+    '#type': webform_section
     contact:
       '#type': webform_contact
       '#title': Contact
@@ -40,7 +42,7 @@ elements: |
       '#company__access': false
   resume:
     '#title': 'Your Resume'
-    '#type': fieldset
+    '#type': webform_section
     resume_method:
       '#type': radios
       '#options':
@@ -81,6 +83,7 @@ elements: |
     '#type': webform_actions
     '#title': 'Submit button(s)'
     '#submit__label': Apply
+  
 css: ''
 javascript: ''
 settings:
@@ -111,22 +114,33 @@ settings:
   form_submit_back: false
   form_autofocus: false
   form_details_toggle: false
-  form_login: false
-  form_login_message: ''
+  form_access_denied: default
+  form_access_denied_title: ''
+  form_access_denied_message: ''
+  form_access_denied_attributes: {  }
   submission_label: ''
   submission_log: false
+  submission_views: {  }
+  submission_views_replace: {  }
   submission_user_columns: {  }
-  submission_login: false
-  submission_login_message: ''
+  submission_user_duplicate: false
+  submission_access_denied: default
+  submission_access_denied_title: ''
+  submission_access_denied_message: ''
+  submission_access_denied_attributes: {  }
   submission_exception_message: ''
   submission_locked_message: ''
+  previous_submission_message: ''
+  previous_submissions_message: ''
   autofill: false
   autofill_message: ''
   autofill_excluded_elements: {  }
   wizard_progress_bar: true
   wizard_progress_pages: false
   wizard_progress_percentage: false
+  wizard_progress_link: false
   wizard_start_label: ''
+  wizard_preview_link: false
   wizard_confirmation: true
   wizard_confirmation_label: ''
   wizard_track: ''
@@ -137,6 +151,7 @@ settings:
   preview_attributes: {  }
   preview_excluded_elements: {  }
   preview_exclude_empty: true
+  preview_exclude_empty_checkbox: false
   draft: none
   draft_multiple: false
   draft_auto_save: false
@@ -221,7 +236,7 @@ handlers:
     settings:
       states:
         - completed
-      to_mail: default
+      to_mail: _default
       to_options: {  }
       cc_mail: ''
       cc_options: {  }
@@ -230,14 +245,16 @@ handlers:
       from_mail: '[webform_submission:values:email:raw]'
       from_options: {  }
       from_name: '[webform_submission:values:first_name] [webform_submission:values:last_name]'
-      subject: default
-      body: default
+      subject: _default
+      body: _default
       excluded_elements: {  }
       ignore_access: false
       exclude_empty: true
+      exclude_empty_checkbox: false
       html: true
       attachments: false
       twig: false
+      theme: ''
       debug: false
       reply_to: ''
       return_path: ''

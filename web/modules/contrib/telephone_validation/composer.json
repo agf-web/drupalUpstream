@@ -10,7 +10,6 @@
   "require": {
     "drupal/core": "^8.0",
     "drupal/telephone": "^8.0",
-    "drupal/field_ui": "^8.0",
     "giggsey/libphonenumber-for-php": "~8.0"
   }
 }

@@ -22,20 +22,36 @@ class WebformImageSelectImagesListBuilder extends ConfigEntityListBuilder {
     $build = [];
 
     // Display info.
-    if ($total = $this->getStorage()->getQuery()->count()->execute()) {
-      $build['info'] = [
-        '#markup' => $this->formatPlural($total, '@total images', '@total images', ['@total' => $total]),
-        '#prefix' => '<div>',
-        '#suffix' => '</div>',
-      ];
-    }
+    $build['info'] = $this->buildInfo();
 
+    // Table.
     $build += parent::render();
+    $build['table']['#sticky'] = TRUE;
 
+    // Attachments.
     $build['#attached']['library'][] = 'webform/webform.tooltip';
     $build['#attached']['library'][] = 'webform/webform.admin.dialog';
 
     return $build;
+  }
+
+  /**
+   * Build information summary.
+   *
+   * @return array
+   *   A render array representing the information summary.
+   */
+  protected function buildInfo() {
+    $total = $this->getStorage()->getQuery()->count()->execute();
+    if (!$total) {
+      return [];
+    }
+
+    return [
+      '#markup' => $this->formatPlural($total, '@total images', '@total images', ['@total' => $total]),
+      '#prefix' => '<div>',
+      '#suffix' => '</div>',
+    ];
   }
 
   /**
@@ -88,13 +104,13 @@ class WebformImageSelectImagesListBuilder extends ConfigEntityListBuilder {
   /**
    * Build images for a webform image select images entity.
    *
-   * @param \Drupal\webform_image_select\WebformImageSelectImagesInterface $webform_images
+   * @param \Drupal\webform_image_select\WebformImageSelectImagesInterface $entity
    *   A webform image select images entity.
    *
    * @return array
    *   Images for a webform image select images entity.
    */
-  protected function buildImages(EntityInterface $entity) {
+  protected function buildImages(WebformImageSelectImagesInterface $entity) {
     $element = ['#images' => $entity->id()];
     $images = WebformImageSelectImages::getElementImages($element);
     if (!$images) {
@@ -137,13 +153,23 @@ class WebformImageSelectImagesListBuilder extends ConfigEntityListBuilder {
         '#type' => 'link',
         '#title' => $title,
         '#url' => Url::fromRoute('entity.webform.canonical', ['webform' => $id]),
-        '#suffix' => '</br>'
+        '#suffix' => '</br>',
       ];
     }
     return [
       'nowrap' => TRUE,
       'data' => $links,
     ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildOperations(EntityInterface $entity) {
+    return parent::buildOperations($entity) + [
+        '#prefix' => '<div class="webform-dropbutton">',
+        '#suffix' => '</div>',
+      ];
   }
 
 }

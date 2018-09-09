@@ -6,8 +6,10 @@ dependencies:
       - webform_test_translation
 open: null
 close: null
+weight: 0
 uid: null
 template: false
+archive: false
 id: test_translation
 title: 'Test: Translations'
 description: 'Test translating a webform.'
@@ -27,7 +29,7 @@ elements: |
       4: Four
       5: Five
       6: Six
-    '#other__option_label': 'Custom number...'
+    '#other__option_label': 'Custom number…'
   details:
     '#type': details
     '#title': Details
@@ -49,10 +51,15 @@ elements: |
         '#field_suffix': ' yrs. old'
         '#min': 1
         '#max': 125
+  token:
+    '#type': webform_computed_token
+    '#title': 'Computed (token)'
+    '#value': 'Site name: [site:name]'
   actions:
     '#type': webform_actions
     '#title': 'Submit button(s)'
     '#submit__label': 'Send message'
+  
 css: ''
 javascript: ''
 settings:
@@ -76,28 +83,40 @@ settings:
   form_reset: false
   form_disable_autocomplete: false
   form_novalidate: false
+  form_disable_inline_errors: false
   form_required: false
   form_unsaved: false
   form_disable_back: false
   form_submit_back: false
   form_autofocus: false
   form_details_toggle: false
-  form_login: false
-  form_login_message: ''
+  form_access_denied: default
+  form_access_denied_title: ''
+  form_access_denied_message: ''
+  form_access_denied_attributes: {  }
   submission_label: ''
   submission_log: false
+  submission_views: {  }
+  submission_views_replace: {  }
   submission_user_columns: {  }
-  submission_login: false
-  submission_login_message: ''
+  submission_user_duplicate: false
+  submission_access_denied: default
+  submission_access_denied_title: ''
+  submission_access_denied_message: ''
+  submission_access_denied_attributes: {  }
   submission_exception_message: ''
   submission_locked_message: ''
+  previous_submission_message: ''
+  previous_submissions_message: ''
   autofill: false
   autofill_message: ''
   autofill_excluded_elements: {  }
   wizard_progress_bar: true
   wizard_progress_pages: false
   wizard_progress_percentage: false
+  wizard_progress_link: false
   wizard_start_label: ''
+  wizard_preview_link: false
   wizard_confirmation: true
   wizard_confirmation_label: ''
   wizard_track: ''
@@ -108,6 +127,7 @@ settings:
   preview_attributes: {  }
   preview_excluded_elements: {  }
   preview_exclude_empty: true
+  preview_exclude_empty_checkbox: false
   draft: none
   draft_multiple: false
   draft_auto_save: false
@@ -192,23 +212,25 @@ handlers:
     settings:
       states:
         - completed
-      to_mail: default
+      to_mail: _default
       to_options: {  }
       cc_mail: ''
       cc_options: {  }
       bcc_mail: ''
       bcc_options: {  }
-      from_mail: default
+      from_mail: _default
       from_options: {  }
-      from_name: default
-      subject: default
-      body: default
+      from_name: _default
+      subject: _default
+      body: _default
       excluded_elements: {  }
       ignore_access: false
       exclude_empty: true
+      exclude_empty_checkbox: false
       html: true
       attachments: false
       twig: false
+      theme: ''
       debug: false
       reply_to: ''
       return_path: ''

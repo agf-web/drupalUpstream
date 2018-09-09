@@ -23,6 +23,8 @@ class Container extends ContainerBase {
     return [
       // Attributes.
       'attributes' => [],
+      // Randomize.
+      'randomize' => FALSE,
       // Flexbox.
       'flex' => 1,
       // Conditional logic.

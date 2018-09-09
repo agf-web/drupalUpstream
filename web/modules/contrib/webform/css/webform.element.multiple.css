@@ -87,6 +87,20 @@
 }
 
 /**
+ * Add margin between stacked form items.
+ */
+.webform-multiple-table .form-item + .form-item {
+  margin-top: .2em;
+}
+
+/**
+ * Remove margin from no messages.
+ */
+.webform-multiple-table--no-items-message .messages__wrapper {
+  padding: 0;
+}
+
+/**
  * Suppress table drag warnings.
  */
 .webform-multiple-table .tabledrag-changed-warning,
@@ -97,8 +111,16 @@
 /**
  * Tweak tabledrag toggle weight.
  */
-.webform-multiple-tabledrag-toggle-weight {
+.tabledrag-toggle-weight-wrapper.webform-multiple-tabledrag-toggle-weight {
   float: right;
+  display: inherit;
+  position: inherit;
+}
+
+.tabledrag-toggle-weight-wrapper.webform-multiple-tabledrag-toggle-weight button {
+  position: inherit;
+  top: inherit;
+  right: inherit;
 }
 
 /**

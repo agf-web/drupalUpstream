@@ -23,19 +23,35 @@ class WebformOptionsListBuilder extends ConfigEntityListBuilder {
     $build = [];
 
     // Display info.
-    if ($total = $this->getStorage()->getQuery()->count()->execute()) {
-      $build['info'] = [
-        '#markup' => $this->formatPlural($total, '@total option', '@total options', ['@total' => $total]),
-        '#prefix' => '<div>',
-        '#suffix' => '</div>',
-      ];
-    }
+    $build['info'] = $this->buildInfo();
 
+    // Table.
     $build += parent::render();
+    $build['table']['#sticky'] = TRUE;
 
+    // Attachments.
     $build['#attached']['library'][] = 'webform/webform.admin.dialog';
 
     return $build;
+  }
+
+  /**
+   * Build information summary.
+   *
+   * @return array
+   *   A render array representing the information summary.
+   */
+  protected function buildInfo() {
+    $total = $this->getStorage()->getQuery()->count()->execute();
+    if (!$total) {
+      return [];
+    }
+
+    return [
+      '#markup' => $this->formatPlural($total, '@total option', '@total options', ['@total' => $total]),
+      '#prefix' => '<div>',
+      '#suffix' => '</div>',
+    ];
   }
 
   /**
@@ -96,7 +112,7 @@ class WebformOptionsListBuilder extends ConfigEntityListBuilder {
    * Build list of webforms and composite elements that the webform options is used by.
    *
    * @param \Drupal\webform\WebformOptionsInterface $webform_options
-   *   A webform options entity
+   *   A webform options entity.
    *
    * @return array
    *   Table data containing list of webforms and composite elements that the
@@ -110,14 +126,14 @@ class WebformOptionsListBuilder extends ConfigEntityListBuilder {
         '#type' => 'link',
         '#title' => $title,
         '#url' => Url::fromRoute('entity.webform.canonical', ['webform' => $id]),
-        '#suffix' => '</br>'
+        '#suffix' => '</br>',
       ];
     }
     $elements = $this->getStorage()->getUsedByCompositeElements($webform_options);
     foreach ($elements as $id => $title) {
       $links[] = [
         '#markup' => $title,
-        '#suffix' => '</br>'
+        '#suffix' => '</br>',
       ];
     }
     return [
@@ -130,7 +146,7 @@ class WebformOptionsListBuilder extends ConfigEntityListBuilder {
    * Build list of webform options.
    *
    * @param \Drupal\webform\WebformOptionsInterface $webform_options
-   *   A webform options entity
+   *   A webform options entity.
    *
    * @return string
    *   Semi-colon delimited list of webform options.
@@ -144,7 +160,17 @@ class WebformOptionsListBuilder extends ConfigEntityListBuilder {
         $value .= ' (' . $key . ')';
       }
     }
-    return implode('; ', array_slice($options, 0, 12)) . (count($options) > 12 ? '; ...' : '');
+    return implode('; ', array_slice($options, 0, 12)) . (count($options) > 12 ? '; …' : '');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildOperations(EntityInterface $entity) {
+    return parent::buildOperations($entity) + [
+        '#prefix' => '<div class="webform-dropbutton">',
+        '#suffix' => '</div>',
+      ];
   }
 
 }

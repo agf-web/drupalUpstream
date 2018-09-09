@@ -22,8 +22,8 @@ regions:
 libraries:
   - 'webform_bootstrap_test_theme/global-styling'
 
-# Information added by Drupal.org packaging script on 2018-04-26
-version: '8.x-5.0-rc12'
+# Information added by Drupal.org packaging script on 2018-09-08
+version: '8.x-5.0-rc21'
 core: '8.x'
 project: 'webform'
-datestamp: 1524706694
+datestamp: 1536405494

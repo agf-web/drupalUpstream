@@ -38,6 +38,28 @@ class WebformSourceEntityManager extends DefaultPluginManager implements Webform
   /**
    * {@inheritdoc}
    */
+  protected function alterDefinitions(&$definitions) {
+    // Unset elements that are missing target element or dependencies.
+    foreach ($definitions as $element_key => $element_definition) {
+      // Check element's (module) dependencies exist.
+      foreach ($element_definition['dependencies'] as $dependency) {
+        if (!$this->moduleHandler->moduleExists($dependency)) {
+          unset($definitions[$element_key]);
+          continue;
+        }
+      }
+    }
+
+    // Additionally sort by weight so we always have them sorted in proper
+    // order.
+    uasort($definitions, [SortArray::class, 'sortByWeightElement']);
+
+    parent::alterDefinitions($definitions);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getSourceEntity($ignored_types = []) {
     if (!is_array($ignored_types)) {
       $ignored_types = [$ignored_types];
@@ -53,17 +75,6 @@ class WebformSourceEntityManager extends DefaultPluginManager implements Webform
     }
 
     return NULL;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function alterDefinitions(&$definitions) {
-    parent::alterDefinitions($definitions);
-
-    // Additionally sort by weight so we always have them sorted in proper
-    // order.
-    uasort($definitions, [SortArray::class, 'sortByWeightElement']);
   }
 
 }

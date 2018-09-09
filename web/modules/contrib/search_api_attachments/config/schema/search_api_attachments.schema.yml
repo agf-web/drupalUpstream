@@ -17,6 +17,13 @@ search_api_attachments.admin_config:
         tika_path:
           type: string
           label: 'Path to Tika .jar file'
+    docconv_extractor_configuration:
+      type: mapping
+      label: 'Docconv extractor configuration'
+      mapping:
+        docconv_path:
+          type: string
+          label: 'Path to the docconv binary'
     solr_extractor_configuration:
       type: mapping
       label: 'Solr extractor configuration'
@@ -40,3 +47,16 @@ search_api_attachments.admin_config:
     preserve_cache:
       type: boolean
       label: 'Preserve cached extractions across cache clears.'
+field.formatter.settings.file_extracted_text:
+  type: mapping
+  label: 'File extracted text'
+  mapping:
+    excluded_extensions:
+      type: string
+      label: 'Excluded file extensions'
+    max_filesize:
+      type: string
+      label: 'Maximum upload size'
+    excluded_private:
+      type: integer
+      label: 'Exclude private files'

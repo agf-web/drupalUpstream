@@ -24,6 +24,15 @@ class WebformPhpMail extends PhpMail {
     $message['body'] = implode("\n\n", $message['body']);
 
     if (!empty($message['params']['html'])) {
+      // Wrap body in HTML template if the <html> tag is missing.
+      if (strpos($message['body'], '<html') === FALSE) {
+        $build = [
+          '#theme' => 'webform_email_html',
+          '#body' => $message['body'],
+          '#subject' => $message['subject'],
+        ];
+        $message['body'] = \Drupal::service('renderer')->renderPlain($build);
+      }
       return $message;
     }
     else {

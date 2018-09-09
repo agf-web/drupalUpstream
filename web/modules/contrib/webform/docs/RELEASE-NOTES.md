@@ -1,34 +1,14 @@
-
 Steps for creating a new release
 --------------------------------
 
-  1. Cleanup code
-  2. Export configuration
-  3. Review code
-  4. Run tests
-  5. Generate release notes
-  6. Tag and create a new release
-  7. Upload screencast to YouTube
-
-1. Cleanup code
----------------
-
-[Convert to short array syntax](https://www.drupal.org/project/short_array_syntax)
-
-    drush short-array-syntax webform
-
-Tidy YAML files
-
-    @see DEVELOPMENT-CHEATSHEET.md
+  1. Review code
+  2. Review accessibility
+  3. Run tests
+  4. Generate release notes
+  5. Tag and create a new release
 
 
-2. Export configuration
------------------------
-
-    @see DEVELOPMENT-CHEATSHEET.md
-
-
-3. Review code
+1. Review code
 --------------
 
 [Online](http://pareview.sh)
@@ -39,7 +19,7 @@ Tidy YAML files
 
     # Check Drupal coding standards
     phpcs --standard=Drupal --extensions=php,module,inc,install,test,profile,theme,css,info modules/sandbox/webform
-    
+
     # Check Drupal best practices
     phpcs --standard=DrupalPractice --extensions=php,module,inc,install,test,profile,theme,js,css,info modules/sandbox/webform
 
@@ -52,7 +32,25 @@ Tidy YAML files
     find . -type f -print0 | xargs -0 chmod 0644
 
 
-4. Run tests
+2. Review accessibility
+-----------------------
+
+[Pa11y](http://pa11y.org/)
+
+Pa11y is your automated accessibility testing pal.
+
+Notes
+- Requires node 8.x+
+
+
+    drush en -y webform_example_accessibility
+    pa11y http://localhost/wf/webform/example_accessibility_basic
+    pa11y http://localhost/wf/webform/example_accessibility_advanced
+    pa11y http://localhost/wf/webform/example_accessibility_containers
+    pa11y http://localhost/wf/webform/example_accessibility_wizard
+
+
+3. Run tests
 ------------
 
 [SimpleTest](https://www.drupal.org/node/645286)
@@ -66,37 +64,38 @@ Tidy YAML files
     php core/scripts/run-tests.sh --suppress-deprecations --url http://localhost/wf --verbose --class "Drupal\Tests\webform\Functional\WebformListBuilderTest"
 
 [PHPUnit](https://www.drupal.org/node/2116263)
-     
-Notes
-- Links to PHP Unit HTML responses are not being printed by PHPStrom
 
-References 
-- [Issue #2870145: Set printerClass in phpunit.xml.dist](https://www.drupal.org/node/2870145) 
+Notes
+- Links to PHP Unit HTML responses are not being printed by PHPStorm
+
+References
+- [Issue #2870145: Set printerClass in phpunit.xml.dist](https://www.drupal.org/node/2870145)
 - [Lesson 10.2 - Unit testing](https://docs.acquia.com/article/lesson-102-unit-testing)
 
-
-    # Execute all Webform PHPUnit tests.
-    cd /var/www/sites/d8_webform/core
-    php ../vendor/phpunit/phpunit/phpunit --printer="\Drupal\Tests\Listeners\HtmlOutputPrinter" --group webform
-
-    cd /var/www/sites/d8_webform/core
-
-    # Execute individual PHPUnit tests.
+    # Export database and base URL.
     export SIMPLETEST_DB=mysql://drupal_d8_webform:drupal.@dm1n@localhost/drupal_d8_webform;
     export SIMPLETEST_BASE_URL='http://localhost/wf';
 
-    # Functional test.    
+    # Execute all Webform PHPUnit tests.
+    cd /var/www/sites/d8_webform/web/core
+    php ../../vendor/phpunit/phpunit/phpunit --printer="\Drupal\Tests\Listeners\HtmlOutputPrinter" --group webform
+
+    # Execute individual PHPUnit tests.
+    cd /var/www/sites/d8_webform/web/core
+
+    # Functional test.
     php ../../vendor/phpunit/phpunit/phpunit --printer="\Drupal\Tests\Listeners\HtmlOutputPrinter" ../modules/sandbox/webform/tests/src/Functional/WebformExampleFunctionalTest.php
 
-    # Kernal test.    
+    # Kernal test.
     php ../../vendor/phpunit/phpunit/phpunit --printer="\Drupal\Tests\Listeners\HtmlOutputPrinter" ../modules/sandbox/webform/tests/src/Kernal/Utility/WebformDialogHelperTest.php
 
     # Unit test.
-    php ../../vendor/phpunit/phpunit/phpunit --printer="\Drupal\Tests\Listeners\HtmlOutputPrinter"  ../modules/sandbox/webform/tests/src/Unit/Utility/WebformYamlTest.php
+    php ../../vendor/phpunit/phpunit/phpunit --printer="\Drupal\Tests\Listeners\HtmlOutputPrinter" ../modules/sandbox/webform/tests/src/Unit/Utility/WebformYamlTest.php
 
-    php ../../vendor/phpunit/phpunit/phpunit --printer="\Drupal\Tests\Listeners\HtmlOutputPrinter"  ../modules/sandbox/webform/tests/src/Unit/Access/WebformAccessCheckTest
+    php ../../vendor/phpunit/phpunit/phpunit --printer="\Drupal\Tests\Listeners\HtmlOutputPrinter" ../modules/sandbox/webform/tests/src/Unit/Access/WebformAccessCheckTest
 
-5. Generate release notes
+
+4. Generate release notes
 -------------------------
 
 [Git Release Notes for Drush](https://www.drupal.org/project/grn)
@@ -104,7 +103,7 @@ References
     drush release-notes --nouser 8.x-5.0-VERSION 8.x-5.x
 
 
-6. Tag and create a new release
+5. Tag and create a new release
 -------------------------------
 
 [Tag a release](https://www.drupal.org/node/1066342)
@@ -114,11 +113,3 @@ References
     git push origin tag 8.x-5.0-VERSION
 
 [Create new release](https://www.drupal.org/node/add/project-release/2640714)
-
-
-7. Upload screencast to YouTube
--------------------------------
-
-- Title : Webform 8.x-5.x-betaXX
-- Tags: Drupal 8,Webform,Form Builder
-- Privacy: listed

@@ -9,7 +9,9 @@ use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\webform\Plugin\WebformHandlerInterface;
 use Drupal\webform\Utility\WebformFormHelper;
 use Drupal\webform\WebformInterface;
+use Drupal\webform\WebformTokenManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a base webform for webform handlers.
@@ -17,6 +19,13 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 abstract class WebformHandlerFormBase extends FormBase {
 
   use WebformDialogFormTrait;
+
+  /**
+   * The token manager.
+   *
+   * @var \Drupal\webform\WebformTokenManagerInterface
+   */
+  protected $tokenManager;
 
   /**
    * The webform.
@@ -37,6 +46,25 @@ abstract class WebformHandlerFormBase extends FormBase {
    */
   public function getFormId() {
     return 'webform_handler_form';
+  }
+
+  /**
+   * Constructs a WebformHandlerFormBase.
+   *
+   * @param \Drupal\webform\WebformTokenManagerInterface $token_manager
+   *   The webform token manager.
+   */
+  public function __construct(WebformTokenManagerInterface $token_manager) {
+    $this->tokenManager = $token_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('webform.token_manager')
+    );
   }
 
   /**
@@ -189,13 +217,6 @@ abstract class WebformHandlerFormBase extends FormBase {
       '#value' => $request->query->has('weight') ? (int) $request->query->get('weight') : $this->webformHandler->getWeight(),
     ];
 
-    $form['actions'] = ['#type' => 'actions'];
-    $form['actions']['submit'] = [
-      '#type' => 'submit',
-      '#value' => $this->t('Save'),
-      '#button_type' => 'primary',
-    ];
-
     // Build tabs.
     $tabs = [
       'conditions' => [
@@ -217,6 +238,20 @@ abstract class WebformHandlerFormBase extends FormBase {
     ];
     $form = WebformFormHelper::buildTabs($form, $tabs);
 
+    $form['actions'] = ['#type' => 'actions'];
+    $form['actions']['submit'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Save'),
+      '#button_type' => 'primary',
+    ];
+
+    // Add token links below the form and on every tab.
+    $form['token_tree_link'] = $this->tokenManager->buildTreeElement();
+    if ($form['token_tree_link']) {
+      $form['token_tree_link'] += [
+        '#weight' => 101,
+      ];
+    }
     return $this->buildDialogForm($form, $form_state);
   }
 
@@ -264,11 +299,11 @@ abstract class WebformHandlerFormBase extends FormBase {
 
     if ($this instanceof WebformHandlerAddForm) {
       $this->webform->addWebformHandler($this->webformHandler);
-      drupal_set_message($this->t('The webform handler was successfully added.'));
+      $this->messenger()->addStatus($this->t('The webform handler was successfully added.'));
     }
     else {
       $this->webform->updateWebformHandler($this->webformHandler);
-      drupal_set_message($this->t('The webform handler was successfully updated.'));
+      $this->messenger()->addStatus($this->t('The webform handler was successfully updated.'));
     }
 
     $form_state->setRedirectUrl($this->webform->toUrl('handlers', ['query' => ['update' => $this->webformHandler->getHandlerId()]]));
@@ -306,8 +341,27 @@ abstract class WebformHandlerFormBase extends FormBase {
    */
   public function exists($handler_id) {
     $instance_ids = $this->webform->getHandlers()->getInstanceIds();
-
     return (isset($instance_ids[$handler_id])) ? TRUE : FALSE;
+  }
+
+  /**
+   * Get the webform handler's webform.
+   *
+   * @return \Drupal\webform\WebformInterface
+   *   A webform.
+   */
+  public function getWebform() {
+    return $this->webform;
+  }
+
+  /**
+   * Get the webform handler.
+   *
+   * @return \Drupal\webform\Plugin\WebformHandlerInterface
+   *   A webform handler.
+   */
+  public function getWebformHandler() {
+    return $this->webformHandler;
   }
 
   /**

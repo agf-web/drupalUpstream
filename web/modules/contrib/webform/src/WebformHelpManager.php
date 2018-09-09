@@ -241,6 +241,8 @@ class WebformHelpManager implements WebformHelpManagerInterface {
    * {@inheritdoc}
    */
   public function buildHelp($route_name, RouteMatchInterface $route_match) {
+    $is_help_disabled = $this->configFactory->get('webform.settings')->get('ui.help_disabled');
+
     // Get path from route match.
     $path = preg_replace('/^' . preg_quote(base_path(), '/') . '/', '/', Url::fromRouteMatch($route_match)->setAbsolute(FALSE)->toString());
 
@@ -270,6 +272,11 @@ class WebformHelpManager implements WebformHelpManagerInterface {
         continue;
       }
 
+      // Check is help is disabled.  Messages are always displayed.
+      if ($is_help_disabled && empty($help['message_type'])) {
+        continue;
+      }
+
       if ($help['message_type']) {
         $build[$id] = [
           '#type' => 'webform_message',
@@ -292,6 +299,10 @@ class WebformHelpManager implements WebformHelpManagerInterface {
           '#theme' => 'webform_help',
           '#info' => $help,
         ];
+      }
+      // Add custom help weight.
+      if (isset($help['weight'])) {
+        $build[$id]['#weight'] = $help['weight'];
       }
     }
 
@@ -408,26 +419,65 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       $rows[$id] = ['data' => $row, 'no_striping' => TRUE];
     }
 
-    $build = [
-      '#theme' => 'table',
-      '#rows' => $rows,
-      '#attributes' => [
-        'border' => 0,
-        'cellpadding' => 2,
-        'cellspacing' => 0,
-      ],
-    ];
+    $build = [];
 
     if (!$docs) {
-      $build['#header'] = [
-        ['data' => '', 'style' => 'padding:0; border-top-color: transparent', 'class' => [RESPONSIVE_PRIORITY_LOW]],
-        ['data' => '', 'style' => 'padding:0; border-top-color: transparent'],
+      // Filter.
+      $build['filter'] = [
+        '#type' => 'search',
+        '#title' => $this->t('Filter'),
+        '#title_display' => 'invisible',
+        '#size' => 30,
+        '#placeholder' => $this->t('Filter by videos'),
+        '#attributes' => [
+          'class' => ['webform-form-filter-text'],
+          'data-element' => 'table',
+          'data-source' => 'tbody tr',
+          'data-parent' => 'tr',
+          'data-summary' => '.webform-help-videos-summary',
+          'data-item-single' => $this->t('video'),
+          'data-item-plural' => $this->t('videos'),
+          'title' => $this->t('Enter a keyword to filter by.'),
+          'autofocus' => 'autofocus',
+        ],
       ];
+
+      // Display info.
+      $build['info'] = [
+        '#markup' => $this->t('@total videos', ['@total' => count($rows)]),
+        '#prefix' => '<p class="webform-help-videos-summary">',
+        '#suffix' => '</p>',
+      ];
+
+      $build['table'] = [
+        '#theme' => 'table',
+        '#header' => [
+          ['data' => '', 'style' => 'padding:0; border-top-color: transparent', 'class' => [RESPONSIVE_PRIORITY_LOW]],
+          ['data' => '', 'style' => 'padding:0; border-top-color: transparent'],
+        ],
+        '#rows' => $rows,
+        '#attributes' => [
+          'border' => 0,
+          'cellpadding' => 2,
+          'cellspacing' => 0,
+        ],
+      ];
+
+      $build['#attached']['library'][] = 'webform/webform.admin';
       $build['#attached']['library'][] = 'webform/webform.help';
       $build['#attached']['library'][] = 'webform/webform.ajax';
     }
     else {
-      $build['#no_striping'] = TRUE;
+      $build = [
+        '#theme' => 'table',
+        '#rows' => $rows,
+        '#no_striping' => TRUE,
+        '#attributes' => [
+          'border' => 0,
+          'cellpadding' => 2,
+          'cellspacing' => 0,
+        ],
+      ];
     }
 
     return $build;
@@ -532,10 +582,32 @@ class WebformHelpManager implements WebformHelpManagerInterface {
           '#suffix' => '</dd>',
         ],
       ];
+
       if ($docs) {
         $build['content']['libraries'][$library_name]['title']['#suffix'] = '</dt>';
         unset($build['content']['libraries'][$library_name]['description']['download']);
+
+        if (isset($library['issues_url'])) {
+          $issues_url = $library['issues_url'];
+        }
+        elseif (preg_match('#https://github.com/[^/]+/[^/]+#', $library['download_url']->toString(), $match)) {
+          $issues_url = Url::fromUri($match[0] . '/issues');
+        }
+        else {
+          $issues_url = NULL;
+        }
+
+        if ($issues_url) {
+          $build['content']['libraries'][$library_name]['description']['accessibility'] = [
+            '#type' => 'link',
+            '#title' => $this->t('known accessibility issues'),
+            '#url' => $issues_url->setOption('query', ['q' => 'is:issue is:open accessibility ']),
+            '#prefix' => '<em>@see ',
+            '#suffix' => '</em>',
+          ];
+        }
       }
+
     }
     return $build;
   }
@@ -897,10 +969,31 @@ class WebformHelpManager implements WebformHelpManagerInterface {
           ],
         ],
       ],
+      'access' => [
+        'title' => $this->t("Webform access controls"),
+        'content' => $this->t('This screencast walks through how to use permissions, roles, and custom access rules to control access to webforms and submissions.'),
+        'youtube_id' => 'EPg9Ltwak2M',
+        'presentation_id' => '19Xkb2MR5N075Va403slTVRYjanJ14HmuEYBwwbrQFX4',
+        'links' => [
+          [
+            'title' => $this->t('Users, Roles, and Permissions | Drupal.org'),
+            'url' => 'https://drupal.org/docs/user_guide/en/user-concept.html ',
+          ],
+          [
+            'title' => $this->t('Users, Roles, and Permissions | Drupalize.me'),
+            'url' => 'https://drupalize.me/topic/users-roles-and-permissions',
+          ],
+          [
+            'title' => $this->t('Access Control | Tag1 Consulting'),
+            'url' => 'https://tag1consulting.com/blog/access-control',
+          ],
+        ],
+      ],
       'webform_nodes' => [
         'title' => $this->t('Attaching webforms to nodes'),
         'content' => $this->t('This screencast walks through how to attach a webform to node.'),
         'youtube_id' => 'B_ZyCOVKPqA',
+        'presentation_id' => '1XoIUSgQ0bb_xCfWx8VZe1WHTr0QoCfnE8DzSAsc2WQM',
         'links' => [
           [
             'title' => $this->t('Working with content types and fields | Drupal.org'),
@@ -915,7 +1008,6 @@ class WebformHelpManager implements WebformHelpManagerInterface {
             'url' => 'https://drupalize.me/tutorial/user-guide/planning-data-types',
           ],
         ],
-        'presentation_id' => '1XoIUSgQ0bb_xCfWx8VZe1WHTr0QoCfnE8DzSAsc2WQM',
       ],
       'webform_blocks' => [
         'title' => $this->t('Placing webforms as blocks'),
@@ -969,6 +1061,46 @@ class WebformHelpManager implements WebformHelpManagerInterface {
           ],
         ],
       ],
+      'dialogs' => [
+        'title' => $this->t('Opening webforms in modal dialogs'),
+        'content' => $this->t('This screencast shows how to open webforms in modal dialogs.'),
+        'youtube_id' => 'zmRxyUHWczw',
+        'presentation_id' => '1XlAv-u1lZr13nZvCEuJXtDp4Dmn8X7Fwq_4yac-SajE',
+        'links' => [
+          [
+            'title' => $this->t('Creating a modal in Drupal 8 | Befused'),
+            'url' => 'https://www.drupal.org/project/devel',
+          ],
+          [
+            'title' => $this->t('Display forms in a modal dialog with Drupal 8 | Agaric'),
+            'url' => 'http://agaric.com/blogs/display-forms-modal-dialog-drupal-8',
+          ],
+          [
+            'title' => $this->t('jQueryUI Dialog Documentation'),
+            'url' => 'https://jqueryui.com/dialog/  ',
+          ],
+        ],
+      ],
+      'views' => [
+        'title' => $this->t('Webform views integration'),
+        'content' => $this->t('This presentation shows how to use views to display webform submissions.'),
+        'youtube_id' => 'Qs_m5ybxeXk',
+        'presentation_id' => '1pUUmwjsyxtU9YB4y0qQbSING1W4YBTcqYQjabmSL5N8',
+        'links' => [
+          [
+            'title' => $this->t('Views module | Drupal.org'),
+            'url' => 'https://www.drupal.org/docs/8/core/modules/views',
+          ],
+          [
+            'title' => $this->t('Webform Views Integration | Drupal.org'),
+            'url' => 'https://www.drupal.org/project/webform_views',
+          ],
+          [
+            'title' => $this->t('D8 Webform and Webform Views Integration @ Drupalcamp Colorado'),
+            'url' => 'https://www.youtube.com/watch?v=Riw9g_y1A_s',
+          ],
+        ],
+      ],
       'translations' => [
         'title' => $this->t('Translating webforms'),
         'content' => $this->t("This screencast shows how to translate a webform's title, descriptions, label and messages."),
@@ -1010,6 +1142,26 @@ class WebformHelpManager implements WebformHelpManagerInterface {
         'content' => $this->t('One of the key mantras in the Drupal is “there is a module for that, “ and Webform is the module for building forms for Drupal 8.'),
         'youtube_id' => 'zl_ErUKymYo',
         'presentation_id' => '14vpNvDhYKGhHspu9BurIneTL4C1spyfwsqI82MvTYUA',
+      ],
+      'accessibility' => [
+        'title' => $this->t('Webform Accessibility'),
+        'content' => $this->t('This presentation is about approaching accessibility using the Webform module for Drupal 8.'),
+        'youtube_id' => 'JR0wnd6Orfk',
+        'presentation_id' => '1ni2a9id7VT67uO3f0i1UMt9_dswfcSHW1gZcXGCSEcM',
+        'links' => [
+          [
+            'title' => $this->t('Accessibility | Drupal.org'),
+            'url' => 'https://www.drupal.org/about/features/accessibility',
+          ],
+          [
+            'title' => $this->t('Drupal 8 Accessibility'),
+            'url' => 'https://www.drupal.org/docs/8/accessibility',
+          ],
+          [
+            'title' => $this->t('Webform Accessibility'),
+            'url' => 'https://www.drupal.org/docs/8/modules/webform/webform-accessibility',
+          ],
+        ],
       ],
     ];
     foreach ($videos as $id => &$video_info) {
@@ -1342,8 +1494,8 @@ class WebformHelpManager implements WebformHelpManagerInterface {
         $this->t('<strong>Webform Element</strong> plugins are used to enhance existing render/form elements. Webform element plugins provide default properties, data normalization, custom validation, element configuration form and customizable display formats.'),
       'video_id' => 'plugins',
       'routes' => [
-        // @see /admin/structure/webform/plugins/elements
-        'webform.element_plugins',
+        // @see /admin/reports/webform-plugins/elements
+        'webform.reports_plugins.elements',
       ],
     ];
 
@@ -1355,8 +1507,8 @@ class WebformHelpManager implements WebformHelpManagerInterface {
         $this->t('<strong>Handlers</strong> are used to route submitted data to external applications and send notifications & confirmations.'),
       'video_id' => 'plugins',
       'routes' => [
-        // @see /admin/structure/webform/plugins/handlers
-        'webform.handler_plugins',
+        // @see /admin/reports/webform-plugins/handlers
+        'webform.reports_plugins.handlers',
       ],
     ];
 
@@ -1368,8 +1520,8 @@ class WebformHelpManager implements WebformHelpManagerInterface {
         $this->t('<strong>Exporters</strong> are used to export results into a downloadable format that can be used by MS Excel, Google Sheets and other spreadsheet applications.'),
       'video_id' => 'plugins',
       'routes' => [
-        // @see /admin/structure/webform/plugins/exporters
-        'webform.exporter_plugins',
+        // @see /admin/reports/webform-plugins/exporters
+        'webform.reports_plugins.exporters',
       ],
     ];
 
@@ -1845,6 +1997,22 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       'paths' => [
         '/admin/structure/block/add/webform_block/*',
       ],
+    ];
+
+    // Webform Accessibility.
+    $help['webform_accessibility'] = [
+      'group' => 'webform_accessibility',
+      'title' => $this->t('Webform Node'),
+      'content' => $this->t("The Webform module aims to be accessible to all users."),
+      'video_id' => 'accessibility',
+      'paths' => [
+        '/admin/structure/webform/manage/example_accessibility_*',
+      ],
+      'message_type' => 'info',
+      'message_close' => TRUE,
+      'message_storage' => WebformMessage::STORAGE_USER,
+      'access' => $this->currentUser->hasPermission('administer webform'),
+      'weight' => -10,
     ];
 
     /**************************************************************************/

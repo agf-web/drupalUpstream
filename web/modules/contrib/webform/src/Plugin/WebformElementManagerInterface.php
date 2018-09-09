@@ -35,7 +35,7 @@ interface WebformElementManagerInterface extends PluginManagerInterface, CachedD
    * @param array $element
    *   An associative array containing an element with a #type property.
    * @param array $form
-   *    An associative array containing the structure of the form.
+   *   An associative array containing the structure of the form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    *
@@ -44,6 +44,21 @@ interface WebformElementManagerInterface extends PluginManagerInterface, CachedD
    * @see \Drupal\webform\WebformSubmissionForm::prepareElements
    */
   public function buildElement(array &$element, array $form, FormStateInterface $form_state);
+
+  /**
+   * Process a form element and apply webform element specific enhancements.
+   *
+   * This method allows any form API element to be enhanced using webform
+   * specific features include custom validation, external libraries,
+   * accessibility improvements, etc…
+   *
+   * @param array $element
+   *   An associative array containing an element with a #type property.
+   *
+   * @return array
+   *   The processed form element with webform element specific enhancements.
+   */
+  public function processElement(array &$element);
 
   /**
    * Invoke a method for a Webform element.
@@ -60,7 +75,7 @@ interface WebformElementManagerInterface extends PluginManagerInterface, CachedD
    *   associative array as described above.
    *
    * @return mixed|null
-   *   Return result of the invoked method.  NULL will be returned if the
+   *   Return result of the invoked method. NULL will be returned if the
    *   element and/or method name does not exist.
    *
    * @see \Drupal\webform\WebformSubmissionForm::prepareElements
@@ -131,5 +146,16 @@ interface WebformElementManagerInterface extends PluginManagerInterface, CachedD
    *   An array of all properties.
    */
   public function getAllProperties();
+
+  /**
+   * Determine if an element type is excluded.
+   *
+   * @param string $type
+   *   The element type.
+   *
+   * @return bool
+   *   TRUE if the element is excluded.
+   */
+  public function isExcluded($type);
 
 }

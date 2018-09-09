@@ -71,8 +71,17 @@ class Date extends DateBase {
       // Must manually set 'data-drupal-date-format' to trigger date picker.
       // @see \Drupal\Core\Render\Element\Date::processDate
       $element['#attributes']['data-drupal-date-format'] = [$element['#date_date_format']];
+    }
+  }
 
-      // Format default value.
+  /**
+   * {@inheritdoc}
+   */
+  public function setDefaultValue(array &$element) {
+    parent::setDefaultValue($element);
+
+    // Format date picker default value.
+    if (!empty($element['#datepicker'])) {
       if (isset($element['#default_value'])) {
         if ($this->hasMultipleValues($element)) {
           foreach ($element['#default_value'] as $index => $default_value) {
@@ -122,8 +131,8 @@ class Date extends DateBase {
         'm/d/Y' => $this->t('Short date - @format (@date)', ['@format' => 'm/d/Y', '@date' => date('m/d/Y')]),
       ],
       '#description' => $this->t("Date format is only applicable for browsers that do not have support for the HTML5 date element. Browsers that support the HTML5 date element will display the date using the user's preferred format."),
-      '#other__option_label' => $this->t('Custom...'),
-      '#other__placeholder' => $this->t('Custom date format...'),
+      '#other__option_label' => $this->t('Custom…'),
+      '#other__placeholder' => $this->t('Custom date format…'),
       '#other__description' => $this->t('Enter date format using <a href="http://php.net/manual/en/function.date.php">Date Input Format</a>.'),
       '#states' => [
         'visible' => [

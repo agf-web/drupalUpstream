@@ -25,6 +25,13 @@ class WebformEntityStorage extends ConfigEntityStorage implements WebformEntityS
   protected $database;
 
   /**
+   * Associative array container total results for all webforms.
+   *
+   * @var array
+   */
+  protected $totals;
+
+  /**
    * Constructs a WebformEntityStorage object.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
@@ -67,7 +74,7 @@ class WebformEntityStorage extends ConfigEntityStorage implements WebformEntityS
     // @see \Drupal\webform_ui\Form\WebformUiElementTestForm
     // @see \Drupal\webform_ui\Form\WebformUiElementTypeFormBase
     if ($id = $entity->id()) {
-      $this->entities[$id] = $entity;
+      $this->setStaticCache([$id => $entity]);
     }
     return $entity;
   }
@@ -87,34 +94,6 @@ class WebformEntityStorage extends ConfigEntityStorage implements WebformEntityS
         ->execute();
     }
     return $return;
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * Config entities are not cached and there is no easy way to enable static
-   * caching. See: Issue #1885830: Enable static caching for config entities.
-   *
-   * Overriding just EntityStorageBase::load is much simpler
-   * than completely re-writting EntityStorageBase::loadMultiple. It is also
-   * worth noting that EntityStorageBase::resetCache() does purge all cached
-   * webform config entities.
-   *
-   * Webforms need to be cached when they are being loading via
-   * a webform submission, which requires a webform's elements and meta data to be
-   * initialized via Webform::initElements().
-   *
-   * @see https://www.drupal.org/node/1885830
-   * @see \Drupal\Core\Entity\EntityStorageBase::resetCache()
-   * @see \Drupal\webform\Entity\Webform::initElements()
-   */
-  public function load($id) {
-    if (isset($this->entities[$id])) {
-      return $this->entities[$id];
-    }
-
-    $this->entities[$id] = parent::load($id);
-    return $this->entities[$id];
   }
 
   /**
@@ -158,7 +137,7 @@ class WebformEntityStorage extends ConfigEntityStorage implements WebformEntityS
         }
 
         // Clear empty webform directory.
-        if (empty(file_scan_directory($file_directory, '/.*/'))) {
+        if (file_exists($file_directory) && empty(file_scan_directory($file_directory, '/.*/'))) {
           file_unmanaged_delete_recursive($file_directory);
         }
       }
@@ -187,15 +166,22 @@ class WebformEntityStorage extends ConfigEntityStorage implements WebformEntityS
    * {@inheritdoc}
    */
   public function getOptions($template = NULL) {
+    /** @var \Drupal\webform\WebformInterface[] $webforms */
     $webforms = $this->loadMultiple();
     @uasort($webforms, [$this->entityType->getClass(), 'sort']);
 
     $uncategorized_options = [];
     $categorized_options = [];
     foreach ($webforms as $id => $webform) {
+      // Skip templates.
       if ($template !== NULL && $webform->get('template') != $template) {
         continue;
       }
+      // Skip archived.
+      if ($webform->isArchived()) {
+        continue;
+      }
+
       if ($category = $webform->get('category')) {
         $categorized_options[$category][$id] = $webform->label();
       }
@@ -246,7 +232,7 @@ class WebformEntityStorage extends ConfigEntityStorage implements WebformEntityS
    * {@inheritdoc}
    */
   public function getSerial(WebformInterface $webform) {
-    // Use a transaction with SELECT ... FOR UPDATE to lock the row between
+    // Use a transaction with SELECT … FOR UPDATE to lock the row between
     // the SELECT and the UPDATE, ensuring that multiple Webform submissions
     // at the same time do not have duplicate numbers. FOR UPDATE must be inside
     // a transaction. The return value of db_transaction() must be assigned or
@@ -286,6 +272,34 @@ class WebformEntityStorage extends ConfigEntityStorage implements WebformEntityS
     $query->condition('webform_id', $webform->id());
     $query->addExpression('MAX(serial)');
     return $query->execute()->fetchField() + 1;
+  }
+
+  /**
+   * Get total number of results for specified webform or all webforms.
+   *
+   * @param string|null $webform_id
+   *   (optional) A webform id.
+   *
+   * @return array|int
+   *   If no webform id is passed, an associative array keyed by webform id
+   *   contains total results for all webforms, otherwise the total number of
+   *   results for specified webform
+   */
+  public function getTotalNumberOfResults($webform_id = NULL) {
+    if (!isset($this->totals)) {
+      $query = $this->database->select('webform_submission', 'ws');
+      $query->fields('ws', ['webform_id']);
+      $query->addExpression('COUNT(sid)', 'results');
+      $query->groupBy('webform_id');
+      $this->totals = array_map('intval', $query->execute()->fetchAllKeyed());
+    }
+
+    if ($webform_id) {
+      return (isset($this->totals[$webform_id])) ? $this->totals[$webform_id] : 0;
+    }
+    else {
+      return $this->totals;
+    }
   }
 
 }

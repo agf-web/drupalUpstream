@@ -64,7 +64,7 @@ class PythonPdf2txtExtractor extends TextExtractorPluginBase {
     $form['python_pdf2txt_script'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Full path to the python pdf2txt script'),
-      '#description' => $this->t('Enter the full path to the python pdf2txt script. Example: "/usr/bin/pdf2txt".'),
+      '#description' => $this->t('Enter the full path to the python pdf2txt script. Example: "/usr/bin/pdf2txt.py".'),
       '#default_value' => $this->configuration['python_pdf2txt_script'],
       '#required' => TRUE,
     ];

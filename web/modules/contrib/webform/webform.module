@@ -23,6 +23,7 @@ use Drupal\webform\Entity\WebformSubmission;
 use Drupal\webform\Element\WebformMessage;
 use Drupal\webform\Plugin\WebformElement\ManagedFile;
 use Drupal\webform\Utility\WebformArrayHelper;
+use Drupal\webform\Utility\WebformElementHelper;
 use Drupal\webform\Utility\WebformDialogHelper;
 use Drupal\webform\Utility\WebformOptionsHelper;
 use Drupal\webform\WebformInterface;
@@ -33,6 +34,7 @@ require_once __DIR__ . '/includes/webform.libraries.inc';
 require_once __DIR__ . '/includes/webform.options.inc';
 require_once __DIR__ . '/includes/webform.theme.inc';
 require_once __DIR__ . '/includes/webform.translation.inc';
+require_once __DIR__ . '/includes/webform.editor.inc';
 
 /**
  * Implements hook_help().
@@ -102,11 +104,18 @@ function webform_modules_uninstalled($modules) {
   // Remove uninstalled module's third party settings from admin settings.
   $config = \Drupal::configFactory()->getEditable('webform.settings');
   $third_party_settings = $config->get('third_party_settings');
+
+  $has_third_party_settings = FALSE;
   foreach ($modules as $module) {
-    unset($third_party_settings[$module]);
+    if (isset($third_party_settings[$module])) {
+      $has_third_party_settings = TRUE;
+      unset($third_party_settings[$module]);
+    }
   }
-  $config->set('third_party_settings', $third_party_settings);
-  $config->save();
+  if ($has_third_party_settings) {
+    $config->set('third_party_settings', $third_party_settings);
+    $config->save();
+  }
 
   // Check HTML email provider support as modules are ininstalled.
   /** @var \Drupal\webform\WebformEmailProviderInterface $email_provider */
@@ -213,18 +222,6 @@ function webform_form_alter(&$form, FormStateInterface $form_state, $form_id) {
     // Make sure webform libraries are always attached to submission form.
     _webform_page_attachments($form);
 
-    // Execute hook_form_BASE_FORM_ID_alter for the webform & source entity
-    // without the operation. (i.e. 'add', 'edit', 'notes', etc...)
-    // @see \Drupal\webform\WebformSubmissionForm::getFormId
-    /** @var \Drupal\webform\WebformSubmissionInterface $webform_submission */
-    $webform_submission = $form_object->getEntity();
-    $webform = $webform_submission->getWebform();
-
-    $hook = 'form_webform_submission_' . $webform->id() . '_form';
-    $form_id = $form_object->getFormId();
-    \Drupal::service('module_handler')->alter($hook, $form, $form_state, $form_id);
-    \Drupal::service('theme.manager')->alter($hook, $form, $form_state, $form_id);
-
     // After build.
     $form['#after_build'][] = '_webform_form_webform_submission_form_after_build';
   }
@@ -309,7 +306,7 @@ function webform_form_update_manager_update_form_alter(&$form, FormStateInterfac
     '#weight' => -10,
   ];
 
-  // Display warning to backup site when webform  is checked.
+  // Display warning to backup site when webform is checked.
   $form['projects']['#options']['webform']['title']['data'] = [
     'title' => $form['projects']['#options']['webform']['title']['data'],
     'container' => [
@@ -323,6 +320,20 @@ function webform_form_update_manager_update_form_alter(&$form, FormStateInterfac
       ],
     ],
   ];
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function webform_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  /** @var \Drupal\views\ViewExecutable $view */
+  $view = $form_state->get('view');
+
+  // Check if this a is webform submission view.
+  // @see \Drupal\webform\WebformSubmissionListBuilder::buildSubmissionViews
+  if (isset($view->webform_submission_view)) {
+    $form['#action'] = Url::fromRoute(\Drupal::routeMatch()->getRouteName(), \Drupal::routeMatch()->getRawParameters()->all())->toString();
+  }
 }
 
 /**
@@ -348,6 +359,17 @@ function webform_system_breadcrumb_alter(Breadcrumb &$breadcrumb, RouteMatchInte
     $links = $breadcrumb->getLinks();
     $link = end($links);
     $link->setText(t('Webforms'));
+  }
+}
+
+/**
+ * Implements hook_token_info_alter().
+ */
+function webform_token_info_alter(&$data) {
+  foreach ($data['types'] as $type => &$info) {
+    if (strpos($type, 'webform') === 0) {
+      $info['description'] .= ' ' . t("Add ':clear' to the end token to return an empty value when the token is missing.");
+    }
   }
 }
 
@@ -454,7 +476,7 @@ function webform_mail_alter(&$message) {
  * Implements hook_page_attachments().
  */
 function webform_page_attachments(array &$attachments) {
-  $route_name = Drupal::routeMatch()->getRouteName();
+  $route_name = \Drupal::routeMatch()->getRouteName();
   $url = Url::fromRoute('<current>')->toString();
 
   // Attach global libraries only to webform specific pages.
@@ -480,6 +502,19 @@ function webform_page_attachments(array &$attachments) {
       ],
       'webform_contribute',
     ];
+  }
+
+  // Attach webform dialog library and options to every page.
+  if (\Drupal::config('webform.settings')->get('settings.dialog')) {
+    $attachments['#attached']['library'][] = 'webform/webform.dialog';
+    $attachments['#attached']['drupalSettings']['webform']['dialog']['options'] = \Drupal::config('webform.settings')->get('settings.dialog_options');
+
+    /** @var \Drupal\webform\WebformRequestInterface $request_handler */
+    $request_handler = \Drupal::service('webform.request');
+    if ($source_entity = $request_handler->getCurrentSourceEntity()) {
+      $attachments['#attached']['drupalSettings']['webform']['dialog']['entity_type'] = $source_entity->getEntityTypeId();
+      $attachments['#attached']['drupalSettings']['webform']['dialog']['entity_id'] = $source_entity->id();
+    }
   }
 }
 
@@ -587,13 +622,18 @@ function webform_css_alter(&$css, AttachedAssetsInterface $assets) {
  */
 function webform_js_alter(&$javascript, AttachedAssetsInterface $assets) {
   // Add Google API key required by webform/libraries.jquery.geocomplete
-  // which is dependency for webform/webform.element.location.
-  // @see \Drupal\webform\Element\WebformLocation::processWebformComposite
+  // which is dependency for webform/webform.element.location.geocomplete.
+  //
+  // @see \Drupal\webform\Element\WebformLocationGeocomplete::processWebformComposite
   // @see webform.libraries.yml
+  // @see webform/webform.element.location.geocomplete
+  // @see webform/libraries.jquery.geocomplete
   $settings = $assets->getSettings();
-  if (!empty($settings['webform']['location']['google_maps_api_key'])) {
-    $api_key = $settings['webform']['location']['google_maps_api_key'];
+  if (!empty($settings['webform']['location']['geocomplete']['api_key']) && isset($javascript['https://maps.googleapis.com/maps/api/js?key=API_KEY&libraries=places'])) {
+    $api_key = $settings['webform']['location']['geocomplete']['api_key'];
     $javascript['https://maps.googleapis.com/maps/api/js?key=API_KEY&libraries=places']['data'] = "https://maps.googleapis.com/maps/api/js?key=$api_key&libraries=places";
+    unset($settings['webform']['location']['geocomplete']['api_key']);
+    $assets->setSettings($settings);
   }
 
   _webform_asset_alter($javascript, 'javascript');
@@ -711,6 +751,10 @@ function webform_element_info_alter(array &$info) {
  *   The processed element.
  */
 function webform_process_options(&$element, FormStateInterface $form_state, &$complete_form) {
+  if (!WebformElementHelper::isWebformElement($element)) {
+    return $element;
+  }
+
   if (!empty($element['#options_description_display'])) {
     $description_property_name = ($element['#options_description_display'] == 'help') ? '#help' : '#description';
     foreach (Element::children($element) as $key) {
@@ -722,9 +766,22 @@ function webform_process_options(&$element, FormStateInterface $form_state, &$co
 
       list($title, $description) = explode(WebformOptionsHelper::DESCRIPTION_DELIMITER, $title);
       $element[$key]['#title'] = $title;
+      $element[$key]['#webform_element'] = TRUE;
       $element[$key][$description_property_name] = $description;
     }
   }
+
+  // Issue #2839344: Some aria-describedby refers to not existing element ID.
+  // @see https://www.drupal.org/project/drupal/issues/2839344
+  if (!empty($element['#attributes']['aria-describedby'])) {
+    foreach (Element::children($element) as $key) {
+      if (empty($element[$key]['#attributes']['aria-describedby'])
+        && $element['#attributes']['aria-describedby'] === $element[$key]['#attributes']['aria-describedby']) {
+        unset($element[$key]['#attributes']['aria-describedby']);
+      }
+    }
+  }
+
   return $element;
 }
 

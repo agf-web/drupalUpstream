@@ -131,11 +131,11 @@ class WebformResultsExportOptionsTest extends WebformTestBase {
 
     // Check composite w/o header prefix.
     $this->getExport($webform, ['header_format' => 'label', 'header_prefix' => TRUE]);
-    $this->assertRaw('"Address: Address","Address: Address 2","Address: City/Town","Address: State/Province","Address: Zip/Postal Code","Address: Country"');
+    $this->assertRaw('"Address: Address","Address: Address 2","Address: City/Town","Address: State/Province","Address: ZIP/Postal Code","Address: Country"');
 
     // Check composite w header prefix.
     $this->getExport($webform, ['header_format' => 'label', 'header_prefix' => FALSE]);
-    $this->assertRaw('Address,"Address 2",City/Town,State/Province,"Zip/Postal Code",Country');
+    $this->assertRaw('Address,"Address 2",City/Town,State/Province,"ZIP/Postal Code",Country');
 
     // Check limit.
     $this->getExport($webform, ['range_type' => 'latest', 'range_latest' => 2]);

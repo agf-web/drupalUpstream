@@ -155,6 +155,18 @@ class WebformScheduledEmailTest extends WebformNodeTestBase {
     $this->assertEqual($scheduled_manager->ready($webform_schedule), 0);
 
     /**************************************************************************/
+    // Ignore past scheduling.
+    /**************************************************************************/
+
+    // Purge all submissions.
+    $this->purgeSubmissions();
+
+    // Check last year email can't be scheduled.
+    $sid = $this->postSubmission($webform_schedule, ['send' => 'last_year']);
+    $this->assertEqual($scheduled_manager->total($webform_schedule), 0);
+    $this->assertRaw('<em class="placeholder">Test: Handler: Test scheduled email: Submission #' . $sid . '</em>: Email <b>ignored</b> by <em class="placeholder">Last year</em> handler to be sent on <em class="placeholder">2016-01-01</em>.');
+
+    /**************************************************************************/
     // Source entity scheduling.
     /**************************************************************************/
 

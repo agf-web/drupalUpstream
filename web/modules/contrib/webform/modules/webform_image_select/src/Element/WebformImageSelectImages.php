@@ -77,26 +77,27 @@ class WebformImageSelectImages extends FormElement {
         'value' => [
           '#type' => 'textfield',
           '#title' => t('Image value'),
-          '#title_display' => t('invisible'),
-          '#placeholder' => t('Enter value'),
+          '#title_display' => 'invisible',
+          '#placeholder' => t('Enter value…'),
           '#error_no_message' => TRUE,
         ],
         'text' => [
           '#type' => 'textfield',
           '#title' => t('Image text'),
-          '#title_display' => t('invisible'),
-          '#placeholder' => t('Enter text'),
+          '#title_display' => 'invisible',
+          '#placeholder' => t('Enter text…'),
           '#error_no_message' => TRUE,
         ],
         'src' => [
           '#type' => 'textfield',
           '#title' => t('Image src'),
-          '#title_display' => t('invisible'),
-          '#placeholder' => t('Enter image src'),
+          '#title_display' => 'invisible',
+          '#placeholder' => t('Enter image src…'),
           '#error_no_message' => TRUE,
         ],
       ],
       '#error_no_message' => TRUE,
+      '#add_more_input_label' => t('more images'),
       '#default_value' => (isset($element['#default_value'])) ? $element['#default_value'] : [],
     ];
 

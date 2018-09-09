@@ -2,7 +2,6 @@
 
 namespace Drupal\webform\Plugin\WebformElement;
 
-use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\webform\Utility\WebformElementHelper;
 use Drupal\webform\Twig\TwigExtension;
@@ -22,6 +21,15 @@ class WebformComputedTwig extends WebformComputedBase {
   /**
    * {@inheritdoc}
    */
+  public function getDefaultProperties() {
+    return [
+      'whitespace' => '',
+    ] + parent::getDefaultProperties();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
 
@@ -32,29 +40,6 @@ class WebformComputedTwig extends WebformComputedBase {
     WebformElementHelper::setPropertyRecursive($form['computed']['help'], '#access', TRUE);
 
     return $form;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
-    parent::validateConfigurationForm($form, $form_state);
-
-    // Validate Twig markup with no context.
-    try {
-      $build = [
-        '#type' => 'inline_template',
-        '#template' => $form_state->getValue('value'),
-        '#context' => [],
-      ];
-      \Drupal::service('renderer')->renderPlain($build);
-    }
-    catch (\Exception $exception) {
-      $form_state->setErrorByName('markup', [
-        'message' => ['#markup' => $this->t('Failed to render computed Twig value due to error.'), '#suffix' => '<br /><br />'],
-        'error' => ['#markup' => Html::escape($exception->getMessage()), '#prefix' => '<pre>', '#suffix' => '</pre>'],
-      ]);
-    }
   }
 
 }

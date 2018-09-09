@@ -13,7 +13,10 @@ use Drupal\system\Plugin\Block\SystemMenuBlock;
  *   id = "menu_block",
  *   admin_label = @Translation("Menu block"),
  *   category = @Translation("Menus"),
- *   deriver = "Drupal\menu_block\Plugin\Derivative\MenuBlock"
+ *   deriver = "Drupal\menu_block\Plugin\Derivative\MenuBlock",
+ *   forms = {
+ *     "settings_tray" = "\Drupal\system\Form\SystemMenuOffCanvasForm",
+ *   },
  * )
  */
 class MenuBlock extends SystemMenuBlock {

@@ -21,6 +21,11 @@ class WebformUiElementDeleteForm extends ConfirmFormBase {
   use WebformDialogFormTrait;
 
   /**
+   * {@inheritdoc}
+   */
+  protected $operation = 'delete';
+
+  /**
    * The renderer.
    *
    * @var \Drupal\Core\Render\RendererInterface
@@ -213,7 +218,7 @@ class WebformUiElementDeleteForm extends ConfirmFormBase {
     $this->webform->deleteElement($this->key);
     $this->webform->save();
 
-    drupal_set_message($this->t('The webform element %title has been deleted.', ['%title' => $this->getElementTitle()]));
+    $this->messenger()->addStatus($this->t('The webform element %title has been deleted.', ['%title' => $this->getElementTitle()]));
     $form_state->setRedirectUrl($this->webform->toUrl('edit-form'));
   }
 

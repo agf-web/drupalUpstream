@@ -3,4 +3,4 @@ description: Provides configurable blocks of menu links.
 core: 8.x
 type: module
 dependencies:
-  - menu_ui
+  - drupal:menu_ui

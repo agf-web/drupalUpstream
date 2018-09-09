@@ -3,6 +3,7 @@
 namespace Drupal\webform_scheduled_email;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Query\Delete as QueryDelete;
 use Drupal\Core\Entity\EntityInterface;
@@ -21,6 +22,13 @@ use Psr\Log\LoggerInterface;
 class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterface {
 
   use StringTranslationTrait;
+
+  /**
+   * The time service.
+   *
+   * @var \Drupal\Component\Datetime\TimeInterface
+   */
+  protected $time;
 
   /**
    * The database connection.
@@ -67,18 +75,21 @@ class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterf
   /**
    * Constructs a WebformScheduledEmailManager object.
    *
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   The time service.
    * @param \Drupal\Core\Database\Connection $database
    *   The database connection.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The configuration object factory.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity manager.
+   *   The entity type manager.
    * @param \Psr\Log\LoggerInterface $logger
    *   A logger instance.
    * @param \Drupal\webform\WebformTokenManagerInterface $token_manager
    *   The webform token manager.
    */
-  public function __construct(Connection $database, ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, LoggerInterface $logger, WebformTokenManagerInterface $token_manager) {
+  public function __construct(TimeInterface $time, Connection $database, ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, LoggerInterface $logger, WebformTokenManagerInterface $token_manager) {
+    $this->time = $time;
     $this->database = $database;
     $this->configFactory = $config_factory;
     $this->webformStorage = $entity_type_manager->getStorage('webform');
@@ -178,6 +189,12 @@ class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterf
       if (!in_array($state, $handler_configuration['settings']['states']) && $handler_configuration['settings']['unschedule']) {
         $this->unschedule($webform_submission, $handler_id);
         return self::EMAIL_UNSCHEDULED;
+      }
+
+      // Check if action should be triggered in the past.
+      if (!empty($handler_configuration['settings']['ignore_past']) && $send_timestamp < $this->time->getRequestTime()) {
+        $this->unschedule($webform_submission, $handler_id);
+        return self::EMAIL_IGNORED;
       }
 
       // Check recipient.

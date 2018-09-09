@@ -71,3 +71,10 @@ function webform_scheduled_email_schema() {
   ];
   return $schema;
 }
+
+/**
+ * Update schema config to add new "past actions" item.
+ */
+function webform_scheduled_email_update_8001() {
+  _webform_update_webform_handler_settings();
+}

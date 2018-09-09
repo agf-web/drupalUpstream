@@ -45,7 +45,7 @@ class DocconvExtractor extends TextExtractorPluginBase {
     $form['docconv_path'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Full path to the docconv binary'),
-      '#description' => $this->t('Enter the full path to the docconv binary. Example: "/usr/bin/docconv".'),
+      '#description' => $this->t('Enter the full path to the docconv binary. Example: "/usr/bin/docd".'),
       '#default_value' => $this->configuration['docconv_path'],
       '#required' => TRUE,
     ];

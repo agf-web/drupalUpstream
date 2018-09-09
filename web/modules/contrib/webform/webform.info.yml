@@ -6,13 +6,14 @@ package: Webform
 configure: entity.webform.collection
 dependencies:
   - 'drupal:field'
-  - 'drupal:system (>= 8.3)'
+  - 'drupal:system (>= 8.5)'
   - 'drupal:user'
 test_dependencies:
+  - 'address:address'
   - 'token:token'
 
-# Information added by Drupal.org packaging script on 2018-04-26
-version: '8.x-5.0-rc12'
+# Information added by Drupal.org packaging script on 2018-09-08
+version: '8.x-5.0-rc21'
 core: '8.x'
 project: 'webform'
-datestamp: 1524706694
+datestamp: 1536405494

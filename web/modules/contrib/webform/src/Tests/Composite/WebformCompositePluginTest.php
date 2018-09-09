@@ -35,7 +35,7 @@ class WebformCompositePluginTest extends WebformTestBase {
     $this->drupalGet('webform/test_element_composite_plugin');
 
     // Check fieldset with nested elements is rendered.
-    $this->assertRaw('<fieldset data-drupal-selector="edit-webform-test-composite-fieldset" id="edit-webform-test-composite-fieldset" class="js-form-item form-item js-form-wrapper form-wrapper">');
+    $this->assertRaw('<fieldset data-drupal-selector="edit-webform-test-composite-fieldset" id="edit-webform-test-composite-fieldset" class="js-webform-type-fieldset webform-type-fieldset js-form-item form-item js-form-wrapper form-wrapper">');
     $this->assertRaw('<span class="fieldset-legend">fieldset</span>');
 
     /* Processing */
@@ -61,7 +61,7 @@ class WebformCompositePluginTest extends WebformTestBase {
       'webform_test_composite[datetime][time]' => '23:19:25',
       'webform_test_composite[nested_tel]' => '123-456-7890',
       'webform_test_composite[nested_select]' => 'Monday',
-      'webform_test_composite[nested_radios]' => 'Monday'
+      'webform_test_composite[nested_radios]' => 'Monday',
     ];
     $this->drupalPostForm('webform/test_element_composite_plugin', $edit, t('Submit'));
     $this->assertRaw("webform_test_composite:

@@ -86,33 +86,7 @@ webform.config.advanced:
   title: 'Advanced'
   route_name: webform.config.advanced
   parent_id: webform.config
-  weight: 80
-
-# Plugins.
-
-webform.plugins:
-  title: 'Plugins'
-  route_name: webform.element_plugins
-  base_route: entity.webform.collection
-  weight: 40
-
-webform.plugins.elements:
-  title: 'Elements'
-  route_name: webform.element_plugins
-  parent_id: webform.plugins
-  weight: 0
-
-webform.plugins.handlers:
-  title: 'Handlers'
-  route_name: webform.handler_plugins
-  parent_id: webform.plugins
-  weight: 10
-
-webform.plugins.exporters:
-  title: 'Exporters'
-  route_name: webform.exporter_plugins
-  parent_id: webform.plugins
-  weight: 20
+  weight: 100
 
 webform.addons:
   title: 'Add-ons'
@@ -124,7 +98,7 @@ webform.contribute:
   title: 'Contribute'
   route_name: webform.contribute
   base_route: entity.webform.collection
-  weight: 50
+  weight: 60
 
 # Form
 
@@ -232,6 +206,14 @@ entity.webform.settings_access:
   parent_id: entity.webform.settings
   weight: 60
 
+# Export
+
+entity.webform.export_form:
+  title: 'Export'
+  route_name: entity.webform.export_form
+  base_route: entity.webform.canonical
+  weight: 60
+
 # Submission
 
 entity.webform_submission.canonical:
@@ -320,8 +302,41 @@ entity.webform.user.submission.edit:
   base_route: entity.webform.user.submission
   weight: 10
 
+entity.webform.user.submission.duplicate:
+  title: 'Duplicate'
+  route_name: entity.webform.user.submission.duplicate
+  base_route: entity.webform.user.submission
+  weight: 20
+
 entity.webform.user.submission.delete:
   title: 'Delete'
   route_name: entity.webform.user.submission.delete
   base_route: entity.webform.user.submission
+  weight: 30
+
+# Webform Plugins.
+
+webform.reports_plugins.elements:
+  title: 'Elements'
+  route_name: webform.reports_plugins.elements
+  base_route: webform.reports_plugins.elements
+  weight: 0
+
+webform.reports_plugins.handlers:
+  title: 'Handlers'
+  route_name: webform.reports_plugins.handlers
+  base_route: webform.reports_plugins.elements
+  weight: 10
+
+webform.reports_plugins.exporters:
+  title: 'Exporters'
+  route_name: webform.reports_plugins.exporters
+  base_route: webform.reports_plugins.elements
   weight: 20
+
+# User Submissions.
+
+entity.webform_submission.user:
+  title: 'Submissions'
+  route_name: entity.webform_submission.user
+  base_route: entity.user.canonical

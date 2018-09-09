@@ -90,18 +90,22 @@ class WebformEntityAccessControlHandler extends EntityAccessControlHandler imple
    */
   public function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
     /** @var \Drupal\webform\WebformInterface $entity */
-    // Check 'view' using 'create' custom webform submission access rules.
-    // Viewing a webform is the same as creating a webform submission.
-    if ($operation == 'view') {
-      return AccessResult::allowed();
-    }
 
     $uid = $entity->getOwnerId();
     $is_owner = ($account->isAuthenticated() && $account->id() == $uid);
-    // Check if 'update' or 'delete' of 'own' or 'any' webform is allowed.
+    // Check if 'view' (aka 'access configuration'), 'update', or 'delete'
+    // of 'own' or 'any' webform is allowed.
     if ($account->isAuthenticated()) {
       $has_administer = $entity->checkAccessRules('administer', $account);
       switch ($operation) {
+        case 'view':
+          // The 'view' operation is reserved for accessing a
+          // webform's configuration via the REST API.
+          if ($has_administer->isAllowed() || $account->hasPermission('access any webform configuration') || ($account->hasPermission('access own webform configuration') && $is_owner)) {
+            return AccessResult::allowed()->cachePerPermissions()->cachePerUser()->addCacheableDependency($entity)->addCacheableDependency($has_administer);
+          }
+          break;
+
         case 'test':
         case 'update':
           if ($has_administer->isAllowed() || $account->hasPermission('edit any webform') || ($account->hasPermission('edit own webform') && $is_owner)) {
@@ -123,8 +127,15 @@ class WebformEntityAccessControlHandler extends EntityAccessControlHandler imple
       }
     }
 
+    // Convert 'render' operation to 'submission_create' operation.
+    // @see https://www.drupal.org/project/drupal/issues/2820315
+    // @see https://www.drupal.org/project/webform/issues/2956771
+    if ($operation === 'render') {
+      $operation = 'submission_create';
+    }
+
     // Check test operation.
-    if ($operation == 'test') {
+    if ($operation === 'test') {
       $access_rules = $entity->checkAccessRules($operation, $account);
       if ($access_rules->isAllowed()) {
         return AccessResult::allowed()->cachePerPermissions()->cachePerUser()->addCacheableDependency($access_rules);
@@ -181,8 +192,19 @@ class WebformEntityAccessControlHandler extends EntityAccessControlHandler imple
     }
 
     $access_result = parent::checkAccess($entity, $operation, $account);
-    // Make sure the webform is added as a cache dependency.
+
+    // Return forbidden access result with a reason for 'view' operation
+    // so that blocked REST API requests can better understand
+    // why access was denied.
+    if ($access_result->isNeutral() && $operation === 'view') {
+      $access_result = AccessResult::neutral("The 'administer webform' or 'access own or any webform configuration' permission is required.");
+      $access_result->cachePerPermissions()->cachePerUser();
+    }
+
+    // Make sure the permission, user, and webform is added as
+    // a cache dependency.
     $access_result->addCacheableDependency($entity);
+
     return $access_result;
   }
 

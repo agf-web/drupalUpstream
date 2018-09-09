@@ -112,6 +112,14 @@ interface WebformScheduledEmailManagerInterface {
   const EMAIL_UNSCHEDULED = 'unscheduled';
 
   /**
+   * Denote email being ignored.
+   *
+   * @var string
+   */
+  const EMAIL_IGNORED = 'ignored';
+
+
+  /**
    * Denote email being sent.
    *
    * @var string

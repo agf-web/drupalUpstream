@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * @file
+ * Install and update functions for the search_api_attachments module.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function search_api_attachments_uninstall() {
+  // Remove collection search_api_attachments.
+  \Drupal::keyValue('search_api_attachments')->deleteAll();
+  \Drupal::database()->query('OPTIMIZE TABLE key_value')->fetchAll();
+}

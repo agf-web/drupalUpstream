@@ -163,6 +163,7 @@ abstract class WebformTestBase extends WebTestBase {
       'view own webform submission',
       'edit own webform submission',
       'delete own webform submission',
+      'access webform submission user',
     ]));
 
     // Any webform submission user.
@@ -365,13 +366,13 @@ abstract class WebformTestBase extends WebTestBase {
    *   Submission values.
    * @param string $submit
    *   Value of the submit button whose click is to be emulated.
-   * @param $options
+   * @param array $options
    *   Options to be forwarded to the url generator.
    *
    * @return int
    *   The created test submission's sid.
    */
-  protected function postSubmissionTest(WebformInterface $webform, array $edit = [], $submit = NULL, $options = []) {
+  protected function postSubmissionTest(WebformInterface $webform, array $edit = [], $submit = NULL, array $options = []) {
     $submit = $this->getWebformSubmitButtonLabel($webform, $submit);
     $this->drupalPostForm('webform/' . $webform->id() . '/test', $edit, $submit, $options);
     return $this->getLastSubmissionId($webform);
