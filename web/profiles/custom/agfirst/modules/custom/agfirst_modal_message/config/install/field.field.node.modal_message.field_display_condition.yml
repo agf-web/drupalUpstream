@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_display_condition
+    - node.type.modal_message
+  module:
+    - options
+id: node.modal_message.field_display_condition
+field_name: field_display_condition
+entity_type: node
+bundle: modal_message
+label: 'Display Condition'
+description: 'When should this modal appear? Just after the page loads (<i>Entrance</i>) or just before leaving (<i>Exit</i>)?'
+required: true
+translatable: false
+default_value:
+  -
+    value: entrance
+default_value_callback: ''
+settings: {  }
+field_type: list_string

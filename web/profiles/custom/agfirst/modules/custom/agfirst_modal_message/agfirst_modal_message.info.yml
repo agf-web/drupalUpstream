@@ -1,0 +1,6 @@
+name: 'AgFirst Modal Message'
+type: module
+description: 'Provides Entrance/Exit modal message content type'
+core: 8.x
+package: 'AgFirst'
+dependencies: {}

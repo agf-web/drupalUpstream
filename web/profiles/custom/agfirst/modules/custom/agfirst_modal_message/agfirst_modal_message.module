@@ -1,0 +1,9 @@
+<?php
+
+function agfirst_modal_message_preprocess_node(array &$vars) {
+  if ($vars['node']->getType() != 'modal_message') {
+    return;
+  }
+
+  $vars['display_condition'] = $vars['node']->field_display_condition->value;
+}

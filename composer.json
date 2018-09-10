@@ -172,9 +172,6 @@
       "drupal/field_group": {
         "HTML5 validation for fields which are currently not part of the visible group": "patches/field_group-validation-2787179-9.patch",
         "Fields with errors are not visible": "patches/fields_with_errors_are-2894213-3.patch"
-      },
-      "drupal/paragraphs": {
-        "Add paragraph bundle to widget forms to allow easier editing of paragraph forms": "patches/add-paragraph-bundle-to-form-alter-including-tests-2868155-67.patch"
       }
     }
   },
