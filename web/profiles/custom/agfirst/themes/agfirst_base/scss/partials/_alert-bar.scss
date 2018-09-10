@@ -1,0 +1,66 @@
+/*=============================================
+  Alert Bars
+=============================================*/
+
+.show-alert {
+
+  &.critical {
+    background-color: $brown-light;
+  }
+  &.warning {
+    background-color: $blue-extra-light;
+  }
+  &.message {
+    background-color: $green-extra-light;
+  }
+}
+
+.alert-wrapper {
+  max-width: 750px;
+  margin: 0 auto;
+  padding: 20px; 
+
+  h4 {
+    margin-top: 20px;
+  }
+}
+
+.alert-bar-close {
+  text-transform: uppercase;
+  position: relative;
+  font-size: .65rem;
+  text-decoration: none;
+  color: $blue-dark;
+  padding: 6px 35px 6px 20px;
+  min-width: 55px;
+  display: inline-block;
+  border-radius: 25px;
+  margin-left: -15px;
+
+  &:hover {
+    background-color: $green;
+    color: #fff;
+
+    &::before, &::after {
+      background: #fff;
+
+    }
+  }
+
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    height: 3px;
+    width: 9px;
+    top: 12px;
+    right: 20px;
+    margin-top: -1px;
+    background: #000;
+  }
+  &::before {
+    transform: (rotate(45deg));
+  }
+  &::after {
+    transform: (rotate(-45deg));
+  }
+}
