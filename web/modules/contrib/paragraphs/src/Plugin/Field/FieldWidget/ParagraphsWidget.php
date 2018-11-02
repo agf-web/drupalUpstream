@@ -15,6 +15,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\SubformState;
 use Drupal\Core\Render\Element;
+use Drupal\Core\TypedData\TranslationStatusInterface;
 use Drupal\paragraphs\ParagraphInterface;
 use Drupal\paragraphs\Plugin\EntityReferenceSelection\ParagraphSelection;
 use Symfony\Component\Validator\ConstraintViolationInterface;
@@ -434,6 +435,12 @@ class ParagraphsWidget extends WidgetBase {
         }
       }
       else {
+        // If the node is being translated, the paragraphs should be all open
+        // when the form is not being rebuilt (E.g. when clicked on a paragraphs
+        // action) and when the the translation is being added.
+        if (!$form_state->isRebuilding() && $host->getTranslationStatus($langcode) == TranslationStatusInterface::TRANSLATION_CREATED) {
+          $item_mode = 'edit';
+        }
         // Add translation if missing for the target language.
         if (!$paragraphs_entity->hasTranslation($langcode)) {
           // Get the selected translation of the paragraph entity.
@@ -461,6 +468,35 @@ class ParagraphsWidget extends WidgetBase {
         if ($paragraphs_entity->hasField('content_translation_source')) {
           // Switch the paragraph to the translation.
           $paragraphs_entity = $paragraphs_entity->getTranslation($langcode);
+        }
+      }
+
+      // If untranslatable fields are hidden while translating, we are
+      // translating the parent and the Paragraph is open, then close the
+      // Paragraph if it does not have translatable fields.
+      $translating_force_close = FALSE;
+      if (\Drupal::moduleHandler()->moduleExists('content_translation')) {
+        $manager = \Drupal::service('content_translation.manager');
+        $settings = $manager->getBundleTranslationSettings('paragraph', $paragraphs_entity->getParagraphType()->id());
+        if (!empty($settings['untranslatable_fields_hide']) && $this->isTranslating) {
+          $translating_force_close = TRUE;
+          $display = EntityFormDisplay::collectRenderDisplay($paragraphs_entity, $this->getSetting('form_display_mode'));
+          // Check if the paragraph has translatable fields.
+          foreach (array_keys($display->get('content')) as $field) {
+            if ($paragraphs_entity->hasField($field)) {
+              $field_definition = $paragraphs_entity->get($field)->getFieldDefinition();
+              // Check if we are referencing paragraphs.
+              $is_paragraph = ($field_definition->getType() == 'entity_reference_revisions' && $field_definition->getSetting('target_type') == 'paragraph');
+              if ($is_paragraph || $field_definition->isTranslatable()) {
+                $translating_force_close = FALSE;
+                break;
+              }
+            }
+          }
+
+          if ($translating_force_close) {
+            $item_mode = 'closed';
+          }
         }
       }
 
@@ -600,7 +636,7 @@ class ParagraphsWidget extends WidgetBase {
                 'callback' => [get_class($this), 'itemAjax'],
                 'wrapper' => $widget_state['ajax_wrapper_id'],
               ],
-              '#access' => $paragraphs_entity->access('update'),
+              '#access' => $paragraphs_entity->access('update') && !$translating_force_close,
               '#paragraphs_mode' => 'closed',
               '#paragraphs_show_warning' => TRUE,
               '#attributes' => [
@@ -625,7 +661,7 @@ class ParagraphsWidget extends WidgetBase {
               'callback' => [get_class($this), 'itemAjax'],
               'wrapper' => $widget_state['ajax_wrapper_id'],
             ],
-            '#access' => $paragraphs_entity->access('update'),
+            '#access' => $paragraphs_entity->access('update') && !$translating_force_close,
             '#paragraphs_mode' => 'edit',
             '#attributes' => [
               'class' => ['paragraphs-icon-button', 'paragraphs-icon-button-edit'],

@@ -708,7 +708,7 @@ class Paragraph extends ContentEntityBase implements ParagraphInterface {
     $summary = '';
     if (in_array($field_definition->getType(), $text_types)) {
       if (in_array($field_name, $excluded_text_types)) {
-        return $summary;
+        return '';
       }
 
       $text = $this->get($field_name)->value;
@@ -716,10 +716,14 @@ class Paragraph extends ContentEntityBase implements ParagraphInterface {
         $text = Unicode::truncate($text, 150);
       }
 
-      $summary = $text;
+      $summary = trim(strip_tags($text));
+      if (empty($summary)) {
+        // Tease raw HTML to have at least some summary.
+        $summary = htmlspecialchars(trim($text));
+      }
     }
 
-    return trim($summary);
+    return $summary;
   }
 
 }
