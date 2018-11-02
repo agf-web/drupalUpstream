@@ -17,6 +17,9 @@ title: 'Test: Handler: Test scheduled email'
 description: 'Test webform schedule email handler.'
 category: null
 elements: |
+  value:
+    '#type': textfield
+    '#title': value
   send:
     '#type': radios
     '#title': Send
@@ -45,6 +48,7 @@ settings:
   page: true
   page_submit_path: ''
   page_confirm_path: ''
+  form_title: source_entity_webform
   form_submit_once: false
   form_exception_message: ''
   form_open_message: ''
@@ -71,6 +75,7 @@ settings:
   form_access_denied_title: ''
   form_access_denied_message: ''
   form_access_denied_attributes: {  }
+  form_file_limit: ''
   submission_label: ''
   submission_log: true
   submission_views: {  }
@@ -83,6 +88,9 @@ settings:
   submission_access_denied_attributes: {  }
   submission_exception_message: ''
   submission_locked_message: ''
+  submission_excluded_elements: {  }
+  submission_exclude_empty: false
+  submission_exclude_empty_checkbox: false
   previous_submission_message: ''
   previous_submissions_message: ''
   autofill: false
@@ -123,9 +131,11 @@ settings:
   limit_total: null
   limit_total_interval: null
   limit_total_message: ''
+  limit_total_unique: false
   limit_user: null
   limit_user_interval: null
   limit_user_message: ''
+  limit_user_unique: false
   entity_limit_total: null
   entity_limit_total_interval: null
   entity_limit_user: null
@@ -208,7 +218,7 @@ handlers:
       exclude_empty_checkbox: false
       html: true
       attachments: false
-      theme: ''
+      theme_name: ''
       twig: false
       debug: true
       reply_to: ''
@@ -249,7 +259,7 @@ handlers:
       html: true
       attachments: false
       twig: false
-      theme: ''
+      theme_name: ''
       debug: true
       reply_to: ''
       return_path: ''
@@ -289,7 +299,7 @@ handlers:
       html: true
       attachments: false
       twig: false
-      theme: ''
+      theme_name: ''
       debug: true
       reply_to: ''
       return_path: ''
@@ -329,7 +339,7 @@ handlers:
       html: true
       attachments: false
       twig: false
-      theme: ''
+      theme_name: ''
       debug: true
       reply_to: ''
       return_path: ''
@@ -371,7 +381,7 @@ handlers:
       html: true
       attachments: false
       twig: false
-      theme: ''
+      theme_name: ''
       debug: true
       reply_to: ''
       return_path: ''
@@ -411,7 +421,7 @@ handlers:
       html: true
       attachments: false
       twig: false
-      theme: ''
+      theme_name: ''
       debug: true
       reply_to: ''
       return_path: ''

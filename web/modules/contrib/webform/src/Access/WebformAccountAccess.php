@@ -20,8 +20,7 @@ class WebformAccountAccess {
    *   The access result.
    */
   public static function checkAdminAccess(AccountInterface $account) {
-    $condition = $account->hasPermission('administer webform') || $account->hasPermission('administer webform submission');
-    return AccessResult::allowedIf($condition)->cachePerPermissions();
+    return AccessResult::allowedIfHasPermissions($account, ['administer webform', 'administer webform submission'], 'OR');
   }
 
   /**
@@ -34,8 +33,7 @@ class WebformAccountAccess {
    *   The access result.
    */
   public static function checkOverviewAccess(AccountInterface $account) {
-    $condition = $account->hasPermission('administer webform') || $account->hasPermission('administer webform submission') || $account->hasPermission('access webform overview');
-    return AccessResult::allowedIf($condition)->cachePerPermissions();
+    return AccessResult::allowedIfHasPermissions($account, ['administer webform', 'administer webform submission', 'access webform overview'], 'OR');
   }
 
   /**
@@ -48,7 +46,8 @@ class WebformAccountAccess {
    *   The access result.
    */
   public static function checkTemplatesAccess(AccountInterface $account) {
-    $condition = $account->hasPermission('access webform overview') && $account->hasPermission('create webform');
+    $condition = ($account->hasPermission('access webform overview') &&
+      ($account->hasPermission('administer webform') || $account->hasPermission('create webform')));
     return AccessResult::allowedIf($condition)->cachePerPermissions();
   }
 
@@ -62,8 +61,7 @@ class WebformAccountAccess {
    *   The access result.
    */
   public static function checkSubmissionAccess(AccountInterface $account) {
-    $condition = $account->hasPermission('administer webform') || $account->hasPermission('administer webform submission') || $account->hasPermission('view any webform submission');
-    return AccessResult::allowedIf($condition)->cachePerPermissions();
+    return AccessResult::allowedIfHasPermissions($account, ['administer webform', 'administer webform submission', 'view any webform submission'], 'OR');
   }
 
   /**

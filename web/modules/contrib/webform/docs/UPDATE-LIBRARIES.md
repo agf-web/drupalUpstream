@@ -53,8 +53,29 @@ Check external libraries are download.
 6. Update webform_libraries.module
 ----------------------------------
 
-- Zip /libraries
-- Copy libraries.zip to webform_libraries.
+Enable and download all libraries
+
+    cd /var/www/sites/d8_webform
+    drush php-eval "\Drupal::configFactory()->getEditable('webform.settings')->set('libraries.excluded_libraries', [])->save();"
+    drush en -y webform_image_select
+    drush webform:libraries:download
+
+Update libraries.zip
+
+    # Remove libraries.zip.
+    rm -Rf /var/www/sites/d8_webform/web/modules/sandbox/webform_libraries/libraries.zip
+
+    # Create libraries.zip
+    cd /var/www/sites/d8_webform/web/
+    zip -r libraries.zip libraries
+    mv libraries.zip /private/var/www/sites/d8_webform/web/modules/sandbox/webform_libraries/libraries.zip
+
+Commit changes
+
+    # Commit changes.
+    cd /private/var/www/sites/d8_webform/web/modules/sandbox/webform_libraries/
+    git commit -am"Update webform_libraries"
+    git push
 
 
 7. Update composer.libraries.json

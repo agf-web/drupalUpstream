@@ -25,7 +25,7 @@ class WebformListBuilderTest extends BrowserTestBase {
     $assert_session = $this->assertSession();
 
     // Test with a superuser.
-    $any_webform_user = $this->drupalCreateUser([
+    $any_webform_user = $this->createUser([
       'access webform overview',
       'create webform',
       'edit any webform',
@@ -43,7 +43,7 @@ class WebformListBuilderTest extends BrowserTestBase {
     $assert_session->linkExists('Delete');
 
     // Test with a user that only has submission access.
-    $any_webform_submission_user = $this->drupalCreateUser([
+    $any_webform_submission_user = $this->createUser([
       'access webform overview',
       'view any webform submission',
       'edit any webform submission',
@@ -72,8 +72,8 @@ class WebformListBuilderTest extends BrowserTestBase {
     $this->assertLinkNotInRow('Test: Submissions', 'View');
 
     // Test with role that is configured via webform access settings.
-    $rid = $this->createRole(['access webform overview']);
-    $special_access_user = $this->drupalCreateUser();
+    $rid = $this->drupalCreateRole(['access webform overview']);
+    $special_access_user = $this->createUser();
     $special_access_user->addRole($rid);
     $special_access_user->save();
     $access = $webform_config->get('access');

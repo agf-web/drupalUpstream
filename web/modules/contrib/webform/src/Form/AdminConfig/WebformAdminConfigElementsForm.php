@@ -2,11 +2,11 @@
 
 namespace Drupal\webform\Form\AdminConfig;
 
+use Drupal\Component\Utility\Bytes;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Url;
 use Drupal\file\Plugin\Field\FieldType\FileItem;
 use Drupal\webform\Element\WebformMessage;
 use Drupal\webform\Utility\WebformArrayHelper;
@@ -450,13 +450,21 @@ class WebformAdminConfigElementsForm extends WebformAdminConfigBaseForm {
     ];
     $form['file']['default_max_filesize'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Default maximum upload size'),
+      '#title' => $this->t('Default maximum file upload size'),
       '#description' => $this->t('Enter a value like "512" (bytes), "80 KB" (kilobytes) or "50 MB" (megabytes) in order to restrict the allowed file size. If left empty the file sizes will be limited only by PHP\'s maximum post and file upload sizes.')
         . '<br /><br />'
         . $this->t('Current limit: %limit', ['%limit' => function_exists('file_upload_max_size') ? format_size(file_upload_max_size()) : $this->t('N/A')]),
       '#element_validate' => [[get_class($this), 'validateMaxFilesize']],
       '#size' => 10,
       '#default_value' => $config->get('file.default_max_filesize'),
+    ];
+    $form['file']['default_form_file_limit'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Default file upload limit per form'),
+      '#description' => $this->t('Enter a value like "512" (bytes), "80 KB" (kilobytes) or "50 MB" (megabytes) in order to set file upload limit.'),
+      '#element_validate' => [[get_class($this), 'validateMaxFilesize']],
+      '#size' => 10,
+      '#default_value' => $config->get('settings.default_form_file_limit'),
     ];
     $file_types = [
       'managed_file' => 'file',
@@ -609,15 +617,23 @@ class WebformAdminConfigElementsForm extends WebformAdminConfigBaseForm {
 
     // Update config and submit form.
     $config = $this->config('webform.settings');
+
     $config->set('element', $form_state->getValue('element') +
       $form_state->getValue('checkbox') +
       $form_state->getValue('location') +
       $form_state->getValue('select') +
       ['excluded_elements' => $excluded_elements]
     );
+
     $config->set('html_editor', $form_state->getValue('html_editor'));
-    $config->set('file', $form_state->getValue('file'));
+
+    $file = $form_state->getValue('file');
+    $config->set('settings.default_form_file_limit', $file['default_form_file_limit']);
+    unset($file['default_form_file_limit']);
+    $config->set('file', $file);
+
     $config->set('format', $format);
+
     parent::submitForm($form, $form_state);
 
     // Reset libraries cached.
@@ -638,8 +654,13 @@ class WebformAdminConfigElementsForm extends WebformAdminConfigBaseForm {
    * Wrapper for FileItem::validateMaxFilesize.
    */
   public static function validateMaxFilesize($element, FormStateInterface $form_state) {
-    if (class_exists('\Drupal\file\Plugin\Field\FieldType\FileItem')) {
-      FileItem::validateMaxFilesize($element, $form_state);
+    // Issue #2359675: File field's Maximum upload size always passes validation.
+    // if (class_exists('\Drupal\file\Plugin\Field\FieldType\FileItem')) {
+    //   FileItem::validateMaxFilesize($element, $form_state);
+    // }
+    // @see \Drupal\file\Plugin\Field\FieldType\FileItem::validateMaxFilesize
+    if (!empty($element['#value']) && !Bytes::toInt($element['#value'])) {
+      $form_state->setError($element, t('The "@name" option must contain a valid value. You may either leave the text field empty or enter a string like "512" (bytes), "80 KB" (kilobytes) or "50 MB" (megabytes).', ['@name' => $element['#title']]));
     }
   }
 

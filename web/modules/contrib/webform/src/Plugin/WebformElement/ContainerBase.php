@@ -2,7 +2,6 @@
 
 namespace Drupal\webform\Plugin\WebformElement;
 
-use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\webform\Plugin\WebformElementBase;
@@ -190,7 +189,7 @@ abstract class ContainerBase extends WebformElementBase {
         '#suffix' => PHP_EOL,
       ];
       $build['divider'] = [
-        '#markup' => str_repeat('-', Unicode::strlen($element['#title'])),
+        '#markup' => str_repeat('-', mb_strlen($element['#title'])),
         '#suffix' => PHP_EOL,
       ];
     }

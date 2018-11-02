@@ -51,7 +51,7 @@ class WebformSubmissionInformation extends RenderElement {
 
     // Add details attributes.
     $element['#attributes']['data-webform-element-id'] = $webform->id() . '-submission-information';
-    $element['#attributes']['class'] = 'webform-submission-information';
+    $element['#attributes']['class'] = ['webform-submission-information'];
 
     return $element;
   }

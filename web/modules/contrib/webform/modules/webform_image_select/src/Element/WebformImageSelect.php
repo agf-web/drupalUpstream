@@ -73,9 +73,14 @@ class WebformImageSelect extends Select {
     if (empty($element['#options']) && !empty($element['#images'])) {
       $options = [];
       foreach ($element['#images'] as $value => &$image) {
-        // Apply XSS filter to image text.
-        $image['text'] = Xss::filter($image['text']);
-        $options[$value] = $image['text'];
+        if (isset($image['text'])) {
+          // Apply XSS filter to image text.
+          $image['text'] = Xss::filter($image['text']);
+          $options[$value] = $image['text'];
+        }
+        else {
+          $options[$value] = $value;
+        }
       }
       $element['#options'] = $options;
     }

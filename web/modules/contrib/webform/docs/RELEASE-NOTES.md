@@ -11,17 +11,22 @@ Steps for creating a new release
 1. Review code
 --------------
 
-[Online](http://pareview.sh)
+[PHP](https://www.drupal.org/node/1587138)
 
-    http://git.drupal.org/project/webform.git 8.x-5.x
-
-[Commandline](https://www.drupal.org/node/1587138)
-
-    # Check Drupal coding standards
+    # Check Drupal PHP coding standards
     phpcs --standard=Drupal --extensions=php,module,inc,install,test,profile,theme,css,info modules/sandbox/webform
 
-    # Check Drupal best practices
+    # Check Drupal PHP best practices
     phpcs --standard=DrupalPractice --extensions=php,module,inc,install,test,profile,theme,js,css,info modules/sandbox/webform
+
+[JavaScript](https://www.drupal.org/node/2873849)
+
+    # Install Eslint. (One-time)
+    cd core
+    yarn install
+    
+    # Check Drupal JavaScript (ES5) legacy coding standards.
+    core/node_modules/.bin/eslint --no-eslintrc -c=core/.eslintrc.legacy.json --ext=.js modules/sandbox/webform    
 
 [File Permissions](https://www.drupal.org/comment/reply/2690335#comment-form)
 
@@ -31,7 +36,7 @@ Steps for creating a new release
     # Directories should be 755 or drwxr-xr-x
     find . -type f -print0 | xargs -0 chmod 0644
 
-
+    
 2. Review accessibility
 -----------------------
 

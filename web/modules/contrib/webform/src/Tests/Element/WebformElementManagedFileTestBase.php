@@ -51,9 +51,6 @@ abstract class WebformElementManagedFileTestBase extends WebformElementTestBase 
   public function setUp() {
     parent::setUp();
 
-    // Create users.
-    $this->createUsers();
-
     $this->fileUsage = $this->container->get('file.usage');
     $this->webform = Webform::load('test_element_managed_file');
     $this->files = $this->drupalGetTestFiles('text');

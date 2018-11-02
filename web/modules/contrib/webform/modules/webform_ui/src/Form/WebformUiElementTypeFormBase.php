@@ -134,9 +134,19 @@ abstract class WebformUiElementTypeFormBase extends FormBase {
         'data-element' => '.webform-ui-element-type-table',
         'data-item-single' => $this->t('element'),
         'data-item-plural' => $this->t('elements'),
+        'data-no-results' => '.webform-element-no-results',
         'title' => $this->t('Enter a part of the element name to filter by.'),
         'autofocus' => 'autofocus',
       ],
+    ];
+
+    // No results.
+    $form['no_results'] = [
+      '#type' => 'webform_message',
+      '#message_message' => $this->t('No elements found. Try a different search.'),
+      '#message_type' => 'info',
+      '#attributes' => ['class' => ['webform-element-no-results']],
+      '#weight' => 1000,
     ];
 
     return $form;

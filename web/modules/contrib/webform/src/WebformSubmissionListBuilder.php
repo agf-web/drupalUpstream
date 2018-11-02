@@ -318,7 +318,7 @@ class WebformSubmissionListBuilder extends EntityListBuilder {
     // Set account and state based on the current route.
     switch ($route_name) {
       case 'entity.webform_submission.user':
-        $this->account = $this->currentUser;
+        $this->account = $this->routeMatch->getParameter('user');
         break;
 
       case "$base_route_name.webform.user.submissions":
@@ -477,9 +477,12 @@ class WebformSubmissionListBuilder extends EntityListBuilder {
     $view = Views::getView($name);
     $view->webform_submission_view = TRUE;
 
-    // Get the current displays arguments.
+    // Get the current display or default arguments.
     $displays = $view->storage->get('display');
-    if (isset($displays[$display_id]['display_options']['arguments'])) {
+    if (!empty($displays[$display_id]['display_options']['arguments'])) {
+      $display_arguments = $displays[$display_id]['display_options']['arguments'];
+    }
+    elseif (!empty($displays['default']['display_options']['arguments'])) {
       $display_arguments = $displays['default']['display_options']['arguments'];
     }
     else {
@@ -877,7 +880,7 @@ class WebformSubmissionListBuilder extends EntityListBuilder {
             '#type' => 'link',
             '#title' => new FormattableMarkup('<span class="webform-icon webform-icon-notes webform-icon-notes--@state"></span><span class="visually-hidden">@label</span>', ['@state' => $state, '@label' => $label]),
             '#url' => $notes_url,
-            '#attributes' => WebformDialogHelper::getOffCanvasDialogAttributes(WebformDialogHelper::DIALOG_NARROW),
+            '#attributes' => WebformDialogHelper::getModalDialogAttributes(WebformDialogHelper::DIALOG_NARROW),
           ],
           'class' => ['webform-results-table__icon'],
         ];

@@ -115,6 +115,18 @@ elements: |
       '#type': textfield
       '#title': last_name
       '#default_value': Smith
+  url:
+    '#type': url
+    '#title': url
+    '#default_value': 'http://example.com?query=param'
+  markup:
+    '#type': textfield
+    '#title': markup
+    '#default_value': '<b>Bold</b> &amp; UPPERCASE'
+  script:
+    '#type': textfield
+    '#title': script
+    '#default_value': '<script>alert(''hi'');</script>'
   
 css: ''
 javascript: ''
@@ -124,6 +136,7 @@ settings:
   page: true
   page_submit_path: ''
   page_confirm_path: ''
+  form_title: source_entity_webform
   form_submit_once: false
   form_exception_message: ''
   form_open_message: ''
@@ -150,6 +163,7 @@ settings:
   form_access_denied_title: ''
   form_access_denied_message: ''
   form_access_denied_attributes: {  }
+  form_file_limit: ''
   submission_label: ''
   submission_log: false
   submission_views: {  }
@@ -162,6 +176,9 @@ settings:
   submission_access_denied_attributes: {  }
   submission_exception_message: ''
   submission_locked_message: ''
+  submission_excluded_elements: {  }
+  submission_exclude_empty: false
+  submission_exclude_empty_checkbox: false
   previous_submission_message: ''
   previous_submissions_message: ''
   autofill: false
@@ -195,7 +212,6 @@ settings:
     <h3>emails</h3>
     <table class="table">
     <tr><th width="50%">webform_submission:values:email</th><td width="50%">[webform_submission:values:email]</td></tr>
-    <tr><th width="50%">webform_submission:values:email:urlencode</th><td width="50%">[webform_submission:values:email:urlencode]</td></tr>
     <tr><th width="50%">webform_submission:values:emails</th><td width="50%">[webform_submission:values:emails]</td></tr>
     <tr><th width="50%">webform_submission:values:emails:0</th><td width="50%">[webform_submission:values:emails:0]</td></tr>
     <tr><th width="50%">webform_submission:values:emails:1</th><td width="50%">[webform_submission:values:emails:1]</td></tr>
@@ -250,7 +266,6 @@ settings:
     <tr><th width="50%">webform_submission:values:contacts:0:name</th><td width="50%">[webform_submission:values:contacts:0:name]</td></tr>
     <tr><th width="50%">webform_submission:values:contacts:1:name</th><td width="50%">[webform_submission:values:contacts:1:name]</td></tr>
     <tr><th width="50%">webform_submission:values:contacts:0:email:html</th><td width="50%">[webform_submission:values:contacts:0:email:html]</td></tr>
-    <tr><th width="50%">webform_submission:values:contacts:0:email:urlencode</th><td width="50%">[webform_submission:values:contacts:0:email:urlencode]</td></tr>
     <tr><th width="50%">webform_submission:values:contacts:1:email:raw:html</th><td width="50%">[webform_submission:values:contacts:1:email:raw:html]</td></tr>
     </table>
     
@@ -258,7 +273,6 @@ settings:
     <table class="table">
     <tr><th width="50%">webform_submission:values:fieldset</th><td width="50%"><pre>[webform_submission:values:fieldset]</pre></td></tr>
     <tr><th width="50%">webform_submission:values:fieldset:html</th><td width="50%">[webform_submission:values:fieldset:html]</td></tr>
-    <tr><th width="50%">webform_submission:values:fieldset:urlencode</th><td width="50%">[webform_submission:values:fieldset:urlencode]</td></tr>
     <tr><th width="50%">webform_submission:values:fieldset:header:html</th><td width="50%">[webform_submission:values:fieldset:header:html]</td></tr>
     <tr><th width="50%">webform_submission:values:fieldset:details:html</th><td width="50%">[webform_submission:values:fieldset:details:html]</td></tr>
     <tr><th width="50%">webform_submission:values:fieldset:fieldset:html</th><td width="50%">[webform_submission:values:fieldset:fieldset:html]</td></tr>
@@ -284,6 +298,21 @@ settings:
     <tr><th width="50%">webform:random:missing:clear</th><td width="50%">[webform:random:missing:clear]</td></tr>
     </table>
     
+    <h3>urlencode</h3>
+    <table class="table">
+    <tr><th width="50%">webform_submission:values:url</th><td width="50%">[webform_submission:values:url]</td></tr>
+    <tr><th width="50%">webform_submission:values:url:urlencode</th><td width="50%">[webform_submission:values:url:urlencode]</td></tr>
+    </table>
+    
+    <h3>htmldecode</h3>
+    <table class="table">
+    <tr><th width="50%">webform_submission:values:markup</th><td width="50%">[webform_submission:values:markup]</td></tr>
+    <tr><th width="50%">webform_submission:values:markup:htmldecode</th><td width="50%">[webform_submission:values:markup:htmldecode]</td></tr>
+    <tr><th width="50%">webform_submission:values:markup:htmldecode:striptags</th><td width="50%">[webform_submission:values:markup:htmldecode:striptags]</td></tr>
+    <tr><th width="50%">webform_submission:values:script</th><td width="50%">[webform_submission:values:script]</td></tr>
+    <tr><th width="50%">webform_submission:values:script:htmldecode</th><td width="50%">[webform_submission:values:script:htmldecode]</td></tr>
+    </table>
+    
   confirmation_url: ''
   confirmation_attributes: {  }
   confirmation_back: true
@@ -294,9 +323,11 @@ settings:
   limit_total: 100
   limit_total_interval: null
   limit_total_message: ''
+  limit_total_unique: false
   limit_user: 10
   limit_user_interval: null
   limit_user_message: ''
+  limit_user_unique: false
   entity_limit_total: 50
   entity_limit_total_interval: null
   entity_limit_user: 5

@@ -29,8 +29,8 @@
           var $output = $('<input class="form-color-output ' + $element.attr('class') + ' js-webform-input-mask" data-inputmask-mask="\\#######" />').uniqueId();
           var $label = $element.parent('.js-form-type-color').find('label').clone();
           $label.attr({
-            'for': $output.attr('id'),
-            'class': 'visually-hidden'
+            for: $output.attr('id'),
+            class: 'visually-hidden'
           });
           if ($.fn.inputmask) {
             $output.inputmask();
@@ -39,7 +39,7 @@
           $element
             .after($output)
             .after($label)
-            .css({'float': 'left'});
+            .css({float: 'left'});
 
           // Sync $element and $output.
           $element.on('input', function () {

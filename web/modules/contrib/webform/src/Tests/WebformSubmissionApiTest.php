@@ -22,25 +22,16 @@ class WebformSubmissionApiTest extends WebformTestBase {
   protected static $testWebforms = ['test_form_wizard_advanced', 'test_form_limit'];
 
   /**
-   * {@inheritdoc}
-   */
-  public function setUp() {
-    parent::setUp();
-
-    // Create users.
-    $this->createUsers();
-  }
-
-  /**
    * Test webform API.
    */
   public function testApi() {
+    $normal_user = $this->drupalCreateUser();
+
+    $contact_webform = Webform::load('contact');
 
     /**************************************************************************/
     // Basic form.
     /**************************************************************************/
-
-    $contact_webform = Webform::load('contact');
 
     // Check submitting a simple webform.
     $values = [
@@ -156,7 +147,7 @@ class WebformSubmissionApiTest extends WebformTestBase {
     // Submission limit form.
     /**************************************************************************/
 
-    $this->drupalLogin($this->normalUser);
+    $this->drupalLogin($normal_user);
 
     $test_form_limit_webform = Webform::load('test_form_limit');
 

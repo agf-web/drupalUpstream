@@ -3,6 +3,7 @@
 namespace Drupal\webform\Element;
 
 use Drupal\Component\Render\FormattableMarkup;
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\webform\Utility\WebformAccessibilityHelper;
@@ -122,12 +123,19 @@ class WebformLikert extends FormElement {
       }
 
       $value = (isset($element['#value'][$question_key])) ? $element['#value'][$question_key] : NULL;
+
+      // Get question id.
+      // @see \Drupal\Core\Form\FormBuilder::doBuildForm
+      $question_id = 'edit-' . implode('-', array_merge($element['#parents'], ['table', $question_key, 'likert_question']));
+      $question_id = Html::getUniqueId($question_id);
+
       $row = [];
       // Must format the label as an item so that inline webform errors will be
       // displayed.
       $row['likert_question'] = [
         '#type' => 'item',
         '#title' => $question_title,
+        '#id' => $question_id,
         // Must include an empty <span> so that the item's value is
         // not required.
         '#value' => '<span></span>',
@@ -149,6 +157,7 @@ class WebformLikert extends FormElement {
           // value is NULL.
           // @see \Drupal\Core\Render\Element\Radio::preRenderRadio
           '#value' => ($value === NULL) ? FALSE : (string) $value,
+          '#attributes' => ['aria-labelledby' => $question_id],
         ];
 
         // Wrap title in span.webform-likert-label.visually-hidden

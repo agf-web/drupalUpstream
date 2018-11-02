@@ -53,6 +53,9 @@ class WebformEntityTranslationTest extends WebformTestBase {
 
     // Check translations.
     $this->drupalGet('admin/structure/webform/manage/test_translation/translate');
+    $this->assertRaw('<a href="' . base_path() . 'webform/test_translation"><strong>English (original)</strong></a>');
+    $this->assertRaw('<a href="' . base_path() . 'es/webform/test_translation" hreflang="es">Spanish</a>');
+    $this->assertNoRaw('<a href="' . base_path() . 'fr/webform/test_translation" hreflang="fr">French</a>');
     $this->assertRaw('<a href="' . base_path() . 'admin/structure/webform/manage/test_translation/translate/es/edit">Edit</a>');
 
     // Check Spanish translation.
@@ -127,6 +130,12 @@ class WebformEntityTranslationTest extends WebformTestBase {
     $this->assertRaw('<label for="edit-textfield">French</label>');
     $this->assertRaw('Site name: Site Web de test');
 
+    // Check translations.
+    $this->drupalGet('admin/structure/webform/manage/test_translation/translate');
+    $this->assertRaw('<a href="' . base_path() . 'webform/test_translation"><strong>English (original)</strong></a>');
+    $this->assertRaw('<a href="' . base_path() . 'es/webform/test_translation" hreflang="es">Spanish</a>');
+    $this->assertRaw('<a href="' . base_path() . 'fr/webform/test_translation" hreflang="fr">French</a>');
+
     // Check French config elements only contains translated properties and
     // custom properties are removed.
     $translation_element = $translation_manager->getElements($webform, 'fr', TRUE);
@@ -163,7 +172,7 @@ class WebformEntityTranslationTest extends WebformTestBase {
     $this->assertNoRaw('Site name: Sitio web de prueba');
 
     /**************************************************************************/
-    // Site wide language
+    // Site wide language.
     /**************************************************************************/
 
     // Make sure the site language is English (en).

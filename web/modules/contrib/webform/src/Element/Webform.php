@@ -2,6 +2,7 @@
 
 namespace Drupal\webform\Element;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Render\Element\RenderElement;
 use Drupal\webform\Entity\Webform as WebformEntity;
 use Drupal\webform\WebformInterface;
@@ -44,7 +45,11 @@ class Webform extends RenderElement {
       $values['data'] = $element['#default_data'];
 
       // Set source entity type and id.
-      if (!empty($element['#entity_type']) && !empty($element['#entity_id'])) {
+      if (!empty($element['#entity']) && $element['#entity'] instanceof EntityInterface) {
+        $values['entity_type'] = $element['#entity']->getEntityTypeId();
+        $values['entity_id'] = $element['#entity']->id();
+      }
+      elseif (!empty($element['#entity_type']) && !empty($element['#entity_id'])) {
         $values['entity_type'] = $element['#entity_type'];
         $values['entity_id'] = $element['#entity_id'];
       }

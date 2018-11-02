@@ -26,28 +26,36 @@ class WebformSubmissionListBuilderTest extends WebformTestBase {
   protected static $testWebforms = ['test_submissions'];
 
   /**
-   * {@inheritdoc}
-   */
-  public function setUp() {
-    parent::setUp();
-
-    // Create users.
-    $this->createUsers();
-  }
-
-  /**
    * Tests results.
    */
   public function testResults() {
     global $base_path;
 
+    $admin_user = $this->drupalCreateUser([
+      'administer webform',
+    ]);
+
+    $own_submission_user = $this->drupalCreateUser([
+      'view own webform submission',
+      'edit own webform submission',
+      'delete own webform submission',
+      'access webform submission user',
+    ]);
+
+    $admin_submission_user = $this->drupalCreateUser([
+      'administer webform submission',
+    ]);
+
     /** @var \Drupal\webform\WebformInterface $webform */
     $webform = Webform::load('test_submissions');
+
     /** @var \Drupal\webform\WebformSubmissionInterface[] $submissions */
     $submissions = array_values(\Drupal::entityTypeManager()->getStorage('webform_submission')->loadByProperties(['webform_id' => 'test_submissions']));
 
-    // Login the normal user.
-    $this->drupalLogin($this->ownWebformSubmissionUser);
+    /**************************************************************************/
+
+    // Login the own submission user.
+    $this->drupalLogin($own_submission_user);
 
     // Make the second submission to be starred (aka sticky).
     $submissions[1]->setSticky(TRUE)->save();
@@ -55,7 +63,7 @@ class WebformSubmissionListBuilderTest extends WebformTestBase {
     // Make the third submission to be locked.
     $submissions[2]->setLocked(TRUE)->save();
 
-    $this->drupalLogin($this->adminSubmissionUser);
+    $this->drupalLogin($admin_submission_user);
 
     /* Filter */
 
@@ -111,12 +119,12 @@ class WebformSubmissionListBuilderTest extends WebformTestBase {
     /**************************************************************************/
 
     // Check that access is denied to custom results table.
-    $this->drupalLogin($this->adminSubmissionUser);
+    $this->drupalLogin($admin_submission_user);
     $this->drupalGet('admin/structure/webform/manage/' . $webform->id() . '/results/submissions/custom');
     $this->assertResponse(403);
 
     // Check that access is allowed to custom results table.
-    $this->drupalLogin($this->adminWebformUser);
+    $this->drupalLogin($admin_user);
     $this->drupalGet('admin/structure/webform/manage/' . $webform->id() . '/results/submissions/custom');
     $this->assertResponse(200);
 
@@ -218,7 +226,7 @@ class WebformSubmissionListBuilderTest extends WebformTestBase {
     // Customize user results.
     /**************************************************************************/
 
-    $this->drupalLogin($this->ownWebformSubmissionUser);
+    $this->drupalLogin($own_submission_user);
 
     // Check view own submissions.
     $this->drupalget('/webform/' . $webform->id() . '/submissions');

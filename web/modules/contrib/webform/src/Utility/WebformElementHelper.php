@@ -72,6 +72,21 @@ class WebformElementHelper {
   protected static $ignoredSubPropertiesRegExp;
 
   /**
+   * Determine if an element and its key is a renderable array.
+   *
+   * @param array|mixed $element
+   *   An element.
+   * @param string
+   *   The element key.
+   *
+   * @return bool
+   *   TRUE if an element and its key is a renderable array.
+   */
+  public static function isElement($element, $key) {
+    return (Element::child($key) && is_array($element));
+  }
+
+  /**
    * Determine if an element is a webform element and should be enhanced.
    *
    * @param array $element
@@ -400,7 +415,7 @@ class WebformElementHelper {
   public static function getFlattened(array $elements) {
     $flattened_elements = [];
     foreach ($elements as $key => &$element) {
-      if (Element::property($key) || !is_array($element)) {
+      if (!WebformElementHelper::isElement($element, $key)) {
         continue;
       }
 

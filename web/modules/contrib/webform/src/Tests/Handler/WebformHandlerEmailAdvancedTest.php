@@ -27,26 +27,8 @@ class WebformHandlerEmailAdvancedTest extends WebformTestBase {
   public function setUp() {
     parent::setUp();
 
-    // Create users.
-    $this->createUsers();
-  }
-
-  /**
-   * Create webform test users.
-   */
-  protected function createUsers() {
     // Create filter.
     $this->createFilters();
-
-    $this->normalUser = $this->drupalCreateUser([
-      'access user profiles',
-      $this->basicHtmlFilter->getPermissionName(),
-    ]);
-    $this->adminSubmissionUser = $this->drupalCreateUser([
-      'access user profiles',
-      'administer webform submission',
-      $this->basicHtmlFilter->getPermissionName(),
-    ]);
   }
 
   /**
@@ -61,6 +43,8 @@ class WebformHandlerEmailAdvancedTest extends WebformTestBase {
   public function testAdvancedEmailHandler() {
     /** @var \Drupal\webform\WebformInterface $webform */
     $webform = Webform::load('test_handler_email_advanced');
+
+    /**************************************************************************/
 
     // Generate a test submission with a file upload.
     $this->drupalLogin($this->rootUser);

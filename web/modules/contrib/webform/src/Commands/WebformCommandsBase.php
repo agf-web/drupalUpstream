@@ -113,13 +113,13 @@ abstract class WebformCommandsBase extends DrushCommands {
     if (preg_match('/\.tgz$/', $path)) {
       $return = drush_shell_cd_and_exec(dirname($path), "tar -xvzf %s -C %s", $path, $destination);
       if (!$return) {
-        throw new \Exception(dt('Unable to extract !filename.', ['!filename' => $path]));
+        throw new \Exception(dt('Unable to extract !filename.' . PHP_EOL . implode(PHP_EOL, drush_shell_exec_output()), ['!filename' => $path]));
       }
     }
     else {
       $return = drush_shell_cd_and_exec(dirname($path), "unzip %s -d %s", $path, $destination);
       if (!$return) {
-        throw new \Exception(dt('Unable to unzip !filename.', ['!filename' => $path]));
+        throw new \Exception(dt('Unable to extract !filename.' . PHP_EOL . implode(PHP_EOL, drush_shell_exec_output()), ['!filename' => $path]));
       }
     }
     return $return;

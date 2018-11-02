@@ -3,15 +3,11 @@
 namespace Drupal\webform\Entity;
 
 use Drupal\Component\Utility\NestedArray;
-use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Serialization\Yaml;
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Language\LanguageInterface;
-use Drupal\Core\Render\Element;
-use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
@@ -336,19 +332,20 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    */
   protected $elementsWizardPages = [];
 
+
+  /**
+   * Track managed file elements.
+   *
+   * @var array
+   */
+  protected $elementsManagedFiles = [];
+
   /**
    * The webform pages.
    *
    * @var array
    */
   protected $pages;
-
-  /**
-   * Track if the webform has a managed file (upload) element.
-   *
-   * @var bool
-   */
-  protected $hasManagedFile = FALSE;
 
   /**
    * Track if the webform is using a flexbox layout.
@@ -628,7 +625,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    */
   public function hasManagedFile() {
     $this->initElements();
-    return $this->hasManagedFile;
+    return (!empty($this->elementsManagedFiles)) ? TRUE : FALSE;
   }
 
   /**
@@ -872,6 +869,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       'page' => TRUE,
       'page_submit_path' => '',
       'page_confirm_path' => '',
+      'form_title' => 'both',
       'form_submit_once' => FALSE,
       'form_exception_message' => '',
       'form_open_message' => '',
@@ -898,6 +896,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       'form_access_denied_title' => '',
       'form_access_denied_message' => '',
       'form_access_denied_attributes' => [],
+      'form_file_limit' => '',
       'submission_label' => '',
       'submission_log' => FALSE,
       'submission_views' => [],
@@ -910,6 +909,9 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       'submission_access_denied_attributes' => [],
       'submission_exception_message' => '',
       'submission_locked_message' => '',
+      'submission_excluded_elements' => [],
+      'submission_exclude_empty' => FALSE,
+      'submission_exclude_empty_checkbox' => FALSE,
       'previous_submission_message' => '',
       'previous_submissions_message' => '',
       'autofill' => FALSE,
@@ -950,9 +952,11 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       'limit_total' => NULL,
       'limit_total_interval' => NULL,
       'limit_total_message' => '',
+      'limit_total_unique' => FALSE,
       'limit_user' => NULL,
       'limit_user_interval' => NULL,
       'limit_user_message' => '',
+      'limit_user_unique' => FALSE,
       'entity_limit_total' => NULL,
       'entity_limit_total_interval' => NULL,
       'entity_limit_user' => NULL,
@@ -963,176 +967,6 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       'results_disabled_ignore' => FALSE,
       'token_update' => FALSE,
     ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getDefaultAccessRules() {
-    return [
-      'create' => [
-        'roles' => [
-          'anonymous',
-          'authenticated',
-        ],
-        'users' => [],
-        'permissions' => [],
-      ],
-      'view_any' => [
-        'roles' => [],
-        'users' => [],
-        'permissions' => [],
-      ],
-      'update_any' => [
-        'roles' => [],
-        'users' => [],
-        'permissions' => [],
-      ],
-      'delete_any' => [
-        'roles' => [],
-        'users' => [],
-        'permissions' => [],
-      ],
-      'purge_any' => [
-        'roles' => [],
-        'users' => [],
-        'permissions' => [],
-      ],
-      'view_own' => [
-        'roles' => [],
-        'users' => [],
-        'permissions' => [],
-      ],
-      'update_own' => [
-        'roles' => [],
-        'users' => [],
-        'permissions' => [],
-      ],
-      'delete_own' => [
-        'roles' => [],
-        'users' => [],
-        'permissions' => [],
-      ],
-      'administer' => [
-        'roles' => [],
-        'users' => [],
-        'permissions' => [],
-      ],
-      'test' => [
-        'roles' => [],
-        'users' => [],
-        'permissions' => [],
-      ],
-    ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function checkAccessRules($operation, AccountInterface $account, WebformSubmissionInterface $webform_submission = NULL) {
-    // Always grant access to user that can administer webforms.
-    if ($account->hasPermission('administer webform')) {
-      return AccessResult::allowed()->cachePerPermissions();
-    }
-
-    // Grant user with administer webform submission access to view all webform submissions.
-    if ($account->hasPermission('administer webform submission') && $operation != 'administer') {
-      return AccessResult::allowed()->cachePerPermissions();
-    }
-
-    // The "page" operation is the same as "create" but requires that the
-    // Webform is allowed to be displayed as dedicated page.
-    // Used by the 'entity.webform.canonical' route.
-    if ($operation == 'page') {
-      if (empty($this->settings['page'])) {
-        return AccessResult::forbidden()->addCacheableDependency($this);
-      }
-      else {
-        $operation = 'create';
-      }
-    }
-
-    $access_rules = $this->getAccessRules() + static::getDefaultAccessRules();
-
-    $cacheability = new CacheableMetadata();
-    $cacheability->addCacheableDependency($this);
-    $cacheability->addCacheContexts(['user.permissions']);
-    foreach ($access_rules as $access_rule) {
-      // If there is some per-user access logic, our response must be cacheable
-      // accordingly.
-      if (!empty($access_rule['users'])) {
-        $cacheability->addCacheContexts(['user']);
-      }
-    }
-
-    // Check administer access rule and grant full access to user.
-    if ($this->checkAccessRule($access_rules['administer'], $account)) {
-      return AccessResult::allowed()->addCacheableDependency($cacheability);
-    }
-
-    // Check operation specific access rules.
-    if (in_array($operation, ['create', 'view_any', 'update_any', 'delete_any', 'purge_any', 'administer', 'test'])
-      && $this->checkAccessRule($access_rules[$operation], $account)) {
-      return AccessResult::allowed()->addCacheableDependency($cacheability);
-    }
-    if (isset($access_rules[$operation . '_any'])
-      && $this->checkAccessRule($access_rules[$operation . '_any'], $account)) {
-      return AccessResult::allowed()->addCacheableDependency($cacheability);
-    }
-
-    // If webform submission is not set then check 'view own'.
-    // @see \Drupal\webform\WebformSubmissionForm::displayMessages.
-    if (empty($webform_submission)
-      && $operation === 'view_own'
-      && $this->checkAccessRule($access_rules[$operation], $account)) {
-      return AccessResult::allowed()->addCacheableDependency($cacheability);
-    }
-
-    // If webform submission is set then check the webform submission owner.
-    if (!empty($webform_submission)) {
-      $is_authenticated_owner = ($account->isAuthenticated() && $account->id() === $webform_submission->getOwnerId());
-      $is_anonymous_owner = ($account->isAnonymous() && !empty($_SESSION['webform_submissions']) && isset($_SESSION['webform_submissions'][$webform_submission->id()]));
-      $is_owner = ($is_authenticated_owner || $is_anonymous_owner);
-      if ($is_owner) {
-        if (isset($access_rules[$operation . '_own'])
-          && $this->checkAccessRule($access_rules[$operation . '_own'], $account)) {
-          return AccessResult::allowed()->cachePerUser()->addCacheableDependency($cacheability);
-        }
-      }
-    }
-
-    return AccessResult::forbidden()->addCacheableDependency($cacheability);
-  }
-
-  /**
-   * Checks an access rule against a user account's roles and id.
-   *
-   * @param array $access_rule
-   *   An access rule.
-   * @param \Drupal\Core\Session\AccountInterface $account
-   *   The user session for which to check access.
-   *
-   * @return bool
-   *   The access result. Returns a TRUE if access is allowed.
-   *
-   * @see \Drupal\webform\Plugin\WebformElementBase::checkAccessRule
-   */
-  protected function checkAccessRule(array $access_rule, AccountInterface $account) {
-    if (!empty($access_rule['roles']) && array_intersect($access_rule['roles'], $account->getRoles())) {
-      return TRUE;
-    }
-    elseif (!empty($access_rule['users']) && in_array($account->id(), $access_rule['users'])) {
-      return TRUE;
-    }
-    elseif (!empty($access_rule['permissions'])) {
-      foreach ($access_rule['permissions'] as $permission) {
-        if ($account->hasPermission($permission)) {
-          return TRUE;
-        }
-      }
-    }
-
-    return FALSE;
   }
 
   /**
@@ -1229,6 +1063,14 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function getElementsManagedFiles() {
+    $this->initElements();
+    return $this->elementsManagedFiles;
+  }
+
+  /**
    * Check operation access for each element.
    *
    * @param string $operation
@@ -1297,7 +1139,6 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     }
 
     // @see \Drupal\webform\Entity\Webform::resetElements
-    $this->hasManagedFile = FALSE;
     $this->hasFlexboxLayout = FALSE;
     $this->hasContainer = FALSE;
     $this->hasConditions = FALSE;
@@ -1309,6 +1150,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     $this->elementsInitializedAndFlattened = [];
     $this->elementsInitializedFlattenedAndHasValue = [];
     $this->elementsTranslations = [];
+    $this->elementsManagedFiles = [];
 
     try {
       $config_translation = \Drupal::moduleHandler()->moduleExists('config_translation');
@@ -1360,7 +1202,6 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    */
   protected function resetElements() {
     $this->pages = NULL;
-    $this->hasManagedFile = NULL;
     $this->hasFlexboxLayout = NULL;
     $this->hasContainer = NULL;
     $this->hasConditions = NULL;
@@ -1374,6 +1215,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     $this->elementsInitializedAndFlattened = NULL;
     $this->elementsInitializedFlattenedAndHasValue = NULL;
     $this->elementsTranslations = NULL;
+    $this->elementsManagedFiles = [];
   }
 
   /**
@@ -1394,7 +1236,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     $elements = WebformElementHelper::removeIgnoredProperties($elements);
 
     foreach ($elements as $key => &$element) {
-      if (Element::property($key) || !is_array($element)) {
+      if (!WebformElementHelper::isElement($element, $key)) {
         continue;
       }
 
@@ -1460,11 +1302,6 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
         // and stored in the '#webform_composite_elements' property.
         $element_plugin->initialize($element);
 
-        // Track managed file upload.
-        if ($element_plugin instanceof WebformManagedFileBase) {
-          $this->hasManagedFile = TRUE;
-        }
-
         // Track flexbox.
         if ($element['#type'] == 'flexbox' || $element['#type'] == 'webform_flexbox') {
           $this->hasFlexboxLayout = TRUE;
@@ -1498,6 +1335,11 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
         // Track wizard.
         if ($element_plugin instanceof WebformWizardPage) {
           $this->elementsWizardPages[$key] = $key;
+        }
+
+        // Track managed files.
+        if ($element_plugin instanceof WebformManagedFileBase) {
+          $this->elementsManagedFiles[$key] = $key;
         }
 
         $element['#webform_multiple'] = $element_plugin->hasMultipleValues($element);
@@ -1594,7 +1436,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    */
   protected function setElementPropertiesRecursive(array &$elements, $key, array $properties, $parent_key = '') {
     foreach ($elements as $element_key => &$element) {
-      if (Element::property($element_key) || !is_array($element)) {
+      if (!WebformElementHelper::isElement($element, $element_key)) {
         continue;
       }
 
@@ -1646,7 +1488,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    */
   protected function deleteElementRecursive(array &$elements, $key) {
     foreach ($elements as $element_key => &$element) {
-      if (Element::property($element_key) || !is_array($element)) {
+      if (!WebformElementHelper::isElement($element, $element_key)) {
         continue;
       }
 
@@ -1675,7 +1517,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    */
   protected function collectSubElementKeysRecursive(array &$sub_element_keys, array $elements) {
     foreach ($elements as $key => &$element) {
-      if (Element::property($key) || !is_array($element)) {
+      if (!WebformElementHelper::isElement($element, $key)) {
         continue;
       }
       $sub_element_keys[$key] = $key;
@@ -1774,8 +1616,11 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     // Update owner to current user.
     $duplicate->setOwnerId(\Drupal::currentUser()->id());
 
-    // If template, clear description, remove template flag, and publish.
-    if ($duplicate->isTemplate()) {
+    // If template being used to create a new webform, clear description
+    // and remove the template flag.
+    // @see \Drupal\webform_templates\Controller\WebformTemplatesController::index
+    $is_template_duplicate = \Drupal::request()->get('template');
+    if ($duplicate->isTemplate() && !$is_template_duplicate) {
       $duplicate->set('description', '');
       $duplicate->set('template', FALSE);
     }
@@ -1808,11 +1653,14 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    * {@inheritdoc}
    */
   public static function preCreate(EntityStorageInterface $storage, array &$values) {
+    /** @var \Drupal\webform\WebformAccessRulesManagerInterface $access_rules_manager */
+    $access_rules_manager = \Drupal::service('webform.access_rules_manager');
+
     $values += [
       'status' => \Drupal::config('webform.settings')->get('settings.default_status'),
       'uid' => \Drupal::currentUser()->id(),
       'settings' => static::getDefaultSettings(),
-      'access' => static::getDefaultAccessRules(),
+      'access' => $access_rules_manager->getDefaultAccessRules(),
     ];
 
     // Convert boolean status to STATUS constant.

@@ -60,6 +60,9 @@ webform.settings:
         default_form_details_toggle:
           type: boolean
           label: 'Display collapse/expand all details link'
+        default_form_file_limit:
+          type: string
+          label: 'Default file upload limit per form'
         default_wizard_prev_button_label:
           type: label
           label: 'Default wizard previous page button label'
@@ -318,7 +321,7 @@ webform.settings:
           label: 'Login message when access denied to private file uploads.'
         default_max_filesize:
           type: string
-          label: 'Default maximum upload size'
+          label: 'Default maximum file upload size'
         default_managed_file_extensions:
           type: string
           label: 'Default allowed managed file extensions'

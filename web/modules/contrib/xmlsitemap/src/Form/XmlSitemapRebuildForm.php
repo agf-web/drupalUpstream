@@ -70,7 +70,9 @@ class XmlSitemapRebuildForm extends ConfigFormBase {
       }
       else {
         $request->query->set('destination', 'admin/config/search/xmlsitemap');
-        drupal_set_message(t('A rebuild is not necessary. If you are just wanting to regenerate the XML sitemap files, you can <a href="@link-cron">run cron manually</a>.', array('@link-cron' => Url::fromRoute('system.run_cron', [], array('query' => drupal_get_destination())))), 'warning');
+        drupal_set_message(t('A rebuild is not necessary. If you are just wanting to regenerate the XML sitemap files, you can <a href="@link-cron">run cron manually</a>.', [
+          '@link-cron' => Url::fromRoute('system.run_cron', [], ['query' => drupal_get_destination()]),
+        ]), 'warning');
         $this->setRequest($request);
       }
     }
@@ -78,20 +80,20 @@ class XmlSitemapRebuildForm extends ConfigFormBase {
     // Build a list of rebuildable link types.
     $rebuild_types = xmlsitemap_get_rebuildable_link_types();
     $rebuild_types = array_combine($rebuild_types, $rebuild_types);
-    $form['entity_type_ids'] = array(
+    $form['entity_type_ids'] = [
       '#type' => 'select',
       '#title' => t('Select which link types you would like to rebuild'),
       '#description' => t('If no link types are selected, the sitemap files will just be regenerated.'),
       '#multiple' => TRUE,
       '#options' => $rebuild_types,
-      '#default_value' => $this->state->get('xmlsitemap_rebuild_needed') || !$this->state->get('xmlsitemap_developer_mode') ? $rebuild_types : array(),
+      '#default_value' => $this->state->get('xmlsitemap_rebuild_needed') || !$this->state->get('xmlsitemap_developer_mode') ? $rebuild_types : [],
       '#access' => $this->state->get('xmlsitemap_developer_mode'),
-    );
-    $form['save_custom'] = array(
+    ];
+    $form['save_custom'] = [
       '#type' => 'checkbox',
       '#title' => t('Save and restore any custom inclusion and priority links.'),
       '#default_value' => TRUE,
-    );
+    ];
     return parent::buildForm($form, $form_state);
   }
 

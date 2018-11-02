@@ -8,6 +8,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\Entity\Node;
 use Drupal\webform\Entity\Webform;
 use Drupal\webform\Plugin\WebformElementManagerInterface;
+use Drupal\webform\WebformAccessRulesManagerInterface;
 use Drupal\webform\WebformEntityReferenceManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -38,6 +39,13 @@ class WebformAccessGroupForm extends EntityForm {
   protected $webformEntityReferenceManager;
 
   /**
+   * The webform access rules manager.
+   *
+   * @var \Drupal\webform\WebformAccessRulesManagerInterface
+   */
+  protected $webformAccessRulesManager;
+
+  /**
    * Constructs a WebformAccessGroupForm.
    *
    * @param \Drupal\Core\Database\Connection $database
@@ -46,11 +54,14 @@ class WebformAccessGroupForm extends EntityForm {
    *   The webform element manager.
    * @param \Drupal\webform\WebformEntityReferenceManagerInterface $webform_entity_reference_manager
    *   The webform entity reference manager.
+   * @param \Drupal\webform\WebformAccessRulesManagerInterface $webform_access_rules_manager
+   *   The webform access rules manager.
    */
-  public function __construct(Connection $database, WebformElementManagerInterface $element_manager, WebformEntityReferenceManagerInterface $webform_entity_reference_manager) {
+  public function __construct(Connection $database, WebformElementManagerInterface $element_manager, WebformEntityReferenceManagerInterface $webform_entity_reference_manager, WebformAccessRulesManagerInterface $webform_access_rules_manager) {
     $this->database = $database;
     $this->elementManager = $element_manager;
     $this->webformEntityReferenceManager = $webform_entity_reference_manager;
+    $this->webformAccessRulesManager = $webform_access_rules_manager;
   }
 
   /**
@@ -60,8 +71,8 @@ class WebformAccessGroupForm extends EntityForm {
     return new static(
       $container->get('database'),
       $container->get('plugin.manager.webform.element'),
-      $container->get('webform.entity_reference_manager')
-
+      $container->get('webform.entity_reference_manager'),
+      $container->get('webform.access_rules_manager')
     );
   }
 
@@ -166,6 +177,13 @@ class WebformAccessGroupForm extends EntityForm {
     $this->elementManager->processElement($form['entities']);
 
     // Permissions.
+    $permissions_options = [];
+    $access_rules = $this->webformAccessRulesManager->getAccessRulesInfo();
+    foreach ($access_rules as $permission => $access_rule) {
+      $permissions_options[$permission] = [
+        'title' => $access_rule['title'],
+      ];
+    }
     $form['permissions_label'] = [
       '#type' => 'label',
       '#title' => $this->t('Permissions'),
@@ -174,18 +192,7 @@ class WebformAccessGroupForm extends EntityForm {
       '#type' => 'tableselect',
       '#header' => ['title' => $this->t('Permission')],
       '#js_select' => FALSE,
-      '#options' => [
-        'administer' => ['title' => $this->t('Administer submissions')],
-        'create' => ['title' => $this->t('Create submissions')],
-        'view_any' => ['title' => $this->t('View any submissions')],
-        'update_any' => ['title' => $this->t('Update any submissions')],
-        'delete_any' => ['title' => $this->t('Delete any submissions')],
-        'purge_any' => ['title' => $this->t('Purge any submissions')],
-        'view_own' => ['title' => $this->t('View own submissions')],
-        'update_own' => ['title' => $this->t('Update own submissions')],
-        'delete_own' => ['title' => $this->t('Delete own submissions')],
-        'test' => ['title' => $this->t('Test webform')],
-      ],
+      '#options' => $permissions_options,
       '#default_value' => $webform_access_group->get('permissions'),
     ];
     $this->elementManager->processElement($form['permissions']);

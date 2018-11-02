@@ -39,21 +39,21 @@ function webform_shortcuts_preprocess_block(&$variables) {
   // Shortcuts.
   // @see modules/webform_shortcuts/js/webform_shortcuts.js
   $shortcuts = [
-    '',
+    '--',
     'CRTL+E' => t('Add element'),
     'CRTL+P' => t('Add page'),
     'CRTL+L' => t('Add layout'),
-    '',
+    '--',
     'CRTL+S' => t('Save element or elements'),
     'CRTL+R' => t('Reset elements'),
-    '',
+    '--',
     'CRTL+W' => t('Show/hide row weights'),
-    '',
+    '--',
   ];
 
   $items = [];
   foreach ($shortcuts as $keys => $task) {
-    if ($task === '') {
+    if ($task === '--') {
       $items[] = [
         '#markup' => '<hr/>',
       ];

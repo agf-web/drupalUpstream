@@ -3,12 +3,13 @@
 namespace Drupal\webform;
 
 use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityViewBuilder;
 use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\Core\Render\Element;
 use Drupal\webform\Plugin\WebformElementManagerInterface;
+use Drupal\webform\Utility\WebformElementHelper;
 use Drupal\webform\Utility\WebformYaml;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -78,6 +79,20 @@ class WebformSubmissionViewBuilder extends EntityViewBuilder implements WebformS
   /**
    * {@inheritdoc}
    */
+  protected function getBuildDefaults(EntityInterface $entity, $view_mode) {
+    $build = parent::getBuildDefaults($entity, $view_mode);
+    // The webform submission will be rendered in the wrapped webform submission
+    // template already and thus has no entity template itself.
+    // @see \Drupal\contact_storage\ContactMessageViewBuilder
+    // @see \Drupal\comment\CommentViewBuilder::getBuildDefaults
+    // @see \Drupal\block_content\BlockContentViewBuilder::getBuildDefaults
+    unset($build['#theme']);
+    return $build;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function buildComponents(array &$build, array $entities, array $displays, $view_mode) {
     if (empty($entities)) {
       return;
@@ -98,14 +113,16 @@ class WebformSubmissionViewBuilder extends EntityViewBuilder implements WebformS
       else {
         $options = [
           'view_mode' => $view_mode,
-          'excluded_elements' => [],
-          'exclude_empty' => FALSE,
-          'exclude_empty_checkbox' => FALSE,
+          'excluded_elements' => $webform->getSetting('submission_excluded_elements'),
+          'exclude_empty' => $webform->getSetting('submission_exclude_empty'),
+          'exclude_empty_checkbox' => $webform->getSetting('submission_exclude_empty_checkbox'),
         ];
       }
 
       switch ($view_mode) {
         case 'yaml':
+          // Note that the YAML view ignores all access controls and excluded
+          // settings.
           $data = $webform_submission->toArray(TRUE, TRUE);
           $build[$id]['data'] = [
             '#theme' => 'webform_codemirror',
@@ -146,8 +163,7 @@ class WebformSubmissionViewBuilder extends EntityViewBuilder implements WebformS
     $build = [];
 
     foreach ($elements as $key => $element) {
-      // Make sure this is an element.
-      if (!is_array($element) || Element::property($key)) {
+      if (!WebformElementHelper::isElement($element, $key)) {
         continue;
       }
 
@@ -186,7 +202,7 @@ class WebformSubmissionViewBuilder extends EntityViewBuilder implements WebformS
 
       $title = $element['#admin_title'] ?: $element['#title'] ?: '(' . $key . ')';
       $html = $webform_element->formatHtml($element, $webform_submission, $options);
-      $rows[] = [
+      $rows[$key] = [
         ['header' => TRUE, 'data' => $title],
         ['data' => (is_string($html)) ? ['#markup' => $html] : $html],
       ];

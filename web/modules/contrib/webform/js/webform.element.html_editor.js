@@ -41,7 +41,9 @@
           && drupalSettings.yamlEditor.source
           && drupalSettings.yamlEditor.source.indexOf('noconflict') !== -1) {
           delete plugins.codemirror;
-          ('console' in window) && window.console.log('YAML Editor module is not compatible with the ckeditor.codemirror plugin. @see Issue #2936147: ckeditor.codemirror plugin breaks admin textarea.');
+          if ('console' in window) {
+            window.console.log('YAML Editor module is not compatible with the ckeditor.codemirror plugin. @see Issue #2936147: ckeditor.codemirror plugin breaks admin textarea.');
+          }
         }
 
         for (var plugin_name in plugins) {

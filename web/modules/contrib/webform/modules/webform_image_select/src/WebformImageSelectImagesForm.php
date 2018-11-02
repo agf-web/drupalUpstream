@@ -99,7 +99,7 @@ class WebformImageSelectImagesForm extends EntityForm {
         '#title' => $this->t('Images'),
         '#title_display' => 'invisible',
         '#empty_options' => 10,
-        '#add_more' => 10,
+        '#add_more_items' => 10,
         '#default_value' => $this->getImages(),
       ];
     }

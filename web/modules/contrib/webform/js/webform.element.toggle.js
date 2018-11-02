@@ -44,7 +44,7 @@
         // Trigger change event for #states API.
         // @see Drupal.states.Trigger.states.checked.change
         $toggle.on('toggle', function () {
-          $checkbox.trigger("change");
+          $checkbox.trigger('change');
         });
 
         // If checkbox is disabled then add the .disabled class to the toggle.
@@ -66,7 +66,7 @@
         var $wrapper = $toggle.parent();
         var $checkbox = $wrapper.find('input[type="checkbox"]');
         var isDisabled = ($checkbox.attr('disabled') || $checkbox.attr('readonly'));
-        (isDisabled) ? $toggle.addClass('disabled') : $toggle.removeClass('disabled');
+        $toggle[isDisabled ? 'disabled' : 'disabled']();
       });
     });
   }

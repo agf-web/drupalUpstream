@@ -4,6 +4,7 @@ namespace Drupal\webform\Plugin;
 
 use Drupal\Component\Utility\SortArray;
 use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 
@@ -55,6 +56,25 @@ class WebformSourceEntityManager extends DefaultPluginManager implements Webform
     uasort($definitions, [SortArray::class, 'sortByWeightElement']);
 
     parent::alterDefinitions($definitions);
+  }
+
+  /**
+   * Get the main source entity. Applies to only paragraphs.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $source_entity
+   *   A source entity.
+   *
+   * @return \Drupal\Core\Entity\EntityInterface
+   *   The main source entity.
+   *
+   * @see \Drupal\webform\Plugin\Field\FieldFormatter\WebformEntityReferenceEntityFormatter::viewElements
+   * @see \Drupal\webform\Plugin\WebformSourceEntity\QueryStringWebformSourceEntity::getSourceEntity
+   */
+  public static function getMainSourceEntity(EntityInterface $source_entity) {
+    while ($source_entity->getEntityTypeId() === 'paragraph') {
+      $source_entity = $source_entity->getParentEntity();
+    }
+    return $source_entity;
   }
 
   /**

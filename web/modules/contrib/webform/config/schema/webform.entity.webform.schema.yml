@@ -65,6 +65,9 @@ webform.webform.*:
         page_confirm_path:
           type: string
           label: 'Page confirm URL alias'
+        form_title:
+          type: string
+          label: 'Form title display'
         form_submit_once:
           type: boolean
           label: 'Prevent duplicate submissions'
@@ -143,6 +146,9 @@ webform.webform.*:
         form_access_denied_attributes:
           type: ignore
           label: 'Form access denied message attributes'
+        form_file_limit:
+          type: string
+          label: 'Form file upload limit'
         submission_label:
           type: label
           label: 'Default submission label'
@@ -155,6 +161,18 @@ webform.webform.*:
         submission_log:
           type: boolean
           label: 'Submission logging'
+        submission_excluded_elements:
+          type: sequence
+          label: 'Submission excluded elements'
+          sequence:
+            type: string
+            label: 'Element key'
+        submission_exclude_empty:
+          type: boolean
+          label: 'Submission exclude empty elements'
+        submission_exclude_empty_checkbox:
+          type: boolean
+          label: 'Submission exclude unselected checkboxes'
         submission_views:
           type: sequence
           label: 'Submission views'
@@ -352,6 +370,9 @@ webform.webform.*:
         limit_total_message:
           type: text
           label: 'Limit total message'
+        limit_total_unique:
+          type: boolean
+          label: 'Limit total to one submission per source entity'
         limit_user:
           type: integer
           label: 'Limit user submissions'
@@ -361,6 +382,9 @@ webform.webform.*:
         limit_user_message:
           type: text
           label: 'Limit user message'
+        limit_user_unique:
+          type: boolean
+          label: 'Limit user to one submission per source entity'
         entity_limit_total:
           type: integer
           label: 'Entity limit total submissions'

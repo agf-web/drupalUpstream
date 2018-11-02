@@ -6,7 +6,6 @@ use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\OptGroup;
 use Drupal\Core\Serialization\Yaml;
-use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\webform\Utility\WebformAccessibilityHelper;
@@ -195,12 +194,14 @@ class WebformElementStates extends FormElement {
         $triggers[] = 'or';
       }
     }
-    $element['disabled_message'] = [
-      '#type' => 'webform_message',
-      '#message_message' => t('<a href="https://www.w3schools.com/tags/att_input_disabled.asp" target="_blank">Disabled</a> elements do not submit data back to the server and the element\'s server-side default or current value will be preserved and saved to the database.'),
-      '#message_type' => 'warning',
-      '#states' => ['visible' => $triggers],
-    ];
+    if (!empty($element['#disabled_message'])) {
+      $element['disabled_message'] = [
+        '#type' => 'webform_message',
+        '#message_message' => t('<a href="https://www.w3schools.com/tags/att_input_disabled.asp" target="_blank">Disabled</a> elements do not submit data back to the server and the element\'s server-side default or current value will be preserved and saved to the database.'),
+        '#message_type' => 'warning',
+        '#states' => ['visible' => $triggers],
+      ];
+    }
 
     $element['#attached']['library'][] = 'webform/webform.element.states';
 
@@ -799,12 +800,12 @@ class WebformElementStates extends FormElement {
         }
         elseif (is_string($condition)) {
           if (!in_array($condition, ['and', 'or', 'xor'])) {
-            return t('Conditional logic (Form API #states) is using the %operator operator.', ['%operator' => Unicode::strtoupper($condition)]);
+            return t('Conditional logic (Form API #states) is using the %operator operator.', ['%operator' => mb_strtoupper($condition)]);
           }
 
           // Make sure the same operator is being used between the conditions.
           if ($operator && $operator != $condition) {
-            return t('Conditional logic (Form API #states) has multiple operators.', ['%operator' => Unicode::strtoupper($condition)]);
+            return t('Conditional logic (Form API #states) has multiple operators.', ['%operator' => mb_strtoupper($condition)]);
           }
 
           // Set the operator.

@@ -216,8 +216,8 @@ class WebformResultsCustomForm extends FormBase {
     // Get link types.
     // @see entity.webform_submission.* route names.
     $link_type_options = [
-      'canonical' => t('View'),
-      'table' => t('Table'),
+      'canonical' => $this->t('View'),
+      'table' => $this->t('Table'),
     ];
     $form['submission']['link_type'] = [
       '#type' => 'select',

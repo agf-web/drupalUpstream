@@ -50,6 +50,11 @@ abstract class WebformCompositeBase extends WebformElementBase {
       'title_display' => 'invisible',
       'disabled' => FALSE,
       'flexbox' => '',
+      // Enhancements.
+      'select2' => FALSE,
+      'chosen' => FALSE,
+      // Wrapper.
+      'wrapper_type' => 'fieldset',
     ] + parent::getDefaultProperties() + $this->getDefaultMultipleProperties();
     unset($properties['required_error']);
 
@@ -814,6 +819,45 @@ abstract class WebformCompositeBase extends WebformElementBase {
     ];
 
     $form['#attached']['library'][] = 'webform/webform.admin.composite';
+
+    // Select2 and/or Chosen enhancements.
+    // @see \Drupal\webform\Plugin\WebformElement\Select::form
+    $form['composite']['select2'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Select2'),
+      '#description' => $this->t('Replace select element with jQuery <a href=":href">Select2</a> box.', [':href' => 'https://select2.github.io/']),
+      '#return_value' => TRUE,
+      '#states' => [
+        'disabled' => [
+          ':input[name="properties[chosen]"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+    if ($this->librariesManager->isExcluded('jquery.select2')) {
+      $form['composite']['select2']['#access'] = FALSE;
+    }
+    $form['composite']['chosen'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Chosen'),
+      '#description' => $this->t('Replace select element with jQuery <a href=":href">Chosen</a> box.', [':href' => 'https://harvesthq.github.io/chosen/']),
+      '#return_value' => TRUE,
+      '#states' => [
+        'disabled' => [
+          ':input[name="properties[select2]"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+    if ($this->librariesManager->isExcluded('jquery.chosen')) {
+      $form['composite']['chosen']['#access'] = FALSE;
+    }
+    if ($this->librariesManager->isIncluded('jquery.select2') && $this->librariesManager->isIncluded('jquery.chosen')) {
+      $form['composite']['select_message'] = [
+        '#type' => 'webform_message',
+        '#message_type' => 'warning',
+        '#message_message' => $this->t('Select2 and Chosen provide very similar functionality, only one should be enabled.'),
+        '#access' => TRUE,
+      ];
+    }
 
     return $form;
   }

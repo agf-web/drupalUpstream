@@ -95,7 +95,7 @@ class WebformEntitySettingsConfirmationForm extends WebformEntitySettingsBaseFor
         WebformInterface::CONFIRMATION_MODAL => $this->t('Modal (reloads the current page/form and displays the confirmation message in a modal dialog)'),
         WebformInterface::CONFIRMATION_URL => $this->t('URL (redirects to a custom path or URL)'),
         WebformInterface::CONFIRMATION_URL_MESSAGE => $this->t('URL with message (redirects to a custom path or URL and displays the confirmation message at the top of the page)'),
-        WebformInterface::CONFIRMATION_NONE => $this->t('None (reloads the current page and do not display a confirmation message)'),
+        WebformInterface::CONFIRMATION_NONE => $this->t('None (reloads the current page and does not display a confirmation message)'),
       ],
       '#default_value' => $settings['confirmation_type'],
     ];

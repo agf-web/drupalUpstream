@@ -351,7 +351,6 @@ class WebformEntitySettingsGeneralForm extends WebformEntitySettingsBaseForm {
         '#return_value' => TRUE,
         '#default_value' => $settings['form_prepopulate_source_entity'],
       ];
-
     }
 
     if ($this->currentUser()->hasPermission('administer webform')) {

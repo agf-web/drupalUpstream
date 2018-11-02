@@ -145,7 +145,7 @@ class WebformElementComputedTest extends WebformElementTestBase {
     $this->assertFieldByName('webform_computed_twig_token', 'Please enter a value for a and b.');
 
     // Calculate 2 + 4 = 6.
-    $edit = ['a' => 2, 'b' => 4];
+    $edit = ['a[select]' => 2, 'b' => 4];
 
     // Check a is updated.
     $this->drupalPostAjaxForm(NULL, $edit, 'webform-computed-webform_computed_token_a-button');

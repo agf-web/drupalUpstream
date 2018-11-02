@@ -155,6 +155,51 @@ class WebformScheduledEmailTest extends WebformNodeTestBase {
     $this->assertEqual($scheduled_manager->ready($webform_schedule), 0);
 
     /**************************************************************************/
+    // Webform scheduling with conditions.
+    /**************************************************************************/
+
+    // Purge all submissions.
+    $this->purgeSubmissions();
+
+    // Create 3 yesterday scheduled emails.
+    $this->postSubmission($webform_schedule, ['send' => 'yesterday']);
+    $this->postSubmission($webform_schedule, ['send' => 'yesterday']);
+    $this->postSubmission($webform_schedule, ['send' => 'yesterday']);
+    $this->assertEqual($scheduled_manager->total($webform_schedule), 3);
+    $this->assertEqual($scheduled_manager->stats(), [
+      'total' => 3,
+      'waiting' => 0,
+      'queued' => 0,
+      'ready' => 3,
+    ]);
+
+    // Add condition to only send yesterday email if 'value' is filled.
+    /** @var \Drupal\webform\Plugin\WebformHandlerInterface $yesterday_handler */
+    $yesterday_handler = $webform_schedule->getHandler('yesterday');
+    $conditions = ['enabled' => [':input[name="value"]' => ['filled' => TRUE]]];
+    $yesterday_handler->setConditions($conditions);
+    // NOTE: Executing $webform_schedule->save() throws the below
+    // unexplainable error.
+    //
+    // TypeError: Argument 1 passed to
+    // Drupal\webform\WebformSubmissionConditionsValidator::validateConditions()
+    // must be of the type array, null given
+    // $webform_schedule->save() ;
+    //
+    // Check that 3 yesterday scheduled emails are skipped and removed.
+    $stats = $scheduled_manager->cron();
+    $this->assertEqual($stats['skipped'], 3);
+    $this->assertEqual($scheduled_manager->stats(), [
+      'total' => 0,
+      'waiting' => 0,
+      'queued' => 0,
+      'ready' => 0,
+    ]);
+
+    // Clear yesterday conditions.
+    $yesterday_handler->setConditions([]);
+
+    /**************************************************************************/
     // Ignore past scheduling.
     /**************************************************************************/
 

@@ -2,7 +2,6 @@
 
 namespace Drupal\webform\Plugin\WebformElement;
 
-use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\OptGroup;
 use Drupal\Core\Render\Markup;
@@ -17,6 +16,8 @@ use Drupal\webform\WebformSubmissionInterface;
  * Provides a base 'options' element.
  */
 abstract class OptionsBase extends WebformElementBase {
+
+  use TextBaseTrait;
 
   /**
    * Export delta for multiple options.
@@ -75,6 +76,14 @@ abstract class OptionsBase extends WebformElementBase {
         'other__min' => '',
         'other__max' => '',
         'other__step' => '',
+        // Counter.
+        'other__counter_type' => '',
+        'other__counter_minimum' => '',
+        'other__counter_minimum_message' => '',
+        'other__counter_maximum' => '',
+        'other__counter_maximum_message' => '',
+        // Wrapper.
+        'wrapper_type' => 'fieldset',
       ];
     }
 
@@ -554,6 +563,17 @@ abstract class OptionsBase extends WebformElementBase {
       $input_name = WebformSubmissionConditionsValidator::getSelectorInputName($selector);
       $other_type = WebformSubmissionConditionsValidator::getInputNameAsArray($input_name, 1);
       $value = $this->getRawValue($element, $webform_submission);
+
+      // Handle edge case where the other element's value has
+      // not been processed.
+      // @see https://www.drupal.org/project/webform/issues/3000202
+      /** @var \Drupal\webform\Element\WebformOtherBase $class */
+      $class = $this->getFormElementClassDefinition();
+      $type = $class::getElementType();
+      if (is_array($value) && count($value) === 2 && isset($value[$type]) && isset($value['other'])) {
+        $value = $class::processValue($element, $value);
+      }
+
       $options = OptGroup::flattenOptions($element['#options']);
       if ($other_type === 'other') {
         if ($this->hasMultipleValues($element)) {
@@ -593,7 +613,7 @@ abstract class OptionsBase extends WebformElementBase {
     // elements, this includes radios, checkboxes, and buttons.
     if (preg_match('/(radios|checkboxes|buttons)/', $this->getPluginId())) {
       $t_args = [
-        '@name' => Unicode::strtolower($this->getPluginLabel()),
+        '@name' => mb_strtolower($this->getPluginLabel()),
         ':href' => 'https://www.drupal.org/node/2836364',
       ];
       $form['element_attributes']['#description'] = $this->t('Please note: That the below custom element attributes will also be applied to the @name fieldset wrapper. (<a href=":href">Issue #2836374</a>)', $t_args);
@@ -673,6 +693,13 @@ abstract class OptionsBase extends WebformElementBase {
         [':input[name="properties[other__type]"]' => ['value' => 'textfield']],
         'or',
         [':input[name="properties[other__type]"]' => ['value' => 'number']],
+      ],
+    ];
+    $states_textbase = [
+      'visible' => [
+        [':input[name="properties[other__type]"]' => ['value' => 'textfield']],
+        'or',
+        [':input[name="properties[other__type]"]' => ['value' => 'textarea']],
       ],
     ];
     $states_textarea = [
@@ -781,6 +808,11 @@ abstract class OptionsBase extends WebformElementBase {
       '#size' => 4,
       '#states' => $states_number,
     ];
+
+    $form['options_other']['other__textbase_container'] = [
+      '#type' => 'container',
+      '#states' => $states_textbase,
+    ] + $this->buildCounterForm('other__', 'Other count');
 
     // Add hide/show #format_items based on #multiple.
     if ($this->supportsMultipleValues() && $this->hasProperty('multiple')) {

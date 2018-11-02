@@ -4,7 +4,7 @@ namespace Drupal\webform\EntitySettings;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Element;
+use Drupal\webform\Utility\WebformElementHelper;
 
 /**
  * Base webform entity settings form.
@@ -62,8 +62,7 @@ abstract class WebformEntitySettingsBaseForm extends EntityForm {
    */
   protected function appendDefaultValueToElementDescriptions(array &$form, array $default_settings) {
     foreach ($form as $key => &$element) {
-      // Skip if not a FAPI element.
-      if (Element::property($key) || !is_array($element)) {
+      if (!WebformElementHelper::isElement($element, $key)) {
         continue;
       }
 

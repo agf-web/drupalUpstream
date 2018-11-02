@@ -36,7 +36,7 @@
               .attr({
                 'role': 'link',
                 'title': title,
-                'aria-label': title,
+                'aria-label': title
               })
               .click(function () {
                 $button.click();

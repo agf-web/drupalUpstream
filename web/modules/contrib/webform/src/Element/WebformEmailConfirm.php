@@ -2,7 +2,6 @@
 
 namespace Drupal\webform\Element;
 
-use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\webform\Utility\WebformElementHelper;
@@ -134,11 +133,11 @@ class WebformEmailConfirm extends FormElement {
           WebformElementHelper::setRequiredError($element, $form_state, $required_error_title);
         }
         // Verify that the value is not longer than #maxlength.
-        if (isset($element['mail_1']['#maxlength']) && Unicode::strlen($mail_1) > $element['mail_1']['#maxlength']) {
+        if (isset($element['mail_1']['#maxlength']) && mb_strlen($mail_1) > $element['mail_1']['#maxlength']) {
           $t_args = [
             '@name' => $element['mail_1']['#title'],
             '%max' => $element['mail_1']['#maxlength'],
-            '%length' => Unicode::strlen($mail_1),
+            '%length' => mb_strlen($mail_1),
           ];
           $form_state->setError($element, t('@name cannot be longer than %max characters but is currently %length characters long.', $t_args));
         }

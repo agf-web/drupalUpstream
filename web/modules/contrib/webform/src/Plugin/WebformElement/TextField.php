@@ -24,6 +24,7 @@ class TextField extends TextBase {
     return [
       // Form display.
       'input_mask' => '',
+      'input_hide' => FALSE,
       // Form validation.
       'counter_type' => '',
       'counter_minimum' => '',

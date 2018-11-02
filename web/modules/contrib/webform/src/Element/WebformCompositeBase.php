@@ -255,6 +255,12 @@ abstract class WebformCompositeBase extends FormElement implements WebformCompos
         $composite_element['#empty_option'] = $composite_element['#placeholder'];
       }
 
+      // Apply #select2 and #chosen to select elements.
+      if (isset($composite_element['#type']) && strpos($composite_element['#type'], 'select') !== FALSE) {
+        $select_properties = ['#select2' => '#select2', '#chosen' => '#chosen'];
+        $composite_element += array_intersect_key($element, $select_properties);
+      }
+
       // Note: File uploads are not supported because uploaded file
       // destination save and delete callbacks are not setup.
       // @see \Drupal\webform\Plugin\WebformElement\WebformManagedFileBase::postSave

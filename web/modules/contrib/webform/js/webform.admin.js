@@ -29,6 +29,7 @@
         var $input = $(this);
         var $table = $($input.data('element'));
         var $summary = $($input.data('summary'));
+        var $noResults = $($input.data('no-results'));
         var $details = $table.closest('details');
         var sourceSelector = $input.data('source') || '.webform-form-filter-text-source';
         var parentSelector = $input.data('parent') || 'tr';
@@ -44,12 +45,12 @@
 
         if ($table.length) {
           $filterRows = $table.find(sourceSelector);
-          $input.on('keyup', debounce(filterElementList, 200));
-          if ($input.val()) {
-            $input.keyup();
-          }
+          $input
+            .attr('autocomplete', 'off')
+            .on('keyup', debounce(filterElementList, 200))
+            .keyup();
           // Make sure the filter input is always focused.
-          setTimeout(function () {$input.focus()});
+          setTimeout(function () {$input.focus();});
         }
 
         /**
@@ -69,7 +70,6 @@
               $details.hide();
             }
             $filterRows.each(toggleEntry);
-            args['@total'] = totalItems;
 
             // Announce filter changes.
             // @see Drupal.behaviors.blockFilterByText
@@ -81,14 +81,20 @@
             ));
           }
           else {
+            totalItems = $filterRows.length;
             $filterRows.each(function (index) {
               $(this).closest(parentSelector).show();
               if ($details.length) {
                 $details.show();
               }
             });
-            args['@total'] = $filterRows.length;
           }
+
+          // Set total.
+          args['@total'] = totalItems;
+
+          // Hide/show no results.
+          $noResults[totalItems ? 'hide' : 'show']();
 
           // Update summary.
           if ($summary.length) {

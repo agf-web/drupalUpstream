@@ -7,6 +7,8 @@ use Drupal\Core\Config\Config;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\webform\Plugin\WebformElement\TableSelect;
+use Drupal\webform\Plugin\WebformElementManagerInterface;
+use Drupal\webform\Plugin\WebformHandlerManager;
 
 /**
  * Base webform admin settings form.
@@ -47,9 +49,6 @@ abstract class WebformAdminConfigBaseForm extends ConfigFormBase {
    *   A table select element used to excluded plugins by id.
    */
   protected function buildExcludedPlugins(PluginManagerInterface $plugin_manager, array $excluded_ids) {
-    $plugins = $plugin_manager->getDefinitions();
-    $plugins = $plugin_manager->getSortedDefinitions($plugins);
-
     $header = [
       'title' => ['data' => $this->t('Title')],
       'id' => ['data' => $this->t('Name'), 'class' => [RESPONSIVE_PRIORITY_LOW]],
@@ -58,6 +57,7 @@ abstract class WebformAdminConfigBaseForm extends ConfigFormBase {
 
     $ids = [];
     $options = [];
+    $plugins = $this->getPluginDefinitions($plugin_manager);
     foreach ($plugins as $id => $plugin_definition) {
       $ids[$id] = $id;
 
@@ -106,10 +106,8 @@ abstract class WebformAdminConfigBaseForm extends ConfigFormBase {
    * @see \Drupal\webform\Form\WebformAdminSettingsForm::buildExcludedPlugins
    */
   protected function convertIncludedToExcludedPluginIds(PluginManagerInterface $plugin_manager, array $included_ids) {
-    $plugins = $plugin_manager->getDefinitions();
-    $plugins = $plugin_manager->getSortedDefinitions($plugins);
-
     $ids = [];
+    $plugins = $this->getPluginDefinitions($plugin_manager);
     foreach ($plugins as $id => $plugin) {
       $ids[$id] = $id;
     }
@@ -117,6 +115,27 @@ abstract class WebformAdminConfigBaseForm extends ConfigFormBase {
     $excluded_ids = array_diff($ids, array_filter($included_ids));
     ksort($excluded_ids);
     return $excluded_ids;
+  }
+
+  /**
+   * Get plugin definitions.
+   *
+   * @param \Drupal\Component\Plugin\PluginManagerInterface $plugin_manager
+   *   A webform element, handler, or exporter plugin manager.
+   *
+   * @return array
+   *   Plugin definitions.
+   */
+  protected function getPluginDefinitions(PluginManagerInterface $plugin_manager) {
+    $plugins = $plugin_manager->getDefinitions();
+    $plugins = $plugin_manager->getSortedDefinitions($plugins);
+    if ($plugin_manager instanceof WebformElementManagerInterface) {
+      unset($plugins['webform_element']);
+    }
+    elseif ($plugin_manager instanceof WebformHandlerManager) {
+      unset($plugins['broken']);
+    }
+    return $plugins;
   }
 
 }

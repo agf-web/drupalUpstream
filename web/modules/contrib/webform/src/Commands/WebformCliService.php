@@ -871,6 +871,9 @@ class WebformCliService implements WebformCliServiceInterface {
     $html = preg_replace('#<pre><code>\s*#', "<code>\n", $html);
     $html = preg_replace('#\s*</code></pre>#', "\n</code>", $html);
 
+    // Fix code in webform-libraries.html.
+    $html = str_replace(' &gt; ', ' > ', $html);
+
     // Remove space after <br> tags.
     $html = preg_replace('/(<br[^>]*>)\s+/', '\1', $html);
 

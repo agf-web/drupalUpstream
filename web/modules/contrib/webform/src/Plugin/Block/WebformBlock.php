@@ -133,7 +133,7 @@ full_name: '[webform_submission:node:field_full_name:clear]",
       '#title' => $this->t('Redirect to the webform'),
       '#default_value' => $this->configuration['redirect'],
       '#return_value' => TRUE,
-      '#description' => t('If your webform has multiple pages, this will change the behavior of the "Next" button. This will also affect where validation messages show up after an error.'),
+      '#description' => $this->t('If your webform has multiple pages, this will change the behavior of the "Next" button. This will also affect where validation messages show up after an error.'),
     ];
 
     $form['token_tree_link'] = $this->tokenManager->buildTreeElement();

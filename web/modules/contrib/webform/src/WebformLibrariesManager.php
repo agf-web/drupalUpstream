@@ -102,6 +102,12 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
     ];
 
     foreach ($libraries as $library_name => $library) {
+      // Excluded.
+      if ($this->isExcluded($library_name)) {
+        $stats['@excluded']++;
+        continue;
+      }
+
       $library_path = '/libraries/' . $library_name;
       $library_exists = (file_exists(DRUPAL_ROOT . $library_path)) ? TRUE : FALSE;
 
@@ -117,19 +123,7 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
         ':settings_elements_href' => Url::fromRoute('webform.config.elements')->toString(),
       ];
 
-      if ($this->isExcluded($library_name)) {
-        // Excluded.
-        $stats['@excluded']++;
-        $title = $this->t('<strong>@title</strong> (Excluded)', $t_args);
-        if (!empty($library['elements']) && $this->areElementsExcluded($library['elements'])) {
-          $t_args['@element_type'] = implode('; ', $library['elements']);
-          $description = $this->t('The <a href=":homepage_href">@title</a> library is excluded because required element types (@element_type) are <a href=":settings_elements_href">excluded</a>.', $t_args);
-        }
-        else {
-          $description = $this->t('The <a href=":homepage_href">@title</a> library is <a href=":settings_libraries_href">excluded</a>.', $t_args);
-        }
-      }
-      elseif ($library_exists) {
+      if ($library_exists) {
         // Installed.
         $stats['@installed']++;
         $title = $this->t('<strong>@title @version</strong> (Installed)', $t_args);

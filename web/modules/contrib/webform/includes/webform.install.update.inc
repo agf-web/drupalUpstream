@@ -1980,7 +1980,7 @@ function webform_update_8105() {
 }
 
 /******************************************************************************/
-// Webform-8.x-5.0-rc4
+// Webform-8.x-5.0-rc4 - March 13, 2018.
 /******************************************************************************/
 
 /**
@@ -2127,12 +2127,28 @@ function webform_update_8114() {
     ->execute();
 }
 
+/******************************************************************************/
+// Webform-8.x-5.0-rc5 - March 14, 2018 (No update required).
+/******************************************************************************/
+
+/******************************************************************************/
+// Webform-8.x-5.0-rc6 - March 16, 2018 (No update required).
+/******************************************************************************/
+
+/******************************************************************************/
+// Webform-8.x-5.0-rc7 - March 23, 2018.
+/******************************************************************************/
+
 /**
  * Issue #2955218: Allow query and token to be removed from confirmation URL.
  */
 function webform_update_8115() {
   _webform_update_webform_settings();
 }
+
+/******************************************************************************/
+// Webform-8.x-5.0-rc8 - April 2, 2018.
+/******************************************************************************/
 
 /**
  * Stop #multiple__label and #multiple__labels from being saved with every element.
@@ -2156,6 +2172,10 @@ function webform_update_8117() {
   $config->set('test.names', WebformYaml::encode($names));
   $config->save();
 }
+
+/******************************************************************************/
+// Webform-8.x-5.0-rc9 - April 7, 2018.
+/******************************************************************************/
 
 /**
  * Issue #2957074: Invalid Tokens in Email Handler.
@@ -2198,12 +2218,28 @@ function webform_update_8121() {
   _webform_update_webform_handler_settings();
 }
 
+/******************************************************************************/
+// Webform-8.x-5.0-rc10 - April 9, 2018 (No update required).
+/******************************************************************************/
+
+/******************************************************************************/
+// Webform-8.x-5.0-rc11 - April 20, 2018 (No update required).
+/******************************************************************************/
+
+/******************************************************************************/
+// Webform-8.x-5.0-rc12 - April 25 2018.
+/******************************************************************************/
+
 /**
  * Issue #2952419: Attached files are deleted without usage checking.
  */
 function webform_update_8122() {
   _webform_update_admin_settings();
 }
+
+/******************************************************************************/
+// Webform-8.x-5.0-rc13 - June 4, 2018.
+/******************************************************************************/
 
 /**
  * Issue #2962442: Remove [webform-authenticated-user] token and use [current-user] token with clear value option.
@@ -2266,6 +2302,10 @@ function webform_update_8126() {
   _webform_update_webform_settings();
 }
 
+/******************************************************************************/
+// Webform-8.x-5.0-rc14 - June 6, 2018.
+/******************************************************************************/
+
 /**
  * Issue #2974597: Enable default publishing status of new webforms.
  */
@@ -2289,12 +2329,20 @@ function webform_update_8129() {
   _webform_update_webform_handler_settings();
 }
 
+/******************************************************************************/
+// Webform-8.x-5.0-rc15 - June 12, 2018.
+/******************************************************************************/
+
 /**
  * Issue #2974153: Non admin duplicate form.
  */
 function webform_update_8130() {
   _webform_update_webform_settings();
 }
+
+/******************************************************************************/
+// Webform-8.x-5.0-rc16 - June 29, 2018.
+/******************************************************************************/
 
 /**
  * Issue #2980470: Convert email handler "default" settings to use "_default_" to prevent localization issues.
@@ -2357,6 +2405,10 @@ function webform_update_8132() {
   _webform_update_admin_settings();
 }
 
+/******************************************************************************/
+// Webform-8.x-5.0-rc17 - August 6, 2018.
+/******************************************************************************/
+
 /**
  * Issue #2890861: Webform toggle element is not accessible.
  */
@@ -2417,6 +2469,14 @@ function webform_update_8136() {
     $webform_config->save();
   }
 }
+
+/******************************************************************************/
+// Webform-8.x-5.0-rc18 - August 7, 2018 (No update required).
+/******************************************************************************/
+
+/******************************************************************************/
+// Webform-8.x-5.0-rc19 - September 6, 2018.
+/******************************************************************************/
 
 /**
  * Update #counter_* attributes.
@@ -2592,5 +2652,100 @@ function webform_update_8143() {
 
     $config->save();
   }
+  _webform_update_webform_settings();
+}
+
+/******************************************************************************/
+// Webform-8.x-5.0-rc20 - September 7, 2018 (No update required).
+/******************************************************************************/
+
+/******************************************************************************/
+// Webform-8.x-5.0-rc21 - September 8, 2018 (No update required).
+/******************************************************************************/
+
+/******************************************************************************/
+// Webform-8.x-5.0-rc22.
+/******************************************************************************/
+
+/**
+ * Issue #2998239: Swift Mailer no longer working after custom email handler theme option was added.
+ */
+function webform_update_8144() {
+  $config_factory = \Drupal::configFactory();
+  foreach ($config_factory->listAll('webform.webform.') as $webform_config_name) {
+    $webform_config = $config_factory->getEditable($webform_config_name);
+
+    $data = $webform_config->getRawData();
+    $has_email_handler = FALSE;
+    foreach ($data['handlers'] as &$handler) {
+      if (in_array($handler['id'], ['email', 'scheduled_email'])) {
+        // Change 'theme' setting to 'theme_name' to prevent conflicts with
+        // Swift Mailer.
+        if (isset($handler['settings']['theme'])) {
+          $handler['settings']['theme_name'] = $handler['settings']['theme'];
+          unset($handler['settings']['theme']);
+          $has_email_handler = TRUE;
+        }
+      }
+    }
+    if ($has_email_handler) {
+      $webform_config->setData($data);
+      $webform_config->save();
+    }
+  }
+}
+
+/**
+ * Issue #3002183: Upload Total Limit instead of Upload File limit.
+ */
+function webform_update_8145() {
+  _webform_update_admin_settings();
+  _webform_update_webform_settings();
+}
+
+/**
+ * Issue #3000542: Remove webform_devel.module logger debugging.
+ */
+function webform_update_8146() {
+  if ($config = \Drupal::configFactory()->getEditable('webform_devel.settings')) {
+    $config->delete();
+  }
+}
+
+/**
+ * Issue #3006468: Hide empty fields on on submission page.
+ */
+function webform_update_8147() {
+  _webform_update_webform_settings();
+}
+
+/**
+ * Issue #3007215: Option to retain webform title when source entity is provided.
+ */
+function webform_update_8148() {
+  _webform_update_webform_settings();
+}
+
+/**
+ * Issue #3007247: Custom composite fields appear as block elements.
+ */
+function webform_update_8149() {
+  $config_factory = \Drupal::configFactory();
+  foreach ($config_factory->listAll('webform.webform.') as $webform_config_name) {
+    $webform_config = $config_factory->getEditable($webform_config_name);
+    $elements = $webform_config->get('elements');
+    if (strpos($elements, "'add_more'") !== FALSE) {
+      $elements = str_replace("'#add_more'", "'#add_more_items'", $elements);
+      $elements = str_replace("'#multiple__add_more'", "'#multiple__add_more_items'", $elements);
+      $webform_config->set('elements', $elements);
+      $webform_config->save(TRUE);
+    }
+  }
+}
+
+/**
+ * Issue #2980032: SUBMISSION BEHAVIORS: Allow edit the previous submission.
+ */
+function webform_update_8150() {
   _webform_update_webform_settings();
 }

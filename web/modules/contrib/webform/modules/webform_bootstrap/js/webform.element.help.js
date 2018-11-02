@@ -15,7 +15,7 @@
   Drupal.webformBootstrap.elementHelpIcon.options = Drupal.webformBootstrap.elementHelpIcon.options || {
     trigger: 'hover focus click',
     placement: 'auto right',
-    delay: 200,
+    delay: 200
   };
 
   /**
@@ -29,9 +29,9 @@
         var $link = $(this);
 
         var options = $.extend({
-            title: $link.attr('data-webform-help'),
-            html: true
-          }, Drupal.webformBootstrap.elementHelpIcon.options);
+          title: $link.attr('data-webform-help'),
+          html: true
+        }, Drupal.webformBootstrap.elementHelpIcon.options);
 
         $link.tooltip(options)
           .on('click', function (event) {

@@ -3,6 +3,8 @@
 /**
  * @file
  * Webform module translation hooks.
+ *
+ * @see webform_preprocess_table()
  */
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
@@ -79,6 +81,10 @@ function webform_form_config_translation_add_form_alter(&$form, FormStateInterfa
  * Validate callback; Validates and cleanups webform elements.
  */
 function _webform_form_config_translate_add_form_validate(&$form, FormStateInterface $form_state) {
+  if ($form_state::hasAnyErrors()) {
+    return;
+  }
+
   $values = $form_state->getValues();
 
   $config_name = $form_state->get('webform_config_name');

@@ -76,7 +76,7 @@ class Address extends WebformCompositeBase {
 
     // Wrap the 'Address' element which contain multiple input in a fieldset.
     // This accessibility improvements make sense for the Webform module
-    // but not the core Address module.
+    // but not for the core Address module.
     // @see https://www.w3.org/WAI/tutorials/forms/grouping/
     $this->setElementDefaultCallback($element, 'pre_render');
     // Replace 'form_element' theme wrapper with composite form element.

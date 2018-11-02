@@ -3,7 +3,6 @@
 namespace Drupal\webform;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Element;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\webform\Plugin\WebformElement\WebformElement;
 use Drupal\webform\Plugin\WebformElementManagerInterface;
@@ -164,7 +163,7 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
    */
   protected function validateFormRecursive(array $form, FormStateInterface $form_state) {
     foreach ($form as $key => $element) {
-      if (!Element::child($key) || !is_array($element)) {
+      if (!WebformElementHelper::isElement($element, $key)) {
         continue;
       }
 
@@ -262,7 +261,12 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
    */
   protected function submitFormRecursive(array $elements, WebformSubmissionInterface $webform_submission, array &$data, $visible = TRUE) {
     foreach ($elements as $key => &$element) {
-      if (Element::property($key) || !is_array($element)) {
+      if (!WebformElementHelper::isElement($element, $key)) {
+        continue;
+      }
+
+      // Skip if element's #states_clear is FALSE.
+      if (isset($element['#states_clear']) && $element['#states_clear'] === FALSE) {
         continue;
       }
 
@@ -517,8 +521,10 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
         break;
 
       case 'pattern':
-        // @see \Drupal\Core\Render\Element\FormElement::validatePattern
-        $result = preg_match('{' . $trigger_value . '}', $element_value);
+        // PHP: Convert JavaScript-escaped Unicode characters to PCRE escape sequence format
+        // @see \Drupal\webform\Plugin\WebformElement\TextBase::validatePattern
+        $pcre_pattern = preg_replace('/\\\\u([a-fA-F0-9]{4})/', '\\x{\\1}', $trigger_value);
+        $result = preg_match('{' . $pcre_pattern . '}u', $element_value);
         break;
 
       case 'less':
@@ -597,7 +603,7 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
    */
   protected function getBuildElementsRecusive(array &$elements, array &$form, array $parent_states = []) {
     foreach ($form as $key => &$element) {
-      if (Element::property($key) || !is_array($element)) {
+      if (!WebformElementHelper::isElement($element, $key)) {
         continue;
       }
 

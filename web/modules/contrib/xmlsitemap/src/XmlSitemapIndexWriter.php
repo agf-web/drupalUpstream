@@ -25,6 +25,8 @@ class XmlSitemapIndexWriter extends XmlSitemapWriter {
 
   /**
    * {@inheritdoc}
+   *
+   * @todo Should this call parent::getRootAttributes()?
    */
   public function getRootAttributes() {
     $attributes['xmlns'] = 'http://www.sitemaps.org/schemas/sitemap/0.9';
@@ -32,30 +34,36 @@ class XmlSitemapIndexWriter extends XmlSitemapWriter {
       $attributes['xmlns:xsi'] = 'http://www.w3.org/2001/XMLSchema-instance';
       $attributes['xsi:schemaLocation'] = 'http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd';
     }
+
+    \Drupal::moduleHandler()->alter('xmlsitemap_root_attributes', $attributes, $this->sitemap);
+
     return $attributes;
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @codingStandardsIgnoreStart
    */
   public function generateXML() {
+    // @codingStandardsIgnoreEnd
     $lastmod_format = \Drupal::config('xmlsitemap.settings')->get('lastmod_format');
 
     $url_options = $this->sitemap->uri['options'];
-    $url_options += array(
+    $url_options += [
       'absolute' => TRUE,
       'xmlsitemap_base_url' => \Drupal::state()->get('xmlsitemap_base_url'),
       'language' => \Drupal::languageManager()->getDefaultLanguage(),
       'alias' => TRUE,
-    );
+    ];
 
     for ($i = 1; $i <= $this->sitemap->chunks; $i++) {
       $url_options['query']['page'] = $i;
-      $element = array(
-        'loc' => Url::fromRoute('xmlsitemap.sitemap_xml', [], $url_options),
+      $element = [
+        'loc' => Url::fromRoute('xmlsitemap.sitemap_xml', [], $url_options)->toString(),
         // @todo Use the actual lastmod value of the chunk file.
         'lastmod' => gmdate($lastmod_format, REQUEST_TIME),
-      );
+      ];
       $this->writeSitemapElement('sitemap', $element);
     }
   }

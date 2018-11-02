@@ -41,7 +41,7 @@
         var $input = $buttons.find('input[type="radio"]');
 
         // Create checkboxradio.
-        $input.checkboxradio({'icon': false});
+        $input.checkboxradio({icon: false});
 
         // Disable checkboxradio.
         $input.checkboxradio('option', 'disabled', $input.is(':disabled'));

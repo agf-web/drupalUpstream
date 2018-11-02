@@ -65,7 +65,7 @@ function webform_test_alter_hooks_form_webform_submission_contact_node_1_add_for
  *
  * @see \Drupal\webform\WebformSubmissionForm::buildForm
  */
-function webform_test_alter_hooks_webform_submission_form_alter(array &$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function webform_test_alter_hooks_webform_submission_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
   \Drupal::messenger()->addStatus(t("@hook: '@form_id' executed.", ['@hook' => 'hook_webform_submission_form_alter()', '@form_id' => $form_id]), TRUE);
 }
 

@@ -52,7 +52,7 @@
           // Set the throbber progress indicator.
           // @see Drupal.Ajax.prototype.setProgressIndicatorThrobber
           var $clickedButton = $form.find('.form-actions :submit.js-webform-submit-clicked');
-          var $progress = $('<div class="ajax-progress ajax-progress-throbber"><div class="throbber">&nbsp;</div></div>xxx');
+          var $progress = $('<div class="ajax-progress ajax-progress-throbber"><div class="throbber">&nbsp;</div></div>');
           $clickedButton.after($progress);
         });
       });

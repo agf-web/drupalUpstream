@@ -72,7 +72,7 @@
             $a.attr('aria-expanded', !expanded);
 
             // Toggle details.
-            (expanded) ? $details.slideUp() : $details.slideDown();
+            $details[expanded ? 'slideUp' : 'slideDown']();
           }
           event.preventDefault();
         }

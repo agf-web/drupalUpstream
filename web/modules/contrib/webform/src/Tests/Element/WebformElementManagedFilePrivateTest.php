@@ -17,12 +17,18 @@ class WebformElementManagedFilePrivateTest extends WebformElementManagedFileTest
    * Test private files.
    */
   public function testPrivateFiles() {
+    $admin_submission_user = $this->drupalCreateUser([
+      'administer webform submission',
+    ]);
+
+    /**************************************************************************/
+
     $elements = $this->webform->getElementsDecoded();
     $elements['managed_file_single']['#uri_scheme'] = 'private';
     $this->webform->setElements($elements);
     $this->webform->save();
 
-    $this->drupalLogin($this->adminSubmissionUser);
+    $this->drupalLogin($admin_submission_user);
 
     // Upload private file as authenticated user.
     $edit = [
@@ -84,7 +90,7 @@ class WebformElementManagedFilePrivateTest extends WebformElementManagedFileTest
     $this->assertResponse(403);
 
     // Check that authenticated user can't access temp file.
-    $this->drupalLogin($this->adminSubmissionUser);
+    $this->drupalLogin($admin_submission_user);
     $this->drupalGet($temp_file_uri);
     $this->assertResponse(403);
 

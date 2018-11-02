@@ -6,7 +6,7 @@ xmlsitemap.settings:
   mapping:
     minimum_lifetime:
       type: integer
-      label: 'Minumum lifetime of an xmlsitemap xml file'
+      label: 'Minimum lifetime of an xmlsitemap xml file'
     xsl:
       type: integer
       label: 'Check XSL functionality'
@@ -74,18 +74,6 @@ xmlsitemap.*:
     label:
       type: string
       label: 'Sitemap label'
-    chunks:
-      type: integer
-      label: 'Number of chunks'
-    links:
-      type: integer
-      label: 'Number of links'
-    max_filesize:
-      type: integer
-      label: 'Maximum filesize of the sitemap'
     context:
       type: ignore
       label: 'Context of the sitemap'
-    updated:
-      type: integer
-      label: 'Last time sitemap was updated'

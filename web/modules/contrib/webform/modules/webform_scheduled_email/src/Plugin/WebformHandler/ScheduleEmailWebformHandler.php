@@ -2,7 +2,6 @@
 
 namespace Drupal\webform_scheduled_email\Plugin\WebformHandler;
 
-use Drupal\Component\Utility\Unicode;
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -397,7 +396,7 @@ class ScheduleEmailWebformHandler extends EmailWebformHandler {
         WebformScheduledEmailManagerInterface::EMAIL_IGNORED => $this->t('Ignored'),
       ];
 
-      $t_args['@action'] = Unicode::strtolower($statuses[$status]);
+      $t_args['@action'] = mb_strtolower($statuses[$status]);
       $this->messenger()->addWarning($this->t('%submission: Email <b>@action</b> by %handler handler to be sent on %date.', $t_args), TRUE);
 
       $debug_message = $this->buildDebugMessage($webform_submission, $message);

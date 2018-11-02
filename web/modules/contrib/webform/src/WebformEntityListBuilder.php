@@ -309,7 +309,7 @@ class WebformEntityListBuilder extends ConfigEntityListBuilder {
 
       if ($entity->access('update')) {
         $row['status']['data'] = $entity->toLink($status, 'settings-form', ['query' => $this->getDestinationArray()])->toRenderable() + [
-          '#attributes' => ['aria-label' => $aria_label]
+          '#attributes' => ['aria-label' => $aria_label],
         ];
       }
       else {
@@ -338,7 +338,7 @@ class WebformEntityListBuilder extends ConfigEntityListBuilder {
           '#type' => 'link',
           '#title' => $result_total,
           '#attributes' => [
-            'aria-label' => $this->formatPlural($result_total, '@count result for @label', '@count results for @label', ['@label' => $entity->label()])
+            'aria-label' => $this->formatPlural($result_total, '@count result for @label', '@count results for @label', ['@label' => $entity->label()]),
           ],
           '#url' => $entity->toUrl('results-submissions'),
           '#suffix' => ($entity->isResultsDisabled() ? ' ' . $this->t('(Disabled)') : ''),
@@ -592,7 +592,6 @@ class WebformEntityListBuilder extends ConfigEntityListBuilder {
     $account = $this->currentUser;
     return ($account->hasPermission('administer webform') || $account->hasPermission('edit any webform') || $account->hasPermission('view any webform submission'));
   }
-
 
   /**
    * {@inheritdoc}

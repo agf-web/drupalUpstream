@@ -7,11 +7,19 @@ use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\webform\Element\WebformMessage;
 use Drupal\webform\WebformAddonsManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Provides route responses for webform add-on.
  */
 class WebformAddonsController extends ControllerBase implements ContainerInjectionInterface {
+  
+  /**
+   * The current request.
+   *
+   * @var \Symfony\Component\HttpFoundation\Request
+   */
+  protected $request;
 
   /**
    * The webform add-ons manager.
@@ -25,8 +33,11 @@ class WebformAddonsController extends ControllerBase implements ContainerInjecti
    *
    * @param \Drupal\webform\WebformAddonsManagerInterface $addons
    *   The webform add-ons manager.
+   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
+   *   The request stack.
    */
-  public function __construct(WebformAddonsManagerInterface $addons) {
+  public function __construct(RequestStack $request_stack, WebformAddonsManagerInterface $addons) {
+    $this->request = $request_stack->getCurrentRequest();
     $this->addons = $addons;
   }
 
@@ -35,6 +46,7 @@ class WebformAddonsController extends ControllerBase implements ContainerInjecti
    */
   public static function create(ContainerInterface $container) {
     return new static(
+      $container->get('request_stack'),
       $container->get('webform.addons_manager')
     );
   }
@@ -62,12 +74,23 @@ class WebformAddonsController extends ControllerBase implements ContainerInjecti
       '#placeholder' => $this->t('Filter by keyword'),
       '#attributes' => [
         'class' => ['webform-form-filter-text'],
+        'data-summary' => '.webform-addons-summary',
+        'data-item-single' => $this->t('add-on'),
+        'data-item-plural' => $this->t('add-ons'),
+        'data-no-results' => '.webform-addons-no-results',
         'data-element' => '.admin-list',
         'data-source' => 'li',
         'data-parent' => 'li',
         'title' => $this->t('Enter a keyword to filter by.'),
         'autofocus' => 'autofocus',
       ],
+    ];
+
+    // Display info.
+    $build['info'] = [
+      '#markup' => $this->t('@total add-ons', ['@total' => count($this->addons->getProjects())]),
+      '#prefix' => '<p class="webform-addons-summary">',
+      '#suffix' => '</p>',
     ];
 
     // Projects.
@@ -77,6 +100,11 @@ class WebformAddonsController extends ControllerBase implements ContainerInjecti
         'class' => ['webform-addons-projects', 'js-webform-details-toggle', 'webform-details-toggle'],
       ],
     ];
+
+    // Store and disable compact mode.
+    // @see system_admin_compact_mode
+    $system_admin_compact_mode = system_admin_compact_mode();
+    $this->request->cookies->set('Drupal_visitor_admin_compact_mode', FALSE);
 
     $categories = $this->addons->getCategories();
     foreach ($categories as $category_name => $category) {
@@ -116,6 +144,17 @@ class WebformAddonsController extends ControllerBase implements ContainerInjecti
         '#content' => $projects,
       ];
     }
+
+    // Reset compact mode to stored setting.
+    $this->request->cookies->get('Drupal_visitor_admin_compact_mode', $system_admin_compact_mode);
+
+    // No results.
+    $build['no_results'] = [
+      '#type' => 'webform_message',
+      '#message_message' => $this->t('No add-ons found. Try a different search.'),
+      '#message_type' => 'info',
+      '#attributes' => ['class' => ['webform-addons-no-results']],
+    ];
 
     $build['#attached']['library'][] = 'webform/webform.addons';
     $build['#attached']['library'][] = 'webform/webform.admin';

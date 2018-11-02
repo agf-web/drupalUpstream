@@ -2,6 +2,7 @@
 
 namespace Drupal\webform;
 
+use Drupal\Core\Session\AccountInterface;
 use Drupal\user\EntityOwnerInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\user\UserInterface;
@@ -238,6 +239,17 @@ interface WebformSubmissionInterface extends ContentEntityInterface, EntityOwner
    *   TRUE if the submission is sticky.
    */
   public function isSticky();
+
+  /**
+   * Test whether the provided account is owner of this webform submission.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Account whose ownership to test.
+   *
+   * @return bool
+   *   Whether the provided account is owner of this webform submission.
+   */
+  public function isOwner(AccountInterface $account);
 
   /**
    * Checks submission notes.

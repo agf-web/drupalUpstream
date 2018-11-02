@@ -21,7 +21,8 @@ class WebformSubmissionAccess {
    *   The access result.
    */
   public static function checkWizardPagesAccess(WebformSubmissionInterface $webform_submission) {
-    return AccessResult::allowedIf($webform_submission->getWebform()->hasWizardPages());
+    $condition = $webform_submission->getWebform()->hasWizardPages();
+    return AccessResult::allowedIf($condition);
   }
 
   /**
@@ -36,11 +37,12 @@ class WebformSubmissionAccess {
    *   The access result.
    */
   public static function checkResendAccess(WebformSubmissionInterface $webform_submission, AccountInterface $account) {
-    $webform = $webform_submission->getWebform();
-    if ($webform->access('submission_update_any', $account) && $webform->hasMessageHandler()) {
+    if ($webform_submission->getWebform()->hasMessageHandler()) {
       return AccessResult::allowed();
     }
-    return AccessResult::forbidden();
+    else {
+      return AccessResult::forbidden();
+    }
   }
 
 }

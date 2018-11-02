@@ -69,7 +69,7 @@ class WebformExceptionHtmlSubscriber extends DefaultExceptionHtmlSubscriber {
   /**
    * Constructs a new WebformSubscriber.
    *
-  * @param \Symfony\Component\HttpKernel\HttpKernelInterface $http_kernel
+   * @param \Symfony\Component\HttpKernel\HttpKernelInterface $http_kernel
    *   The HTTP kernel.
    * @param \Psr\Log\LoggerInterface $logger
    *   The logger service.
@@ -221,14 +221,19 @@ class WebformExceptionHtmlSubscriber extends DefaultExceptionHtmlSubscriber {
           break;
 
         case WebformInterface::ACCESS_DENIED_PAGE:
-          $this->redirectToLogin($event, $webform_access_denied_message, $webform);
           // Must manually build access denied path so that base path is not
           // included.
           $this->makeSubrequest($event, '/webform/' . $webform->id() . '/access-denied', Response::HTTP_FORBIDDEN);
           break;
 
-        case WebformInterface::ACCESS_DENIED_DEFAULT:
         case WebformInterface::ACCESS_DENIED_MESSAGE:
+          // Display message.
+          $this->setMessage($webform_access_denied_message, $webform);
+          // Make the default 403 request so that we can add cacheable dependencies.
+          $this->makeSubrequest($event, '/system/403', Response::HTTP_FORBIDDEN);
+          break;
+
+        case WebformInterface::ACCESS_DENIED_DEFAULT:
         default:
           // Make the default 403 request so that we can add cacheable dependencies.
           $this->makeSubrequest($event, '/system/403', Response::HTTP_FORBIDDEN);
@@ -264,9 +269,7 @@ class WebformExceptionHtmlSubscriber extends DefaultExceptionHtmlSubscriber {
   protected function redirectToLogin(GetResponseForExceptionEvent $event, $message = NULL, EntityInterface $entity = NULL) {
     // Display message.
     if ($message) {
-      $message = $this->tokenManager->replace($message, $entity);
-      $build = WebformHtmlEditor::checkMarkup($message);
-      $this->messenger->addStatus($this->renderer->renderPlain($build));
+      $this->setMessage($message, $entity);
     }
 
     // Only redirect anonymous users.
@@ -280,6 +283,20 @@ class WebformExceptionHtmlSubscriber extends DefaultExceptionHtmlSubscriber {
       ['absolute' => TRUE, 'query' => $this->redirectDestination->getAsArray()]
     );
     $event->setResponse(new RedirectResponse($redirect_url->toString()));
+  }
+
+  /**
+   * Display custom message.
+   *
+   * @param null|string $message
+   *   (Optional) Message to be display on user login.
+   * @param null|\Drupal\Core\Entity\EntityInterface $entity
+   *   (Optional) Entity to be used when replacing tokens.
+   */
+  protected function setMessage($message, EntityInterface $entity = NULL) {
+    $message = $this->tokenManager->replace($message, $entity);
+    $build = WebformHtmlEditor::checkMarkup($message);
+    $this->messenger->addStatus($this->renderer->renderPlain($build));
   }
 
 }

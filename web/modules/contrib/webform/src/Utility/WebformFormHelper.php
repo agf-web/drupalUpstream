@@ -191,7 +191,7 @@ class WebformFormHelper {
    */
   protected static function flattenElementsRecursive(array &$build, array &$elements, array &$duplicate_element_keys) {
     foreach ($build as $key => &$element) {
-      if (Element::child($key) && is_array($element)) {
+      if (WebformElementHelper::isElement($element, $key)) {
         // If there are duplicate element keys create an array of referenced
         // elements.
         if (isset($elements[$key])) {

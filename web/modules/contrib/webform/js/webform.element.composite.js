@@ -31,11 +31,11 @@
           else {
             $element.show();
             if (required) {
-              $element.attr({'required': 'required', 'aria-required': 'true'})
+              $element.attr({'required': 'required', 'aria-required': 'true'});
             }
           }
         }).change();
-      })
+      });
     }
   };
 

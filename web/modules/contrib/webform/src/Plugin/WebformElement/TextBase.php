@@ -2,7 +2,6 @@
 
 namespace Drupal\webform\Plugin\WebformElement;
 
-use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\webform\Plugin\WebformElementBase;
 use Drupal\webform\Utility\WebformTextHelper;
@@ -12,6 +11,8 @@ use Drupal\webform\WebformSubmissionInterface;
  * Provides a base 'text' (field) class.
  */
 abstract class TextBase extends WebformElementBase {
+
+  use TextBaseTrait;
 
   /**
    * {@inheritdoc}
@@ -25,6 +26,7 @@ abstract class TextBase extends WebformElementBase {
       'placeholder' => '',
       'autocomplete' => 'on',
       'pattern' => '',
+      'pattern_error' => '',
     ] + parent::getDefaultProperties();
   }
 
@@ -32,7 +34,7 @@ abstract class TextBase extends WebformElementBase {
    * {@inheritdoc}
    */
   public function getTranslatableProperties() {
-    return array_merge(parent::getTranslatableProperties(), ['counter_message']);
+    return array_merge(parent::getTranslatableProperties(), ['counter_message', 'pattern_error']);
   }
 
   /**
@@ -92,6 +94,27 @@ abstract class TextBase extends WebformElementBase {
       $element['#attributes']['class'][] = 'js-webform-input-mask';
       $element['#attached']['library'][] = 'webform/webform.element.inputmask';
     }
+
+    // Input hiding.
+    if (!empty($element['#input_hide'])) {
+      $element['#attributes']['class'][] = 'js-webform-input-hide';
+      $element['#attached']['library'][] = 'webform/webform.element.inputhide';
+    }
+
+    // Pattern validation.
+    // This override core's pattern validation to support unicode
+    // and a custom error message.
+    if (isset($element['#pattern'])) {
+      $element['#attributes']['pattern'] = $element['#pattern'];
+      $element['#element_validate'][] = [get_called_class(), 'validatePattern'];
+
+      // Set required error message using #pattern_error.
+      // @see Drupal.behaviors.webformRequiredError
+      // @see webform.form.js
+      if (!empty($element['#pattern_error']) && empty($element['#required_error'])) {
+        $element['#attributes']['data-webform-required-error'] = $element['#pattern_error'];
+      }
+    }
   }
 
   /**
@@ -112,7 +135,7 @@ abstract class TextBase extends WebformElementBase {
       '#options' => [
         'Basic' => [
           "'alias': 'currency'" => $this->t('Currency - @format', ['@format' => '$ 9.99']),
-          "'alias': 'mm/dd/yyyy'" => $this->t('Date - @format', ['@format' => 'mm/dd/yyyy']),
+          "'alias': 'datetime'" => $this->t('Date - @format', ['@format' => "2007-06-09'T'17:46:21"]),
           "'alias': 'decimal'" => $this->t('Decimal - @format', ['@format' => '1.234']),
           "'alias': 'email'" => $this->t('Email - @format', ['@format' => 'example@example.com']),
           "'alias': 'percentage'" => $this->t('Percentage - @format', ['@format' => '99%']),
@@ -124,13 +147,23 @@ abstract class TextBase extends WebformElementBase {
           '[9-]AAA-999' => $this->t('License plate - @format', ['@format' => '[9-]AAA-999']),
           "'alias': 'mac'" => $this->t('MAC addresses - @format', ['@format' => '99-99-99-99-99-99']),
           '999-99-9999' => $this->t('SSN - @format', ['@format' => '999-99-9999']),
-          "'alias': 'vin'" => 'VIN (Vehicle identification number)',
+          "'alias': 'vin'" => $this->t('VIN (Vehicle identification number)'),
+          "'casing': 'upper'" => $this->t('Uppercase - UPPERCASE'),
+          "'casing': 'lower'" => $this->t('Lowercase - lowercase'),
         ],
       ],
     ];
     if ($this->librariesManager->isExcluded('jquery.inputmask')) {
       $form['form']['input_mask']['#access'] = FALSE;
     }
+
+    // Input hiding.
+    $form['form']['input_hide'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Input hiding'),
+      '#description' => $this->t('Hide the input of the element when the input is not being focused.'),
+      '#return_value' => TRUE,
+    ];
 
     // Pattern.
     $form['validation']['pattern'] = [
@@ -139,80 +172,19 @@ abstract class TextBase extends WebformElementBase {
       '#description' => $this->t('A <a href=":href">regular expression</a> that the element\'s value is checked against.', [':href' => 'http://www.w3schools.com/js/js_regexp.asp']),
       '#value__title' => $this->t('Pattern regular expression'),
     ];
+    $form['validation']['pattern_error'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Pattern message'),
+      '#description' => $this->t('If set, this message will be used when a pattern is not matched, instead of the default "@message" message.', ['@message' => t('%name field is not in the right format.')]),
+      '#states' => [
+        'visible' => [
+          ':input[name="properties[pattern][checkbox]"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
 
     // Counter.
-    $form['validation']['counter_type'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Count'),
-      '#description' => $this->t('Limit entered value to a maximum number of characters or words.'),
-      '#empty_option' => $this->t('- None -'),
-      '#options' => [
-        'character' => $this->t('Characters'),
-        'word' => $this->t('Words'),
-      ],
-    ];
-    $form['validation']['counter_container'] = $this->getFormInlineContainer();
-    $form['validation']['counter_container']['#states'] = [
-      'invisible' => [
-        ':input[name="properties[counter_type]"]' => ['value' => ''],
-      ],
-    ];
-    $form['validation']['counter_container']['counter_minimum'] = [
-      '#type' => 'number',
-      '#title' => $this->t('Count minimum'),
-      '#min' => 1,
-      '#states' => [
-        'required' => [
-          ':input[name="properties[counter_type]"]' => ['!value' => ''],
-          ':input[name="properties[counter_maximum]"]' => ['value' => ''],
-        ],
-      ],
-    ];
-    $form['validation']['counter_container']['counter_maximum'] = [
-      '#type' => 'number',
-      '#title' => $this->t('Count maximum'),
-      '#min' => 1,
-      '#states' => [
-        'required' => [
-          ':input[name="properties[counter_type]"]' => ['!value' => ''],
-          ':input[name="properties[counter_minimum]"]' => ['value' => ''],
-        ],
-      ],
-    ];
-    $form['validation']['counter_message_container'] = [
-      '#type' => 'container',
-      '#states' => [
-        'invisible' => [
-          ':input[name="properties[counter_type]"]' => ['value' => ''],
-        ],
-      ],
-    ];
-    $form['validation']['counter_message_container']['counter_minimum_message'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Count minimum message'),
-      '#description' => $this->t('Defaults to: %value', ['%value' => $this->t('%d characters/word(s) entered')]),
-      '#states' => [
-        'visible' => [
-          ':input[name="properties[counter_minimum]"]' => ['!value' => ''],
-          ':input[name="properties[counter_maximum]"]' => ['value' => ''],
-        ],
-      ],
-    ];
-    $form['validation']['counter_message_container']['counter_maximum_message'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Count maximum message'),
-      '#description' => $this->t('Defaults to: %value', ['%value' => $this->t('%d characters/word(s) remaining')]),
-      '#states' => [
-        'visible' => [
-          ':input[name="properties[counter_maximum]"]' => ['!value' => ''],
-        ],
-      ],
-    ];
-    if ($this->librariesManager->isExcluded('jquery.textcounter')) {
-      $form['validation']['counter_type']['#access'] = FALSE;
-      $form['validation']['counter_container']['#access'] = FALSE;
-      $form['validation']['counter_message_container']['#access'] = FALSE;
-    }
+    $form['validation'] += $this->buildCounterForm();
 
     if (isset($form['form']['maxlength'])) {
       $form['form']['maxlength']['#description'] .= ' ' . $this->t('If character counter is enabled, maxlength will automatically be set to the count maximum.');
@@ -251,7 +223,7 @@ abstract class TextBase extends WebformElementBase {
 
     // Get character/word count.
     if ($type === 'character') {
-      $length = Unicode::strlen($value);
+      $length = mb_strlen($value);
       $t_args['%length'] = $length;
     }
     // Validate word count.
@@ -270,6 +242,29 @@ abstract class TextBase extends WebformElementBase {
   }
 
   /**
+   * Form API callback. Validate unicode pattern and display a custom error.
+   *
+   * @see https://www.drupal.org/project/drupal/issues/2633550
+   */
+  public static function validatePattern(&$element, FormStateInterface $form_state, &$complete_form) {
+    if ($element['#value'] !== '') {
+      // PHP: Convert JavaScript-escaped Unicode characters to PCRE
+      // escape sequence format.
+      // @see https://bytefreaks.net/programming-2/php-programming-2/php-convert-javascript-escaped-unicode-characters-to-html-hex-references˚
+      $pcre_pattern = preg_replace('/\\\\u([a-fA-F0-9]{4})/', '\\x{\\1}', $element['#pattern']);
+      $pattern = '{^(?:' . $pcre_pattern . ')$}u';
+      if (!preg_match($pattern, $element['#value'])) {
+        if (!empty($element['#pattern_error'])) {
+          $form_state->setError($element, $element['#pattern_error']);
+        }
+        else {
+          $form_state->setError($element, t('%name field is not in the right format.', ['%name' => $element['#title']]));
+        }
+      }
+    }
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
@@ -281,9 +276,16 @@ abstract class TextBase extends WebformElementBase {
     // @see http://stackoverflow.com/questions/4440626/how-can-i-validate-regex
     if (!empty($properties['#pattern'])) {
       set_error_handler('_webform_entity_element_validate_rendering_error_handler');
-      if (preg_match('{^(?:' . $properties['#pattern'] . ')$}', NULL) === FALSE) {
+
+      // PHP: Convert JavaScript-escaped Unicode characters to PCRE escape
+      // sequence format.
+      // @see https://bytefreaks.net/programming-2/php-programming-2/php-convert-javascript-escaped-unicode-characters-to-html-hex-references
+      $pcre_pattern = preg_replace('/\\\\u([a-fA-F0-9]{4})/', '\\x{\\1}', $properties['#pattern']);
+
+      if (preg_match('{^(?:' . $pcre_pattern . ')$}u', NULL) === FALSE) {
         $form_state->setErrorByName('pattern', t('Pattern %pattern is not a valid regular expression.', ['%pattern' => $properties['#pattern']]));
       }
+
       set_error_handler('_drupal_error_handler');
     }
 

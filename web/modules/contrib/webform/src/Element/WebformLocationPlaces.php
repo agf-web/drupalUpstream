@@ -32,7 +32,7 @@ class WebformLocationPlaces extends WebformLocationBase {
   public static function getLocationAttributes() {
     return [
       'lat' => t('Latitude'),
-      'lng' =>  t('Longitude'),
+      'lng' => t('Longitude'),
       'name' => t('Name'),
       'city' => t('City'),
       'country' => t('Country'),

@@ -113,7 +113,12 @@ abstract class TabularBaseWebformExporter extends WebformExporterBase {
       case 'created':
       case 'changed':
       case 'timestamp':
-        $record[] = date('Y-m-d H:i:s', $webform_submission->get($field_name)->value);
+        if (!empty($webform_submission->$field_name->value)) {
+          $record[] = date('Y-m-d H:i:s', $webform_submission->$field_name->value);
+        }
+        else{
+          $record[] = '';
+        }
         break;
 
       case 'entity_reference':

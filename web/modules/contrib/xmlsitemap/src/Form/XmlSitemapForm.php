@@ -26,28 +26,28 @@ class XmlSitemapForm extends EntityForm {
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
     if ($this->entity->getContext() == NULL) {
-      $this->entity->context = array();
+      $this->entity->context = [];
       $this->entity->setOriginalId(NULL);
     }
     $xmlsitemap = $this->entity;
     $form['#entity'] = $xmlsitemap;
-    $form['label'] = array(
+    $form['label'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Label'),
       '#maxlength' => 255,
       '#default_value' => $xmlsitemap->label(),
       '#description' => $this->t('Label for the Example.'),
       '#required' => TRUE,
-    );
-    $form['context'] = array(
+    ];
+    $form['context'] = [
       '#tree' => TRUE,
-    );
+    ];
     $visible_children = Element::getVisibleChildren($form['context']);
     if (empty($visible_children)) {
-      $form['context']['empty'] = array(
+      $form['context']['empty'] = [
         '#type' => 'markup',
         '#markup' => '<p>' . t('There are currently no XML sitemap contexts available.') . '</p>',
-      );
+      ];
     }
 
     return $form;
@@ -74,14 +74,14 @@ class XmlSitemapForm extends EntityForm {
     try {
       $status = $this->entity->save();
       if ($status == SAVED_NEW) {
-        drupal_set_message($this->t('Saved the %label sitemap.', array(
-              '%label' => $this->entity->label(),
-        )));
+        drupal_set_message($this->t('Saved the %label sitemap.', [
+          '%label' => $this->entity->label(),
+        ]));
       }
-      else if ($status == SAVED_UPDATED) {
-        drupal_set_message($this->t('Updated the %label sitemap.', array(
-              '%label' => $this->entity->label(),
-        )));
+      elseif ($status == SAVED_UPDATED) {
+        drupal_set_message($this->t('Updated the %label sitemap.', [
+          '%label' => $this->entity->label(),
+        ]));
       }
     }
     catch (EntityStorageException $ex) {
@@ -95,13 +95,11 @@ class XmlSitemapForm extends EntityForm {
    * {@inheritdoc}
    */
   public function delete(array $form, FormStateInterface $form_state) {
-    $destination = array();
     $request = $this->getRequest();
     if ($request->query->has('destination')) {
-      $destination = drupal_get_destination();
       $request->query->remove('destination');
     }
-    $form_state->setRedirect('xmlsitemap.admin_delete', array('xmlsitemap' => $this->entity->id()));
+    $form_state->setRedirect('xmlsitemap.admin_delete', ['xmlsitemap' => $this->entity->id()]);
   }
 
 }

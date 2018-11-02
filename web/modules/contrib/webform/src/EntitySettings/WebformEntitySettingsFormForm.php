@@ -112,6 +112,19 @@ class WebformEntitySettingsFormForm extends WebformEntitySettingsBaseForm {
       $form['form_settings']['status']['#access'] = FALSE;
       $form['form_settings']['scheduled']['#access'] = FALSE;
     }
+    $form['form_settings']['form_title'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Form title display'),
+      '#description' => $this->t("Select how the form's title is displayed when this webform is attached to a source entity. This title is only displayed when a webform is linked to from a source entity or opened in dialog."),
+      '#options' => [
+        WebformInterface::TITLE_SOURCE_ENTITY_WEBFORM => $this->t('Source entity: Webform'),
+        WebformInterface::TITLE_WEBFORM_SOURCE_ENTITY => $this->t('Webform: Source entity'),
+        WebformInterface::TITLE_WEBFORM => $this->t('Webform'),
+        WebformInterface::TITLE_SOURCE_ENTITY => $this->t('Source entity'),
+      ],
+      '#required' => TRUE,
+      '#default_value' => $settings['form_title'],
+    ];
     $form['form_settings']['form_open_message'] = [
       '#type' => 'webform_html_editor',
       '#title' => $this->t('Form open message'),
@@ -157,9 +170,9 @@ class WebformEntitySettingsFormForm extends WebformEntitySettingsBaseForm {
       '#title' => $this->t('When a user is denied access to this webform'),
       '#options' => [
         WebformInterface::ACCESS_DENIED_DEFAULT => $this->t('Default (Displays the default access denied page)'),
-        WebformInterface::ACCESS_DENIED_MESSAGE => $this->t('Inline (Displays message when access is denied to field and blocks)'),
-        WebformInterface::ACCESS_DENIED_PAGE => $this->t('Page (Displays message when access is denied to forms, fields, and blocks)'),
-        WebformInterface::ACCESS_DENIED_LOGIN => $this->t('Login (Redirects to user login form and displays message)'),
+        WebformInterface::ACCESS_DENIED_MESSAGE => $this->t('Inline (Displays message when access is denied to field, nodes, and blocks)'),
+        WebformInterface::ACCESS_DENIED_PAGE => $this->t('Page (Displays message when access is denied to forms, fields, nodes, and blocks)'),
+        WebformInterface::ACCESS_DENIED_LOGIN => $this->t('Login (Redirects to user login form and displays message. Field, nodes, and block only display the message.)'),
       ],
       '#required' => TRUE,
       '#default_value' => $settings['form_access_denied'],
@@ -431,6 +444,22 @@ class WebformEntitySettingsFormForm extends WebformEntitySettingsBaseForm {
       '#default_value' => $settings['preview_attributes'],
     ];
     $form['preview_settings']['preview_container']['token_tree_link'] = $this->tokenManager->buildTreeElement();
+
+    // File settings.
+    $form['file_settings'] = [
+      '#type' => 'details',
+      '#title' => $this->t('File settings'),
+      '#open' => TRUE,
+      '#access' => $webform->hasManagedFile(),
+    ];
+    $form['file_settings']['form_file_limit'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('File upload limit'),
+      '#description' => $this->t('Enter a value like "512" (bytes), "80 KB" (kilobytes) or "50 MB" (megabytes) in order to set the file upload limit for this form.'),
+      '#element_validate' => [['\Drupal\webform\Form\AdminConfig\WebformAdminConfigElementsForm', 'validateMaxFilesize']],
+      '#size' => 10,
+      '#default_value' => $settings['form_file_limit'],
+    ];
 
     // Custom settings.
     $properties = WebformElementHelper::getProperties($webform->getElementsDecoded());

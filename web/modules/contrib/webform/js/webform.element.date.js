@@ -72,7 +72,7 @@
 
         // Add min/max year to data range.
         if (!options.yearRange && $input.data('min-year') && $input.data('max-year')) {
-          options.yearRange = $input.data('min-year') + ':' + $input.attr('data-max-year')
+          options.yearRange = $input.data('min-year') + ':' + $input.attr('data-max-year');
         }
 
         // First day of the week.

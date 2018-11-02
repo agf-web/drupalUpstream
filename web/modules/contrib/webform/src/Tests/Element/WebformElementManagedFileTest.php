@@ -32,6 +32,17 @@ class WebformElementManagedFileTest extends WebformElementManagedFileTestBase {
   ];
 
   /**
+   * {@inheritdoc}
+   */
+  public function setUp() {
+    parent::setUp();
+
+    $this->adminSubmissionUser = $this->drupalCreateUser([
+      'administer webform submission',
+    ]);
+  }
+
+  /**
    * Test single and multiple file upload.
    */
   public function testFileUpload() {

@@ -2,10 +2,12 @@
 
 namespace Drupal\webform\Form;
 
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
+use Drupal\Component\Transliteration\TransliterationInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\SubformState;
-use Drupal\Component\Plugin\Exception\PluginNotFoundException;
+use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\webform\Plugin\WebformHandlerInterface;
 use Drupal\webform\Utility\WebformFormHelper;
 use Drupal\webform\WebformInterface;
@@ -19,6 +21,25 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 abstract class WebformHandlerFormBase extends FormBase {
 
   use WebformDialogFormTrait;
+
+  /**
+   * Machine name maxlenght.
+   */
+  const MACHINE_NAME_MAXLENGHTH = 64;
+
+  /**
+   * The language manager.
+   *
+   * @var \Drupal\Core\Language\LanguageManagerInterface
+   */
+  protected $languageManager;
+
+  /**
+   * The transliteration helper.
+   *
+   * @var \Drupal\Component\Transliteration\TransliterationInterface
+   */
+  protected $transliteration;
 
   /**
    * The token manager.
@@ -51,10 +72,16 @@ abstract class WebformHandlerFormBase extends FormBase {
   /**
    * Constructs a WebformHandlerFormBase.
    *
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   The language manager.
+   * @param \Drupal\Component\Transliteration\TransliterationInterface $transliteration
+   *   The transliteration helper.
    * @param \Drupal\webform\WebformTokenManagerInterface $token_manager
    *   The webform token manager.
    */
-  public function __construct(WebformTokenManagerInterface $token_manager) {
+  public function __construct(LanguageManagerInterface $language_manager, TransliterationInterface $transliteration, WebformTokenManagerInterface $token_manager) {
+    $this->languageManager = $language_manager;
+    $this->transliteration = $transliteration;
     $this->tokenManager = $token_manager;
   }
 
@@ -63,6 +90,8 @@ abstract class WebformHandlerFormBase extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
+      $container->get('language_manager'),
+      $container->get('transliteration'),
       $container->get('webform.token_manager')
     );
   }
@@ -150,7 +179,7 @@ abstract class WebformHandlerFormBase extends FormBase {
     ];
     $form['general']['handler_id'] = [
       '#type' => 'machine_name',
-      '#maxlength' => 64,
+      '#maxlength' => static::MACHINE_NAME_MAXLENGHTH,
       '#description' => $this->t('A unique name for this handler instance. Must be alpha-numeric and underscore separated.'),
       '#default_value' => $this->webformHandler->getHandlerId() ?: $this->getUniqueMachineName($this->webformHandler),
       '#required' => TRUE,
@@ -310,24 +339,38 @@ abstract class WebformHandlerFormBase extends FormBase {
   }
 
   /**
-   * Generates a unique machine name for a webform handler instance.
+   * Generates a unique translated machine name for a webform handler instance.
    *
    * @param \Drupal\webform\Plugin\WebformHandlerInterface $handler
    *   The webform handler.
    *
    * @return string
-   *   Returns the unique name.
+   *   Returns a unique machine based the handler's plugin label.
+   *
+   * @see \Drupal\Core\Render\Element\MachineName
+   * @see \Drupal\system\MachineNameController::transliterate
    */
   public function getUniqueMachineName(WebformHandlerInterface $handler) {
-    $suggestion = $handler->getPluginId();
+    // Get label which default to the plugin's label for new instances.
+    $label = (string) $this->webformHandler->label();
+
+    // Get current langcode.
+    $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
+
+    // Get machine name.
+    $suggestion = $this->transliteration->transliterate($label, $langcode, '_', static::MACHINE_NAME_MAXLENGHTH);
+    $suggestion = mb_strtolower($suggestion);
+    $suggestion = preg_replace('@' . strtr('[^a-z0-9_]+', ['@' => '\@', chr(0) => '']) . '@', '_', $suggestion);
+
+    // Increment the machine name.
     $count = 1;
     $machine_default = $suggestion;
     $instance_ids = $this->webform->getHandlers()->getInstanceIds();
     while (isset($instance_ids[$machine_default])) {
       $machine_default = $suggestion . '_' . $count++;
     }
-    // Only return a suggestion if it is not the default plugin id.
-    return ($machine_default != $handler->getPluginId()) ? $machine_default : '';
+
+    return $machine_default;
   }
 
   /**

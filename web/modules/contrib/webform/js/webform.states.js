@@ -20,7 +20,7 @@
    * @param {string} data
    *   The data attribute name.
    *
-   * @returns {boolean}
+   * @return {boolean}
    *   TRUE if an element has a specified data attribute.
    */
   $.fn.hasData = function (data) {
@@ -30,7 +30,7 @@
   /**
    * Check if element is within the webform or not.
    *
-   * @returns {boolean}
+   * @return {boolean}
    *   TRUE if element is within the webform.
    */
   $.fn.isWebform = function () {
@@ -238,7 +238,7 @@
   /**
    * Trigger an input's event handlers.
    *
-   * @param input
+   * @param {element} input
    *   An input.
    */
   function triggerEventHandlers(input) {
@@ -271,7 +271,7 @@
   /**
    * Backup an input's current value and required attribute
    *
-   * @param input
+   * @param {element} input
    *   An input.
    */
   function backupValueAndRequired(input) {
@@ -305,7 +305,7 @@
   /**
    * Restore an input's value and required attribute.
    *
-   * @param input
+   * @param {element} input
    *   An input.
    */
   function restoreValueAndRequired(input) {
@@ -344,7 +344,7 @@
   /**
    * Clear an input's value and required attributes.
    *
-   * @param input
+   * @param {element} input
    *   An input.
    */
   function clearValueAndRequired(input) {

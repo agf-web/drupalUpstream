@@ -277,7 +277,42 @@ class WebformEntityController extends ControllerBase implements ContainerInjecti
     else {
       $source_entity = $this->requestHandler->getCurrentSourceEntity('webform');
     }
-    return ($source_entity) ? $source_entity->label() : $webform->label();
+
+    // If source entity does not exist or does not have a label always use
+    // the webform's label.
+    if (!$source_entity || !method_exists($source_entity, 'label')) {
+      return $webform->label();
+    }
+
+    // Handler duplicate titles.
+    if ($source_entity->label() === $webform->label()) {
+      return $webform->label();
+    }
+
+    // Get the webform's title.
+    switch ($webform->getSetting('form_title')) {
+      case WebformInterface::TITLE_SOURCE_ENTITY:
+        return $source_entity->label();
+
+      case WebformInterface::TITLE_WEBFORM:
+        return $webform->label();
+
+      case WebformInterface::TITLE_WEBFORM_SOURCE_ENTITY:
+        $t_args = [
+          '@source_entity' => $source_entity->label(),
+          '@webform' => $webform->label(),
+        ];
+        return $this->t('@webform: @source_entity ', $t_args);
+
+      case WebformInterface::TITLE_SOURCE_ENTITY_WEBFORM:
+      default:
+        $t_args = [
+          '@source_entity' => $source_entity->label(),
+          '@webform' => $webform->label(),
+        ];
+        return $this->t('@source_entity: @webform', $t_args);
+
+    }
   }
 
 }

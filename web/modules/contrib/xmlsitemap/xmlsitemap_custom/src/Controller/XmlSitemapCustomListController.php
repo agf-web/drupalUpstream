@@ -4,6 +4,7 @@ namespace Drupal\xmlsitemap_custom\Controller;
 
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Link;
 use Drupal\Core\Url;
 
 /**
@@ -18,20 +19,20 @@ class XmlSitemapCustomListController extends ControllerBase {
    *   The list to be rendered.
    */
   public function render() {
-    $build['xmlsitemap_add_custom'] = array(
+    $build['xmlsitemap_add_custom'] = [
       '#type' => 'link',
       '#title' => t('Add custom link'),
       '#href' => 'admin/config/search/xmlsitemap/custom/add',
-    );
-    $header = array(
-      'loc' => array('data' => t('Location'), 'field' => 'loc', 'sort' => 'asc'),
-      'priority' => array('data' => t('Priority'), 'field' => 'priority'),
-      'changefreq' => array('data' => t('Change frequency'), 'field' => 'changefreq'),
-      'language' => array('data' => t('Language'), 'field' => 'language'),
-      'operations' => array('data' => t('Operations')),
-    );
+    ];
+    $header = [
+      'loc' => ['data' => t('Location'), 'field' => 'loc', 'sort' => 'asc'],
+      'priority' => ['data' => t('Priority'), 'field' => 'priority'],
+      'changefreq' => ['data' => t('Change frequency'), 'field' => 'changefreq'],
+      'language' => ['data' => t('Language'), 'field' => 'language'],
+      'operations' => ['data' => t('Operations')],
+    ];
 
-    $rows = array();
+    $rows = [];
 
     $query = db_select('xmlsitemap');
     $query->fields('xmlsitemap');
@@ -42,38 +43,42 @@ class XmlSitemapCustomListController extends ControllerBase {
 
     foreach ($result as $link) {
       $language = $this->languageManager()->getLanguage($link->language);
-      $row = array();
-      $row['loc'] = $this->l($link->loc, Url::fromUri('base://' . $link->loc));
+      $row = [];
+      $row['loc'] = Link::fromTextAndUrl($link->loc, Url::fromUri('internal:' . $link->loc));
       $row['priority'] = number_format($link->priority, 1);
       $row['changefreq'] = $link->changefreq ? Unicode::ucfirst(xmlsitemap_get_changefreq($link->changefreq)) : t('None');
       if (isset($header['language'])) {
         $row['language'] = $language->getName();
       }
-      $operations['edit'] = array(
+      $operations['edit'] = [
         'title' => t('Edit'),
         'url' => Url::fromRoute('xmlsitemap_custom.edit', ['link' => $link->id]),
-      );
-      $operations['delete'] = array(
+      ];
+      $operations['delete'] = [
         'title' => t('Delete'),
         'url' => Url::fromRoute('xmlsitemap_custom.delete', ['link' => $link->id]),
-      );
-      $row['operations'] = array(
-        'data' => array(
+      ];
+      $row['operations'] = [
+        'data' => [
           '#type' => 'operations',
           '#links' => $operations,
-        ),
-      );
+        ],
+      ];
       $rows[] = $row;
     }
 
     // @todo Convert to tableselect
-    $build['xmlsitemap_custom_table'] = array(
+    $build['xmlsitemap_custom_table'] = [
       '#type' => 'table',
       '#header' => $header,
       '#rows' => $rows,
-      '#empty' => $this->t('No custom links available. <a href="@custom_link">Add custom link</a>', array('@custom_link' => Url::fromRoute('xmlsitemap_custom.add', [], array('query' => $this->getDestinationArray()))->toString())),
-    );
-    $build['xmlsitemap_custom_pager'] = array('#type' => 'pager');
+      '#empty' => $this->t('No custom links available. <a href="@custom_link">Add custom link</a>', [
+        '@custom_link' => Url::fromRoute('xmlsitemap_custom.add', [], [
+          'query' => $this->getDestinationArray(),
+        ])->toString(),
+      ]),
+    ];
+    $build['xmlsitemap_custom_pager'] = ['#type' => 'pager'];
 
     return $build;
   }

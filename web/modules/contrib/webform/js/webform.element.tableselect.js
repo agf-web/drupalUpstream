@@ -30,7 +30,7 @@
     var $table = $(this);
 
     // Set default table rows to .selected class.
-    $table.find('tr').each(function() {
+    $table.find('tr').each(function () {
       // Set table row selected for checkboxes.
       var $tr = $(this);
       if ($tr.find('input[type="checkbox"]:checked').length && !$tr.hasClass('selected')) {
@@ -61,6 +61,6 @@
 
       $checkbox.click();
     });
-  }
+  };
 
 })(jQuery, Drupal);

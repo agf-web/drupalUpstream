@@ -88,6 +88,27 @@
           editor.setOption('readOnly', $input.is(':disabled'));
         });
 
+        // Delay refreshing CodeMirror for 10 millisecond while the dialog is
+        // still being rendered.
+        // @see http://stackoverflow.com/questions/8349571/codemirror-editor-is-not-loading-content-until-clicked
+        setTimeout(function () {
+          // Show tab panel and open details.
+          var $tabPanel = $input.parents('.ui-tabs-panel:hidden');
+          var $details = $input.parents('details:not([open])');
+
+          if (!$tabPanel.length && $details.length) {
+            return;
+          }
+
+          $tabPanel.show();
+          $details.attr('open', 'open');
+
+          editor.refresh();
+
+          // Hide tab panel and close details.
+          $tabPanel.hide();
+          $details.removeAttr('open');
+        }, 10);
       });
 
       // Webform CodeMirror syntax coloring.
@@ -95,55 +116,7 @@
         // Mode Runner - http://codemirror.net/demo/runmode.html
         CodeMirror.runMode($(this).addClass('cm-s-default').text(), $(this).attr('data-webform-codemirror-mode'), this);
       });
-
     }
   };
-
-  /****************************************************************************/
-  // Refresh functions.
-  /****************************************************************************/
-
-  /**
-   * Refresh codemirror element to make sure it renders correctly.
-   *
-   * @param element
-   *   An element containing a CodeMirror editor.
-   */
-  function refresh(element) {
-    // Show tab panel and open details.
-    var $tabPanel = $(element).parents('.ui-tabs-panel:hidden');
-    $tabPanel.show();
-    var $details = $(element).parents('details:not([open])');
-    $details.attr('open', 'open');
-
-    element.CodeMirror.refresh();
-
-    // Hide tab panel and close details.
-    $tabPanel.hide();
-    $details.removeAttr('open');
-  }
-
-  // Workaround: When a dialog opens we need to reference all CodeMirror
-  // editors to make sure they are properly initialized and sized.
-  $(window).on('dialog:aftercreate', function (dialog, $element, settings) {
-    // Delay refreshing CodeMirror for 10 millisecond while the dialog is
-    // still being rendered.
-    // @see http://stackoverflow.com/questions/8349571/codemirror-editor-is-not-loading-content-until-clicked
-    setTimeout(function () {
-      $('.CodeMirror').each(function (index, element) {
-        refresh(element);
-      });
-    }, 10);
-  });
-
-  // On state:visible refresh CodeMirror elements.
-  $(document).on('state:visible state:visible-slide', function (event) {
-    var $element = $(event.target).parent().find('.js-webform-codemirror');
-    $element.parent().find('.CodeMirror').each(function (index, element) {
-      setTimeout(function () {
-        refresh(element);
-      }, 1);
-    });
-  });
 
 })(jQuery, Drupal);

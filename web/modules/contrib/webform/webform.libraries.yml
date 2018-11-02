@@ -220,6 +220,16 @@ webform.progress.tracker:
   dependencies:
     - webform/libraries.progress-tracker
 
+# Off canvas.
+
+webform.off_canvas:
+  version: VERSION
+  js:
+    js/webform.off-canvas.js: {}
+  dependencies:
+  - core/drupal.debounce
+  - core/drupal.dialog.off_canvas
+
 # Promotions.
 
 webform.promotions:
@@ -600,6 +610,14 @@ webform.element.inputmask:
     - core/drupal
     - core/jquery.once
     - webform/libraries.jquery.inputmask
+
+webform.element.inputhide:
+  version: VERSION
+  js:
+    js/webform.element.inputhide.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery.once
 
 webform.element.likert:
   version: VERSION

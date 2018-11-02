@@ -146,6 +146,13 @@ function webform_access_menu_local_tasks_alter(&$data, $route_name) {
  * Implements hook_ENTITY_TYPE_access().
  */
 function webform_access_webform_access(WebformInterface $webform, $operation, AccountInterface $account) {
+  // Prevent recursion when a webform is being passed as the source entity
+  // via the URL.
+  // @see \Drupal\webform\Plugin\WebformSourceEntity\QueryStringWebformSourceEntity::getSourceEntity
+  if (\Drupal::request()->query->get('source_entity_type') === 'webform') {
+    return AccessResult::neutral();
+  }
+
   /** @var \Drupal\webform\WebformRequestInterface $request_handler */
   $request_handler = \Drupal::service('webform.request');
   $source_entity = $request_handler->getCurrentSourceEntity();

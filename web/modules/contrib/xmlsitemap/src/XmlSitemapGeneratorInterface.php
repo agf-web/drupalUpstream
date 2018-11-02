@@ -16,7 +16,7 @@ interface XmlSitemapGeneratorInterface {
    *
    * @param string $path
    *   An internal Drupal path.
-   * @param Drupal\Core\Language\LanguageInterface $language
+   * @param string $language
    *   A language code to use when looking up the paths.
    */
   public function getPathAlias($path, $language);
@@ -30,8 +30,9 @@ interface XmlSitemapGeneratorInterface {
    * Get how much memory was used.
    *
    * @param bool $start
+   *   Start value.
    *
-   * @return integer
+   * @return int
    *   Used memory.
    */
   public function getMemoryUsage($start = FALSE);
@@ -42,7 +43,7 @@ interface XmlSitemapGeneratorInterface {
    * This function just makes a guess. It does not take into account
    * the currently loaded modules.
    *
-   * @return integer
+   * @return int
    *   Optimal memory limit.
    */
   public function getOptimalMemoryLimit();
@@ -50,7 +51,7 @@ interface XmlSitemapGeneratorInterface {
   /**
    * Calculate the optimal memory level for sitemap generation.
    *
-   * @param $new_limit
+   * @param int $new_limit
    *   An optional PHP memory limit in bytes. If not provided, the value of
    *   getOptimalMemoryLimit() will be used.
    */
@@ -59,9 +60,9 @@ interface XmlSitemapGeneratorInterface {
   /**
    * Generate one page (chunk) of the sitemap.
    *
-   * @param $sitemap
+   * @param XmlSitemapInterface $sitemap
    *   An unserialized data array for an XML sitemap.
-   * @param $page
+   * @param string $page
    *   An integer of the specific page of the sitemap to generate.
    */
   public function generatePage(XmlSitemapInterface $sitemap, $page);
@@ -73,15 +74,15 @@ interface XmlSitemapGeneratorInterface {
    *   An unserialized data array for an XML sitemap.
    * @param \Drupal\xmlsitemap\XmlSitemapWriter $writer
    *   XML writer object.
-   * @param int $pageAn integer of the specific page of the sitemap to generate.
-   *   An integer of the specific page of the sitemap to generate.
+   * @param int $chunk
+   *   Chunk value.
    */
   public function generateChunk(XmlSitemapInterface $sitemap, XmlSitemapWriter $writer, $chunk);
 
   /**
    * Generate the index sitemap.
    *
-   * @param $sitemap
+   * @param XmlSitemapInterface $sitemap
    *   An unserialized data array for an XML sitemap.
    */
   public function generateIndex(XmlSitemapInterface $sitemap);
@@ -115,8 +116,11 @@ interface XmlSitemapGeneratorInterface {
    *   Results for the regeneration process.
    * @param array $operations
    *   Operations performed.
-   * @param int $elapsedTime elapsed.
+   * @param int $elapsed
+   *   Elapsed.
    *   Time elapsed.
+   *
+   * @codingStandardsIgnoreStart
    */
   public function regenerateBatchFinished($success, $results, $operations, $elapsed);
 
@@ -151,7 +155,8 @@ interface XmlSitemapGeneratorInterface {
    *   Results for the regeneration process.
    * @param array $operations
    *   Operations performed.
-   * @param int $elapsedTime elapsed.
+   * @param int $elapsed
+   *   Elapsed.
    *   Time elapsed.
    */
   public function rebuildBatchFinished($success, $results, $operations, $elapsed);
@@ -161,6 +166,9 @@ interface XmlSitemapGeneratorInterface {
    *
    * @param array $variables
    *   Variables to be set.
+   *
+   * @codingStandardsIgnoreEnd
    */
   public function batchVariableSet(array $variables);
+
 }

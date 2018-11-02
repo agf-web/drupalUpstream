@@ -30,13 +30,18 @@ class WebformSubmissionTest extends WebformTestBase {
    * Tests webform submission entity.
    */
   public function testWebformSubmission() {
+    $normal_user = $this->drupalCreateUser();
+
     /** @var \Drupal\webform\WebformInterface $webform */
     $webform = Webform::load('test_submissions');
+
     /** @var \Drupal\webform\WebformSubmissionInterface[] $submissions */
     $submissions = array_values(\Drupal::entityTypeManager()->getStorage('webform_submission')->loadByProperties(['webform_id' => 'test_submissions']));
 
     /** @var \Drupal\webform\WebformSubmissionInterface $webform_submission */
     $webform_submission = reset($submissions);
+
+    /**************************************************************************/
 
     // Check create submission.
     $this->assert($webform_submission instanceof WebformSubmission, '$webform_submission instanceof WebformSubmission');
@@ -55,12 +60,11 @@ class WebformSubmissionTest extends WebformTestBase {
     $this->assertEqual($webform_submission->getSourceUrl()->toString(), $webform->toUrl('canonical', ['absolute' => TRUE])->toString());
 
     // Check get source URL set to user 1.
-    $this->createUsers();
     $webform_submission
       ->set('entity_type', 'user')
-      ->set('entity_id', $this->normalUser->id())
+      ->set('entity_id', $normal_user->id())
       ->save();
-    $this->assertEqual($webform_submission->getSourceUrl()->toString(), $this->normalUser->toUrl('canonical', ['absolute' => TRUE])->toString());
+    $this->assertEqual($webform_submission->getSourceUrl()->toString(), $normal_user->toUrl('canonical', ['absolute' => TRUE])->toString());
 
     // Check missing webform_id exception.
     try {
@@ -92,8 +96,13 @@ class WebformSubmissionTest extends WebformTestBase {
    * Tests duplicating webform submission.
    */
   public function testDuplicate() {
-    $this->createUsers();
-    $this->drupalLogin($this->adminSubmissionUser);
+    $admin_submission_user = $this->drupalCreateUser([
+      'administer webform submission',
+    ]);
+
+    /**************************************************************************/
+
+    $this->drupalLogin($admin_submission_user);
 
     $webform = Webform::load('contact');
     $sid = $this->postSubmission($webform, [

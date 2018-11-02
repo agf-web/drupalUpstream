@@ -24,8 +24,9 @@ class WebformImageSelectImages extends FormElement {
       '#input' => TRUE,
       '#label' => t('image'),
       '#labels' => t('images'),
-      '#empty_items' => 5,
-      '#add_more' => 1,
+      '#min_items' => 3,
+      '#empty_items' => 1,
+      '#add_more_items' => 1,
       '#process' => [
         [$class, 'processWebformImageSelectImages'],
       ],
@@ -63,7 +64,7 @@ class WebformImageSelectImages extends FormElement {
     // Wrap this $element in a <div> that handle #states.
     WebformElementHelper::fixStatesWrapper($element);
 
-    $properties = ['#label', '#labels', '#empty_items', '#add_more'];
+    $properties = ['#label', '#labels', '#empty_items', '#add_more_items'];
 
     $element['images'] = array_intersect_key($element, array_combine($properties, $properties)) + [
       '#type' => 'webform_multiple',
@@ -80,6 +81,7 @@ class WebformImageSelectImages extends FormElement {
           '#title_display' => 'invisible',
           '#placeholder' => t('Enter value…'),
           '#error_no_message' => TRUE,
+          '#attributes' => ['class' => ['js-webform-options-sync']],
         ],
         'text' => [
           '#type' => 'textfield',
@@ -116,6 +118,8 @@ class WebformImageSelectImages extends FormElement {
         '#message_storage' => WebformMessage::STORAGE_LOCAL,
       ];
     }
+
+    $element['#attached']['library'][] = 'webform/webform.element.options.admin';
 
     return $element;
   }

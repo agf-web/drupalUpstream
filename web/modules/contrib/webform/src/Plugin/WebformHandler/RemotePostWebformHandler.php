@@ -576,7 +576,7 @@ class RemotePostWebformHandler extends WebformHandlerBase {
    * Get response file data.
    *
    * @param int $fid
-   *   A file id
+   *   A file id.
    * @param string|null $prefix
    *   A prefix to prepended to data.
    *

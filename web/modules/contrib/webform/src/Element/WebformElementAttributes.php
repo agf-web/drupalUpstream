@@ -2,7 +2,6 @@
 
 namespace Drupal\webform\Element;
 
-use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\Core\Serialization\Yaml;
@@ -61,7 +60,7 @@ class WebformElementAttributes extends FormElement {
 
     $t_args = [
       '@title' => $element['#title'],
-      '@type' => Unicode::strtolower($type),
+      '@type' => mb_strtolower($type),
     ];
 
     // Class.

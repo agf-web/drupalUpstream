@@ -6,30 +6,31 @@
  *
  * @ingroup xmlsitemap
  */
+
 use Drupal\Component\Utility\Timer;
 
 /**
  * Implements hook_drush_command().
  */
 function xmlsitemap_drush_command() {
-  $items['xmlsitemap-regenerate'] = array(
+  $items['xmlsitemap-regenerate'] = [
     'description' => 'Regenerate the XML sitemap files.',
     'callback' => 'drush_xmlsitemap_regenerate',
-    'drupal dependencies' => array('xmlsitemap'),
-  );
-  $items['xmlsitemap-rebuild'] = array(
+    'drupal dependencies' => ['xmlsitemap'],
+  ];
+  $items['xmlsitemap-rebuild'] = [
     'description' => 'Dump and re-process all possible XML sitemap data, and then regenerate the files.',
     'callback' => 'drush_xmlsitemap_rebuild',
-    'drupal dependencies' => array('xmlsitemap'),
-  );
-  $items['xmlsitemap-index'] = array(
+    'drupal dependencies' => ['xmlsitemap'],
+  ];
+  $items['xmlsitemap-index'] = [
     'description' => 'Process un-indexed XML sitemap links.',
     'callback' => 'drush_xmlsitemap_index',
-    'drupal dependencies' => array('xmlsitemap'),
-    'options' => array(
+    'drupal dependencies' => ['xmlsitemap'],
+    'options' => [
       'limit' => 'The limit of links of each type to process.',
-    ),
-  );
+    ],
+  ];
   return $items;
 }
 
@@ -41,10 +42,10 @@ function drush_xmlsitemap_regenerate() {
   Timer::start('xmlsitemap_regenerate');
   xmlsitemap_run_unprogressive_batch('xmlsitemap_regenerate_batch');
 
-  $vars = array(
+  $vars = [
     '@timer' => Timer::read('xmlsitemap_regenerate'),
     '@memory-peak' => format_size(memory_get_peak_usage(TRUE)),
-  );
+  ];
   drush_print(dt('XML sitemap files regenerated in @timer ms. Peak memory usage: @memory-peak.', $vars));
   Timer::stop('xmlsitemap_regenerate');
 }
@@ -63,10 +64,10 @@ function drush_xmlsitemap_rebuild() {
   Timer::start('xmlsitemap_rebuild');
   xmlsitemap_run_unprogressive_batch('xmlsitemap_rebuild_batch', $rebuild_types, TRUE);
 
-  $vars = array(
+  $vars = [
     '@timer' => Timer::read('xmlsitemap_rebuild'),
     '@memory-peak' => format_size(memory_get_peak_usage(TRUE)),
-  );
+  ];
   drush_print(dt('XML sitemap files rebuilt in @timer ms. Peak memory usage: @memory-peak.', $vars));
   Timer::stop('xmlsitemap_rebuild');
 }
@@ -78,7 +79,7 @@ function drush_xmlsitemap_index() {
   $limit = (int) drush_get_option('limit', \Drupal::config('xmlsitemap.settings')->get('batch_limit'));
   $count_before = db_select('xmlsitemap', 'x')->countQuery()->execute()->fetchField();
 
-  \Drupal::moduleHandler()->invokeAll('xmlsitemap_index_links', array('limit' => $limit));
+  \Drupal::moduleHandler()->invokeAll('xmlsitemap_index_links', ['limit' => $limit]);
 
   $count_after = db_select('xmlsitemap', 'x')->countQuery()->execute()->fetchField();
 
@@ -86,6 +87,6 @@ function drush_xmlsitemap_index() {
     drush_print(dt('No new XML sitemap links to index.'));
   }
   else {
-    drush_print(dt('Indexed @count new XML sitemap links.', array('@count' => $count_after - $count_before)));
+    drush_print(dt('Indexed @count new XML sitemap links.', ['@count' => $count_after - $count_before]));
   }
 }

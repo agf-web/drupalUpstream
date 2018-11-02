@@ -8,8 +8,8 @@ dependencies:
   - 'drupal:block_content'
   - 'webform:webform'
 
-# Information added by Drupal.org packaging script on 2018-09-08
-version: '8.x-5.0-rc21'
+# Information added by Drupal.org packaging script on 2018-10-23
+version: '8.x-5.0-rc24'
 core: '8.x'
 project: 'webform'
-datestamp: 1536405494
+datestamp: 1540255389

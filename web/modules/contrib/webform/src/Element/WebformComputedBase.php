@@ -3,6 +3,7 @@
 namespace Drupal\webform\Element;
 
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\EventSubscriber\MainContentViewSubscriber;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\webform\Entity\WebformSubmission;
@@ -82,32 +83,15 @@ abstract class WebformComputedBase extends FormElement {
   public static function processWebformComputed(&$element, FormStateInterface $form_state, &$complete_form) {
     $webform_submission = static::getWebformSubmission($element, $form_state, $complete_form);
     if ($webform_submission) {
-      $value = static::processValue($element, $webform_submission);;
-
-      // Hide empty computed element using display:none so that #states API
-      // can still use the empty computed value.
-      if ($value === '' && $element['#hide_empty']) {
-        $element['#wrapper_attributes']['style'] = 'display:none';
-      }
-
       // Set tree.
       $element['#tree'] = TRUE;
-
-      // Display markup.
-      $element['value']['#markup'] = $value;
-      $element['value']['#allowed_tags'] = WebformXss::getAdminTagList();
-
-      // Include hidden element so that computed value will be available to
-      // conditions (#states).
-      $element['hidden'] = [
-        '#type' => 'hidden',
-        '#value' => ['#markup' => $value],
-        '#parents' => $element['#parents'],
-      ];
 
       // Set #type to item to trigger #states behavior.
       // @see drupal_process_states;
       $element['#type'] = 'item';
+
+      $value = static::processValue($element, $webform_submission);
+      static::setWebformComputedElementValue($element, $value);
     }
 
     if (!empty($element['#states'])) {
@@ -198,7 +182,7 @@ abstract class WebformComputedBase extends FormElement {
     // the accurate computed value.
     $webform_submission = static::getWebformSubmission($element, $form_state, $complete_form);
     if ($webform_submission) {
-      $value = static::processValue($element, $webform_submission);;
+      $value = static::processValue($element, $webform_submission);
       $form_state->setValueForElement($element['value'], NULL);
       $form_state->setValueForElement($element['hidden'], NULL);
       $form_state->setValueForElement($element, $value);
@@ -208,6 +192,42 @@ abstract class WebformComputedBase extends FormElement {
   /****************************************************************************/
   // Form/Ajax callbacks.
   /****************************************************************************/
+
+  /**
+   * Set computed element's value.
+   *
+   * @param array $element
+   *   A computed element.
+   * @param $value
+   *   A computer value.
+   */
+  protected static function setWebformComputedElementValue(array &$element, $value) {
+    // Hide empty computed element using display:none so that #states API
+    // can still use the empty computed value.
+    if ($value === '' && $element['#hide_empty']) {
+      $element['#wrapper_attributes']['style'] = 'display:none';
+    }
+    else {
+      unset($element['#wrapper_attributes']);
+    }
+
+    // Display markup.
+    $element['value']['#markup'] = $value;
+    $element['value']['#allowed_tags'] = WebformXss::getAdminTagList();
+
+    // Include hidden element so that computed value will be available to
+    // conditions (#states).
+    $element['hidden']['#type'] = 'hidden';
+    $element['hidden']['#value'] = ['#markup' => $value];
+    $element['hidden']['#parents'] = $element['#parents'];
+  }
+
+  /**
+   * Determine if the current request is using Ajax.
+   */
+  protected static function isAjax() {
+    return (\Drupal::request()->get(MainContentViewSubscriber::WRAPPER_FORMAT) === 'drupal_ajax');
+  }
 
   /**
    * Webform computed element validate callback.
@@ -230,7 +250,10 @@ abstract class WebformComputedBase extends FormElement {
    *   The current state of the form.
    */
   public static function submitWebformComputedCallback(array $form, FormStateInterface $form_state) {
-    $form_state->setRebuild();
+    // Only rebuild if the request is not using Ajax.
+    if (!static::isAjax()) {
+      $form_state->setRebuild();
+    }
   }
 
   /**
@@ -247,6 +270,11 @@ abstract class WebformComputedBase extends FormElement {
   public static function ajaxWebformComputedCallback(array $form, FormStateInterface $form_state) {
     $button = $form_state->getTriggeringElement();
     $element = NestedArray::getValue($form, array_slice($button['#array_parents'], 0, -1));
+
+    // Set element value and #markup  after the form has been validated.
+    $webform_submission = static::getWebformSubmission($element, $form_state, $form);
+    $value = static::processValue($element, $webform_submission);
+    static::setWebformComputedElementValue($element, $value);
 
     // Only return the wrapper id, this prevents the computed element from
     // being reinitialized via JS after each update.
@@ -306,20 +334,24 @@ abstract class WebformComputedBase extends FormElement {
   protected static function getWebformSubmission(array $element, FormStateInterface $form_state, array &$complete_form) {
     $form_object = $form_state->getFormObject();
     if ($form_object instanceof WebformSubmissionForm) {
-      // We must continually copy form values to the webform submission
-      // since a computed element's value can be based on
+      /** @var \Drupal\webform\WebformSubmissionInterface $webform_submission */
+      $webform_submission = $form_object->getEntity();
+
+      // We must continually copy validated form values to the
+      // webform submission since a computed element's value can be based on
       // another computed element's value.
       //
       // Therefore, we are creating a single clone of the webform submission
       // and only copying the submitted form values to the cached submission.
-      $entity = $form_object->getEntity();
-      if (!isset(static::$submissions[$entity->uuid()])) {
-        static::$submissions[$entity->uuid()] = clone $form_object->getEntity();
+      if ($form_state->isValidationComplete()) {
+        if (!isset(static::$submissions[$webform_submission->uuid()])) {
+          static::$submissions[$webform_submission->uuid()] = clone $form_object->getEntity();
+        }
+        $webform_submission = static::$submissions[$webform_submission->uuid()];
+        $form_object->copyFormValuesToEntity($webform_submission, $complete_form, $form_state);
       }
 
-      $entity = static::$submissions[$entity->uuid()];
-      $form_object->copyFormValuesToEntity($entity, $complete_form, $form_state);
-      return $entity;
+      return $webform_submission;
     }
     elseif (isset($element['#webform_submission'])) {
       if (is_string($element['#webform_submission'])) {

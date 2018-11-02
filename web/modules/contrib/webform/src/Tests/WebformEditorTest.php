@@ -26,7 +26,6 @@ class WebformEditorTest extends WebformTestBase {
    */
   protected $fileUsage;
 
-
   /**
    * {@inheritdoc}
    */

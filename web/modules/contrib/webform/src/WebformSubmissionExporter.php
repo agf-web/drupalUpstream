@@ -310,6 +310,10 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
       }
     }
 
+    $form['export'] = [
+      '#type' => 'container',
+      '#attributes' => ['data-webform-states-no-clear' => TRUE],
+    ];
     $form['export']['format'] = [
       '#type' => 'details',
       '#title' => $this->t('Format options'),

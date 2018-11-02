@@ -36,7 +36,7 @@
         }
 
         var options = $.extend({
-          'button': '<button type="button" class="webform-details-toggle-state"></button>'
+          button: '<button type="button" class="webform-details-toggle-state"></button>'
         }, Drupal.webform.detailsToggle.options);
 
         // Create toggle buttons.
@@ -56,7 +56,7 @@
 
             // Set the saved states for all the details elements.
             // @see webform.element.details.save.js
-            if (Drupal.webformDetailsSaveGetName) {
+            if (!Drupal.webformDetailsSaveGetName) {
               $form.find('details').each(function () {
                 var name = Drupal.webformDetailsSaveGetName($(this));
                 if (name) {
@@ -70,7 +70,7 @@
 
         if ($tabs.length) {
           // Add toggle state before the tabs.
-          $tabs.find('.item-list').before($toggle);
+          $tabs.find('.item-list:first-child').before($toggle);
         }
         else {
           // Add toggle state link to first details element.

@@ -118,9 +118,9 @@ webform.handler.email:
     twig:
       type: boolean
       label: 'Twig'
-    theme:
+    theme_name:
       type: string
-      label: 'Theme'
+      label: 'Theme name'
     debug:
       type: boolean
       label: 'Enable debugging'
@@ -510,6 +510,9 @@ webform.handler.settings:
     limit_total_message:
       type: text
       label: 'Limit total message'
+    limit_total_unique:
+      type: string
+      label: 'Limit total to one submission per source entity'
     limit_user:
       type: string
       label: 'Limit user submissions'
@@ -519,6 +522,9 @@ webform.handler.settings:
     limit_user_message:
       type: text
       label: 'Limit user message'
+    limit_user_unique:
+      type: string
+      label: 'Limit user to one submission per source entity'
     entity_limit_total:
       type: string
       label: 'Entity limit total submissions'

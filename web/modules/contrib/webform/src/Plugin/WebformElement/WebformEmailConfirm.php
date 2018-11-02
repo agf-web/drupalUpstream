@@ -28,6 +28,8 @@ class WebformEmailConfirm extends Email {
       'confirm__title' => '',
       'confirm__description' => '',
       'confirm__placeholder' => '',
+      // Wrapper.
+      'wrapper_type' => 'fieldset',
     ];
     unset(
       $properties['multiple'],

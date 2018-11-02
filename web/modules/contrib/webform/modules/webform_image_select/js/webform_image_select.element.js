@@ -69,10 +69,13 @@
           .prop('tabindex', '0')
           .attr('role', isMultiple ? 'checkbox' : 'radio')
           .each(function () {
+            var alt = $(this).find('img').attr('alt');
             // Cleanup alt, set title, and fix aria.
-            var alt = $(this).find('img').attr('alt').replace(/<\/?[^>]+(>|$)/g, '');
-            $(this).find('img').attr('alt', alt);
-            $(this).attr('title', alt);
+            if (alt) {
+              alt = alt.replace(/<\/?[^>]+(>|$)/g, '');
+              $(this).find('img').attr('alt', alt);
+              $(this).attr('title', alt);
+            }
 
             // Aria hide caption since the 'title' attribute will be read aloud.
             $(this).find('p').attr('aria-hidden', true);

@@ -254,7 +254,7 @@ class TextFormat extends WebformElementBase {
     $key = $element['#webform_key'];
 
     $data = $webform_submission->getData();
-    $value = isset($data[$key]) ? $data[$key]['value'] : '';
+    $value = (isset($data[$key]) && isset($data[$key]['value'])) ? $data[$key]['value'] : '';
     $uuids = _webform_parse_file_uuids($value);
 
     if ($update) {

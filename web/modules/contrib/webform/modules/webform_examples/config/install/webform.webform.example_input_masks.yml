@@ -43,10 +43,10 @@ elements: |
       '#type': textfield
       '#title': Email
       '#input_mask': '''alias'': ''email'''
-    date:
+    datetime:
       '#type': textfield
-      '#title': 'Date (mm/dd/yyyy)'
-      '#input_mask': '''alias'': ''mm/dd/yyyy'''
+      '#title': 'Date time (2007-06-09'T'17:46:21)'
+      '#input_mask': '''alias'': ''datetime'''
     currency:
       '#type': textfield
       '#title': Currency
@@ -77,6 +77,14 @@ elements: |
       '#type': textfield
       '#title': 'VIN (Vehicle identification number)'
       '#input_mask': '''alias'': ''vin'''
+    uppercase:
+      '#type': textfield
+      '#title': UPPERCASE
+      '#input_mask': '''casing'': ''upper'''
+    lowercase:
+      '#type': textfield
+      '#title': lowercase
+      '#input_mask': '''casing'': ''lower'''
   
 css: ''
 javascript: ''
@@ -86,6 +94,7 @@ settings:
   page: true
   page_submit_path: ''
   page_confirm_path: ''
+  form_title: source_entity_webform
   form_submit_once: false
   form_exception_message: ''
   form_open_message: ''
@@ -112,6 +121,7 @@ settings:
   form_access_denied_title: ''
   form_access_denied_message: ''
   form_access_denied_attributes: {  }
+  form_file_limit: ''
   submission_label: ''
   submission_log: false
   submission_views: {  }
@@ -124,6 +134,9 @@ settings:
   submission_access_denied_attributes: {  }
   submission_exception_message: ''
   submission_locked_message: ''
+  submission_excluded_elements: {  }
+  submission_exclude_empty: false
+  submission_exclude_empty_checkbox: false
   previous_submission_message: ''
   previous_submissions_message: ''
   autofill: false
@@ -164,9 +177,11 @@ settings:
   limit_total: null
   limit_total_interval: null
   limit_total_message: ''
+  limit_total_unique: false
   limit_user: null
   limit_user_interval: null
   limit_user_message: ''
+  limit_user_unique: false
   entity_limit_total: null
   entity_limit_total_interval: null
   entity_limit_user: null

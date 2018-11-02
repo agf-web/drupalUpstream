@@ -54,6 +54,9 @@ class WebformDialogHelper {
    */
   public static function attachLibraries(array &$build) {
     $build['#attached']['library'][] = 'webform/webform.admin.dialog';
+    if (static::useOffCanvas()) {
+      $build['#attached']['library'][] = 'webform/webform.off_canvas';
+    }
     // @see \Drupal\webform\Element\WebformHtmlEditor::preRenderWebformHtmlEditor
     if (\Drupal::moduleHandler()->moduleExists('imce') && \Drupal\imce\Imce::access()) {
       $build['#attached']['library'][] = 'imce/drupal.imce.ckeditor';

@@ -100,6 +100,15 @@ class WebformBlockTest extends UnitTestCase {
     $this->assertEquals($access_result->getCacheMaxAge(), $result->getCacheMaxAge(), 'Block access has the same cache max age as the access of the webform.');
   }
 
+  /**
+   * Create a mock webform block.
+   *
+   * @param \Drupal\webform\WebformInterface $webform
+   *   A webform.
+   *
+   * @return \Drupal\webform\Plugin\Block\WebformBlock
+   *   A mock webform block.
+   */
   protected function mockWebformBlock(WebformInterface $webform) {
     $request_stack = $this->getMockBuilder(RequestStack::class)
       ->disableOriginalConstructor()
@@ -133,6 +142,6 @@ class WebformBlockTest extends UnitTestCase {
     $plugin_definition = ['provider' => 'unit_test'];
 
     return new WebformBlock($configuration, $plugin_id, $plugin_definition, $request_stack, $entity_type_manager, $token_manager);
-
   }
+
 }

@@ -43,6 +43,10 @@ webform_multiple_no_operations:
   - One
   - Two
   - Three
+webform_multiple_no_add_more:
+  - One
+  - Two
+  - Three
 webform_multiple_custom_label:
   - One
   - Two
@@ -122,6 +126,10 @@ webform_multiple_no_items: {  }");
     // Check that sorting is disabled.
     $this->assertNoRaw('<tr class="draggable odd" data-drupal-selector="edit-webform-multiple-no-sorting-items-0">');
     $this->assertRaw('<tr data-drupal-selector="edit-webform-multiple-no-sorting-items-0" class="odd">');
+
+    // Check that add more is removed.
+    $this->assertFieldByName('webform_multiple_no_operations[add][more_items]', '1');
+    $this->assertNoFieldByName('webform_multiple_no_add_more[add][more_items]', '1');
 
     // Check custom labels.
     $this->assertRaw('<input data-drupal-selector="edit-webform-multiple-custom-label-add-submit" formnovalidate="formnovalidate" type="submit" id="edit-webform-multiple-custom-label-add-submit" name="webform_multiple_custom_label_table_add" value="{add_more_button_label}" class="button js-form-submit form-submit" />');

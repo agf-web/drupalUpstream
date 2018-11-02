@@ -6,7 +6,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Serialization\Yaml;
-use Drupal\Core\Render\Element;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Url;
@@ -247,7 +246,7 @@ class WebformEntityElementsValidator implements WebformEntityElementsValidatorIn
    */
   protected function getDuplicateNamesRecursive(array $elements, array &$names) {
     foreach ($elements as $key => &$element) {
-      if (Element::property($key) || !is_array($element)) {
+      if (!WebformElementHelper::isElement($element, $key)) {
         continue;
       }
       if (isset($element['#type'])) {
@@ -355,7 +354,7 @@ class WebformEntityElementsValidator implements WebformEntityElementsValidatorIn
    */
   protected function getElementKeysRecursive(array $elements, array &$names) {
     foreach ($elements as $key => &$element) {
-      if (Element::property($key) || !is_array($element)) {
+      if (!WebformElementHelper::isElement($element, $key)) {
         continue;
       }
       if (isset($element['#type'])) {

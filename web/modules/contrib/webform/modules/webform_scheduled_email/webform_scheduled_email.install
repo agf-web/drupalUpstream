@@ -7,6 +7,9 @@
 
 use Drupal\Core\Entity\EntityTypeInterface;
 
+// Webform install helper functions.
+include_once __DIR__ . '/../../includes/webform.install.inc';
+
 /**
  * Implements hook_schema().
  */

@@ -34,9 +34,6 @@ class WebformNodeTest extends WebformNodeTestBase {
   public function setUp() {
     parent::setUp();
 
-    // Create users.
-    $this->createUsers();
-
     // Place webform test blocks.
     $this->placeWebformBlocks('webform_test_block_submission_limit');
   }
@@ -49,6 +46,10 @@ class WebformNodeTest extends WebformNodeTestBase {
 
     /** @var \Drupal\webform\WebformEntityReferenceManagerInterface $entity_reference_manager */
     $entity_reference_manager = \Drupal::service('webform.entity_reference_manager');
+
+    $normal_user = $this->drupalCreateUser();
+
+    /**************************************************************************/
 
     // Check table names.
     $this->assertEqual($entity_reference_manager->getTableNames(), [
@@ -185,7 +186,7 @@ class WebformNodeTest extends WebformNodeTestBase {
     $this->assertRaw('3 webform + source entity limit');
 
     // Create submission as authenticated user.
-    $this->drupalLogin($this->normalUser);
+    $this->drupalLogin($normal_user);
     $this->postNodeSubmission($node);
 
     $this->drupalGet('node/' . $node->id());
@@ -208,7 +209,7 @@ class WebformNodeTest extends WebformNodeTestBase {
     $this->postNodeSubmission($node);
     $this->drupalLogout();
 
-    $this->drupalLogin($this->normalUser);
+    $this->drupalLogin($normal_user);
 
     $this->drupalGet('node/' . $node->id());
 

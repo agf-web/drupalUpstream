@@ -30,7 +30,8 @@
       if (!$.fn.oldChosen) {
         $.fn.oldChosen = $.fn.chosen;
         $.fn.chosen = function (options) {
-          var select = $(this), is_creating_chosen = !!options;
+          var select = $(this);
+          var is_creating_chosen = !!options;
           if (is_creating_chosen && select.css('position') === 'absolute') {
             select.removeAttr('style');
           }
@@ -55,12 +56,20 @@
           }
 
           var options = $.extend({width: '100%'}, Drupal.webform.chosen.options);
-          if ($select.data('placeholder') && $select.prop('multiple')) {
-            options.placeholder_text_multiple = $select.data('placeholder');
+          if ($select.data('placeholder')) {
+            if ($select.prop('multiple')) {
+              options.placeholder_text_multiple = $select.data('placeholder');
+            }
+            else {
+              // Clear option value so that placeholder is displayed.
+              $select.find('option[value=""]').html('');
+              // Allow single option to be deselected.
+              options.allow_single_deselect = true;
+            }
           }
 
           $select.chosen(options);
-        })
+        });
     }
   };
 
