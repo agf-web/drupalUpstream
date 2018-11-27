@@ -21,7 +21,7 @@ class BlankPageController extends ControllerBase {
       '#tag' => 'meta',
       '#attributes' => array(
         'name' => 'description',
-        'content' => $this->t('Find the Farm Credit location in Georgia that serves you.'),
+        'content' => $this->t('Find the Farm Credit location that serves you.'),
       ),
     );
 
