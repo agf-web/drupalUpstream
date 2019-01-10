@@ -67,4 +67,4 @@ if (file_exists($local_settings)) {
  * Always install the 'standard' profile to stop the installer from
  * modifying settings.php.
  */
-$settings['install_profile'] = 'agfirst';
+$settings['install_profile'] = 'standard';

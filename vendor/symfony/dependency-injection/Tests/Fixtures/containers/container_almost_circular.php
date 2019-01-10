@@ -4,6 +4,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Dumper\PhpDumper;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\DependencyInjection\Tests\Fixtures\FooForCircularWithAddCalls;
 
 $public = 'public' === $visibility;
 $container = new ContainerBuilder();
@@ -100,5 +101,48 @@ $container->register('dispatcher2', 'stdClass')->setPublic($public)
 
 $container->register('subscriber2', 'stdClass')->setPublic(false)
     ->addArgument(new Reference('manager2'));
+
+// private service involved in a loop
+
+$container->register('foo6', 'stdClass')
+    ->setPublic(true)
+    ->setProperty('bar6', new Reference('bar6'));
+
+$container->register('bar6', 'stdClass')
+    ->setPublic(false)
+    ->addArgument(new Reference('foo6'));
+
+$container->register('baz6', 'stdClass')
+    ->setPublic(true)
+    ->setProperty('bar6', new Reference('bar6'));
+
+// provided by Christian Schiffler
+
+$container
+    ->register('root', 'stdClass')
+    ->setArguments([new Reference('level2'), new Reference('multiuse1')])
+    ->setPublic(true);
+
+$container
+    ->register('level2', FooForCircularWithAddCalls::class)
+    ->addMethodCall('call', [new Reference('level3')]);
+
+$container->register('multiuse1', 'stdClass');
+
+$container
+    ->register('level3', 'stdClass')
+    ->addArgument(new Reference('level4'));
+
+$container
+    ->register('level4', 'stdClass')
+    ->setArguments([new Reference('multiuse1'), new Reference('level5')]);
+
+$container
+    ->register('level5', 'stdClass')
+    ->addArgument(new Reference('level6'));
+
+$container
+    ->register('level6', FooForCircularWithAddCalls::class)
+    ->addMethodCall('call', [new Reference('level5')]);
 
 return $container;
