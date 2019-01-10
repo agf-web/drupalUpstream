@@ -2,6 +2,7 @@
 
 namespace Drupal\webform;
 
+use Drupal\Core\Access\AccessResultReasonInterface;
 use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityHandlerInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -119,19 +120,39 @@ class WebformEntityAccessControlHandler extends EntityAccessControlHandler imple
       }
     }
 
-    // Check if 'view' (aka 'access configuration'), 'update', or 'delete'
-    // of 'own' or 'any' webform is allowed.
-    if ($account->isAuthenticated()) {
-      $is_owner = ($account->id() == $entity->getOwnerId());
-      switch ($operation) {
-        case 'view':
-          // The 'view' operation is reserved for accessing a
-          // webform's configuration via the REST API.
-          if ($account->hasPermission('access any webform configuration') || ($account->hasPermission('access own webform configuration') && $is_owner)) {
-            return WebformAccessResult::allowed($entity, TRUE);
-          }
-          break;
+    $is_owner = ($account->id() == $entity->getOwnerId());
 
+    // Check 'view' operation use 'submission_create' when viewing rendered
+    // HTML webform or use access 'configuration' when requesting a
+    // webform's configuration via REST or JSON API.
+    // @see https://www.drupal.org/project/webform/issues/2956771
+    if ($operation === 'view') {
+      // Check is current request if for HTML.
+      $is_html = ($this->requestStack->getCurrentRequest()->getRequestFormat() === 'html');
+      // Make sure JSON API 1.x requests format which is 'html' is
+      // detected properly.
+      // @see https://www.drupal.org/project/jsonapi/issues/2877584
+      $is_jsonapi = (strpos($this->requestStack->getCurrentRequest()->getPathInfo(), '/jsonapi/') === 0) ? TRUE : FALSE;
+      if ($is_html && !$is_jsonapi) {
+        $access_result = $this->accessRulesManager->checkWebformAccess('create', $account, $entity);
+      }
+      else {
+        if ($account->hasPermission('access any webform configuration') || ($account->hasPermission('access own webform configuration') && $is_owner)) {
+          $access_result = WebformAccessResult::allowed($entity, TRUE);
+        }
+        else {
+          $access_result = $this->accessRulesManager->checkWebformAccess('configuration', $account, $entity);
+        }
+      }
+      if ($access_result instanceof AccessResultReasonInterface) {
+        $access_result->setReason('Access to webform configuration is required.');
+      }
+      return $access_result->addCacheContexts(['url.path', 'request_format']);
+    }
+
+    // Check if 'update', or 'delete' of 'own' or 'any' webform is allowed.
+    if ($account->isAuthenticated()) {
+      switch ($operation) {
         case 'test':
         case 'update':
           if ($account->hasPermission('edit any webform') || ($account->hasPermission('edit own webform') && $is_owner)) {
@@ -159,13 +180,6 @@ class WebformEntityAccessControlHandler extends EntityAccessControlHandler imple
       return $rules_access_result;
     }
 
-    // Convert 'render' operation to 'submission_create' operation.
-    // @see https://www.drupal.org/project/drupal/issues/2820315
-    // @see https://www.drupal.org/project/webform/issues/2956771
-    if ($operation === 'render') {
-      $operation = 'submission_create';
-    }
-
     // Check submission_* operation.
     if (strpos($operation, 'submission_') === 0) {
       // Grant user with administer webform submission access to do whatever he
@@ -184,7 +198,6 @@ class WebformEntityAccessControlHandler extends EntityAccessControlHandler imple
       if ($operation === 'submission_view_own' && $account->hasPermission('view own webform submission')) {
         return WebformAccessResult::allowed();
       }
-
 
       if (in_array($operation, ['submission_page', 'submission_create'])) {
         /** @var \Drupal\webform\WebformSubmissionStorageInterface $submission_storage */
@@ -268,10 +281,6 @@ class WebformEntityAccessControlHandler extends EntityAccessControlHandler imple
     // @see \Drupal\Core\Entity\EntityAccessControlHandler::checkAccess
     if ($operation === 'delete' && $entity->isNew()) {
       return WebformAccessResult::forbidden($entity);
-    }
-    elseif ($operation === 'view') {
-      return WebformAccessResult::neutral($entity)
-        ->setReason("The 'administer webform' or 'access own or any webform configuration' permission is required.");
     }
     else {
       return WebformAccessResult::neutral($entity);

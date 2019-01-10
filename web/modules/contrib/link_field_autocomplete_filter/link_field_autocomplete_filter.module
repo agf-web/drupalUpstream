@@ -68,28 +68,31 @@ function link_field_autocomplete_filter_form_field_config_edit_form_alter(&$form
 }
 
 /**
- * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ * Implements hook_field_widget_form_alter().
  */
-function link_field_autocomplete_filter_field_widget_link_default_form_alter(&$element, FormStateInterface $form_state, $context) {
-  $fieldDefinitions = $context['items']->getFieldDefinition();
-  if (!$fieldDefinitions || !($fieldDefinitions instanceof ThirdPartySettingsInterface)) {
-    return;
-  }
-
-  $configs = $fieldDefinitions->getThirdPartySetting('link_field_autocomplete_filter', 'allowed_content_types');
-  $settings = is_array($configs) ? $configs : [];
-  $bundles = array_filter($settings);
-  // Only alter and validate if a value is set.
-  if (count($bundles) > 0) {
-    $element['uri']['#selection_handler'] = 'default:node';
-    $element['uri']['#selection_settings'] = [
-      'target_bundles' => $bundles,
-    ];
-    if (is_array($element['uri']['#element_validate'])) {
-      $element['uri']['#element_validate'][] = '_link_field_autocomplete_filter_validate_widget';
+function link_field_autocomplete_filter_field_widget_form_alter(&$element, \Drupal\Core\Form\FormStateInterface $form_state, $context) {
+  $widget_type = $context['widget']->getPluginId();
+  if ($widget_type === 'link_default' || $widget_type === 'link_attributes' || $widget_type === 'link_target_field_widget') {
+    $fieldDefinitions = $context['items']->getFieldDefinition();
+    if (!$fieldDefinitions || !($fieldDefinitions instanceof ThirdPartySettingsInterface)) {
+      return;
     }
-    else {
-      $element['uri']['#element_validate'] = ['_link_field_autocomplete_filter_validate_widget'];
+
+    $configs = $fieldDefinitions->getThirdPartySetting('link_field_autocomplete_filter', 'allowed_content_types');
+    $settings = is_array($configs) ? $configs : [];
+    $bundles = array_filter($settings);
+    // Only alter and validate if a value is set.
+    if (count($bundles) > 0) {
+      $element['uri']['#selection_handler'] = 'default:node';
+      $element['uri']['#selection_settings'] = [
+        'target_bundles' => $bundles,
+      ];
+      if (is_array($element['uri']['#element_validate'])) {
+        $element['uri']['#element_validate'][] = '_link_field_autocomplete_filter_validate_widget';
+      }
+      else {
+        $element['uri']['#element_validate'] = ['_link_field_autocomplete_filter_validate_widget'];
+      }
     }
   }
 }

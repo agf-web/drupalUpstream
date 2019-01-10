@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * Provides route responses for webform add-on.
  */
 class WebformAddonsController extends ControllerBase implements ContainerInjectionInterface {
-  
+
   /**
    * The current request.
    *
@@ -31,10 +31,10 @@ class WebformAddonsController extends ControllerBase implements ContainerInjecti
   /**
    * Constructs a WebformAddonsController object.
    *
-   * @param \Drupal\webform\WebformAddonsManagerInterface $addons
-   *   The webform add-ons manager.
    * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
    *   The request stack.
+   * @param \Drupal\webform\WebformAddonsManagerInterface $addons
+   *   The webform add-ons manager.
    */
   public function __construct(RequestStack $request_stack, WebformAddonsManagerInterface $addons) {
     $this->request = $request_stack->getCurrentRequest();

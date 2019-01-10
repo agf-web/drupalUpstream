@@ -6,8 +6,8 @@ description: Adds a Link Field configuration for filtering the content types in 
 dependencies:
   - drupal:link
 
-# Information added by Drupal.org packaging script on 2018-03-19
-version: '8.x-1.6'
+# Information added by Drupal.org packaging script on 2018-11-09
+version: '8.x-1.7'
 core: '8.x'
 project: 'link_field_autocomplete_filter'
-datestamp: 1521503887
+datestamp: 1541788984

@@ -75,6 +75,10 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
   public function testCheckAccess($operation, array $options, array $expected, $assert_message = '') {
     // Set $options default value.
     $options += [
+      // What is the request path.
+      'request_path' => '',
+      // What is the request format.
+      'request_format' => 'html',
       // Array of permissions to assign to a mocked account.
       'permissions' => [],
       // Array of access rules that should yield 'allowed' when the mocked
@@ -114,7 +118,7 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
     $request_stack->method('getCurrentRequest')
-      ->willReturn(new Request(['token' => $token]));
+      ->willReturn(new Request(['token' => $token], [], ['_format' => $options['request_format']]));
 
     // Mock webform submission storage.
     $webform_submission_storage = $this->getMockBuilder(WebformSubmissionStorageInterface::class)
@@ -223,26 +227,20 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
    * @see testCheckAccess()
    */
   public function providerCheckAccess() {
-    $neutral_access_result = [
-      'access_result_is_allowed' => FALSE,
-      'access_result_cache_tags' => ['webform_cache_tag'],
-      'access_result_cache_contexts' => ['user.permissions', 'webform_cache_context'],
-    ];
-
-    $view_neutral_access_result = [
-      'access_result_is_allowed' => FALSE,
-      'access_result_cache_tags' => ['webform_cache_tag'],
-      'access_result_cache_contexts' => ['user.permissions', 'webform_cache_context'],
-    ];
+    $tests = [];
 
     /**************************************************************************/
-    // The "view" operation.
+    // The "view" HTML operation.
     /**************************************************************************/
 
     $tests[] = [
       'view',
       [],
-      $view_neutral_access_result,
+      [
+        'access_result_is_allowed' => FALSE,
+        'access_result_cache_tags' => ['access_rules_cache_tag'],
+        'access_result_cache_contexts' => ['access_rules_cache_context', 'request_format', 'url.path'],
+      ],
       'View when nobody',
     ];
 
@@ -272,17 +270,35 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
       'View when has "administer" access rule',
     ];
 
+    /**************************************************************************/
+    // The "view" configuration operation.
+    /**************************************************************************/
+
     $tests[] = [
       'view',
       [
         'permissions' => ['access any webform configuration'],
       ],
       [
+        'access_result_is_allowed' => FALSE,
+        'access_result_cache_tags' => ['access_rules_cache_tag'],
+        'access_result_cache_contexts' => ['access_rules_cache_context', 'request_format', 'url.path'],
+      ],
+      'View when has "access any webform configuration" permission and request form is HTML',
+    ];
+
+    $tests[] = [
+      'view',
+      [
+        'request_format' => 'not_html',
+        'permissions' => ['access any webform configuration'],
+      ],
+      [
         'access_result_is_allowed' => TRUE,
         'access_result_cache_tags' => ['webform_cache_tag'],
-        'access_result_cache_contexts' => ['user', 'user.permissions', 'webform_cache_context'],
+        'access_result_cache_contexts' => ['request_format', 'url.path', 'user', 'user.permissions', 'webform_cache_context'],
       ],
-      'View when has "access any webform configuration" permission',
+      'View when has "access any webform configuration" permission and request form is NOT HTML',
     ];
 
     $tests[] = [
@@ -291,8 +307,27 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
         'permissions' => ['access own webform configuration'],
         'account_is_webform_owner' => FALSE,
       ],
-      $view_neutral_access_result,
-      'View when has "access own webform configuration" permission and is not owner',
+      [
+        'access_result_is_allowed' => FALSE,
+        'access_result_cache_tags' => ['access_rules_cache_tag'],
+        'access_result_cache_contexts' => ['access_rules_cache_context', 'request_format', 'url.path'],
+      ],
+      'View when has "access own webform configuration" permission and is not owner and request form is HTML',
+    ];
+
+    $tests[] = [
+      'view',
+      [
+        'request_format' => 'not_html',
+        'permissions' => ['access own webform configuration'],
+        'account_is_webform_owner' => FALSE,
+      ],
+      [
+        'access_result_is_allowed' => FALSE,
+        'access_result_cache_tags' => ['access_rules_cache_tag'],
+        'access_result_cache_contexts' => ['access_rules_cache_context', 'request_format', 'url.path'],
+      ],
+      'View when has "access own webform configuration" permission and is not owner and request form is NOT HTML',
     ];
 
     $tests[] = [
@@ -302,11 +337,26 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
         'account_is_webform_owner' => TRUE,
       ],
       [
+        'access_result_is_allowed' => FALSE,
+        'access_result_cache_tags' => ['access_rules_cache_tag'],
+        'access_result_cache_contexts' => ['access_rules_cache_context', 'request_format', 'url.path'],
+      ],
+      'View when has "access own webform configuration" permission and is owner and request form is HTML',
+    ];
+
+    $tests[] = [
+      'view',
+      [
+        'request_format' => 'not_html',
+        'permissions' => ['access own webform configuration'],
+        'account_is_webform_owner' => TRUE,
+      ],
+      [
         'access_result_is_allowed' => TRUE,
         'access_result_cache_tags' => ['webform_cache_tag'],
-        'access_result_cache_contexts' => ['user', 'user.permissions', 'webform_cache_context'],
+        'access_result_cache_contexts' => ['request_format', 'url.path', 'user', 'user.permissions', 'webform_cache_context'],
       ],
-      'View when has "access own webform configuration" permission and is owner',
+      'View when has "access own webform configuration" permission and is owner and request form is NOT HTML',
     ];
 
     /**************************************************************************/
@@ -316,7 +366,11 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
     $tests[] = [
       'test',
       [],
-      $neutral_access_result,
+      [
+        'access_result_is_allowed' => FALSE,
+        'access_result_cache_tags' => ['webform_cache_tag'],
+        'access_result_cache_contexts' => ['user.permissions', 'webform_cache_context'],
+      ],
       'Test when nobody',
     ];
 
@@ -365,7 +419,11 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
         'permissions' => ['edit own webform'],
         'account_is_webform_owner' => FALSE,
       ],
-      $neutral_access_result,
+      [
+        'access_result_is_allowed' => FALSE,
+        'access_result_cache_tags' => ['webform_cache_tag'],
+        'access_result_cache_contexts' => ['user.permissions', 'webform_cache_context'],
+      ],
       'Test when has "edit own webform" permission and is not owner',
     ];
 
@@ -390,7 +448,11 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
     $tests[] = [
       'update',
       [],
-      $neutral_access_result,
+      [
+        'access_result_is_allowed' => FALSE,
+        'access_result_cache_tags' => ['webform_cache_tag'],
+        'access_result_cache_contexts' => ['user.permissions', 'webform_cache_context'],
+      ],
       'Update when nobody',
     ];
 
@@ -438,7 +500,11 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
         'permission' => ['edit own webform'],
         'account_is_webform_owner' => FALSE,
       ],
-      $neutral_access_result,
+      [
+        'access_result_is_allowed' => FALSE,
+        'access_result_cache_tags' => ['webform_cache_tag'],
+        'access_result_cache_contexts' => ['user.permissions', 'webform_cache_context'],
+      ],
       'Update when has "edit own webform" permission and is not owner',
     ];
 
@@ -462,7 +528,11 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
     $tests[] = [
       'duplicate',
       [],
-      $neutral_access_result,
+      [
+        'access_result_is_allowed' => FALSE,
+        'access_result_cache_tags' => ['webform_cache_tag'],
+        'access_result_cache_contexts' => ['user.permissions', 'webform_cache_context'],
+      ],
       'Duplicate when nobody',
     ];
 
@@ -498,7 +568,11 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
         'permissions' => ['create webform'],
         'webform_is_template' => FALSE,
       ],
-      $neutral_access_result,
+      [
+        'access_result_is_allowed' => FALSE,
+        'access_result_cache_tags' => ['webform_cache_tag'],
+        'access_result_cache_contexts' => ['user.permissions', 'webform_cache_context'],
+      ],
       'Duplicate when has "create webform" permission and webform is not template',
     ];
 
@@ -520,7 +594,11 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
         'permisssions' => ['create webform', 'edit own webform'],
         'account_is_webform_owner' => FALSE,
       ],
-      $neutral_access_result,
+      [
+        'access_result_is_allowed' => FALSE,
+        'access_result_cache_tags' => ['webform_cache_tag'],
+        'access_result_cache_contexts' => ['user.permissions', 'webform_cache_context'],
+      ],
       'Duplicate when has "create webform" and "edit own webform" permissions and is not owner',
     ];
 
@@ -545,7 +623,11 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
     $tests[] = [
       'delete',
       [],
-      $neutral_access_result,
+      [
+        'access_result_is_allowed' => FALSE,
+        'access_result_cache_tags' => ['webform_cache_tag'],
+        'access_result_cache_contexts' => ['user.permissions', 'webform_cache_context'],
+      ],
       'Delete when nobody',
     ];
 
@@ -594,7 +676,11 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
         'permissions' => ['delete own webform'],
         'account_is_webform_owner' => FALSE,
       ],
-      $neutral_access_result,
+      [
+        'access_result_is_allowed' => FALSE,
+        'access_result_cache_tags' => ['webform_cache_tag'],
+        'access_result_cache_contexts' => ['user.permissions', 'webform_cache_context'],
+      ],
       'Delete when has "delete own webform" permission and is not owner',
     ];
 
@@ -649,7 +735,11 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
     $tests[] = [
       'submission_view_any',
       [],
-      $neutral_access_result,
+      [
+        'access_result_is_allowed' => FALSE,
+        'access_result_cache_tags' => ['webform_cache_tag'],
+        'access_result_cache_contexts' => ['user.permissions', 'webform_cache_context'],
+      ],
       'Submission view any when nobody',
     ];
 
@@ -670,14 +760,22 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
       [
         'permissions' => ['view own webform submission'],
       ],
-      $neutral_access_result,
+      [
+        'access_result_is_allowed' => FALSE,
+        'access_result_cache_tags' => ['webform_cache_tag'],
+        'access_result_cache_contexts' => ['user.permissions', 'webform_cache_context'],
+      ],
       'Submission view any when has "view own webform submission" permission but is not owner',
     ];
 
     $tests[] = [
       'submission_view_own',
       [],
-      $neutral_access_result,
+      [
+        'access_result_is_allowed' => FALSE,
+        'access_result_cache_tags' => ['webform_cache_tag'],
+        'access_result_cache_contexts' => ['user.permissions', 'webform_cache_context'],
+      ],
       'Submission view own when nobody',
     ];
 
@@ -699,7 +797,11 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
       [
         'webform_is_open' => FALSE,
       ],
-      $neutral_access_result,
+      [
+        'access_result_is_allowed' => FALSE,
+        'access_result_cache_tags' => ['webform_cache_tag'],
+        'access_result_cache_contexts' => ['user.permissions', 'webform_cache_context'],
+      ],
       'Submission page when nobody',
     ];
 
@@ -722,7 +824,11 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
         'webform_is_template' => TRUE,
         'webform_is_open' => FALSE,
       ],
-      $neutral_access_result,
+      [
+        'access_result_is_allowed' => FALSE,
+        'access_result_cache_tags' => ['webform_cache_tag'],
+        'access_result_cache_contexts' => ['user.permissions', 'webform_cache_context'],
+      ],
       'Submission page when the webform is template without create access',
     ];
 

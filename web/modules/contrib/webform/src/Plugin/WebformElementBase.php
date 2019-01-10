@@ -221,6 +221,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
       'format_items' => $this->getItemsDefaultFormat(),
       'format_items_html' => '',
       'format_items_text' => '',
+      'format_attributes' => [],
     ];
 
     // Unique validation.
@@ -476,6 +477,13 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
    * {@inheritdoc}
    */
   public function isRoot() {
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasManagedFiles(array $element) {
     return FALSE;
   }
 
@@ -1011,15 +1019,21 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
 
     // Set the multiple element.
     $element['#element'] = $element;
+
     // Remove properties that should only be applied to the parent element.
-    $element['#element'] = array_diff_key($element['#element'], array_flip(['#default_value', '#description', '#description_display', '#required', '#required_error', '#states', '#wrapper_attributes', '#prefix', '#suffix', '#element', '#tags', '#multiple']));
+    $element['#element'] = array_diff_key($element['#element'], array_flip(['#access', '#default_value', '#description', '#description_display', '#required', '#required_error', '#states', '#wrapper_attributes', '#prefix', '#suffix', '#element', '#tags', '#multiple']));
+
     // Propagate #states to sub element.
     // @see \Drupal\webform\Element\WebformCompositeBase::processWebformComposite
     if (!empty($element['#states'])) {
       $element['#element']['#_webform_states'] = $element['#states'];
     }
+
     // Always make the title invisible.
     $element['#element']['#title_display'] = 'invisible';
+
+    // Set hidden element #after_build handler.
+    $element['#element']['#after_build'][] = [get_class($this), 'hiddenElementAfterBuild'];
 
     // Change the element to a multiple element.
     $element['#type'] = 'webform_multiple';
@@ -1094,6 +1108,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
    * {@inheritdoc}
    */
   public function getAdminLabel(array $element) {
+    $element += ['#admin_title' => '', '#title' => '', '#webform_key' => ''];
     return $element['#admin_title'] ?: $element['#title'] ?: $element['#webform_key'];
   }
 
@@ -1138,17 +1153,14 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
    *   A render array representing an element as text or HTML.
    */
   protected function build($format, array &$element, WebformSubmissionInterface $webform_submission, array $options = []) {
-    $options += [
-      'exclude_empty' => TRUE,
-    ];
     $options['multiline'] = $this->isMultiline($element);
     $format_function = 'format' . ucfirst($format);
     $value = $this->$format_function($element, $webform_submission, $options);
 
     // Handle empty value.
     if ($value === '') {
-      // Return NULL for empty formatted value.
-      if (!empty($options['exclude_empty'])) {
+      // Return NULL if empty is excluded.
+      if ($this->isEmptyExcluded($element, $options)) {
         return NULL;
       }
       // Else set the formatted value to empty message/placeholder.
@@ -1721,6 +1733,16 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
     return $this->formatHtml($element, $webform_submission);
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function isEmptyExcluded(array $element, array $options) {
+    $options += [
+      'exclude_empty' => TRUE,
+    ];
+    return !empty($options['exclude_empty']);
+  }
+
   /****************************************************************************/
   // Export methods.
   /****************************************************************************/
@@ -1819,11 +1841,20 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
       return;
     }
 
+    /** @var \Drupal\webform\Plugin\WebformElementManagerInterface $element_manager */
+    $element_manager = \Drupal::service('plugin.manager.webform.element');
+
     $name = $element['#webform_key'];
     $value = NestedArray::getValue($form_state->getValues(), $element['#parents']);
 
-    // Skip empty unique fields or composite arrays.
-    if ($value === '' || is_array($value)) {
+    // Skip composite elements.
+    $element_plugin = $element_manager->getElementInstance($element);
+    if ($element_plugin->isComposite()) {
+      return;
+    }
+
+    // Skip empty values but allow for '0'.
+    if ($value === '' || $value === NULL || (is_array($value) && empty($value))) {
       return;
     }
 
@@ -1833,13 +1864,13 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
     $webform_submission = $form_object->getEntity();
     $webform = $webform_submission->getWebform();
 
-    // Build unique query.
+    // Build unique query which return a single duplicate value.
     $query = \Drupal::database()->select('webform_submission', 'ws');
     $query->leftJoin('webform_submission_data', 'wsd', 'ws.sid = wsd.sid');
-    $query->fields('ws', ['sid']);
+    $query->fields('wsd', ['value']);
     $query->condition('wsd.webform_id', $webform->id());
     $query->condition('wsd.name', $name);
-    $query->condition('wsd.value', $value);
+    $query->condition('wsd.value', (array) $value, 'IN');
     // Unique user condition.
     if (!empty($element['#unique_user'])) {
       $query->condition('ws.uid', $webform_submission->getOwnerId());
@@ -1859,24 +1890,31 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
     if ($sid = $webform_submission->id()) {
       $query->condition('ws.sid', $sid, '<>');
     }
-    // Using range() is more efficient than using countQuery() for data checks.
+    // Get single duplicate value.
     $query->range(0, 1);
-    $count = $query->execute()->fetchField();
+    $duplicate_value = $query->execute()->fetchField();
 
-    if ($count) {
-      if (isset($element['#unique_error'])) {
-        $form_state->setError($element, $element['#unique_error']);
+    // Skip NULL or empty string value.
+    if ($duplicate_value === FALSE || $duplicate_value === '') {
+      return;
+    }
+
+    if (isset($element['#unique_error'])) {
+      $form_state->setError($element, $element['#unique_error']);
+    }
+    elseif (isset($element['#title'])) {
+      // Get #options display value.
+      if (isset($element['#options'])) {
+        $duplicate_value = WebformOptionsHelper::getOptionText($duplicate_value, $element['#options'], TRUE);
       }
-      elseif (isset($element['#title'])) {
-        $t_args = [
-          '%name' => empty($element['#title']) ? $element['#parents'][0] : $element['#title'],
-          '%value' => $value,
-        ];
-        $form_state->setError($element, t('The value %value has already been submitted once for the %name element. You may have already submitted this webform, or you need to use a different value.', $t_args));
-      }
-      else {
-        $form_state->setError($element);
-      }
+      $t_args = [
+        '%name' => empty($element['#title']) ? $element['#parents'][0] : $element['#title'],
+        '%value' => $duplicate_value,
+      ];
+      $form_state->setError($element, t('The value %value has already been submitted once for the %name element. You may have already submitted this webform, or you need to use a different value.', $t_args));
+    }
+    else {
+      $form_state->setError($element);
     }
   }
 
@@ -2014,8 +2052,6 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
 
   /**
    * {@inheritdoc}
-   *
-   * @see \Drupal\webform\Entity\Webform::getElementsSelectorOptions
    */
   public function getElementSelectorOptions(array $element) {
     if ($this->hasMultipleValues($element) && $this->hasMultipleWrapper()) {
@@ -2035,6 +2071,13 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
     else {
       return [":input[name=\"$name\"]" => $title];
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getElementSelectorSourceValues(array $element) {
+    return [];
   }
 
   /**
@@ -2177,7 +2220,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
     $form['element_description']['help'] = [
       '#type' => 'details',
       '#title' => $this->t('Help'),
-      '#description' => $this->t("Displays a help tooltip after the element's title"),
+      '#description' => $this->t("Displays a help tooltip after the element's title."),
       '#states' => [
         'invisible' => [
           [':input[name="properties[title_display]"]' => ['value' => 'invisible']],
@@ -2512,6 +2555,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
       '#type' => 'webform_element_states',
       '#state_options' => $this->getElementStateOptions(),
       '#selector_options' => $webform->getElementsSelectorOptions(),
+      '#selector_sources' => $webform->getElementsSelectorSourceValues(),
       '#disabled_message' => TRUE,
     ];
     $form['conditional_logic']['states_clear'] = [
@@ -2879,6 +2923,18 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
           '#items' => $items,
         ],
       ],
+    ];
+    $form['display']['format_attributes'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Display wrapper attributes'),
+    ];
+    $form['display']['format_attributes']['format_attributes'] = [
+      '#type' => 'webform_element_attributes',
+      '#title' => $this->t('Display'),
+      '#class__description' => $this->t("Apply classes to the element's display wrapper. Select 'custom…' to enter custom classes."),
+      '#style__description' => $this->t("Apply custom styles to the element's display wrapper."),
+      '#attributes__description' => $this->t("Enter additional attributes to be added to the element's display wrapper."),
+      '#classes' => $this->configFactory->get('webform.settings')->get('element.wrapper_classes'),
     ];
 
     /* Administration */

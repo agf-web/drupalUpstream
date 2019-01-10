@@ -46,38 +46,26 @@ class DraggableViewsField extends BulkForm {
   protected $currentUser;
 
   /**
-   * Constructs a new DraggableViewsField object.
+   * Sets the current_user service.
    *
-   * @param array $configuration
-   *   A configuration array containing information about the plugin instance.
-   * @param string $plugin_id
-   *   The plugin ID for the plugin instance.
-   * @param mixed $plugin_definition
-   *   The plugin implementation definition.
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager.
-   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
-   *   The language manager.
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   Current user.
+   *
+   * @return $this
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityManagerInterface $entity_manager, LanguageManagerInterface $language_manager, AccountInterface $current_user) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_manager, $language_manager);
+  public function setCurrentUser(AccountInterface $current_user) {
     $this->currentUser = $current_user;
+    return $this;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('entity.manager'),
-      $container->get('language_manager'),
-      $container->get('current_user')
-    );
+    /** @var static $datasource */
+    $bulk_form = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+    $bulk_form->setCurrentUser($container->get('current_user'));
+    return $bulk_form;
   }
 
   /**

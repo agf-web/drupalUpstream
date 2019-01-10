@@ -11,6 +11,14 @@
 }
 
 /**
+ * Submission.
+ */
+
+.webform-submission-information .button {
+  font-size: 1em;
+}
+
+/**
  * Webform setting button displays a gear icon.
  * @see /admin/structure/webform/manage/contact/results/submissions
  */

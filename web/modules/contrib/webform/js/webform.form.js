@@ -8,6 +8,28 @@
   'use strict';
 
   /**
+   * Remove single submit event listener.
+   *
+   * @type {Drupal~behavior}
+   *
+   * @prop {Drupal~behaviorAttach} attach
+   *   Attaches the behavior for removing single submit event listener.
+   *
+   * @see Drupal.behaviors.formSingleSubmit
+   */
+  Drupal.behaviors.weformRemoveFormSingleSubmit = {
+    attach: function attach() {
+      function onFormSubmit(e) {
+        var $form = $(e.currentTarget);
+        $form.removeAttr('data-drupal-form-submit-last');
+      }
+      $('body')
+        .once('webform-single-submit')
+        .on('submit.singleSubmit', 'form.webform-remove-single-submit:not([method~="GET"])', onFormSubmit);
+    }
+  };
+
+  /**
    * Autofocus first input.
    *
    * @type {Drupal~behavior}

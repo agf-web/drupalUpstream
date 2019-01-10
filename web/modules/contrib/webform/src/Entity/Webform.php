@@ -12,7 +12,6 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 use Drupal\webform\Plugin\WebformElement\WebformActions;
-use Drupal\webform\Plugin\WebformElement\WebformManagedFileBase;
 use Drupal\webform\Plugin\WebformElement\WebformWizardPage;
 use Drupal\webform\Plugin\WebformHandlerMessageInterface;
 use Drupal\webform\Utility\WebformElementHelper;
@@ -126,6 +125,13 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    * @var string
    */
   protected $uuid;
+
+  /**
+   * The webform's current operation.
+   *
+   * @var string
+   */
+  protected $operation;
 
   /**
    * The webform override state.
@@ -332,7 +338,6 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    */
   protected $elementsWizardPages = [];
 
-
   /**
    * Track managed file elements.
    *
@@ -436,6 +441,29 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
   public function setOwnerId($uid) {
     $this->uid = ($uid) ? $uid : NULL;
     return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOperation() {
+    return $this->operation;
+
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setOperation($operation) {
+    $this->operation = $operation;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isTest() {
+    return ($this->operation === 'test') ? TRUE : FALSE;
   }
 
   /**
@@ -557,6 +585,13 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    */
   public function isConfidential() {
     return $this->getSetting('form_confidential');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasRemoteAddr() {
+    return (!$this->isConfidential() && $this->getSetting('form_remote_addr')) ? TRUE : FALSE;
   }
 
   /**
@@ -877,6 +912,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       'form_previous_submissions' => TRUE,
       'form_confidential' => FALSE,
       'form_confidential_message' => '',
+      'form_remote_addr' => TRUE,
       'form_convert_anonymous' => FALSE,
       'form_prepopulate' => FALSE,
       'form_prepopulate_source_entity' => FALSE,
@@ -1117,6 +1153,22 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
   /**
    * {@inheritdoc}
    */
+  public function getElementsSelectorSourceValues() {
+    /** @var \Drupal\webform\Plugin\WebformElementManagerInterface $element_manager */
+    $element_manager = \Drupal::service('plugin.manager.webform.element');
+
+    $source_values = [];
+    $elements = $this->getElementsInitializedAndFlattened();
+    foreach ($elements as $element) {
+      $element_plugin = $element_manager->getElementInstance($element);
+      $source_values += $element_plugin->getElementSelectorSourceValues($element);
+    }
+    return $source_values;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getElementsPrepopulate() {
     return $this->elementsPrepopulate;
   }
@@ -1245,6 +1297,15 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
         WebformElementHelper::applyTranslation($element, $this->elementsTranslations[$key]);
       }
 
+      // Prevent regressions where webform_computed_* element is still using
+      // #value instead of #template.
+      if (isset($element['#type']) && strpos($element['#type'], 'webform_computed_') === 0) {
+        if (isset($element['#value']) && !isset($element['#template'])) {
+          $element['#template'] = $element['#value'];
+          unset($element['#value']);
+        }
+      }
+
       // Copy only the element properties to decoded and flattened elements.
       $this->elementsDecodedAndFlattened[$key] = WebformElementHelper::getProperties($element);
 
@@ -1338,7 +1399,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
         }
 
         // Track managed files.
-        if ($element_plugin instanceof WebformManagedFileBase) {
+        if ($element_plugin->hasManagedFiles($element)) {
           $this->elementsManagedFiles[$key] = $key;
         }
 
@@ -1703,6 +1764,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
 
     // Delete all submission associated with this webform.
     $submission_ids = \Drupal::entityQuery('webform_submission')
+      ->accessCheck(FALSE)
       ->condition('webform_id', array_keys($entities), 'IN')
       ->sort('sid')
       ->execute();
@@ -1751,6 +1813,23 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     }
 
     return $cache_contexts;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheMaxAge() {
+    if ($this->isScheduled()) {
+      $time = time();
+      if ($this->open && strtotime($this->open) > $time) {
+        return (strtotime($this->open) - $time);
+      }
+      elseif ($this->close && strtotime($this->close) > $time) {
+        return (strtotime($this->close) - $time);
+      }
+    }
+
+    return parent::getCacheMaxAge();
   }
 
   /**
@@ -1847,37 +1926,37 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       return;
     }
 
-    $submit_base_path = '/' . ($page_submit_path ?: $default_page_base_path . '/' . str_replace('_', '-', $this->id()));
-
-    // Update submit path.
-    $submit_suffixes = [
-      '',
-      '/submissions',
-      '/drafts',
-    ];
-    foreach ($submit_suffixes as $submit_suffix) {
-      $submit_source = '/webform/' . $this->id() . $submit_suffix;
-      $submit_alias = $submit_base_path . $submit_suffix;
-      $this->updatePath($submit_source, $submit_alias, $this->langcode);
-      $this->updatePath($submit_source, $submit_alias, LanguageInterface::LANGCODE_NOT_SPECIFIED);
+    // Update webform base, confirmation, submissions and drafts paths.
+    $path_base_alias = '/' . ($page_submit_path ?: $default_page_base_path . '/' . str_replace('_', '-', $this->id()));
+    $path_suffixes = ['', '/confirmation', '/submissions', '/drafts'];
+    foreach ($path_suffixes as $path_suffix) {
+      $path_source = '/webform/' . $this->id() . $path_suffix;
+      $path_alias = $path_base_alias . $path_suffix;
+      if ($path_suffix === '/confirmation' && $this->settings['page_confirm_path']) {
+        $path_alias = '/' . trim($this->settings['page_confirm_path'], '/');
+      }
+      $this->updatePath($path_source, $path_alias, $this->langcode);
+      $this->updatePath($path_source, $path_alias, LanguageInterface::LANGCODE_NOT_SPECIFIED);
     }
-
-    // Update confirm path.
-    $confirm_source = '/webform/' . $this->id() . '/confirmation';
-    $confirm_alias = $this->settings['page_confirm_path'] ?: $submit_base_path . '/confirmation';
-    $confirm_alias = '/' . trim($confirm_alias, '/');
-    $this->updatePath($confirm_source, $confirm_alias, $this->langcode);
-    $this->updatePath($confirm_source, $confirm_alias, LanguageInterface::LANGCODE_NOT_SPECIFIED);
   }
 
   /**
    * {@inheritdoc}
    */
   public function deletePaths() {
+    // Path module must be enabled for URL aliases to be updated.
+    if (!\Drupal::moduleHandler()->moduleExists('path')) {
+      return;
+    }
+
     /** @var \Drupal\Core\Path\AliasStorageInterface $path_alias_storage */
     $path_alias_storage = \Drupal::service('path.alias_storage');
-    $path_alias_storage->delete(['source' => '/webform/' . $this->id()]);
-    $path_alias_storage->delete(['source' => '/webform/' . $this->id() . '/confirmation']);
+
+    // Delete webform base, confirmation, submissions and drafts paths.
+    $path_suffixes = ['', '/confirmation', '/submissions', '/drafts'];
+    foreach ($path_suffixes as $path_suffix) {
+      $path_alias_storage->delete(['source' => '/webform/' . $this->id() . $path_suffix]);
+    }
   }
 
   /**

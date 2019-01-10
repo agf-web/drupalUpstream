@@ -123,10 +123,10 @@
       // @see Issue #2977569: Hidden fieldsets that become visible with conditional logic cannot be made required.
       if ($target.is('.js-webform-type-radios, .js-webform-type-checkboxes, fieldset')) {
         if (e.value) {
-          $target.find('legend span:not(.visually-hidden)').addClass('js-form-required form-required');
+          $target.find('legend span.fieldset-legend:not(.visually-hidden)').addClass('js-form-required form-required');
         }
         else {
-          $target.find('legend span:not(.visually-hidden)').removeClass('js-form-required form-required');
+          $target.find('legend span.fieldset-legend:not(.visually-hidden)').removeClass('js-form-required form-required');
         }
       }
 
@@ -212,11 +212,11 @@
       $(e.target)
         .prop('disabled', e.value)
         .closest('.js-form-item, .js-form-submit, .js-form-wrapper').toggleClass('form-disabled', e.value)
-        .find('select, input, textarea').prop('disabled', e.value);
+        .find('select, input, textarea, button').prop('disabled', e.value);
 
       // Trigger webform:disabled.
       $(e.target).trigger('webform:disabled')
-        .find('select, input, textarea').trigger('webform:disabled');
+        .find('select, input, textarea, button').trigger('webform:disabled');
     }
   });
 

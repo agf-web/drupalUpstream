@@ -28,6 +28,7 @@ class PdftotextExtractor extends TextExtractorPluginBase {
    */
   public function extract(File $file) {
     if (in_array($file->getMimeType(), $this->getPdfMimeTypes())) {
+      $pdftotext_path = $this->configuration['pdftotext_path'];
       $filepath = $this->getRealpath($file->getFileUri());
       // UTF-8 multibyte characters will be stripped by escapeshellargs() for
       // the default C-locale.
@@ -37,7 +38,7 @@ class PdftotextExtractor extends TextExtractorPluginBase {
       setlocale(LC_CTYPE, 'en_US.UTF-8');
       // Pdftotext descriptions states that '-' as text-file will send text to
       // stdout.
-      $cmd = escapeshellcmd('pdftotext') . ' ' . escapeshellarg($filepath) . ' -';
+      $cmd = escapeshellcmd($pdftotext_path) . ' ' . escapeshellarg($filepath) . ' -';
       // Restore the locale.
       setlocale(LC_CTYPE, $backup_locale);
       // Support UTF-8 commands.
@@ -50,17 +51,44 @@ class PdftotextExtractor extends TextExtractorPluginBase {
     }
   }
 
-  /**
+/**
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    $form['pdftotext'] = [
-      '#type' => 'markup',
-      '#markup' => $this->t('No configuration needed for this extraction method.'),
-      '#prefix' => '<p>',
-      '#suffix' => '</p>',
+    $form['pdftotext_path'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Pdftotext binary'),
+      '#description' => $this->t('Enter the name of pdftotext executable or the full path to the pdftotext binary. Example: "pdftotext" or "/usr/bin/pdftotext".'),
+      '#default_value' => $this->configuration['pdftotext_path'],
+      '#required' => TRUE,
     ];
     return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
+    $pdftotext_path = $form_state->getValue([
+      'text_extractor_config',
+      'pdftotext_path',
+    ]);
+
+    $is_name = strpos($pdftotext_path, '/') === FALSE && strpos($pdftotext_path, '\\') === FALSE;
+    if (!$is_name && !file_exists($pdftotext_path) && isset($form['text_extractor_config']['pdftotext_path'])) {
+      $form_state->setError($form['text_extractor_config']['pdftotext_path'], $this->t('The file %path does not exist.', ['%path' => $pdftotext_path]));
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
+    $this->configuration['pdftotext_path'] = $form_state->getValue([
+      'text_extractor_config',
+      'pdftotext_path',
+    ]);
+    parent::submitConfigurationForm($form, $form_state);
   }
 
 }

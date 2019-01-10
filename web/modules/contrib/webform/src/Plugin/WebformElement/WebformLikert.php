@@ -50,6 +50,7 @@ class WebformLikert extends WebformElementBase {
       'format' => $this->getItemDefaultFormat(),
       'format_html' => '',
       'format_text' => '',
+      'format_attributes' => [],
       // Likert settings.
       'sticky' => TRUE,
       'questions' => [],
@@ -388,6 +389,20 @@ class WebformLikert extends WebformElementBase {
   /**
    * {@inheritdoc}
    */
+  public function getElementSelectorSourceValues(array $element) {
+    $selector_options = $this->getElementSelectorOptions($element);
+    $selectors = reset($selector_options);
+
+    $source_values = [];
+    foreach (array_keys($selectors) as $selector) {
+      $source_values[$selector] = $element['#answers'];
+    }
+    return $source_values;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
     $form['likert'] = [
@@ -451,7 +466,7 @@ class WebformLikert extends WebformElementBase {
     $form['likert']['na_answer_text'] = [
       '#type' => 'textfield',
       '#title' => $this->t('N/A answer text'),
-      '#description' => $this->t('Text display display on webform.'),
+      '#description' => $this->t('Text displayed on the webform.'),
       '#attributes' => ['data-webform-states-no-clear' => TRUE],
       '#states' => [
         'visible' => [

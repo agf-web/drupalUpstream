@@ -105,7 +105,19 @@ webform.ajax:
     - core/jquery.once
     - core/jquery.form
 
-# Block
+# Announce.
+
+webform.announce:
+  version: VERSION
+  js:
+    js/webform.announce.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal
+    - core/drupal.announce
+
+# Block.
 
 webform.block:
   version: VERSION
@@ -138,6 +150,7 @@ webform.confirmation.modal:
     - core/drupal.dialog
     - core/drupal.dialog.position
     - core/jquery.once
+    - core/jquery.ui.dialog
     - webform/webform.confirmation
 
 # Contribute.
@@ -283,6 +296,7 @@ webform.form:
     js/webform.form.js: {}
   dependencies:
     - core/drupal
+    - core/drupal.form
     - core/jquery.once
     - webform/webform.states
 
@@ -306,6 +320,7 @@ webform.form.submit_once:
     js/webform.form.submit_once.js: {}
   dependencies:
     - core/drupal
+    - core/drupal.progress
     - core/jquery.once
     - system/base
 
@@ -325,7 +340,6 @@ webform.form.unsaved:
   dependencies:
     - core/jquery.once
     - core/drupal
-
 
 webform.wizard.pages:
   version: VERSION
@@ -484,11 +498,15 @@ webform.element.composite:
 
 webform.element.computed:
   version: VERSION
+  css:
+    component:
+      css/webform.element.computed.css: {}
   js:
     js/webform.element.computed.js: {}
   dependencies:
     - core/drupal.debounce
     - core/jquery.once
+    - webform/webform.announce
 
 webform.element.counter:
   version: VERSION
@@ -504,11 +522,20 @@ webform.element.counter:
 
 webform.element.date:
   version: VERSION
+  css:
+    component:
+      css/webform.element.date.css: {}
   js:
     js/webform.element.date.js: {}
   dependencies:
     - core/drupal.date
     - core/drupalSettings
+
+webform.element.datelist:
+  version: VERSION
+  css:
+    component:
+      css/webform.element.datelist.css: {}
 
 webform.element.details.save:
   version: VERSION
@@ -649,6 +676,18 @@ webform.element.location.places:
   - core/jquery.once
   - webform/libraries.algolia.places
 
+webform.element.managed_file:
+  version: VERSION
+  css:
+    component:
+      css/webform.element.managed_file.css: {}
+  js:
+    js/webform.element.managed_file.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery.once
+    - file/drupal.file
+
 webform.element.message:
   version: VERSION
   css:
@@ -760,6 +799,12 @@ webform.element.states:
   css:
     component:
       css/webform.element.states.css: {}
+  js:
+    js/webform.element.states.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery.once
+    - core/jquery.ui.autocomplete
 
 webform.element.telephone:
   version: VERSION
@@ -876,14 +921,14 @@ imce.input:
 
 libraries.codemirror.text:
   remote: https://github.com/codemirror/codemirror
-  version: &webform_codemirror_version '5.40.0'
+  version: &webform_codemirror_version '5.42.0'
   license: &webform_codemirror_license
     name: MIT
     url: http://codemirror.net/LICENSE
     gpl-compatible: true
   cdn: &webform_codemirror_cdn
-    /libraries/codemirror/lib/: https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.40.0/
-    /libraries/codemirror/: https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.40.0/
+    /libraries/codemirror/lib/: https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/
+    /libraries/codemirror/: https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/
   css:
     component:
       /libraries/codemirror/lib/codemirror.css: {}
@@ -962,13 +1007,13 @@ libraries.codemirror.twig:
 
 libraries.algolia.places:
   remote: https://github.com/algolia/places
-  version: '1.10.0'
+  version: '1.15.0'
   license:
     name: MIT
     url: https://github.com/algolia/places/blob/master/LICENSE
     gpl-compatible: true
   cdn:
-    /libraries/algolia.places/dist/cdn/: https://cdn.jsdelivr.net/npm/places.js@1.0.0/dist/cdn/
+    /libraries/algolia.places/dist/cdn/: https://cdn.jsdelivr.net/npm/places.js@1.15.0/dist/cdn/
   js:
     /libraries/algolia.places/dist/cdn/places.js: {}
 
@@ -1043,13 +1088,13 @@ libraries.jquery.icheck.square:
 
 libraries.jquery.inputmask:
   remote: https://github.com/RobinHerbots/jquery.inputmask
-  version: '4.0.0'
+  version: '4.0.4'
   license:
     name: MIT
     url: http://opensource.org/licenses/mit-license.php
     gpl-compatible: true
   cdn:
-    /libraries/jquery.inputmask/: https://cdn.rawgit.com/RobinHerbots/Inputmask/4.0.0/
+    /libraries/jquery.inputmask/: https://cdn.rawgit.com/RobinHerbots/Inputmask/4.0.4/
   js:
     /libraries/jquery.inputmask/dist/min/jquery.inputmask.bundle.min.js: {}
   dependencies:
@@ -1057,19 +1102,21 @@ libraries.jquery.inputmask:
 
 libraries.jquery.intl-tel-input:
   remote: https://github.com/jackocnr/intl-tel-input
-  version: 'v13.0.0'
+  version: 'v14.0.6'
   license:
     name: MIT
     url: https://github.com/jackocnr/intl-tel-input/blob/master/LICENSE
     gpl-compatible: true
   cdn:
-    /libraries/jquery.intl-tel-input/build/: https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/13.0.0/
+    /libraries/jquery.intl-tel-input/build/: https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/14.0.6/
   css:
     component:
       /libraries/jquery.intl-tel-input/build/css/intlTelInput.css: {}
   js:
     /libraries/jquery.intl-tel-input/build/js/utils.js : {}
     /libraries/jquery.intl-tel-input/build/js/intlTelInput.min.js : {}
+    /libraries/jquery.intl-tel-input/build/js/intlTelInput-jquery.min.js : {}
+
   dependencies:
     - core/jquery
 
@@ -1140,13 +1187,13 @@ libraries.jquery.textcounter:
 
 libraries.jquery.timepicker:
   remote: https://github.com/jonthornton/jquery-timepicker
-  version: '1.11.13'
+  version: '1.11.14'
   license:
     name: MIT
     url: http://opensource.org/licenses/mit-license.php
     gpl-compatible: true
   cdn:
-    /libraries/jquery.timepicker/: https://cdn.rawgit.com/jonthornton/jquery-timepicker/1.11.13/
+    /libraries/jquery.timepicker/: https://cdn.rawgit.com/jonthornton/jquery-timepicker/1.11.14/
   css:
     component:
       /libraries/jquery.timepicker/jquery.timepicker.css: {}

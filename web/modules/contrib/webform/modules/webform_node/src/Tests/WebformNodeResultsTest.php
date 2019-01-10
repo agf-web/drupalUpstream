@@ -43,7 +43,7 @@ class WebformNodeResultsTest extends WebformNodeTestBase {
 
     $admin_submission_user = $this->drupalCreateUser([
       'administer webform submission',
-    ]); 
+    ]);
 
     /** @var \Drupal\webform\WebformSubmissionStorageInterface $submission_storage */
     $submission_storage = \Drupal::entityTypeManager()->getStorage('webform_submission');
@@ -207,7 +207,7 @@ class WebformNodeResultsTest extends WebformNodeTestBase {
     $this->assertResponse(200);
 
     // Check deleting webform node results.
-    $this->drupalPostForm('node/' . $node->id() . '/webform/results/clear', [], t('Clear'));
+    $this->drupalPostForm('node/' . $node->id() . '/webform/results/clear', ['confirm' => TRUE], t('Clear'));
     $this->assertEqual($submission_storage->getTotal($webform, $node), 0);
     $this->assertEqual($submission_storage->getTotal($webform), 3);
   }

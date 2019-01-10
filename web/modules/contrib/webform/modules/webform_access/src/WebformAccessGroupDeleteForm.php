@@ -2,31 +2,34 @@
 
 namespace Drupal\webform_access;
 
-use Drupal\Core\Entity\EntityDeleteForm;
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Url;
-use Drupal\webform\Form\WebformDialogFormTrait;
+use Drupal\webform\Form\WebformConfigEntityDeleteFormBase;
 
 /**
  * Provides a delete webform access group form.
  */
-class WebformAccessGroupDeleteForm extends EntityDeleteForm {
-
-  use WebformDialogFormTrait;
+class WebformAccessGroupDeleteForm extends WebformConfigEntityDeleteFormBase {
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
-    $form = parent::buildForm($form, $form_state);
-    return $this->buildDialogConfirmForm($form, $form_state);
-  }
+  protected $confirmCheckbox = FALSE;
 
   /**
    * {@inheritdoc}
    */
-  public function getRedirectUrl() {
-    return Url::fromRoute('entity.webform_access_group.collection');
+  public function getDescription() {
+    return [
+      'title' => [
+        '#markup' => $this->t('This action will…'),
+      ],
+      'list' => [
+        '#theme' => 'item_list',
+        '#items' => [
+          $this->t('Remove configuration'),
+          $this->t('Affect any fields which use this access group'),
+        ],
+      ],
+    ];
   }
 
 }

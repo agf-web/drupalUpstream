@@ -5,12 +5,13 @@ namespace Drupal\webform_access;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\node\Entity\Node;
 use Drupal\webform\Entity\Webform;
 use Drupal\webform\Plugin\WebformElementManagerInterface;
+use Drupal\webform\Utility\WebformDialogHelper;
 use Drupal\webform\WebformAccessRulesManagerInterface;
 use Drupal\webform\WebformEntityReferenceManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Entity\EntityManager;
 
 /**
  * Provides a form to define a webform access group.
@@ -23,6 +24,13 @@ class WebformAccessGroupForm extends EntityForm {
    * @var object
    */
   protected $database;
+
+  /**
+   * Entity manager.
+   *
+   * @var Drupal\Core\Entity\EntityManager
+   */
+  protected $entityManager;
 
   /**
    * The webform element manager.
@@ -50,6 +58,8 @@ class WebformAccessGroupForm extends EntityForm {
    *
    * @param \Drupal\Core\Database\Connection $database
    *   The database.
+   * @param \Drupal\Core\Entity\EntityManager $entity_manager
+   *   The entity manager.
    * @param \Drupal\webform\Plugin\WebformElementManagerInterface $element_manager
    *   The webform element manager.
    * @param \Drupal\webform\WebformEntityReferenceManagerInterface $webform_entity_reference_manager
@@ -57,8 +67,9 @@ class WebformAccessGroupForm extends EntityForm {
    * @param \Drupal\webform\WebformAccessRulesManagerInterface $webform_access_rules_manager
    *   The webform access rules manager.
    */
-  public function __construct(Connection $database, WebformElementManagerInterface $element_manager, WebformEntityReferenceManagerInterface $webform_entity_reference_manager, WebformAccessRulesManagerInterface $webform_access_rules_manager) {
+  public function __construct(Connection $database, EntityManager $entity_manager, WebformElementManagerInterface $element_manager, WebformEntityReferenceManagerInterface $webform_entity_reference_manager, WebformAccessRulesManagerInterface $webform_access_rules_manager) {
     $this->database = $database;
+    $this->entityManager = $entity_manager;
     $this->elementManager = $element_manager;
     $this->webformEntityReferenceManager = $webform_entity_reference_manager;
     $this->webformAccessRulesManager = $webform_access_rules_manager;
@@ -70,6 +81,7 @@ class WebformAccessGroupForm extends EntityForm {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('database'),
+      $container->get('entity.manager'),
       $container->get('plugin.manager.webform.element'),
       $container->get('webform.entity_reference_manager'),
       $container->get('webform.access_rules_manager')
@@ -205,6 +217,21 @@ class WebformAccessGroupForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
+  protected function actions(array $form, FormStateInterface $form_state) {
+    $actions = parent::actions($form, $form_state);
+
+    // Open delete button in a modal dialog.
+    if (isset($actions['delete'])) {
+      $actions['delete']['#attributes'] = WebformDialogHelper::getModalDialogAttributes(WebformDialogHelper::DIALOG_NARROW, $actions['delete']['#attributes']['class']);
+      WebformDialogHelper::attachLibraries($actions['delete']);
+    }
+
+    return $actions;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $form_state->setValue('permissions', array_filter($form_state->getValue('permissions')));
   }
@@ -265,7 +292,7 @@ class WebformAccessGroupForm extends EntityForm {
     $webforms = Webform::loadMultiple($webform_ids);
 
     /** @var \Drupal\node\NodeInterface[] $nodes */
-    $nodes = Node::loadMultiple($nids);
+    $nodes = $this->entityManager->getStorage('node')->loadMultiple($nids);
 
     $options = [];
     foreach ($webform_nodes as $nid => $field_names) {

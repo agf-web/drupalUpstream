@@ -385,7 +385,7 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       // Content.
       $row['content'] = ['data' => []];
       $row['content']['data']['title'] = [
-        '#markup' => $video['title'],
+        '#markup' => $video['title'] . ' | ' . (isset($video['owner']) ? $video['owner'] : $this->t('Jacob Rockowitz')),
         '#prefix' => '<h3>',
         '#suffix' => '</h3>',
       ];
@@ -404,22 +404,29 @@ class WebformHelpManager implements WebformHelpManagerInterface {
         '#prefix' => '<p>',
         '#suffix' => '</p>',
       ];
-      $row['content']['data']['resources'] = [
-        'title' => [
-          '#markup' => $this->t('Additional resources'),
-          '#prefix' => '<div><strong>',
-          '#suffix' => '</strong></div>',
-        ],
-        'links' => [
-          '#theme' => 'links',
-          '#links' => $this->getVideoLinks($id),
-          '#attributes' => ['class' => ['webform-help-links']],
-        ],
-      ];
+      if ($video_links = $this->getVideoLinks($id)) {
+        $row['content']['data']['resources'] = [
+          'title' => [
+            '#markup' => $this->t('Additional resources'),
+            '#prefix' => '<div><strong>',
+            '#suffix' => '</strong></div>',
+          ],
+          'links' => [
+            '#theme' => 'links',
+            '#links' => $video_links,
+            '#attributes' => ['class' => ['webform-help-links']],
+          ],
+        ];
+      }
       $rows[$id] = ['data' => $row, 'no_striping' => TRUE];
     }
 
-    $build = [];
+    $build = [
+      'content' => [
+        '#markup' => '<p>' . $this->t('The below are video tutorials are produced by <a href="https://jrockowitz.com">Jacob Rockowitz</a> and <a href="https://www.webwash.net/">WebWash.net</a>.') . '</p>' .
+          (!$docs ? '<hr/>' : ''),
+      ],
+    ];
 
     if (!$docs) {
       // Filter.
@@ -473,13 +480,12 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       ];
 
 
-
       $build['#attached']['library'][] = 'webform/webform.admin';
       $build['#attached']['library'][] = 'webform/webform.help';
       $build['#attached']['library'][] = 'webform/webform.ajax';
     }
     else {
-      $build = [
+      $build['videos'] = [
         '#theme' => 'table',
         '#rows' => $rows,
         '#no_striping' => TRUE,
@@ -501,7 +507,8 @@ class WebformHelpManager implements WebformHelpManagerInterface {
     $build = [
       'content' => [
         '#markup' => '<p>' . $this->t("Below is a list of modules and projects that extend and/or provide additional functionality to the Webform module and Drupal's Form API.") . '</p>' .
-        '<p>★ = ' . $this->t('Recommended') . '</p>',
+          '<hr/>' .
+          '<p>★ = ' . $this->t('Recommended') . '</p>',
       ],
     ];
 
@@ -803,7 +810,10 @@ class WebformHelpManager implements WebformHelpManagerInterface {
    *   An associative array containing videos.
    */
   protected function initVideos() {
-    $videos = [
+    $videos = [];
+
+    // Jacob Rockowitz (jrockowitz.com).
+    $videos += [
       'introduction' => [
         'title' => $this->t('Introduction to Webform for Drupal 8'),
         'content' => $this->t('This screencast provides a general introduction to the Webform module.'),
@@ -1185,6 +1195,116 @@ class WebformHelpManager implements WebformHelpManagerInterface {
         'presentation_id' => '1TMo0vBjkdtfcIsYWhxQnjO_rG9ebK64oHhdPvTvwNus',
       ],
     ];
+
+    // WebWash (www.webwash.net/).
+    $videos += [
+      'webwash_webform' => [
+        'title' => $this->t('How to Create Forms using Webform and Contact in Drupal 8'),
+        'owner' => $this->t('WebWash'),
+        'content' => $this->t('Learn how to create forms using Webform and Contact module in Drupal 8.'),
+        'youtube_id' => 'u8PBW0K9I9I',
+        'links' => [
+          [
+            'title' => $this->t('Getting Started with Webform in Drupal 8: Part I |  WebWash'),
+            'url' => 'https://www.webwash.net/getting-started-webform-drupal-8/',
+          ],
+          [
+            'title' => $this->t('Moving Forward with Webform in Drupal 8: Part II | WebWash'),
+            'url' => 'https://www.webwash.net/moving-forward-webform-drupal-8/ ',
+          ],
+        ]
+      ],
+      'webwash_install' => [
+        'title' => $this->t('Using Webform in Drupal 8, 1.1: Install Webform'),
+        'owner' => $this->t('WebWash'),
+        'content' => $this->t('Learn how to download and install the Webform module.'),
+        'youtube_id' => 'T4CiLF8fwFQ',
+      ],
+      'webwash_create' => [
+        'title' => $this->t('Using Webform in Drupal 8, 1.2: Create a Form'),
+        'owner' => $this->t('WebWash'),
+        'content' => $this->t('Learn how to create a form from scratch and add three elements to it: Name, Email and Telephone.'),
+        'youtube_id' => 'fr3kTiYKNls',
+      ],
+      'webwash_conditional' => [
+        'title' => $this->t('Using Webform in Drupal 8, 2.1: Create Conditional Elements'),
+        'owner' => $this->t('WebWash'),
+        'content' => $this->t('Learn how to create conditional elements.'),
+        'youtube_id' => 'ic4wu-iZd4Y',
+      ],
+      'webwash_wizard' => [
+        'title' => $this->t('Using Webform in Drupal 8, 2.2: Create Multi-step Wizard'),
+        'owner' => $this->t('WebWash'),
+        'content' => $this->t('Learn how to create a multi-step page form.'),
+        'youtube_id' => 'k17W2yH71ak',
+      ],
+      'webwash_float' => [
+        'title' => $this->t('Using Webform in Drupal 8, 2.3: Float Elements Next to Each Other'),
+        'owner' => $this->t('WebWash'),
+        'content' => $this->t('Learn how to float elements next to each other on a form.'),
+        'youtube_id' => 'EgFNqfVboHQ',
+      ],
+      'webwash_options' => [
+        'title' => $this->t('Using Webform in Drupal 8, 2.4: Create List Options'),
+        'owner' => $this->t('WebWash'),
+        'content' => $this->t('Learn how to create reusable list options for elements.'),
+        'youtube_id' => 'magHXd9DNpg',
+        'links' => [
+          [
+            'title' => $this->t('How to Use Webform Predefined Options in Drupal 8 | WebWash'),
+            'url' => 'https://www.webwash.net/use-webform-predefined-options-drupal-8/',
+          ],
+        ],
+      ],
+      'webwash_email' => [
+        'title' => $this->t('Using Webform in Drupal 8, 2.5: Sending Emails'),
+        'owner' => $this->t('WebWash'),
+        'content' => $this->t('Learn how to send emails when a submission is submitted.'),
+        'youtube_id' => 'kSzi1J1MyBc',
+      ],
+      'webwash_confirmation' => [
+        'title' => $this->t('Using Webform in Drupal 8, 2.6: Create Confirmation Page'),
+        'owner' => $this->t('WebWash'),
+        'content' => $this->t('Learn how to create a custom confirmation page.'),
+        'youtube_id' => 'edYCWGoLzZk',
+      ],
+      'webwash_submissions' => [
+        'title' => $this->t('Using Webform in Drupal 8, 3.1: View, Download and Clear Submissions'),
+        'owner' => $this->t('WebWash'),
+        'content' => $this->t('Learn how to view and manage submission data.'),
+        'youtube_id' => 'dftBF8P4Lh4',
+      ],
+      'webwash_drafts' => [
+        'title' => $this->t('Using Webform in Drupal 8, 3.2: Allow Draft Submissions'),
+        'owner' => $this->t('WebWash'),
+        'content' => $this->t('Learn how to allow users to save draft submissions.'),
+        'youtube_id' => 'xA3RtJFZc_4',
+      ],
+      'webwash_zapier' => [
+        'title' => $this->t('Using Webform in Drupal 8, 4.1: Send Submissions to Zapier'),
+        'owner' => $this->t('WebWash'),
+        'content' => $this->t('Learn how to integrate Webform with other system using Zapier.'),
+        'youtube_id' => 'GY0F-rya2iY',
+        'links' => [
+          [
+            'title' => $this->t('Integrate Webform and Google Sheets using Zapier in Drupal 8 | WebWash'),
+            'url' => 'https://www.webwash.net/integrate-webform-and-google-sheets-using-zapier-in-drupal-8/',
+          ],
+        ],
+      ],
+      'webwash_block' => [
+        'title' => $this->t('Using Webform in Drupal 8, 5.1: Display Form as a Block'),
+        'owner' => $this->t('WebWash'),
+        'content' => $this->t('Learn how to display a form as a block.'),
+        'youtube_id' => 'men4peeDS_4',
+      ],
+      'webwash_node' => [
+        'title' => $this->t('Using Webform in Drupal 8, 5.2: Display Form using Webform Node'),
+        'owner' => $this->t('WebWash'),
+        'content' => $this->t('Learn how to display forms using Webform Node sub-module.'),
+        'youtube_id' => '29pntXdy81k',
+      ],
+    ];
     foreach ($videos as $id => &$video_info) {
       $video_info['id'] = $id;
     }
@@ -1349,13 +1469,28 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       ],
     ];
 
+
+    /**************************************************************************/
+    // Help.
+    /**************************************************************************/
+
+    $help['help'] = [
+      'group' => 'help',
+      'title' => $this->t('Help'),
+      'content' => $this->t('Visit the Webform 8.x-5.x <a href="https://www.drupal.org/node/2856146">documentation pages</a> for an <a href="https://www.drupal.org/node/2834423">introduction</a>, <a href="https://www.drupal.org/node/2837024">features overview</a>, <a href="https://www.drupal.org/node/2932764">articles</a>, <a href="https://www.drupal.org/node/2860989">recipes</a>, <a href="https://www.drupal.org/node/2932760">known issues</a>, and a <a href="https://www.drupal.org/node/2843422">roadmap</a>.'),
+      'routes' => [
+        // @see /admin/structure/webform/help
+        'webform.help',
+      ],
+    ];
+
     /**************************************************************************/
     // Contribute.
     /**************************************************************************/
 
     // Contribute.
     $help['contribute'] = [
-      'group' => 'contribute',
+      'group' => 'help',
       'title' => $this->t('Contribute'),
       'content' => $this->t('The <strong>Contribute</strong> page encourages individuals and organizations to join the Drupal community, become members of the Drupal Association, and contribute to Drupal projects, events, and more.'),
       'video_id' => 'about',
@@ -1364,6 +1499,7 @@ class WebformHelpManager implements WebformHelpManagerInterface {
         'webform.contribute',
       ],
     ];
+
     /**************************************************************************/
     // Configuration.
     /**************************************************************************/
@@ -1455,25 +1591,37 @@ class WebformHelpManager implements WebformHelpManagerInterface {
     ];
 
     // Configuration: Libraries.
+    $t_args = [
+      '@webform-libraries-make' => 'webform-libraries-make',
+      '@webform-libraries-composer' => 'webform-libraries-composer',
+      '@webform-libraries-download' => 'webform-libraries-download',
+      '@webform-composer-update' => 'webform-composer-update',
+    ];
+    $drush_version = (class_exists('\Drush\Drush')) ? \Drush\Drush::getMajorVersion() : 8;
+    if ($drush_version >= 9) {
+      foreach ($t_args as $command_name => $command) {
+        $t_args[$command_name] = str_replace('-', ':', $command);
+      }
+    }
     $help['config_libraries_help'] = [
       'group' => 'configuration',
       'title' => $this->t('Configuration: Libraries: Help'),
       'content' => '<p>' . $this->t('The Webform module utilizes third-party Open Source libraries to enhance webform elements and to provide additional functionality.') . ' ' .
-        $this->t('It is recommended that these libraries are installed in your Drupal installations /libraries directory.') . ' ' .
+        $this->t('It is recommended that these libraries are installed in your Drupal installations /libraries or /web/libraries directory.') . ' ' .
         $this->t('If these libraries are not installed, they will be automatically loaded from a CDN.') . ' ' .
         $this->t('All libraries are optional and can be excluded via the admin settings form.') .
         '</p>' .
         '<p>' . $this->t('There are several ways to download the needed third-party libraries.') . '</p>' .
         '<p><strong>' . $this->t('Recommended') . '</strong></p>' .
         '<ul>' .
-        '<li>' . $this->t('Use the <a href="https://github.com/wikimedia/composer-merge-plugin">Composer Merge plugin</a> to include the Webform module\'s <a href="https://cgit.drupalcode.org/webform/tree/composer.libraries.json">composer.libraries.json</a> or generate a custom file using <code>drush webform-libraries-composer &gt; DRUPAL_ROOT/composer.libraries.json</code>.') . '<br/><strong>' . t('<a href="https://www.drupal.org/node/3003140">Learn more &raquo;</a>') . '</strong>'. '</li>' .
+        '<li>' . $this->t('Use the <a href="https://github.com/wikimedia/composer-merge-plugin">Composer Merge plugin</a> to include the Webform module\'s <a href="https://cgit.drupalcode.org/webform/tree/composer.libraries.json">composer.libraries.json</a> or generate a custom file using <code>drush @webform-libraries-composer &gt; DRUPAL_ROOT/composer.libraries.json</code>.', $t_args) . '<br/><strong>' . t('<a href="https://www.drupal.org/node/3003140">Learn more &raquo;</a>') . '</strong>'. '</li>' .
         '</ul>' .
         '<p><strong>' . $this->t('Alternatives') . '</strong></p>' .
         '<ul>' .
-        '<li>' . $this->t('Generate a *.make.yml or composer.json file using <code>drush webform-libraries-make</code> or <code>drush webform-libraries-composer</code>.') . '</li>' .
-        '<li>' . $this->t('Execute <code>drush webform-libraries-download</code>, to download third-party libraries required by the Webform module. (OSX/Linux)') . '</li>' .
-        '<li>' . $this->t("Execute <code>drush webform-composer-update</code>, to update your Drupal installation's composer.json to include the Webform module's selected libraries as repositories.") . '</li>' .
-        '<li>' . $this->t('Download and extract a <a href=":href">zipped archive containing all webform libraries</a> and extract the directories and files to /libraries', [':href' => 'https://cgit.drupalcode.org/sandbox-jrockowitz-2941983/plain/libraries.zip']) . '</li>' .
+        '<li>' . $this->t('Generate a *.make.yml or composer.json file using <code>drush @webform-libraries-make</code> or <code>drush @webform-libraries-composer</code>.', $t_args) . '</li>' .
+        '<li>' . $this->t('Execute <code>drush @webform-libraries-download</code>, to download third-party libraries required by the Webform module. (OSX/Linux)', $t_args) . '</li>' .
+        '<li>' . $this->t("Execute <code>drush @webform-composer-update</code>, to update your Drupal installation's composer.json to include the Webform module's selected libraries as repositories.", $t_args) . '</li>' .
+        '<li>' . $this->t('Download and extract a <a href=":href">zipped archive containing all webform libraries</a> and extract the directories and files to /libraries or /web/libraries', [':href' => 'https://cgit.drupalcode.org/sandbox-jrockowitz-2941983/plain/libraries.zip']) . '</li>' .
         '</ul>',
       'message_type' => 'info',
       'message_close' => TRUE,
@@ -1732,30 +1880,6 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       ],
     ];
 
-    // Submissions: Purge.
-    $help['submissions_purge'] = [
-      'group' => 'submissions',
-      'title' => $this->t('Submissions: Purge'),
-      'content' => $this->t('The <strong>Submissions purge</strong> page allows all submissions across all webforms to be deleted. <strong>PLEASE NOTE: THIS ACTION CANNOT BE UNDONE.</strong>'),
-      'message_type' => 'warning',
-      'routes' => [
-        // @see /admin/structure/webform/results/purge
-        'entity.webform_submission.collection_purge',
-      ],
-    ];
-
-    // Submissions: Log.
-    $help['submissions_log'] = [
-      'group' => 'submissions',
-      'title' => $this->t('Submissions: Log'),
-      'content' => $this->t('The <strong>Submissions log</strong> page tracks all submission events for all webforms that have submission logging enabled. Submission logging can be enabled globally or on a per webform basis.'),
-      'routes' => [
-        // @see /admin/structure/webform/results/log
-        'entity.webform_submission.collection_log',
-      ],
-    ];
-
-
     // Results.
     $help['results'] = [
       'group' => 'submissions',
@@ -1769,17 +1893,6 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       ],
     ];
 
-    // Results: Log.
-    $help['results_log'] = [
-      'group' => 'submissions',
-      'title' => $this->t('Results: Log'),
-      'content' => $this->t('The <strong>Results Log</strong> lists all webform submission events for the current webform.'),
-      'routes' => [
-        // @see /admin/structure/webform/manage/{webform}/results/log
-        'entity.webform.results_log',
-      ],
-    ];
-
     // Results: Download.
     $help['results_download'] = [
       'group' => 'submissions',
@@ -1788,17 +1901,6 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       'routes' => [
         // @see /admin/structure/webform/manage/{webform}/results/download
         'entity.webform.results_export',
-      ],
-    ];
-
-    // Results: Clear.
-    $help['results_clear'] = [
-      'group' => 'submissions',
-      'title' => $this->t('Results: Clear'),
-      'content' => $this->t("The <strong>Clear</strong> page allows all submissions to a webform to be deleted."),
-      'routes' => [
-        // @see /admin/structure/webform/manage/{webform}/results/clear
-        'entity.webform.results_clear',
       ],
     ];
 
@@ -1855,19 +1957,6 @@ class WebformHelpManager implements WebformHelpManagerInterface {
         'entity.webform_submission.yaml',
         // @see /node/{node}/webform/submission/{webform_submisssion}/yaml
         'entity.node.webform_submission.yaml',
-      ],
-    ];
-
-    $help['submission_log'] = [
-      'group' => 'submission',
-      'title' => $this->t('Submission: Log'),
-      'content' => $this->t("The <strong>Log</strong> page shows all events and transactions for a submission."),
-      'video_id' => 'submission',
-      'routes' => [
-        // @see /admin/structure/webform/manage/{webform}/submission/{webform_submisssion}/log
-        'entity.webform_submission.log',
-        // @see /node/{node}/webform/submission/{webform_submission}/log
-        'entity.node.webform_submission.log',
       ],
     ];
 
@@ -1986,15 +2075,6 @@ class WebformHelpManager implements WebformHelpManagerInterface {
         'entity.node.webform.results_submissions',
       ],
     ];
-    $help['webform_node_results_log'] = [
-      'group' => 'webform_nodes',
-      'title' => $this->t('Webform Node: Results: Log'),
-      'content' => $this->t('The <strong>Results Log</strong> lists all webform submission events for the current webform.'),
-      'routes' => [
-        // @see /node/{node}/webform/results/log
-        'entity.node.webform.results_log',
-      ],
-    ];
     $help['webform_node_results_download'] = [
       'group' => 'webform_nodes',
       'title' => $this->t('Webform Node: Results: Download'),
@@ -2002,15 +2082,6 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       'routes' => [
         // @see /node/{node}/webform/results/download
         'entity.node.webform.results_export',
-      ],
-    ];
-    $help['webform_node_results_clear'] = [
-      'group' => 'webform_nodes',
-      'title' => $this->t('Webform Node: Results: Clear'),
-      'content' => $this->t("The <strong>Clear</strong> page allows all submissions to a webform node to be deleted."),
-      'routes' => [
-        // @see /node/{node}/webform/results/clear
-        'entity.node.webform.results_clear',
       ],
     ];
 

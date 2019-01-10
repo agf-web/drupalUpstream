@@ -69,7 +69,8 @@ function maillog_webform_submission_form_alter(array &$form, FormStateInterface 
   // Display warning if no emails are being sent.
   $build[] = [
     '#markup' => t('No emails will be sent.'),
-    '#prefix' => ' <b>', '#suffix' => '</b>',
+    '#prefix' => ' <b>',
+    '#suffix' => '</b>',
   ];
 
   if ($build) {

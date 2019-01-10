@@ -96,7 +96,7 @@ class WebformOptions extends FormElement {
     }
     else {
       $t_args = ['@label' => isset($element['#label']) ? Unicode::ucfirst($element['#label']) : t('Options')];
-      $properties = ['#label', '#labels', '#empty_items', '#add_more_items'];
+      $properties = ['#label', '#labels', '#min_items', '#empty_items', '#add_more_items'];
 
       $element['options'] = array_intersect_key($element, array_combine($properties, $properties)) + [
         '#type' => 'webform_multiple',

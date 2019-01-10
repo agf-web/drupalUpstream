@@ -80,6 +80,11 @@ class WebformResultsExportForm extends FormBase {
       '#access' => ($saved_options) ? TRUE : FALSE,
       '#submit' => ['::delete'],
     ];
+
+    // Disable single submit.
+    $form['#attributes']['class'][] = 'webform-remove-single-submit';
+    $form['#attached']['library'][] = 'webform/webform.form';
+
     return $form;
   }
 

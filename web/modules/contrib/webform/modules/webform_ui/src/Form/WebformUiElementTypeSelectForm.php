@@ -27,7 +27,7 @@ class WebformUiElementTypeSelectForm extends WebformUiElementTypeFormBase {
     if ($parent) {
       $parent_element = $webform->getElement($parent);
       $t_args = ['@parent' => $parent_element['#admin_title'] ?: $parent_element['#title'] ?: $parent_element['#webform_key']];
-      $form['#title'] = t('Select an element to add to "@parent"', $t_args);
+      $form['#title'] = $this->t('Select an element to add to "@parent"', $t_args);
     }
 
     $elements = $this->elementManager->getInstances();

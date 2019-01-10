@@ -64,7 +64,7 @@ class WebformImageSelectImages extends FormElement {
     // Wrap this $element in a <div> that handle #states.
     WebformElementHelper::fixStatesWrapper($element);
 
-    $properties = ['#label', '#labels', '#empty_items', '#add_more_items'];
+    $properties = ['#label', '#labels', '#min_items', '#empty_items', '#add_more_items'];
 
     $element['images'] = array_intersect_key($element, array_combine($properties, $properties)) + [
       '#type' => 'webform_multiple',

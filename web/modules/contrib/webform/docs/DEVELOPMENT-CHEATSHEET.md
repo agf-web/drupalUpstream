@@ -43,7 +43,7 @@ git push
 git branch -D [issue-number]-[issue-description]
 git push origin :[issue-number]-[issue-description]
 
-# Delete remove branch
+# Delete remote branch
 git push origin --delete [issue-number]-[issue-description]
 ```
 
@@ -57,7 +57,7 @@ drush webform-libraries-composer > composer.json
 **Manually Execute an Update Hook**
 
 ```bash
-drush php-eval 'module_load_include('install', 'webform'); webform_update_8124()';
+drush php-eval 'module_load_include('install', 'webform'); webform_update_8144()';
 ```
 
 **Import and Export Configuration**
@@ -103,6 +103,7 @@ echo 'true' > tests/modules/webform_test_handler/webform_test_handler.features.y
 echo 'true' > tests/modules/webform_test_handler_remote_post/webform_test_handler_remote_post.features.yml
 echo 'true' > tests/modules/webform_test_options/webform_test_options.features.yml
 echo 'true' > tests/modules/webform_test_paragraphs/webform_test_paragraphs.features.yml
+echo 'true' > tests/modules/webform_test_rest/webform_test_rest.features.yml
 echo 'true' > tests/modules/webform_test_submissions/webform_test_submissions.features.yml
 echo 'true' > tests/modules/webform_test_third_party_settings/webform_test_third_party_settings.features.yml
 echo 'true' > tests/modules/webform_test_translation/webform_test_translation.features.yml
@@ -129,9 +130,11 @@ drush en -y webform\
   webform_test_handler\
   webform_test_handler_remote_post\
   webform_test_options\
-  webform_test_views\
+  webform_test_paragraphs\
+  webform_test_rest\
   webform_test_submissions\
   webform_test_translation\
+  webform_test_views\
   webform_image_select_test\
   webform_node_test_multiple\
   webform_node_test_translation\
@@ -161,9 +164,10 @@ drush features-export -y webform_test_element
 drush features-export -y webform_test_handler
 drush features-export -y webform_test_handler_remote_post
 drush features-export -y webform_test_options
-drush features-export -y webform_test_views
+drush features-export -y webform_test_rest
 drush features-export -y webform_test_submissions
 drush features-export -y webform_test_translation
+drush features-export -y webform_test_views
 drush features-export -y webform_test_paragraphs
 drush features-export -y webform_image_select_test
 drush features-export -y webform_node_test_multiple
@@ -193,10 +197,11 @@ drush webform:tidy -y --dependencies webform_test_element
 drush webform:tidy -y --dependencies webform_test_handler
 drush webform:tidy -y --dependencies webform_test_handler_remote_post
 drush webform:tidy -y --dependencies webform_test_options
-drush webform:tidy -y --dependencies webform_test_views
+drush webform:tidy -y --dependencies webform_test_paragraphs
+drush webform:tidy -y --dependencies webform_test_rest
 drush webform:tidy -y --dependencies webform_test_submissions
 drush webform:tidy -y --dependencies webform_test_translation
-drush webform:tidy -y --dependencies webform_test_paragraphs
+drush webform:tidy -y --dependencies webform_test_views
 drush webform:tidy -y --dependencies webform_image_select_test
 drush webform:tidy -y --dependencies webform_node_test_multiple
 drush webform:tidy -y --dependencies webform_node_test_translation
@@ -222,10 +227,11 @@ drush features-import -y webform_test_block_submission_limit
 drush features-import -y webform_test_handler
 drush features-import -y webform_test_handler_remote_post
 drush features-import -y webform_test_options
-drush features-import -y webform_test_views
+drush features-import -y webform_test_paragraphs
+drush features-import -y webform_test_rest
 drush features-import -y webform_test_submissions
 drush features-import -y webform_test_translation
-drush features-import -y webform_test_paragraphs
+drush features-import -y webform_test_views
 drush features-import -y webform_image_select_test
 drush features-import -y webform_node_test_multiple
 drush features-import -y webform_node_test_translation

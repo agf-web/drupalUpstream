@@ -79,7 +79,7 @@ class WebformMultiple extends FormElement {
       return static::convertValuesToItems($element, $input['items']);
     }
     else {
-      return NULL;
+      return [];
     }
   }
 
@@ -143,16 +143,18 @@ class WebformMultiple extends FormElement {
 
     $table_id = implode('_', $element['#parents']) . '_table';
 
-    // Disable add operation when #cardinality is met.
+    // Disable add operation when #cardinality is met
+    // and make sure to limit the number of items.
     if (!empty($element['#cardinality']) && $number_of_items >= $element['#cardinality']) {
       $element['#add'] = FALSE;
+      $number_of_items = $element['#cardinality'];
+      $form_state->set($number_of_items_storage_key, $number_of_items);
     }
 
     // Add wrapper to the element.
-    $element += [
-      '#prefix' => '<div id="' . $table_id . '">',
-      '#suffix' => '</div>',
-    ];
+    $element += ['#prefix' => '', '#suffix' => ''];
+    $element['#prefix'] = '<div id="' . $table_id . '">' . $element['#prefix'];
+    $element['#suffix'] .= '</div>';
 
     // DEBUG:
     // Disable Ajax callback by commenting out the below callback and wrapper.
@@ -771,7 +773,7 @@ class WebformMultiple extends FormElement {
     $action_key = static::getStorageKey($element, 'action');
     $form_state->set($action_key, TRUE);
 
-    // Rebuild the webform.
+    // Rebuild the form.
     $form_state->setRebuild();
   }
 
@@ -808,7 +810,7 @@ class WebformMultiple extends FormElement {
     $action_key = static::getStorageKey($element, 'action');
     $form_state->set($action_key, TRUE);
 
-    // Rebuild the webform.
+    // Rebuild the form.
     $form_state->setRebuild();
   }
 
@@ -844,7 +846,7 @@ class WebformMultiple extends FormElement {
     $action_key = static::getStorageKey($element, 'action');
     $form_state->set($action_key, TRUE);
 
-    // Rebuild the webform.
+    // Rebuild the form.
     $form_state->setRebuild();
   }
 
@@ -937,20 +939,7 @@ class WebformMultiple extends FormElement {
     // Now build the associative array of items.
     $items = [];
     foreach ($values as $value) {
-      $item = NULL;
-      if (isset($value['_item_'])) {
-        $item = $value['_item_'];
-      }
-      else {
-        // Get hidden (#access: FALSE) elements in the '_handle_' column and
-        // add them to the $value.
-        // @see \Drupal\webform\Element\WebformMultiple::buildElementRow
-        if (isset($value['_hidden_']) && is_array($value['_hidden_'])) {
-          $value += $value['_hidden_'];
-        }
-        unset($value['weight'], $value['_operations_'], $value['_hidden_']);
-        $item = $value;
-      }
+      $item = static::convertValueToItem($value);
 
       // Never add an empty item.
       if (static::isEmpty($item)) {
@@ -973,6 +962,31 @@ class WebformMultiple extends FormElement {
   }
 
   /**
+   * Convert value array containing (elements or _item_ and weight) to an item.
+   *
+   * @param array $value
+   *   The multiple value array.
+   *
+   * @return array
+   *   An item array.
+   */
+  public static function convertValueToItem(array $value) {
+    if (isset($value['_item_'])) {
+      return $value['_item_'];
+    }
+    else {
+      // Get hidden (#access: FALSE) elements in the '_handle_' column and
+      // add them to the $value.
+      // @see \Drupal\webform\Element\WebformMultiple::buildElementRow
+      if (isset($value['_hidden_']) && is_array($value['_hidden_'])) {
+        $value += $value['_hidden_'];
+      }
+      unset($value['weight'], $value['_operations_'], $value['_hidden_']);
+      return $value;
+    }
+  }
+
+  /**
    * Validate composite element has unique keys.
    *
    * @param array $element
@@ -992,10 +1006,14 @@ class WebformMultiple extends FormElement {
 
     $unique_keys = [];
     foreach ($values as $value) {
-      $item = (isset($value['_item_'])) ? $value['_item_'] : $value;
+      $item = static::convertValueToItem($value);
+
       $key_name = $element['#key'];
       $key_value = $item[$key_name];
-      if (empty($key_value)) {
+
+      // Skip empty key and item.
+      unset($item[$key_name]);
+      if (empty($key_value) && static::isEmpty($item)) {
         continue;
       }
 

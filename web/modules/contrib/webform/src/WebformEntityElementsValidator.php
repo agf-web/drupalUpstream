@@ -56,6 +56,13 @@ class WebformEntityElementsValidator implements WebformEntityElementsValidatorIn
   protected $originalElements;
 
   /**
+   * An array of element keys.
+   *
+   * @var array
+   */
+  protected $elementKeys;
+
+  /**
    * The 'renderer' service.
    *
    * @var \Drupal\Core\Render\RendererInterface
@@ -82,6 +89,19 @@ class WebformEntityElementsValidator implements WebformEntityElementsValidatorIn
    * @var \Drupal\Core\Form\FormBuilderInterface
    */
   protected $formBuilder;
+
+  /**
+   * Element keys/names that are reserved.
+   *
+   * @var array
+   */
+  public static $reservedNames = [
+    'add',
+    'form_build_id',
+    'form_id',
+    'form_token',
+    'op',
+  ];
 
   /**
    * Constructs a WebformEntityElementsValidator object.
@@ -135,14 +155,24 @@ class WebformEntityElementsValidator implements WebformEntityElementsValidatorIn
     $this->elements = Yaml::decode($this->elementsRaw);
     $this->originalElements = Yaml::decode($this->originalElementsRaw);
 
+    $this->elementKeys = [];
+    if (is_array($this->elements)) {
+      $this->getElementKeysRecursive($this->elements, $this->elementKeys);
+    }
+
     // Validate elements are an array.
     if ($options['array'] && ($message = $this->validateArray())) {
       return [$message];
     }
 
     // Validate duplicate element name.
-    if ($options['names'] && ($messages = $this->validateDuplicateNames())) {
-      return $messages;
+    if ($options['names']) {
+      if ($messages = $this->validateNames()) {
+        return $messages;
+      }
+      elseif ($messages = $this->validateDuplicateNames()) {
+        return $messages;
+      }
     }
 
     // Validate ignored properties.
@@ -205,6 +235,35 @@ class WebformEntityElementsValidator implements WebformEntityElementsValidatorIn
       return $this->t('Elements are not valid. YAML must contain an associative array of elements.');
     }
     return NULL;
+  }
+
+  /**
+   * Validate elements names.
+   *
+   * @return array|null
+   *   If not valid, an array of error messages.
+   */
+  protected function validateNames() {
+    $messages = [];
+    foreach ($this->elementKeys as $name) {
+      if (!preg_match('/^[_a-z0-9]+$/', $name)) {
+        $line_numbers = $this->getLineNumbers('/^\s*(["\']?)' . preg_quote($name, '/') . '\1\s*:/');
+        $t_args = [
+          '%name' => $name,
+          '@line_number' => WebformArrayHelper::toString($line_numbers),
+        ];
+        $messages[] = $this->t('The element key %name on line @line_number must contain only lowercase letters, numbers, and underscores.', $t_args);
+      }
+      elseif (in_array($name, static::$reservedNames)) {
+        $line_numbers = $this->getLineNumbers('/^\s*(["\']?)' . preg_quote($name, '/') . '\1\s*:/');
+        $t_args = [
+          '%name' => $name,
+          '@line_number' => WebformArrayHelper::toString($line_numbers),
+        ];
+        $messages[] = $this->t('The element key %name on line @line_number is a reserved key.', $t_args);
+      }
+    }
+    return $messages;
   }
 
   /**
@@ -345,26 +404,6 @@ class WebformEntityElementsValidator implements WebformEntityElementsValidatorIn
   }
 
   /**
-   * Recurse through elements and collect an associative array of deleted element keys.
-   *
-   * @param array $elements
-   *   An array of elements.
-   * @param array $names
-   *   An array tracking deleted element keys.
-   */
-  protected function getElementKeysRecursive(array $elements, array &$names) {
-    foreach ($elements as $key => &$element) {
-      if (!WebformElementHelper::isElement($element, $key)) {
-        continue;
-      }
-      if (isset($element['#type'])) {
-        $names[$key] = $key;
-      }
-      $this->getElementKeysRecursive($element, $names);
-    }
-  }
-
-  /**
    * Validate element hierarchy.
    *
    * @return array|null
@@ -448,6 +487,30 @@ class WebformEntityElementsValidator implements WebformEntityElementsValidatorIn
     }
 
     return $message;
+  }
+
+  /****************************************************************************/
+  // Helper methods.
+  /****************************************************************************/
+
+  /**
+   * Recurse through elements and collect an associative array of deleted element keys.
+   *
+   * @param array $elements
+   *   An array of elements.
+   * @param array $names
+   *   An array tracking deleted element keys.
+   */
+  protected function getElementKeysRecursive(array $elements, array &$names) {
+    foreach ($elements as $key => &$element) {
+      if (!WebformElementHelper::isElement($element, $key)) {
+        continue;
+      }
+      if (isset($element['#type'])) {
+        $names[$key] = $key;
+      }
+      $this->getElementKeysRecursive($element, $names);
+    }
   }
 
   /**

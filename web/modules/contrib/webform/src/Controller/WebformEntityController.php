@@ -302,7 +302,7 @@ class WebformEntityController extends ControllerBase implements ContainerInjecti
           '@source_entity' => $source_entity->label(),
           '@webform' => $webform->label(),
         ];
-        return $this->t('@webform: @source_entity ', $t_args);
+        return $this->t('@webform: @source_entity', $t_args);
 
       case WebformInterface::TITLE_SOURCE_ENTITY_WEBFORM:
       default:

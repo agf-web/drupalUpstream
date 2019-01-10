@@ -12,3 +12,13 @@ function search_api_attachments_uninstall() {
   // Remove collection search_api_attachments.
   \Drupal::keyValue('search_api_attachments')->deleteAll();
 }
+
+/**
+ * Add path configuration for pdftotext_extractor
+ */
+function search_api_attachments_update_8001() {
+  \Drupal::configFactory()
+    ->getEditable('search_api_attachments.admin_config')
+    ->set('pdftotext_extractor_configuration.pdftotext_path', 'pdftotext')
+    ->save();
+}

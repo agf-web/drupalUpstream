@@ -28,6 +28,7 @@ class Fieldset extends ContainerBase {
       'more_title' => '',
       // Title.
       'title_display' => '',
+      'description_display' => '',
     ] + parent::getDefaultProperties();
   }
 

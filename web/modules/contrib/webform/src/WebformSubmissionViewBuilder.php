@@ -200,7 +200,14 @@ class WebformSubmissionViewBuilder extends EntityViewBuilder implements WebformS
       // Replace tokens before building the element.
       $webform_element->replaceTokens($element, $webform_submission);
 
+      // Check if empty value is excluded.
+      if ($webform_element->isEmptyExcluded($element, $options) && !$webform_element->getValue($element, $webform_submission, $options)) {
+        continue;
+      }
+
       $title = $element['#admin_title'] ?: $element['#title'] ?: '(' . $key . ')';
+      // Note: Not displaying an empty message since empty values just render
+      // an empty table cell.
       $html = $webform_element->formatHtml($element, $webform_submission, $options);
       $rows[$key] = [
         ['header' => TRUE, 'data' => $title],

@@ -81,5 +81,5 @@ Commit changes
 7. Update composer.libraries.json
 ----------------------------------
 
-    cd web/modules/sandbox/webform
+    cd /private/var/www/sites/d8_webform/web/modules/sandbox/webform
     drush webform:libraries:composer > composer.libraries.json
