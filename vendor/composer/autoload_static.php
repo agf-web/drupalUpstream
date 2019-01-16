@@ -67,6 +67,7 @@ class ComposerStaticInit06cfba171977e2e6c39b75884dc9cee6
         'T' => 
         array (
             'Twig\\' => 5,
+            'TYPO3\\PharStreamWrapper\\' => 24,
         ),
         'S' => 
         array (
@@ -217,6 +218,10 @@ class ComposerStaticInit06cfba171977e2e6c39b75884dc9cee6
         'Twig\\' => 
         array (
             0 => __DIR__ . '/..' . '/twig/twig/src',
+        ),
+        'TYPO3\\PharStreamWrapper\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src',
         ),
         'Symfony\\Polyfill\\Php70\\' => 
         array (
@@ -3469,6 +3474,7 @@ class ComposerStaticInit06cfba171977e2e6c39b75884dc9cee6
         'Drupal\\Core\\Routing\\UrlGeneratorInterface' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/Routing/UrlGeneratorInterface.php',
         'Drupal\\Core\\Routing\\UrlGeneratorTrait' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/Routing/UrlGeneratorTrait.php',
         'Drupal\\Core\\Routing\\UrlMatcher' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/Routing/UrlMatcher.php',
+        'Drupal\\Core\\Security\\PharExtensionInterceptor' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/Security/PharExtensionInterceptor.php',
         'Drupal\\Core\\Security\\RequestSanitizer' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/Security/RequestSanitizer.php',
         'Drupal\\Core\\Serialization\\Yaml' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/Serialization/Yaml.php',
         'Drupal\\Core\\Session\\AccountInterface' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/Session/AccountInterface.php',
@@ -6242,6 +6248,13 @@ class ComposerStaticInit06cfba171977e2e6c39b75884dc9cee6
         'Symfony\\Polyfill\\Iconv\\Iconv' => __DIR__ . '/..' . '/symfony/polyfill-iconv/Iconv.php',
         'Symfony\\Polyfill\\Mbstring\\Mbstring' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/Mbstring.php',
         'Symfony\\Polyfill\\Php70\\Php70' => __DIR__ . '/..' . '/symfony/polyfill-php70/Php70.php',
+        'TYPO3\\PharStreamWrapper\\Assertable' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Assertable.php',
+        'TYPO3\\PharStreamWrapper\\Behavior' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Behavior.php',
+        'TYPO3\\PharStreamWrapper\\Exception' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Exception.php',
+        'TYPO3\\PharStreamWrapper\\Helper' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Helper.php',
+        'TYPO3\\PharStreamWrapper\\Interceptor\\PharExtensionInterceptor' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Interceptor/PharExtensionInterceptor.php',
+        'TYPO3\\PharStreamWrapper\\Manager' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Manager.php',
+        'TYPO3\\PharStreamWrapper\\PharStreamWrapper' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/PharStreamWrapper.php',
         'Text_Template' => __DIR__ . '/..' . '/phpunit/php-text-template/src/Template.php',
         'Twig\\Cache\\CacheInterface' => __DIR__ . '/..' . '/twig/twig/src/Cache/CacheInterface.php',
         'Twig\\Cache\\FilesystemCache' => __DIR__ . '/..' . '/twig/twig/src/Cache/FilesystemCache.php',
