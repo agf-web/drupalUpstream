@@ -6,6 +6,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Mail\MailManagerInterface;
+use Drupal\Core\Messenger\MessengerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -35,12 +36,20 @@ class TestEmailForm extends FormBase {
   }
 
   /**
+   * The messenger service.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('plugin.manager.mail'),
-      $container->get('language_manager')
+      $container->get('language_manager'),
+      $container->get('messenger')
     );
   }
 
@@ -51,10 +60,13 @@ class TestEmailForm extends FormBase {
    *   Mail manager service.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   The language manager.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger.
    */
-  public function __construct(MailManagerInterface $mail_manager, LanguageManagerInterface $language_manager) {
+  public function __construct(MailManagerInterface $mail_manager, LanguageManagerInterface $language_manager, MessengerInterface $messenger) {
     $this->mailManager = $mail_manager;
     $this->languageManager = $language_manager;
+    $this->messenger = $messenger;
   }
 
   /**
@@ -103,13 +115,13 @@ class TestEmailForm extends FormBase {
     $to = $form_state->getValue(['to']);
     $param_keys = ['cc', 'bcc', 'subject', 'body'];
     $params = array_intersect_key($form_state->getValues(), array_flip($param_keys));
-    $langcode = $this->languageManager->getDefaultLanguage();
+    $langcode = $this->languageManager->getDefaultLanguage()->getId();
 
     // Send email with drupal_mail.
     $message = $this->mailManager->mail('reroute_email', 'test_email_form', $to, $langcode, $params);
 
     if (!empty($message['result'])) {
-      drupal_set_message($this->t('Test email submitted for delivery from test form.'));
+      $this->messenger->addMessage($this->t('Test email submitted for delivery from test form.'));
     }
   }
 

@@ -5,8 +5,8 @@ package: Development
 configure: reroute_email.settings
 type: module
 
-# Information added by Drupal.org packaging script on 2017-12-15
-version: '8.x-1.0'
+# Information added by Drupal.org packaging script on 2019-02-18
+version: '8.x-1.1'
 core: '8.x'
 project: 'reroute_email'
-datestamp: 1513342688
+datestamp: 1550478487

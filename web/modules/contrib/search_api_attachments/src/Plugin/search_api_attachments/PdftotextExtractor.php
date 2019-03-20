@@ -51,7 +51,7 @@ class PdftotextExtractor extends TextExtractorPluginBase {
     }
   }
 
-/**
+  /**
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
@@ -69,13 +69,11 @@ class PdftotextExtractor extends TextExtractorPluginBase {
    * {@inheritdoc}
    */
   public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
-    $pdftotext_path = $form_state->getValue([
-      'text_extractor_config',
-      'pdftotext_path',
-    ]);
+    $values = $form_state->getValue(['text_extractor_config']);
+    $pdftotext_path = $values['pdftotext_path'];
 
     $is_name = strpos($pdftotext_path, '/') === FALSE && strpos($pdftotext_path, '\\') === FALSE;
-    if (!$is_name && !file_exists($pdftotext_path) && isset($form['text_extractor_config']['pdftotext_path'])) {
+    if (!$is_name && !file_exists($pdftotext_path)) {
       $form_state->setError($form['text_extractor_config']['pdftotext_path'], $this->t('The file %path does not exist.', ['%path' => $pdftotext_path]));
     }
   }

@@ -139,7 +139,7 @@ class SettingsForm extends ConfigFormBase {
       '#type' => 'checkbox',
       '#title' => $this->t('Display a Drupal status message after rerouting'),
       '#default_value' => $this->rerouteConfig->get(REROUTE_EMAIL_MESSAGE),
-      '#description' => $this->t('Check this box if you would like a Drupal status message to be displayed to users after submitting an email to let them know it was rerouted to a different email address.'),
+      '#description' => $this->t('Check this box if you would like a Drupal status message to be displayed to users after submitting an email to let them know it was aborted to send or rerouted to a different email address.'),
       '#states' => $states,
     ];
 

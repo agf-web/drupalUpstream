@@ -56,12 +56,10 @@ class DocconvExtractor extends TextExtractorPluginBase {
    * {@inheritdoc}
    */
   public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
-    $docconv_path = $form_state->getValue([
-      'text_extractor_config',
-      'docconv_path',
-    ]);
-    if (!file_exists($docconv_path) && isset($form['text_extractor_config']['docconv_path'])) {
-      $form_state->setError($form['text_extractor_config']['docconv_path'], $this->t('The file %path does not exist.', ['%path' => $docconv_path]));
+    $values = $form_state->getValue(['text_extractor_config']);
+
+    if (!file_exists($values['docconv_path'])) {
+      $form_state->setError($form['text_extractor_config']['docconv_path'], $this->t('The file %path does not exist.', ['%path' => $values['docconv_path']]));
     }
   }
 

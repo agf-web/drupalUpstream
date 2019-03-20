@@ -22,13 +22,6 @@ class TelephoneItemTest extends BaseItemTest {
   public static $modules = ['telephone_validation'];
 
   /**
-   * Skip schema check.
-   *
-   * @var bool
-   */
-  protected $strictConfigSchema = FALSE;
-
-  /**
    * Enable validation on telephone field.
    */
   protected function setUp() {

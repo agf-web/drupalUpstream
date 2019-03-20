@@ -94,8 +94,7 @@ Yay!</p>
 <p/>
 </div>
 </body>
-</html>'
-        , '
+</html>', '
         <div class="page">
 <p/>
 <p>Congratulations!
@@ -103,8 +102,9 @@ The extraction seems working!
 Yay!</p>
 <p/>
 </div>
-'
+',
       ],
     ];
   }
+
 }

@@ -12,6 +12,12 @@ tika_extractor_configuration:
   java_path: 'java'
   tika_path: ''
 
+tika_server_extractor_configuration:
+  scheme: 'http'
+  host: 'localhost'
+  port: '9998'
+  timeout: 5
+
 python_pdf2txt_extractor_configuration:
   python_path: 'python'
   python_pdf2txt_script: '/usr/bin/pdf2txt.py'

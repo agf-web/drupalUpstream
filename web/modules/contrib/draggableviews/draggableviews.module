@@ -106,15 +106,13 @@ function draggableviews_preprocess_views_view_table(&$variables) {
   // Add hierarchy.
   foreach ($variables['rows'] as $key => $row) {
     $columns = array_keys($row['columns']);
+
     // Find the first column that is not the draggableviews field.
-    do {
-      $first_column = current($columns);
+    foreach ($columns as $first_column) {
       if ($first_column !== 'draggableviews') {
         break;
       }
-      // Set the first column.
-      $first_column = each($columns);
-    } while ($first_column);
+    }
 
     // Indent the first column that is not the draggableviews field.
     $columns_title = $row['columns'][$first_column]['content'][0]['field_output']['#markup'];

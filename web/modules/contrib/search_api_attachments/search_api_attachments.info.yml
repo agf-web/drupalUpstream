@@ -7,8 +7,8 @@ configure: search_api_attachments.admin_form
 dependencies:
  - search_api:search_api
 
-# Information added by Drupal.org packaging script on 2018-11-24
-version: '8.x-1.0-beta11'
+# Information added by Drupal.org packaging script on 2019-02-25
+version: '8.x-1.0-beta12'
 core: '8.x'
 project: 'search_api_attachments'
-datestamp: 1543072085
+datestamp: 1551108787

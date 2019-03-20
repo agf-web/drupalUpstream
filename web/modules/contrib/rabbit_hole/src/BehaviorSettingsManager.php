@@ -43,6 +43,8 @@ class BehaviorSettingsManager implements BehaviorSettingsManagerInterface {
         $entity->set($key, $setting);
       }
     }
+    $entity->set('entity_type_id', $entity_type_id);
+    $entity->set('entity_id', $entity_id);
     $entity->save();
   }
 

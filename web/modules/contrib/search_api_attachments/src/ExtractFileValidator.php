@@ -24,9 +24,8 @@ class ExtractFileValidator {
   /**
    * Constructs a new ExtractFileValidator class.
    *
-   * @param MimeTypeGuesserInterface $mimeTypeGuesser
+   * @param \Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface $mimeTypeGuesser
    *   Mime type guesser service.
-   *
    */
   public function __construct(MimeTypeGuesserInterface $mimeTypeGuesser) {
     $this->mimeTypeGuesser = $mimeTypeGuesser;
@@ -71,8 +70,8 @@ class ExtractFileValidator {
    *
    * @param object $file
    *   File object.
-   * @param number $max_filesize
-   *  Max allowed file size
+   * @param int $max_filesize
+   *   Max allowed file size.
    *
    * @return bool
    *   TRUE if the file size does not exceed configured max size.
@@ -102,7 +101,7 @@ class ExtractFileValidator {
    *
    * @param object $file
    *   File object.
-   * @param boolean $excluded_private
+   * @param bool $excluded_private
    *   Boolean value whether exclude private file.
    *
    * @return bool

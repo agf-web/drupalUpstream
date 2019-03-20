@@ -2,6 +2,7 @@
 
 namespace Drupal\telephone_validation\Plugin\Validation\Constraint;
 
+use Drupal\Core\Config\Entity\ThirdPartySettingsInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\telephone_validation\Validator;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -49,6 +50,12 @@ class TelephoneConstraintValidator extends ConstraintValidator implements Contai
     }
     /** @var \Drupal\field\Entity\FieldConfig $field */
     $field = $value->getFieldDefinition();
+
+    // Check field allows storing a third party settings.
+    if (!$field instanceof ThirdPartySettingsInterface) {
+      return;
+    }
+
     $settings = $field->getThirdPartySettings('telephone_validation');
     // If no settings found we must skip validation.
     if (empty($settings)) {

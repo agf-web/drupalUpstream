@@ -13,6 +13,9 @@ use Drupal\views\Plugin\views\filter\BooleanOperator;
  */
 class SearchApiAttachmentsFilterPlugin extends BooleanOperator {
 
+  /**
+   * {@inheritdoc}
+   */
   public function query() {
     if (!$this->value) {
       return;

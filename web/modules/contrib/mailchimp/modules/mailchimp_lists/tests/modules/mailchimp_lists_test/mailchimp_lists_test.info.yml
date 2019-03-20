@@ -1,12 +1,12 @@
-name: 'MailChimp Lists Test'
+name: 'Mailchimp Lists Test'
 type: module
-description: 'MailChimp Lists Test Module.'
+description: 'Mailchimp Lists Test Module.'
 package: Testing
 # version: VERSION
 # core: 8.x
 
-# Information added by Drupal.org packaging script on 2018-02-27
-version: '8.x-1.6'
+# Information added by Drupal.org packaging script on 2018-11-29
+version: '8.x-1.8'
 core: '8.x'
 project: 'mailchimp'
-datestamp: 1519758801
+datestamp: 1543531087

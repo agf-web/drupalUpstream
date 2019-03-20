@@ -75,15 +75,13 @@ class PythonPdf2txtExtractor extends TextExtractorPluginBase {
    * {@inheritdoc}
    */
   public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
-    $values = $form_state->getValues();
+    $values = $form_state->getValue(['text_extractor_config']);
+    $python_path = $values['python_path'];
+    $python_pdf2txt_script = $values['python_pdf2txt_script'];
 
     // Check that the file exists.
-    $python_path = $values['text_extractor_config']['python_path'];
-    $python_pdf2txt_script = $values['text_extractor_config']['python_pdf2txt_script'];
     if (!file_exists($python_pdf2txt_script)) {
-      if (isset($form['text_extractor_config']['python_pdf2txt_script'])) {
-        $form_state->setError($form['text_extractor_config']['python_pdf2txt_script'], $this->t('The file %path does not exist.', ['%path' => $python_pdf2txt_script]));
-      }
+      $form_state->setError($form['text_extractor_config']['python_pdf2txt_script'], $this->t('The file %path does not exist.', ['%path' => $python_pdf2txt_script]));
     }
     // Check that the file is an executable Python Script.
     else {
@@ -91,10 +89,8 @@ class PythonPdf2txtExtractor extends TextExtractorPluginBase {
       exec($cmd, $output, $return_code);
       // $return_code = 1 if it fails. 100 instead.
       if ($return_code != 100) {
-        if (isset($form['text_extractor_config']['python_path']) && isset($form['text_extractor_config']['python_pdf2txt_script'])) {
-          $form_state->setError($form['text_extractor_config']['python_path'], '');
-          $form_state->setError($form['text_extractor_config']['python_pdf2txt_script'], $this->t('Python Pdf2txt script file is not executable.'));
-        }
+        $form_state->setError($form['text_extractor_config']['python_path'], '');
+        $form_state->setError($form['text_extractor_config']['python_pdf2txt_script'], $this->t('Python Pdf2txt script file is not executable.'));
       }
     }
   }
@@ -103,8 +99,8 @@ class PythonPdf2txtExtractor extends TextExtractorPluginBase {
    * {@inheritdoc}
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
-    $this->configuration['python_path'] = $form_state->getValue(array('text_extractor_config', 'python_path'));
-    $this->configuration['python_pdf2txt_script'] = $form_state->getValue(array('text_extractor_config', 'python_pdf2txt_script'));
+    $this->configuration['python_path'] = $form_state->getValue(['text_extractor_config', 'python_path']);
+    $this->configuration['python_pdf2txt_script'] = $form_state->getValue(['text_extractor_config', 'python_pdf2txt_script']);
     parent::submitConfigurationForm($form, $form_state);
   }
 

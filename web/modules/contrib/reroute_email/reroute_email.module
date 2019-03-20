@@ -5,6 +5,7 @@
  * Intercepts all outgoing emails to be rerouted to a configurable destination.
  */
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Egulias\EmailValidator\EmailParser;
 use Egulias\EmailValidator\EmailLexer;
 use Drupal\Component\Utility\Unicode;
@@ -153,6 +154,11 @@ function reroute_email_mail_alter(&$message) {
     // Extensive params keys cause OOM error in var_export().
     unset($message['params']);
 
+    // Simplify subject to avoid OOM error in var_export().
+    if ($message['subject'] instanceof TranslatableMarkup) {
+      $message['subject'] = $message['subject']->render();
+    }
+
     // Record a variable dump of the email in the recent log entries.
     $message_string = var_export($message, TRUE);
 
@@ -163,12 +169,14 @@ function reroute_email_mail_alter(&$message) {
       ]);
 
     // Let users know email has been aborted, but logged.
-    drupal_set_message(t('<em>@message_id</em> was aborted by reroute email; site administrators can check the recent log entries for complete details on the rerouted email.', ['@message_id' => $message['id']]));
+    if ($config->get(REROUTE_EMAIL_MESSAGE)) {
+      \Drupal::messenger()->addMessage(t('<em>@message_id</em> was aborted by reroute email; site administrators can check the recent log entries for complete details on the rerouted email.', ['@message_id' => $message['id']]));
+    }
   }
   elseif ($config->get(REROUTE_EMAIL_MESSAGE)) {
 
     // Display a message to let users know email was rerouted.
-    drupal_set_message(t('Submitted email, with ID: <em>@message_id</em>, was rerouted to configured address: <em>@reroute_target</em>. For more details please refer to Reroute Email settings.', [
+    \Drupal::messenger()->addMessage(t('Submitted email, with ID: <em>@message_id</em>, was rerouted to configured address: <em>@reroute_target</em>. For more details please refer to Reroute Email settings.', [
       '@message_id' => $message['id'],
       '@reroute_target' => $message['to'],
     ]));

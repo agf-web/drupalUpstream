@@ -1,8 +1,11 @@
+INTRODUCTION
+------------
 Search Api Attachments
 
 This module will extract the content out of attached files using chosen method
 among:
- - the Tika library
+ - the Tika App JAR
+ - the Tika Server JAR
  - the build in Solr extractor
  - the Pdftotext command line tool
  - the python Pdf2txt extractor
@@ -33,21 +36,43 @@ Choose an extraction method and follow the instructions under the respective
 heading below.
 
 
-EXTRACTION CONFIGURATION (Tika)
--------------------------------
+EXTRACTION CONFIGURATION: TIKA APP
+----------------------------------
 On Ubuntu 18.04
 
 Install java
 > sudo apt-get install openjdk-7-jdk
 
-Download Apache Tika library: http://tika.apache.org/download.html
+Download Apache Tika App JAR: http://tika.apache.org/download.html
 > wget http://mir2.ovh.net/ftp.apache.org/dist/tika/tika-app-1.18.jar
 
 Enter the full path on your server where you downloaded the jar
 e.g. /var/apache-tika/tika-app-1.18.jar.
 
-EXTRACTION CONFIGURATION (Solr)
--------------------------------
+EXTRACTION CONFIGURATION: TIKA SERVER
+-------------------------------------
+On Ubuntu 18.04
+
+Install java
+> sudo apt-get install openjdk-7-jdk
+
+Download Apache Tika Server JAR: http://tika.apache.org/download.html
+> wget https://www-eu.apache.org/dist/tika/tika-server-1.20.jar
+OR
+> wget https://www-us.apache.org/dist/tika/tika-server-1.20.jar
+
+Launch Tika server
+> java -jar tika-server-1.20.jar
+
+Configure search_api_attachments to use it at the following path:
+/admin/config/search/search_api_attachments
+
+More info:
+- https://wiki.apache.org/tika/TikaJAXRS
+- https://github.com/apache/tika/tree/master/tika-server
+
+EXTRACTION CONFIGURATION: SOLR
+------------------------------
 Install and configure the search_api_solr module
 https://www.drupal.org/project/search_api_solr
 Make sure to configure it as explained in its README.txt
@@ -55,14 +80,14 @@ Create at least one solr server (/admin/config/search/search-api/add-server)
 Now you can choose it from /admin/config/search/search_api_attachments
 
 
-EXTRACTION CONFIGURATION (Pdftotext)
-------------------------------------
+EXTRACTION CONFIGURATION: PDFTOTEXT
+-----------------------------------
 Pdftotext is a command line utility tool included by default on many linux
 distributions. See the wikipedia page for more info:
 https://en.wikipedia.org/wiki/Pdftotext
 
-EXTRACTION CONFIGURATION (python Pdf2txt)
------------------------------------------
+EXTRACTION CONFIGURATION: PYTHON PDF2TXT
+----------------------------------------
 On Debian 8
 
 Install python or make sure you already have it
@@ -71,14 +96,14 @@ Install Pdf2txt as described in https://github.com/euske/pdfminer
 or try
 > sudo apt-get install python-pdfminer
 
-EXTRACTION CONFIGURATION (go docconv)
------------------------------------------
+EXTRACTION CONFIGURATION: GO DOCCONV
+------------------------------------
 Install golang or make sure you already have it
 get docconv (https://github.com/sajari/docconv)
 Install docconv as described in https://github.com/sajari/docconv
 
 
-SIMPLE USAGE EXAMPLE (File fields content (file entities))
+SIMPLE USAGE EXAMPLE 1: FILE FIELDS CONTENT: FILE ENTITIES
 ----------------------------------------------------------
 0) This is tested with :
    drupal 8.6.x
@@ -133,8 +158,8 @@ SIMPLE USAGE EXAMPLE (File fields content (file entities))
 
 
 
-SIMPLE USAGE EXAMPLE (media fields content (media entities of type File))
--------------------------------------------------------------------------
+SIMPLE USAGE EXAMPLE 2: MEDIA FIELDS CONTENT OR MEDIA ENTITIES OF TYPE FILE
+---------------------------------------------------------------------------
 0) This is tested with :
    drupal 8.6.x
    search_api 8.x-1.x
@@ -143,11 +168,13 @@ SIMPLE USAGE EXAMPLE (media fields content (media entities of type File))
 1) Install drupal, media, search_api search_api_db and search_api_attachments.
 
 2) Go to admin/structure/types/manage/article/fields/add-field and add a
-   file field 'My medias' (field_my_medias). (choose File in the Media type settings)
+   file field 'My medias' (field_my_medias).
+   (choose File in the Media type settings)
 
 3 ) Go to media/add/file and add a media with a pdf file
 
-4) Go to node/add/article and add an article node that references the media entity created at step 3
+4) Go to node/add/article and add an article node that references the media
+   entity created at step 3
 
 5) Configure the extractor at admin/config/search/search_api_attachments and Go
    to admin/config/search/search-api/add-server and add server 'My server'
@@ -185,5 +212,3 @@ SIMPLE USAGE EXAMPLE (media fields content (media entities of type File))
 13) Go to admin/config/search/search-api/index/my_index and Index items.
 
 14) Go to /saa and search for any term in the title, body or in the pdf file :)
-
-

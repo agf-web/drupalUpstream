@@ -3,7 +3,9 @@
 namespace Drupal\search_api_attachments;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\StreamWrapper\StreamWrapperInterface;
@@ -46,13 +48,29 @@ abstract class TextExtractorPluginBase extends PluginBase implements TextExtract
   protected $mimeTypeGuesser;
 
   /**
+   * The messenger.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
+   * The file system service.
+   *
+   * @var \Drupal\Core\File\FileSystemInterface
+   */
+  protected $fileSystem;
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ConfigFactoryInterface $config_factory, StreamWrapperManagerInterface $stream_wrapper_manager, MimeTypeGuesserInterface $mime_type_guesser) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ConfigFactoryInterface $config_factory, StreamWrapperManagerInterface $stream_wrapper_manager, MimeTypeGuesserInterface $mime_type_guesser, MessengerInterface $messenger, FileSystemInterface $file_system) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->configFactory = $config_factory;
     $this->streamWrapperManager = $stream_wrapper_manager;
     $this->mimeTypeGuesser = $mime_type_guesser;
+    $this->messenger = $messenger;
+    $this->fileSystem = $file_system;
   }
 
   /**
@@ -60,7 +78,7 @@ abstract class TextExtractorPluginBase extends PluginBase implements TextExtract
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
-        $configuration, $plugin_id, $plugin_definition, $container->get('config.factory'), $container->get('stream_wrapper_manager'), $container->get('file.mime_type.guesser')
+        $configuration, $plugin_id, $plugin_definition, $container->get('config.factory'), $container->get('stream_wrapper_manager'), $container->get('file.mime_type.guesser'), $container->get('messenger'), $container->get('file_system')
     );
   }
 
@@ -78,6 +96,13 @@ abstract class TextExtractorPluginBase extends PluginBase implements TextExtract
    */
   public function getConfiguration() {
     return $this->configuration;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getmessenger() {
+    return $this->messenger;
   }
 
   /**
@@ -108,7 +133,7 @@ abstract class TextExtractorPluginBase extends PluginBase implements TextExtract
    * {@inheritdoc}
    */
   public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
-    
+
   }
 
   /**
@@ -129,7 +154,7 @@ abstract class TextExtractorPluginBase extends PluginBase implements TextExtract
    */
   public function getRealpath($uri) {
     $wrapper = $this->streamWrapperManager->getViaUri($uri);
-    $scheme = file_uri_scheme($uri);
+    $scheme = $this->fileSystem->uriScheme($uri);
     $local_wrappers = $this->streamWrapperManager->getWrappers(StreamWrapperInterface::LOCAL);
     if (in_array($scheme, array_keys($local_wrappers))) {
       return $wrapper->realpath();

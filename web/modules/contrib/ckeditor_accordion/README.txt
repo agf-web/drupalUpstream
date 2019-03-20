@@ -13,7 +13,8 @@ to create & display any type of content in an accordion format.
 
 The styling is minimal blue and easily over writeable by developers.
 
-Once the Accordion has been created, "ckeditorAccordionAttached" event gets triggered on the accordion element.
+Once the Accordion has been created, "ckeditorAccordionAttached" event
+gets triggered on the accordion element.
 
 
 INSTALLATION:
@@ -26,5 +27,5 @@ INSTALLATION:
 5. Scroll down to the bottom to the input Allowed HTML tags
 6. Find and replace <dl> with <dl class>
    This ensures CKEditor doesn't remove the class name that the accordion uses.
-7. If you would like the Accordion tabs to be closed by default, you can change this setting at:
-   /admin/config/content/ckeditor-accordion
+7. If you would like the Accordion tabs to be closed by default,
+	 you can change this setting at: /admin/config/content/ckeditor-accordion

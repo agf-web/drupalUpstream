@@ -81,37 +81,33 @@ class TikaExtractor extends TextExtractorPluginBase {
    * {@inheritdoc}
    */
   public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
-    $values = $form_state->getValues();
+    $values = $form_state->getValue(['text_extractor_config']);
+    $java_path = $values['java_path'];
+    $tika_path = $values['tika_path'];
+
     // Check java path.
-    if (isset($values['text_extractor_config']['java_path']) && !empty($values['text_extractor_config']['java_path'])) {
-      $java = $values['text_extractor_config']['java_path'];
-      exec($java, $output, $return_code);
-      // $return_code = 127 if it fails. 1 instead.
-      if ($return_code != 1 && isset($form['text_extractor_config']['java_path'])) {
-        $form_state->setError($form['text_extractor_config']['java_path'], $this->t('Invalid path or filename %path for java executable.', ['%path' => $values['text_extractor_config']['java_path']]));
-        return;
-      }
-    }
-    elseif (isset($form['text_extractor_config']['java_path'])) {
-      $form_state->setError($form['text_extractor_config']['java_path'], $this->t('You must set a valid path to be able to check tika application jar.', ['%path' => $values['text_extractor_config']['java_path']]));
+    exec($java_path, $output, $return_code);
+    // $return_code = 127 if it fails. 1 instead.
+    if ($return_code != 1) {
+      $form_state->setError($form['text_extractor_config']['java_path'], $this->t('Invalid path or filename %path for java executable.', ['%path' => $java_path]));
       return;
     }
 
     // Check tika path.
-    if (isset($values['text_extractor_config']['tika_path']) && !empty($values['text_extractor_config']['tika_path'])) {
-      if (!file_exists($values['text_extractor_config']['tika_path']) && isset($form['text_extractor_config']['tika_path'])) {
-        $form_state->setError($form['text_extractor_config']['tika_path'], $this->t('Invalid path or filename %path for tika application jar.', ['%path' => $values['text_extractor_config']['tika_path']]));
+    if (!file_exists($tika_path)) {
+      $form_state->setError($form['text_extractor_config']['tika_path'], $this->t('Invalid path or filename %path for tika application jar.', ['%path' => $tika_path]));
+    }
+    // Check return code.
+    else {
+      $cmd = $java_path . ' -jar ' . escapeshellarg($tika_path) . ' -V';
+      exec($cmd, $output, $return_code);
+      // $return_code = 1 if it fails. 0 instead.
+      if ($return_code) {
+        $form_state->setError($form['text_extractor_config']['tika_path'], $this->t('Tika could not be reached and executed.'));
       }
       else {
-        $cmd = $java . ' -jar ' . escapeshellarg($values['text_extractor_config']['tika_path']) . ' -V';
-        exec($cmd, $output, $return_code);
-        // $return_code = 1 if it fails. 0 instead.
-        if ($return_code && isset($form['text_extractor_config']['tika_path'])) {
-          $form_state->setError($form['text_extractor_config']['tika_path'], $this->t('Tika could not be reached and executed.'));
-        }
-        else {
-          drupal_set_message(t('Tika can be reached and be executed'));
-        }
+        $this->getMessenger()
+          ->addStatus(t('Tika can be reached and be executed'));
       }
     }
   }
@@ -120,8 +116,8 @@ class TikaExtractor extends TextExtractorPluginBase {
    * {@inheritdoc}
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
-    $this->configuration['java_path'] = $form_state->getValue(array('text_extractor_config', 'java_path'));
-    $this->configuration['tika_path'] = $form_state->getValue(array('text_extractor_config', 'tika_path'));
+    $this->configuration['java_path'] = $form_state->getValue(['text_extractor_config', 'java_path']);
+    $this->configuration['tika_path'] = $form_state->getValue(['text_extractor_config', 'tika_path']);
     parent::submitConfigurationForm($form, $form_state);
   }
 

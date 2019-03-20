@@ -101,13 +101,6 @@ class InvocationTest extends WebTestBase {
   public function testTokenizedUrlRedirect() {}
 
   /**
-   * Test redirects that use PHP code.
-   *
-   * @todo
-   */
-  public function testCodeRedirect() {}
-
-  /**
    * Test that a node set to page_not_found overrides returns a 404.
    */
   public function testPageNotFound() {

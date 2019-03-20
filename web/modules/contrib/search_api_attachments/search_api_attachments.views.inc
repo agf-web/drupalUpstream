@@ -4,6 +4,7 @@
  * @file
  * Adds views hooks.
  */
+
 use Drupal\search_api\Entity\Index;
 
 /**
@@ -22,7 +23,7 @@ function search_api_attachments_views_data_alter(&$data) {
         'title' => t('Exclude search in attachments'),
         'help' => 'Excludes searching in attachments',
         'id' => 'search_api_attachments_include_search_in_attachments',
-      ]
+      ],
     ];
   }
 }

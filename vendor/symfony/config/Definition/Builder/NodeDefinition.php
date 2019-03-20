@@ -11,8 +11,8 @@
 
 namespace Symfony\Component\Config\Definition\Builder;
 
-use Symfony\Component\Config\Definition\NodeInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidDefinitionException;
+use Symfony\Component\Config\Definition\NodeInterface;
 
 /**
  * This class provides a fluent interface for defining a node.
@@ -34,10 +34,10 @@ abstract class NodeDefinition implements NodeParentInterface
     protected $trueEquivalent = true;
     protected $falseEquivalent = false;
     protected $parent;
-    protected $attributes = array();
+    protected $attributes = [];
 
     /**
-     * @param string                   $name   The name of the node
+     * @param string|null              $name   The name of the node
      * @param NodeParentInterface|null $parent The parent
      */
     public function __construct($name, NodeParentInterface $parent = null)
@@ -345,7 +345,7 @@ abstract class NodeDefinition implements NodeParentInterface
     /**
      * Instantiate and configure the node according to this definition.
      *
-     * @return NodeInterface $node The node instance
+     * @return NodeInterface The node instance
      *
      * @throws InvalidDefinitionException When the definition is invalid
      */

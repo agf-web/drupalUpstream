@@ -17,6 +17,22 @@ search_api_attachments.admin_config:
         tika_path:
           type: string
           label: 'Path to Tika .jar file'
+    tika_server_extractor_configuration:
+      type: mapping
+      label: 'Tika server extractor configuration'
+      mapping:
+        scheme:
+          type: string
+          label: 'The HTTP protocol to use for sending queries'
+        host:
+          type: string
+          label: 'The host name or IP of the Tika server'
+        port:
+          type: string
+          label: 'The port of the Tika server'
+        timeout:
+          type: integer
+          label: 'Timeout for Tika queries'
     docconv_extractor_configuration:
       type: mapping
       label: 'Docconv extractor configuration'

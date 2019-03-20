@@ -45,13 +45,20 @@ class FieldFormatterTest extends BrowserTestBase {
   }
 
   /**
-   * Helper function for testTelephoneField().
+   * Test function for testTelephoneField().
+   *
+   * @dataProvider telephoneDataProvider
+   *   Test different scenarios.
    */
-  public function testTelephoneFieldFallback() {
-    $this->generateTelephoneField();
-    $node = $this->drupalCreateNode(['field_telephone' => ['98765432']]);
+  public function testTelephoneFieldFallback($format, $link, $default_country, $expected, $value) {
+    $this->generateTelephoneField([
+      'format' => $format,
+      'link' => $link,
+      'default_country' => $default_country,
+    ]);
+    $node = $this->drupalCreateNode(['field_telephone' => [$value]]);
     $this->drupalGet($node->toUrl());
-    $this->assertSession()->responseContains('98765432');
+    $this->assertSession()->responseContains($expected);
   }
 
   /**
@@ -75,13 +82,56 @@ class FieldFormatterTest extends BrowserTestBase {
       ->setComponent('field_telephone', [
         'type' => 'telephone_formatter',
         'weight' => 1,
-        'settings' => $settings + [
-          'format' => PhoneNumberFormat::INTERNATIONAL,
-          'link' => TRUE,
-          'default_country' => NULL,
+        'settings' => [
+          'format' => $settings['format'],
+          'link' => $settings['link'],
+          'default_country' => $settings['default_country'],
         ],
       ])
       ->save();
+  }
+
+  /**
+   * Different test scenarios for Telephone formatter.
+   */
+  public function telephoneDataProvider() {
+    return [
+      [
+        'format' => PhoneNumberFormat::INTERNATIONAL,
+        'link' => FALSE,
+        'default_country' => NULL,
+        'expected' => '98765432',
+        'value' => '98765432',
+      ],
+      [
+        'format' => PhoneNumberFormat::INTERNATIONAL,
+        'link' => TRUE,
+        'default_country' => 'SI',
+        'expected' => '<a href="tel:+386-1-425-68-58">+386 1 425 68 58</a>',
+        'value' => '014256858',
+      ],
+      [
+        'format' => PhoneNumberFormat::E164,
+        'link' => TRUE,
+        'default_country' => 'SI',
+        'expected' => '<a href="tel:+386-51-333-333">+38651333333</a>',
+        'value' => '051333333',
+      ],
+      [
+        'format' => PhoneNumberFormat::NATIONAL,
+        'link' => FALSE,
+        'default_country' => 'SI',
+        'expected' => '(03) 425 68 58',
+        'value' => '034256858',
+      ],
+      [
+        'format' => PhoneNumberFormat::RFC3966,
+        'link' => FALSE,
+        'default_country' => 'SI',
+        'expected' => 'tel:+386-70-123-456',
+        'value' => '070 123 456',
+      ],
+    ];
   }
 
 }

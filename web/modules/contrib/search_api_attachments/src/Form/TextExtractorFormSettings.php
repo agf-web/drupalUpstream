@@ -23,7 +23,9 @@ class TextExtractorFormSettings extends ConfigFormBase {
   const CONFIGNAME = 'search_api_attachments.admin_config';
 
   /**
-   * Drupal\search_api_attachments\TextExtractorPluginManager service.
+   * Text extractor plugin Manager.
+   *
+   * @var Drupal\search_api_attachments\TextExtractorPluginManagerservice
    */
   private $textExtractorPluginManager;
 
@@ -115,7 +117,12 @@ class TextExtractorFormSettings extends ConfigFormBase {
     if ($extractor_plugin_id) {
       $configuration = $config->get($extractor_plugin_id . '_configuration');
       $extractor_plugin = $this->getTextExtractorPluginManager()->createInstance($extractor_plugin_id, $configuration);
-      $extractor_plugin->validateConfigurationForm($form, $form_state);
+
+      // Validate the text_extractor_config part of the form only if it
+      // corresponds to the current $extractor_plugin_id.
+      if (!empty($form['text_extractor_config']['extraction_method']['#value']) && $form['text_extractor_config']['extraction_method']['#value'] == $extractor_plugin_id) {
+        $extractor_plugin->validateConfigurationForm($form, $form_state);
+      }
     }
   }
 
@@ -136,7 +143,7 @@ class TextExtractorFormSettings extends ConfigFormBase {
     $config = $this->configFactory()->getEditable(static::CONFIGNAME);
     // Set the extraction method variable.
     $config->set('extraction_method', $extractor_plugin_id);
-    // Set the preserving cache option
+    // Set the preserving cache option.
     $config->set('preserve_cache', $form_state->getValue('preserve_cache'));
     $config->save();
 
@@ -146,7 +153,8 @@ class TextExtractorFormSettings extends ConfigFormBase {
     $extracted_data = NULL;
     try {
       $extracted_data = $extractor_plugin->extract($file);
-    } catch (\Exception $e) {
+    }
+    catch (\Exception $e) {
       $error = $e->getMessage();
     }
     $file->delete();
@@ -200,7 +208,7 @@ class TextExtractorFormSettings extends ConfigFormBase {
    *
    * @param array $form
    *   The form array.
-   * @param FormStateInterface $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state object.
    */
   public function buildTextExtractorConfigForm(array &$form, FormStateInterface $form_state) {
@@ -233,8 +241,12 @@ class TextExtractorFormSettings extends ConfigFormBase {
       $configuration = $config->get($extractor_plugin_id . '_configuration');
       $extractor_plugin = $this->getTextExtractorPluginManager()->createInstance($extractor_plugin_id, $configuration);
       $form['text_extractor_config']['#title'] = $this->t('@extractor_plugin_label configuration', ['@extractor_plugin_label' => $this->getExtractionPluginInformations()['labels'][$extractor_plugin_id]]);
-      $text_extractor_form = $extractor_plugin->buildConfigurationForm(array(), $form_state);
+      $text_extractor_form = $extractor_plugin->buildConfigurationForm([], $form_state);
 
+      $form['text_extractor_config']['extraction_method'] = [
+        '#type' => 'value',
+        '#value' => $extractor_plugin_id,
+      ];
       $form['text_extractor_config'] += $text_extractor_form;
     }
   }
@@ -244,7 +256,7 @@ class TextExtractorFormSettings extends ConfigFormBase {
    *
    * @param array $form
    *   The form array.
-   * @param FormStateInterface $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state object.
    */
   public function buildTextExtractorTestResultForm(array &$form, FormStateInterface $form_state) {
@@ -283,7 +295,7 @@ class TextExtractorFormSettings extends ConfigFormBase {
    *
    * @param array $form
    *   The form array.
-   * @param FormStateInterface $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state object.
    *
    * @return array
@@ -312,10 +324,10 @@ class TextExtractorFormSettings extends ConfigFormBase {
       $source .= '/data/search_api_attachments_test_extraction.pdf';
       copy($source, $filepath);
       // Create the file object.
-      $file = File::create(array(
-            'uri' => $filepath,
-            'uid' => $this->currentUser()->id(),
-      ));
+      $file = File::create([
+        'uri' => $filepath,
+        'uid' => $this->currentUser()->id(),
+      ]);
       $file->save();
     }
     else {
@@ -331,7 +343,7 @@ class TextExtractorFormSettings extends ConfigFormBase {
    *   The text extractor plugin manager.
    */
   protected function getTextExtractorPluginManager() {
-    return $this->textExtractorPluginManager ? : \Drupal::service('plugin.manager.search_api_attachments.text_extractor');
+    return $this->textExtractorPluginManager ?: \Drupal::service('plugin.manager.search_api_attachments.text_extractor');
   }
 
 }

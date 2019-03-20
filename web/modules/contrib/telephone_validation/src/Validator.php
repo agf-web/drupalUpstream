@@ -89,9 +89,9 @@ class Validator {
     foreach ($this->countryManager->getList() as $region => $name) {
       $region_meta = $this->phoneUtils->getMetadataForRegion($region);
       if (is_object($region_meta)) {
-        $regions[$region] = (string) new FormattableMarkup('@country - @country_code', [
+        $regions[$region] = (string) new FormattableMarkup('@country - +@country_code', [
           '@country' => $name,
-          '@country_code' => $region_meta->getCountryCode() . $region_meta->getLeadingDigits(),
+          '@country_code' => $region_meta->getCountryCode(),
         ]);
       }
     }

@@ -212,7 +212,7 @@ class FilesExtractor extends ProcessorPluginBase implements PluginFormInterface 
                   foreach ($filefield_values as $media_value) {
                     $media = Media::load($media_value['target_id']);
                     // Supporting only the default media file field for now.
-                    if ($media->bundle() == 'file') {
+                    if ($media && $media->bundle() == 'file') {
                       $mediafilefield_values = $media->field_media_file->getValue();
                       foreach ($mediafilefield_values as $filefield_value) {
                         $all_fids[] = $filefield_value['target_id'];
@@ -232,8 +232,8 @@ class FilesExtractor extends ProcessorPluginBase implements PluginFormInterface 
             $fids = $this->limitToAllowedNumber($all_fids);
             // Retrieve the files.
             $files = $this->entityTypeManager
-                ->getStorage('file')
-                ->loadMultiple($fids);
+              ->getStorage('file')
+              ->loadMultiple($fids);
           }
           if (!empty($files)) {
             $extraction = '';
@@ -324,12 +324,11 @@ class FilesExtractor extends ProcessorPluginBase implements PluginFormInterface 
     }
   }
 
-
   /**
    * Limit the indexed text to first N bytes.
    *
    * @param string $extracted_text
-   *  The hole extracted text
+   *   The hole extracted text.
    *
    * @return string
    *   The first N bytes of the extracted text that will be indexed and cached.
@@ -337,7 +336,7 @@ class FilesExtractor extends ProcessorPluginBase implements PluginFormInterface 
   public function limitBytes($extracted_text) {
     $bytes = 0;
     if (isset($this->configuration['number_first_bytes'])) {
-      $bytes = $this->configuration['number_first_bytes'];
+      $bytes = Bytes::toInt($this->configuration['number_first_bytes']);
     }
     // If $bytes is 0 return all items.
     if ($bytes == 0) {
@@ -456,17 +455,17 @@ class FilesExtractor extends ProcessorPluginBase implements PluginFormInterface 
       '#default_value' => isset($this->configuration['number_indexed']) ? $this->configuration['number_indexed'] : '0',
       '#size' => 5,
       '#min' => 0,
-      '#max' => 99999,
+      '#max' => 999999,
       '#description' => $this->t('The number of files to index per file field.<br />The order of indexation is the weight in the widget.<br /> 0 for no restriction.'),
     ];
     $form['number_first_bytes'] = [
-      '#type' => 'number',
-      '#title' => $this->t('Number of first N bytes to index in the extracted string'),
+      '#type' => 'textfield',
+      '#title' => $this->t('Limit size of the extracted string before indexing.'),
       '#default_value' => isset($this->configuration['number_first_bytes']) ? $this->configuration['number_first_bytes'] : '0',
       '#size' => 5,
       '#min' => 0,
       '#max' => 99999,
-      '#description' => $this->t('The number first bytes to index in the extracted string.<br /> 0 to index the full extracted content without bytes limitation.'),
+      '#description' => $this->t('Enter a value like "1000", "10 KB", "10 MB" or "10 GB" in order to restrict the size of the content after extraction.<br /> 0 to index the full extracted content without bytes limitation.'),
     ];
     $form['max_filesize'] = [
       '#type' => 'textfield',
@@ -496,10 +495,40 @@ class FilesExtractor extends ProcessorPluginBase implements PluginFormInterface 
    * @see \Drupal\Core\Plugin\PluginFormInterface::validateConfigurationForm()
    */
   public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
+    // Validate 'number_first_bytes'.
+    $number_first_bytes = trim($form_state->getValue('number_first_bytes'));
+    $error = $this->validateSize($number_first_bytes);
+    if ($error) {
+      $form_state->setError($form['number_first_bytes'], $this->t('The size limit option must contain a valid value. You may either enter "0" (for no restriction) or a string like "10 KB", "10 MB" or "10 GB".'));
+    }
+
+    // Validate 'max_filesize'.
     $max_filesize = trim($form_state->getValue('max_filesize'));
-    if ($max_filesize != '0') {
-      $size_info = explode(' ', $max_filesize);
-      if (count($size_info) != 2) {
+    $error = $this->validateSize($max_filesize);
+    if ($error) {
+      $form_state->setError($form['max_filesize'], $this->t('The max filesize option must contain a valid value. You may either enter "0" (for no restriction) or a string like "10 KB", "10 MB" or "10 GB".'));
+    }
+  }
+
+  /**
+   * Helper method to validate the size of files' format.
+   *
+   * @param string $bytes
+   *   Number of bytes.
+   *
+   * @return bool
+   *   TRUE if $bites is of form "N KB", "N MB" or "N GB" where N is integer.
+   */
+  public function validateSize($bytes) {
+    $error = FALSE;
+    if ($bytes != '0') {
+
+      $size_info = explode(' ', $bytes);
+      // The only case we can have count($size_info) == 1 is for '0' value.
+      if (count($size_info) == 1) {
+        $error = $size_info[0] != '0';
+      }
+      elseif (count($size_info) != 2) {
         $error = TRUE;
       }
       else {
@@ -507,10 +536,8 @@ class FilesExtractor extends ProcessorPluginBase implements PluginFormInterface 
         $unit_expected = in_array($size_info[1], ['KB', 'MB', 'GB']);
         $error = !$starts_integer || !$unit_expected;
       }
-      if ($error) {
-        $form_state->setErrorByName('max_filesize', $this->t('The max filesize option must contain a valid value. You may either enter "0" (for no restriction) or a string like "10 KB, "10 MB" or "10 GB".'));
-      }
     }
+    return $error;
   }
 
   /**

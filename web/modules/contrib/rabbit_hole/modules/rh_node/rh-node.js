@@ -2,21 +2,18 @@
  * @file
  */
 
-(function($) {
+(function($, Drupal) {
 
   Drupal.behaviors.rhNode = {
     attach: function (context, settings) {
 
-      // Set the summary for the settings form.
-      $('fieldset.rabbit-hole-settings-form').drupalSetSummary(function() {
-        var $rabbitHoleAction = $('.rabbit-hole-action-setting input:checked');
-
-        // Get the label of the selected action.
-        var summary = $('label[for=' + $rabbitHoleAction.attr('id') + ']').text();
-        return Drupal.checkPlain(summary);
+      // Display the action in the vertical tab summary.
+      $(context).find('.rabbit-hole-settings-form').drupalSetSummary(function(context) {
+        var $action = $('.rabbit-hole-action-setting input:checked', context);
+        return Drupal.checkPlain($action.next('label').text());
       });
 
     }
   }
 
-})(jQuery);
+})(jQuery, Drupal);

@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\ckeditor_accordion\Plugin\CKEditorPlugin\CKEditorAccordion.
- */
 
 namespace Drupal\ckeditor_accordion\Plugin\CKEditorPlugin;
 
@@ -24,7 +20,7 @@ class CKEditorAccordion extends CKEditorPluginBase {
    * {@inheritdoc}
    */
   public function getConfig(Editor $editor) {
-    $config = array();
+    $config = [];
     return $config;
   }
 
@@ -32,7 +28,7 @@ class CKEditorAccordion extends CKEditorPluginBase {
    * {@inheritdoc}
    */
   public function getDependencies(Editor $editor) {
-    return array();
+    return [];
   }
 
   /**
@@ -47,12 +43,12 @@ class CKEditorAccordion extends CKEditorPluginBase {
    */
   public function getButtons() {
     $path = drupal_get_path('module', 'ckeditor_accordion') . '/js/plugins/accordion/icons';
-    return array(
-      'Accordion' => array(
+    return [
+      'Accordion' => [
         'label' => t('Add Accordion'),
         'image' => $path . '/accordion.png',
-      ),
-    );
+      ],
+    ];
   }
 
 }

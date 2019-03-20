@@ -159,10 +159,7 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
       );
     }
 
-    if (substr($target, 0, 4) == '<?php') {
-      // TODO: Evaluate PHP code.
-    }
-    elseif ($target === '<front>' || $target === '/<front>') {
+    if ($target === '<front>' || $target === '/<front>') {
       // Special case for redirecting to the front page.
       $target = \Drupal::service('url_generator')->generateFromRoute('<front>', [], []);
     }
@@ -259,8 +256,7 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
     ];
 
     // Get the default value for the redirect path.
-    // Build the descriptive text. Add some help text for PHP, if the user has
-    // the permission to use PHP for evaluation.
+    // Build the descriptive text.
     $description = [];
     $description[] = t('Enter the relative path or the full URL that the user should get redirected to. Query strings and fragments are supported, such as %example.', ['%example' => 'http://www.example.com/?query=value#fragment']);
 
@@ -269,7 +265,7 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
     }
 
     $form['rabbit_hole']['redirect']['rh_redirect'] = [
-      '#type' => /*rabbit_hole_access_php($module) ? 'textarea' :*/ 'textfield',
+      '#type' => 'textfield',
       '#title' => t('Redirect path'),
       '#default_value' => $redirect,
       '#description' => '<p>' . implode('</p><p>', $description) . '</p>',
@@ -328,10 +324,6 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
         '#token_types' => [$entity_type_for_tokens],
       ];
     }
-
-    // If the redirect path contains PHP, and the user doesn't have permission
-    // to use PHP for evaluation, we'll disable access to the path setting, and
-    // print some helpful information about what's going on.
   }
 
   /**
@@ -340,7 +332,7 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
   public function alterExtraFields(array &$fields) {
     $fields['rh_redirect'] = BaseFieldDefinition::create('string')
       ->setName('rh_redirect')
-      ->setLabel($this->t('Rabbit Hole redirect path or code'))
+      ->setLabel($this->t('Rabbit Hole redirect path.'))
       ->setDescription($this->t('The path to where the user should get redirected to.'));
     $fields['rh_redirect_response'] = BaseFieldDefinition::create('integer')
       ->setName('rh_redirect_response')

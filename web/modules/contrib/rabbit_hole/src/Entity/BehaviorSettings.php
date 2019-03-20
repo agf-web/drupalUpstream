@@ -74,6 +74,20 @@ class BehaviorSettings extends ConfigEntityBase implements BehaviorSettingsInter
   protected $redirect_code;
 
   /**
+   * The entity type id, eg. 'node_type'.
+   *
+   * @var string
+   */
+  protected $entity_type_id;
+
+  /**
+   * The entity id, eg. 'article'.
+   *
+   * @var string
+   */
+  protected $entity_id;
+
+  /**
    * {@inheritdoc}
    */
   public function setAction($action) {
@@ -152,6 +166,23 @@ class BehaviorSettings extends ConfigEntityBase implements BehaviorSettingsInter
    */
   public function getRedirectPath() {
     return $this->redirect;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function calculateDependencies() {
+    parent::calculateDependencies();
+
+    if ($this->entity_type_id && $this->entity_id) {
+      // Create dependency on the bundle.
+      $bundle = \Drupal::entityTypeManager()->getDefinition($this->entity_type_id);
+      $entity_type = \Drupal::entityTypeManager()->getDefinition($bundle->getBundleOf());
+      $bundle_config_dependency = $entity_type->getBundleConfigDependency($this->entity_id);
+      $this->addDependency($bundle_config_dependency['type'], $bundle_config_dependency['name']);
+    }
+
+    return $this;
   }
 
 }

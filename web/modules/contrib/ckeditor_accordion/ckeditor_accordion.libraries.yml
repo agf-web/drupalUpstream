@@ -8,3 +8,4 @@ accordion_style:
   dependencies:
     - core/jquery
     - core/jquery.once
+    - core/drupal
