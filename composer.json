@@ -22,7 +22,7 @@
     "drupal/config_direct_save": "^1.0",
     "drupal/config_installer": "^1.0",
     "drupal/console": "^1",
-    "drupal/core": "~8.6.0",
+    "drupal/core": "^8.6",
     "drupal/crop": "^1.2",
     "drupal/devel": "^2.0",
     "drupal/draggableviews": "1.x-dev",
