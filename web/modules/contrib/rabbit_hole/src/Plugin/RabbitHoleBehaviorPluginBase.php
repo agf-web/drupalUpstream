@@ -2,9 +2,9 @@
 
 namespace Drupal\rabbit_hole\Plugin;
 
-use Drupal\Core\Entity\Entity;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Component\Plugin\PluginBase;
+use Drupal\Core\Entity\EntityInterface;
 
 /**
  * Base class for Rabbit hole behavior plugin plugins.
@@ -14,7 +14,7 @@ abstract class RabbitHoleBehaviorPluginBase extends PluginBase implements Rabbit
   /**
    * {@inheritdoc}
    */
-  public function performAction(Entity $entity) {
+  public function performAction(EntityInterface $entity) {
     // Perform no action.
   }
 
@@ -25,7 +25,7 @@ abstract class RabbitHoleBehaviorPluginBase extends PluginBase implements Rabbit
     &$form,
     &$form_state,
     $form_id,
-    Entity $entity = NULL,
+    EntityInterface $entity = NULL,
     $entity_is_bundle = FALSE,
     ImmutableConfig $bundle_settings = NULL
   ) {

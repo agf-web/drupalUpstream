@@ -5,8 +5,8 @@ description: Adds Rabbit Hole functionality for media entity.
 dependencies:
   - rabbit_hole:rabbit_hole
 
-# Information added by Drupal.org packaging script on 2019-02-23
-version: '8.x-1.0-beta5'
+# Information added by Drupal.org packaging script on 2019-05-03
+version: '8.x-1.0-beta6'
 core: '8.x'
 project: 'rabbit_hole'
-datestamp: 1550891287
+datestamp: 1556921890

@@ -3,10 +3,10 @@
 namespace Drupal\rabbit_hole\Plugin\RabbitHoleBehaviorPlugin;
 
 use Drupal\Component\Utility\UrlHelper;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Url;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Link;
-use Drupal\Core\Entity\Entity;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -122,7 +122,7 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
   /**
    * {@inheritdoc}
    */
-  public function performAction(Entity $entity, Response $current_response = NULL) {
+  public function performAction(EntityInterface $entity, Response $current_response = NULL) {
     $target = $entity->get('rh_redirect')->value;
     $response_code = NULL;
 
@@ -219,7 +219,7 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
     &$form,
     &$form_state,
     $form_id,
-    Entity $entity = NULL,
+    EntityInterface $entity = NULL,
     $entity_is_bundle = FALSE,
     ImmutableConfig $bundle_settings = NULL
   ) {

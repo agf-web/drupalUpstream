@@ -2,8 +2,8 @@
 
 namespace Drupal\rabbit_hole\Plugin\RabbitHoleBehaviorPlugin;
 
+use Drupal\Core\Entity\EntityInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Drupal\Core\Entity\Entity;
 use Drupal\rabbit_hole\Plugin\RabbitHoleBehaviorPluginBase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,7 +20,7 @@ class PageNotFound extends RabbitHoleBehaviorPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function performAction(Entity $entity, Response $current_response = NULL) {
+  public function performAction(EntityInterface $entity, Response $current_response = NULL) {
     throw new NotFoundHttpException();
   }
 

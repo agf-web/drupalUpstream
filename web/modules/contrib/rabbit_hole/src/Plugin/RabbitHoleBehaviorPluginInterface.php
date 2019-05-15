@@ -2,9 +2,9 @@
 
 namespace Drupal\rabbit_hole\Plugin;
 
-use Drupal\Core\Entity\Entity;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Component\Plugin\PluginInspectionInterface;
+use Drupal\Core\Entity\EntityInterface;
 
 /**
  * Defines an interface for Rabbit hole behavior plugin plugins.
@@ -18,10 +18,10 @@ interface RabbitHoleBehaviorPluginInterface extends PluginInspectionInterface {
   /**
    * Perform the rabbit hole action.
    *
-   * @param Entity $entity
+   * @param EntityInterface $entity
    *   The entity the action is being performed on.
    */
-  public function performAction(Entity $entity);
+  public function performAction(EntityInterface $entity);
 
   /**
    * Return a settings form for the rabbit hole action.
@@ -32,7 +32,7 @@ interface RabbitHoleBehaviorPluginInterface extends PluginInspectionInterface {
    *   The form state array to modify.
    * @param string $form_id
    *   The form ID.
-   * @param Entity|null $entity
+   * @param EntityInterface|null $entity
    *   The entity used by the form.
    * @param bool $entity_is_bundle
    *   Whether the entity is a bundle.
@@ -44,7 +44,7 @@ interface RabbitHoleBehaviorPluginInterface extends PluginInspectionInterface {
     &$form,
     &$form_state,
     $form_id,
-    Entity $entity = NULL,
+    EntityInterface $entity = NULL,
     $entity_is_bundle = FALSE,
     ImmutableConfig $bundle_settings = NULL
   );

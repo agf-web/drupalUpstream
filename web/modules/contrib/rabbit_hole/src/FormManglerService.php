@@ -2,8 +2,8 @@
 
 namespace Drupal\rabbit_hole;
 
-use Drupal\Core\Entity\Entity;
 use Drupal\Core\Config\ImmutableConfig;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfo;
 use Drupal\rabbit_hole\Plugin\RabbitHoleBehaviorPluginManager;
@@ -12,6 +12,7 @@ use Drupal\rabbit_hole\Entity\BehaviorSettings;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Component\Utility\UrlHelper;
 
 /**
  * Class FormManglerService.
@@ -73,12 +74,12 @@ class FormManglerService {
    *
    * @param array $attach
    *   The form that the Rabbit Hole form should be attached to.
-   * @param \Drupal\Core\Entity\Entity $entity
+   * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity that we're adding the form to, e.g. a node.  This should be
    *    defined even in the case of bundles since it is used to determine bundle
    *    and entity type.
    */
-  public function addRabbitHoleOptionsToEntityForm(array &$attach, Entity $entity, FormStateInterface $form_state, $form_id) {
+  public function addRabbitHoleOptionsToEntityForm(array &$attach, EntityInterface $entity, FormStateInterface $form_state, $form_id) {
     $this->addRabbitHoleOptionsToForm($attach, $entity->getEntityType()->id(),
       $entity, $form_state, $form_id);
   }
@@ -260,6 +261,35 @@ class FormManglerService {
 
     // TODO: Optionally provide additional form submission handler (can we do
     // this via plugin?).
+    // Add ability to validate user input before saving the data.
+    $attach['rabbit_hole']['rabbit_hole']['redirect']['rh_redirect']['#element_validate'][] = [
+      'Drupal\rabbit_hole\FormManglerService',
+      'validateFormRedirect'
+    ];
+  }
+
+  /**
+   * Validate user input before saving it.
+   *
+   * @param array $form
+   *   The form.
+   * @param string|int|object $form_state
+   *   The form state.
+   */
+  public static function validateFormRedirect($form, FormStateInterface &$form_state){
+
+    $rh_action = $form_state->getValue('rh_action');
+
+    // Validate URL of page redirect.
+    if($rh_action == 'page_redirect'){
+      $redirect = $form_state->getValue('rh_redirect');
+      if (!UrlHelper::isExternal($redirect)) {
+        //  Check if internal URL matches requirements of \Drupal\Core\Url::fromUserInput.
+        if ((strpos($redirect, '/') !== 0) && (strpos($redirect, '#') !== 0) && (strpos($redirect, '?') !== 0)) {
+          $form_state->setErrorByName('rh_redirect', t("Internal path '@string' must begin with a '/', '?', or '#'.", ['@string' => $redirect]));
+        }
+      }
+    }
   }
 
   /**
@@ -323,7 +353,7 @@ class FormManglerService {
    *   The form state.
    * @param string $form_id
    *   The form ID.
-   * @param \Drupal\Core\Entity\Entity|null $entity
+   * @param \Drupal\Core\Entity\EntityInterface|null $entity
    *   The entity whose settings form we are displaying.
    * @param bool $entity_is_bundle
    *   Whether the entity is a bundle.
@@ -334,7 +364,7 @@ class FormManglerService {
     &$form,
     $form_state,
     $form_id,
-    Entity $entity = NULL,
+    EntityInterface $entity = NULL,
     $entity_is_bundle = FALSE,
     ImmutableConfig $bundle_settings = NULL
   ) {
