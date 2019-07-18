@@ -35,3 +35,21 @@ function getfarmcredit_client_theme() {
     ],
   ];
 }
+
+/**
+ * Implements hook_page_attachments().
+ */
+function getfarmcredit_client_page_attachments(array &$page) {
+  $current_url = Url::fromRoute('<current>');
+  if ($current_url->toString()=="/locations"){
+    $base_url = \Drupal::request()->getSchemeAndHttpHost();
+    $canonical = [
+      '#tag' => 'meta',
+      '#attributes' => [
+        'rel' => 'canonical',
+        'href' => $base_url . '/locations',
+      ],
+    ];
+    $page['#attached']['html_head'][] = [$canonical, 'canonical'];
+  }
+}
