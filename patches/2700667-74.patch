@@ -1,0 +1,61 @@
+diff --git a/core/includes/common.inc b/core/includes/common.inc
+index 9e208d8fe2..bc2262767f 100644
+--- a/core/includes/common.inc
++++ b/core/includes/common.inc
+@@ -586,6 +586,11 @@ function drupal_js_defaults($data = NULL) {
+  *   ),
+  * @endcode
+  *
++ * Drupal form elements are not required to support states. For states to work,
++ * the element has to print #attributes. Item elements work using
++ * #wrapper_attributes instead. States are not supported by render array where
++ * #type is markup.
++ *
+  * @param $elements
+  *   A renderable array element having a #states property as described above.
+  *
+@@ -597,7 +602,7 @@ function drupal_process_states(&$elements) {
+   // still want to be able to show/hide them. Since there's no actual HTML input
+   // element available, setting #attributes does not make sense, but a wrapper
+   // is available, so setting #wrapper_attributes makes it work.
+-  $key = ($elements['#type'] == 'item') ? '#wrapper_attributes' : '#attributes';
++  $key = isset($elements['#type']) && $elements['#type'] == 'item' ? '#wrapper_attributes' : '#attributes';
+   $elements[$key]['data-drupal-states'] = Json::encode($elements['#states']);
+ }
+ 
+diff --git a/core/tests/Drupal/KernelTests/Core/Common/DrupalProcessStatesTest.php b/core/tests/Drupal/KernelTests/Core/Common/DrupalProcessStatesTest.php
+new file mode 100644
+index 0000000000..a84d2c2b93
+--- /dev/null
++++ b/core/tests/Drupal/KernelTests/Core/Common/DrupalProcessStatesTest.php
+@@ -0,0 +1,30 @@
++<?php
++
++namespace Drupal\KernelTests\Core\Common;
++
++use Drupal\KernelTests\KernelTestBase;
++
++/**
++ * @covers ::drupal_process_states
++ * @group Common
++ */
++class DrupalProcessStatesTest extends KernelTestBase {
++
++  /**
++   * Tests that drupal_process_states() doesn't cause any notices.
++   */
++  public function testProcessStates() {
++    // Create a form element without specifying a '#type'.
++    $form_element = [
++      '#markup' => 'Custom markup',
++      '#states' => [
++        'visible' => [
++          ':select[name="method"]' => ['value' => 'email'],
++        ],
++      ],
++    ];
++    drupal_process_states($form_element);
++    $this->assertArrayHasKey('#attributes', $form_element);
++  }
++
++}
