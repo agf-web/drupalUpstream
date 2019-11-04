@@ -1,0 +1,8 @@
+agfirst-ext-link:
+  version: 0.1
+  js:
+    js/agfirst_extlink_override.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.ui.dialog
+    - extlink/drupal.extlink

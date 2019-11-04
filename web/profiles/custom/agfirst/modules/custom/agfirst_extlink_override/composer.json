@@ -1,0 +1,14 @@
+{
+  "name": "drupal/agfirst_extlink_override",
+  "type": "drupal-module",
+  "description": "This module provides JS overrides to improve the appearance of external link messages.",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/agfirst_extlink_override",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "http://drupal.org/project/issues/agfirst_extlink_override",
+    "source": "http://cgit.drupalcode.org/agfirst_extlink_override"
+  },
+  "require": { }
+}

@@ -1,0 +1,46 @@
+<?php
+
+/**
+ * @file
+ * Contains agfirst_extlink_override.module..
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function agfirst_extlink_override_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the agfirst_extlink_override module.
+    case 'help.page.agfirst_extlink_override':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('This module provides JS overrides to improve the appearance of external link messages.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function agfirst_extlink_override_theme($existing, $type, $theme, $path) {
+  return [
+    'agfirst_extlink_override_link_message'     => [
+      'variables' => [
+        'attributes' => [],
+        'message' => '',
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_page_attachments().
+ * Attach our JS to override popup behaviors.
+ */
+function agfirst_extlink_override_page_attachments(array &$attachments) {
+  $attachments['#attached']['library'][] = 'agfirst_extlink_override/agfirst-ext-link';
+}
