@@ -1,0 +1,90 @@
+a {
+  span.ext {
+    display: none;
+  }
+}
+.ui-widget-overlay {
+  background-color: #000;
+}
+.ui-dialog {
+  padding: 0;
+  font-family: $sans-serif;
+  border-radius: 0;
+  .ui-dialog-titlebar {
+    border-radius: 0;
+    border: 0;
+    background-color: transparent;
+  }
+  .ui-dialog-title {
+    color: $green;
+    font-family: $futura;
+    font-weight: 900;
+    @include bp($medium) {
+      font-size: 20px;
+    }
+    @include bp($large) {
+      font-size: 24px;
+    }
+  }
+  .ui-dialog-titlebar-close {
+    right: 16px;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    background-color: transparent;
+    .ui-button-icon {
+      display: none;
+    }
+    &:before,
+    &:after {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 4px;
+      height: 24px;
+      margin: -12px 0 0 -2px;
+      background-color: #000;
+      transform: rotate3d(0,0,1,45deg);
+    }
+    &:after {
+      transform: rotate3d(0,0,1,-45deg);
+    }
+  }
+  .ui-dialog-buttonpane {
+    margin: 0;
+    border: 0;
+    button {
+      padding: 10px 30px;
+      color: $green;
+      font-family: $sans-serif;
+      font-weight: 700;
+      border: 2px solid $green;
+      outline: 0;
+      background-color: transparent;
+      transition: color 0.3s, background-color 0.3s;
+      @include bp($large) {
+        &:hover {
+          color: #FFF;
+          background-color: $green;
+        }
+      }
+      &:last-of-type {
+        color: #666;
+        border-color: #666;
+        @include bp($large) {
+          &:hover {
+            color: #FFF;
+            background-color: #666;
+          }
+        }
+      }
+    }
+  }
+}
+.ui-widget {
+  &.ui-widget-content {
+    border: 0;
+  }
+}
