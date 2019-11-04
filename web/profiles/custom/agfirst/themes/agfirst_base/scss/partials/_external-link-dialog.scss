@@ -19,12 +19,7 @@ a {
     color: $green;
     font-family: $futura;
     font-weight: 900;
-    @include bp($medium) {
-      font-size: 20px;
-    }
-    @include bp($large) {
-      font-size: 24px;
-    }
+    font-size: 30px;
   }
   .ui-dialog-titlebar-close {
     right: 16px;
@@ -51,6 +46,9 @@ a {
     &:after {
       transform: rotate3d(0,0,1,-45deg);
     }
+  }
+  .ui-dialog-content {
+    font-size: 18px;
   }
   .ui-dialog-buttonpane {
     margin: 0;
