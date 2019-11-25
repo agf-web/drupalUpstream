@@ -84,15 +84,15 @@ function agfirst_base_preprocess_page(array &$variables) {
   $variables['has_sidebar']['right_top']    = $sidebar_right_mobile_top > 0;
   $variables['has_sidebar']['right_bottom'] = $sidebar_right_mobile_bottom > 0;
 
-  $variables['has_sidebar_content_left'] = 
+  $variables['has_sidebar_content_left'] =
     $variables['has_sidebar']['left_top'] ||
     $variables['has_sidebar']['left_bottom'];
 
-  $variables['has_sidebar_content_right'] = 
+  $variables['has_sidebar_content_right'] =
     $variables['has_sidebar']['right_top'] ||
     $variables['has_sidebar']['right_bottom'];
-    
-  $variables['has_sidebar_content'] = 
+
+  $variables['has_sidebar_content'] =
     $variables['has_sidebar_content_left'] ||
     $variables['has_sidebar_content_right'];
 }
@@ -277,6 +277,9 @@ function agfirst_base_theme_suggestions_page_alter(array &$suggestions, array $v
   }
 
   $node = \Drupal::routeMatch()->getParameter('node');
+  if (($node !== NULL) && !is_array($node) && !is_object($node)){
+    $node = \Drupal\node\Entity\Node::load($node);
+  }
   if (!empty($node)) {
     $suggestions[] = 'page__' . $node->bundle();
   }
