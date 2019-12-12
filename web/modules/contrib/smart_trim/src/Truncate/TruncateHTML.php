@@ -1,5 +1,10 @@
 <?php
 
+namespace Drupal\smart_trim\Truncate;
+
+use Drupal\Component\Utility\Html;
+use Drupal\Component\Utility\Unicode;
+
 /**
  * @file
  * Contains trim functionality.
@@ -26,11 +31,6 @@
  * Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-namespace Drupal\smart_trim\Truncate;
-
-use Drupal\Component\Utility\Html;
-use Drupal\Component\Utility\Unicode;
-
 /**
  * Class TruncateHTML.
  */
@@ -39,45 +39,44 @@ class TruncateHTML {
   /**
    * Total characters.
    *
-   * @type int
+   * @var int
    */
   protected $charCount = 0;
 
   /**
    * Total words.
    *
-   * @type int
+   * @var int
    */
   protected $wordCount = 0;
 
   /**
    * Character / Word limit.
    *
-   * @type int
+   * @var int
    */
   protected $limit;
 
   /**
    * Element to start on.
    *
-   * @type \DOMElement
+   * @var \DOMElement
    */
   protected $startNode;
 
   /**
    * Ellipsis character.
    *
-   * @type string
+   * @var string
    */
   protected $ellipsis;
 
   /**
    * Did we find the breakpoint?
    *
-   * @type bool
+   * @var bool
    */
   protected $foundBreakpoint = FALSE;
-
 
   /**
    * Sets up object for use.
@@ -176,10 +175,11 @@ class TruncateHTML {
       }
       else {
         $text = html_entity_decode($node->nodeValue, ENT_QUOTES, 'UTF-8');
-        $length = Unicode::strlen($text);
+        $length = mb_strlen($text);
         if (($this->charCount + $length) >= $this->limit) {
           // We have found our end point.
           $node->nodeValue = Unicode::truncate($text, $this->limit - $this->charCount, TRUE);
+          $this->removeTrailingPunctuation($node);
           $this->removeProceedingNodes($node);
           $this->insertEllipsis($node);
           $this->foundBreakpoint = TRUE;
@@ -226,6 +226,7 @@ class TruncateHTML {
             $node->nodeValue = substr($node->nodeValue, 0, $last_word[1] + strlen($last_word[0]));
           }
 
+          $this->removeTrailingPunctuation($node);
           $this->removeProceedingNodes($node);
           $this->insertEllipsis($node);
           $this->foundBreakpoint = TRUE;
@@ -235,6 +236,18 @@ class TruncateHTML {
           $this->wordCount += $cur_count;
         }
       }
+    }
+  }
+
+  /**
+   * Removes certain punctuation from the end of the node value.
+   *
+   * @param \DOMNode $domnode
+   *   Node to be altered.
+   */
+  protected function removeTrailingPunctuation(\DOMNode $domnode) {
+    while (preg_match('/[\.,:;\?!…]$/', $domnode->nodeValue)) {
+      $domnode->nodeValue = substr($domnode->nodeValue, 0, -1);
     }
   }
 
@@ -274,7 +287,7 @@ class TruncateHTML {
    */
   protected function insertEllipsis(\DOMNode $domnode) {
     // HTML tags to avoid appending the ellipsis to.
-    $avoid = array('a', 'strong', 'em', 'h1', 'h2', 'h3', 'h4', 'h5');
+    $avoid = ['a', 'strong', 'em', 'h1', 'h2', 'h3', 'h4', 'h5'];
 
     if (in_array($domnode->parentNode->nodeName, $avoid) && ($domnode->parentNode->parentNode !== NULL || $domnode->parentNode->parentNode !== $this->startNode)) {
       // Append as text node to parent instead.
