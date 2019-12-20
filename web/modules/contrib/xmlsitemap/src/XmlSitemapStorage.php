@@ -3,6 +3,7 @@
 namespace Drupal\xmlsitemap;
 
 use Drupal\Component\Uuid\UuidInterface;
+use Drupal\Core\Cache\MemoryCache\MemoryCacheInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\Entity\ConfigEntityStorage;
 use Drupal\Core\Entity\EntityInterface;
@@ -36,10 +37,11 @@ class XmlSitemapStorage extends ConfigEntityStorage {
    *   The language manager.
    * @param \Drupal\Core\State\StateInterface $state
    *   The state service.
+   * @param \Drupal\Core\Cache\MemoryCache\MemoryCacheInterface|null $memory_cache
+   *   The memory cache backend.
    */
-  public function __construct(EntityTypeInterface $entity_type, ConfigFactoryInterface $config_factory, UuidInterface $uuid_service, LanguageManagerInterface $language_manager, StateInterface $state) {
-    parent::__construct($entity_type, $config_factory, $uuid_service, $language_manager);
-
+  public function __construct(EntityTypeInterface $entity_type, ConfigFactoryInterface $config_factory, UuidInterface $uuid_service, LanguageManagerInterface $language_manager, StateInterface $state, MemoryCacheInterface $memory_cache = NULL) {
+    parent::__construct($entity_type, $config_factory, $uuid_service, $language_manager, $memory_cache);
     $this->state = $state;
   }
 
@@ -52,7 +54,8 @@ class XmlSitemapStorage extends ConfigEntityStorage {
       $container->get('config.factory'),
       $container->get('uuid'),
       $container->get('language_manager'),
-      $container->get('state')
+      $container->get('state'),
+      $container->has('entity.memory_cache') ? $container->get('entity.memory_cache') : NULL
     );
   }
 
@@ -63,6 +66,7 @@ class XmlSitemapStorage extends ConfigEntityStorage {
     // Delete the auxiliar xmlsitemap data.
     foreach ($entities as $entity) {
       $this->state->delete('xmlsitemap.' . $entity->id());
+      xmlsitemap_clear_directory($entity, TRUE);
     }
 
     parent::doDelete($entities);
@@ -86,6 +90,20 @@ class XmlSitemapStorage extends ConfigEntityStorage {
       foreach ($settings as $setting => $value) {
         $entity->{$setting} = $value;
       }
+
+      // Load the entity URI.
+      $entity->uri = xmlsitemap_sitemap_uri($entity);
+
+      // Load in the default contexts if they haven't been set yet.
+      $contexts = xmlsitemap_get_context_info();
+      foreach ($contexts as $context_key => $context) {
+        if (!isset($entity->context[$context_key]) && isset($context['default'])) {
+          $entity->context[$context_key] = $context['default'];
+        }
+      }
+
+      // Remove invalid contexts.
+      $entity->context = array_intersect_key($entity->context, $contexts);
     }
 
     return $entities;

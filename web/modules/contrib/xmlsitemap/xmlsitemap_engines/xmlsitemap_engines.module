@@ -82,7 +82,7 @@ function xmlsitemap_engines_submit_access() {
   }
 
   // Skip if the time since last submission is less than the minimum lifetime.
-  if ((REQUEST_TIME - $submitted_last) < $minimum_lifetime) {
+  if ((\Drupal::time()->getRequestTime() - $submitted_last) < $minimum_lifetime) {
     return FALSE;
   }
 
@@ -117,7 +117,7 @@ function xmlsitemap_engines_submit_engines(array $smids = []) {
     xmlsitemap_engines_submit_sitemaps($custom_url, $sitemaps);
   }
 
-  \Drupal::state()->set('xmlsitemap_engines_submit_last', REQUEST_TIME);
+  \Drupal::state()->set('xmlsitemap_engines_submit_last', \Drupal::time()->getRequestTime());
 }
 
 /**
@@ -201,13 +201,13 @@ function xmlsitemap_engines_get_engine_info($engine = NULL) {
 function xmlsitemap_engines_xmlsitemap_engine_info() {
   $engines['google'] = [
     'name' => t('Google'),
-    'url' => 'http://www.google.com/webmasters/tools/ping?sitemap=[sitemap]',
-    'help url' => 'http://www.google.com/support/webmasters/bin/answer.py?hl=en&answer=156184',
+    'url' => 'https://www.google.com/ping?sitemap=[sitemap]',
+    'help url' => 'https://www.google.com/support/webmasters/bin/answer.py?hl=en&answer=156184',
   ];
   $engines['bing'] = [
     'name' => t('Bing'),
-    'url' => 'http://www.bing.com/webmaster/ping.aspx?siteMap=[sitemap]',
-    'help url' => 'http://www.bing.com/webmaster',
+    'url' => 'https://www.bing.com/ping?sitemap=[sitemap]',
+    'help url' => 'https://www.bing.com/webmaster/help/how-to-submit-sitemaps-82a15bd4',
   ];
   return $engines;
 }

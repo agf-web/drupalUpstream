@@ -2,11 +2,15 @@
 
 namespace Drupal\xmlsitemap\Tests;
 
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\user\Entity\Role;
 
 /**
@@ -62,7 +66,7 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
     ]);
 
     // Add a vocabulary so we can test different view modes.
-    $vocabulary = entity_create('taxonomy_vocabulary', [
+    $vocabulary = Vocabulary::create([
       'name' => 'Tags',
       'description' => $this->randomMachineName(),
       'vid' => 'tags',
@@ -89,19 +93,19 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
       'bundle' => 'page',
     ])->save();
 
-    entity_get_form_display('node', 'page', 'default')
+    EntityFormDisplay::load('node.page.default')
       ->setComponent($field_name, [
         'type' => 'entity_reference_autocomplete_tags',
       ])
       ->save();
 
     // Show on default display and teaser.
-    entity_get_display('node', 'page', 'default')
+    EntityViewDisplay::load('node.page.default')
       ->setComponent($field_name, [
         'type' => 'entity_reference_label',
       ])
       ->save();
-    entity_get_display('node', 'page', 'teaser')
+    EntityViewDisplay::load('node.page.teaser')
       ->setComponent($field_name, [
         'type' => 'entity_reference_label',
       ])
@@ -125,7 +129,7 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
     $edit['status[value]'] = TRUE;
     $this->drupalPostForm('node/add/page', $edit, t('Save'));
 
-    $tags = entity_load_multiple('taxonomy_term');
+    $tags = Term::loadMultiple();
     foreach ($tags as $tag) {
       $this->assertSitemapLinkValues('taxonomy_term', $tag->id(), [
         'status' => 0,
@@ -143,7 +147,7 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
 
     $this->drupalPostForm('node/add/page', $edit, t('Save'));
 
-    $tags = entity_load_multiple('taxonomy_term');
+    $tags = Term::loadMultiple();
     foreach ($tags as $tag) {
       $this->assertSitemapLinkValues('taxonomy_term', $tag->id(), [
         'status' => 1,
@@ -273,7 +277,7 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
     }
 
     // Clear all the node link data so we can emulate 'old' nodes.
-    db_delete('xmlsitemap')
+    \Drupal::database()->delete('xmlsitemap')
       ->condition('type', 'node')
       ->execute();
 

@@ -42,10 +42,8 @@ interface XmlSitemapLinkStorageInterface {
    *
    * @return bool
    *   TRUE if the link is changed, or FALSE otherwise.
-   *
-   * @codingStandardsIgnoreStart
    */
-  public function checkChangedLink(array $link, $original_link = NULL, $flag = FALSE);
+  public function checkChangedLink(array $link, array $original_link = NULL, $flag = FALSE);
 
   /**
    * Check if there is a visible sitemap link given a certain set of conditions.
@@ -60,8 +58,6 @@ interface XmlSitemapLinkStorageInterface {
    *
    * @return bool
    *   TRUE if there is a visible link, or FALSE otherwise.
-   *
-   * @codingStandardsIgnoreEnd
    */
   public function checkChangedLinks(array $conditions = [], array $updates = [], $flag = FALSE);
 
@@ -114,10 +110,8 @@ interface XmlSitemapLinkStorageInterface {
    *
    * @return int
    *   The number of links that were updated.
-   *
-   * @codingStandardsIgnoreStart
    */
-  public function updateMultiple($updates = [], $conditions = [], $check_flag = TRUE);
+  public function updateMultiple(array $updates = [], array $conditions = [], $check_flag = TRUE);
 
   /**
    * Load a specific sitemap link from the database.
@@ -129,8 +123,6 @@ interface XmlSitemapLinkStorageInterface {
    *
    * @return array
    *   A sitemap link (array) or FALSE if the conditions were not found.
-   *
-   * @codingStandardsIgnoreEnd
    */
   public function load($entity_type, $entity_id);
 

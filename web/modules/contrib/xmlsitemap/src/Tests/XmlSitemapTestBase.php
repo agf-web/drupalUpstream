@@ -346,7 +346,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
       }
     }
 
-    return $this->assertEqual($value, $assert_value, "xmlsitemap_$variable is " . ($assert_value ? 'TRUE' : 'FALSE'));
+    return $this->assertEqual($value, $assert_value, "$variable is " . ($assert_value ? 'TRUE' : 'FALSE'));
   }
 
   /**
@@ -388,7 +388,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
       return [];
     }
 
-    $query = db_select('watchdog');
+    $query = \Drupal::database()->select('watchdog');
     $query->fields('watchdog', [
       'wid',
       'type',
@@ -499,7 +499,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
     if ($id = parent::verbose($verbose_message)) {
       $url = file_create_url($this->originalFileDirectory . '/simpletest/verbose/' . get_class($this) . '-' . $id . '.html');
       $message_url = Url::fromUri($url, ['attributes' => ['target' => '_blank']]);
-      $this->error($this->l($message, $message_url), 'User notice');
+      $this->error(\Drupal::linkGenerator()->generate($message, $message_url), 'User notice');
     }
   }
 

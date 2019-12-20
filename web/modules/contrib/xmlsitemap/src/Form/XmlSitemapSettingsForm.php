@@ -5,10 +5,11 @@ namespace Drupal\xmlsitemap\Form;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Site\Settings;
 use Drupal\Core\State\StateInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Datetime\DateFormatter;
+use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\xmlsitemap\XmlSitemapLinkStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -27,7 +28,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
   /**
    * The date service.
    *
-   * @var \Drupal\Core\Datetime\DateFormatter
+   * @var \Drupal\Core\Datetime\DateFormatterInterface
    */
   protected $date;
 
@@ -45,12 +46,12 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
    *   The factory for configuration objects.
    * @param \Drupal\Core\State\StateInterface $state
    *   The state service.
-   * @param \Drupal\Core\Datetime\DateFormatter $date
+   * @param \Drupal\Core\Datetime\DateFormatterInterface $date
    *   The date formatter service.
    * @param \Drupal\xmlsitemap\XmlSitemapLinkStorageInterface $link_storage
    *   The xmlsitemap link storage service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, StateInterface $state, DateFormatter $date, XmlSitemapLinkStorageInterface $link_storage) {
+  public function __construct(ConfigFactoryInterface $config_factory, StateInterface $state, DateFormatterInterface $date, XmlSitemapLinkStorageInterface $link_storage) {
     parent::__construct($config_factory);
 
     $this->state = $state;
@@ -177,13 +178,15 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
       '#field_prefix' => file_build_uri(''),
       '#required' => TRUE,
     ];
+    $base_url_override = Settings::get('xmlsitemap_base_url', FALSE);
     $form['advanced']['xmlsitemap_base_url'] = [
       '#type' => 'textfield',
       '#title' => t('Default base URL'),
-      '#default_value' => $this->state->get('xmlsitemap_base_url'),
+      '#default_value' => $base_url_override ? $base_url_override : $this->state->get('xmlsitemap_base_url'),
       '#size' => 30,
       '#description' => t('This is the default base URL used for sitemaps and sitemap links.'),
       '#required' => TRUE,
+      '#disabled' => !empty($base_url_override),
     ];
     $form['advanced']['lastmod_format'] = [
       '#type' => 'select',
@@ -196,7 +199,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('lastmod_format'),
     ];
     foreach ($form['advanced']['lastmod_format']['#options'] as $key => &$label) {
-      $label .= ' (' . gmdate($key, REQUEST_TIME) . ')';
+      $label .= ' (' . gmdate($key) . ')';
     }
     $form['advanced']['xmlsitemap_developer_mode'] = [
       '#type' => 'checkbox',
@@ -280,7 +283,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
       $this->linkStorage->save([
         'type' => 'frontpage',
         'id' => 0,
-        'loc' => '',
+        'loc' => '/',
         'subtype' => '',
         'priority' => $values['frontpage_priority'],
         'changefreq' => $values['frontpage_changefreq'],

@@ -13,5 +13,15 @@
     },
     "require-dev": {
         "drupal/robotstxt": "^1.0"
+    },
+    "suggest": {
+        "drush/drush": "Command-line regenerating and rebuilding sitemaps."
+    },
+    "extra": {
+        "drush": {
+             "services": {
+                 "drush.services.yml": "^9 || ^10"
+             }
+        }
     }
 }

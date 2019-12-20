@@ -2,17 +2,15 @@
 
 namespace Drupal\xmlsitemap_custom\Form;
 
-use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Form\FormBase;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Http\ClientFactory;
 use Drupal\Core\Language\LanguageInterface;
-use GuzzleHttp\Exception\ClientException;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Path\AliasManagerInterface;
-use Drupal\xmlsitemap\XmlSitemapLinkStorageInterface;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\xmlsitemap\XmlSitemapLinkStorageInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a form for editing a custom link.
@@ -101,7 +99,7 @@ class XmlSitemapCustomEditForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state, $link = '') {
     if (!$custom_link = $this->linkStorage->load('custom', $link)) {
-      drupal_set_message($this->t('No valid custom link specified.'), 'error');
+      $this->messenger()->addError($this->t('No valid custom link specified.'));
       $this->redirect('xmlsitemap_custom.list');
     }
     else {
@@ -175,7 +173,7 @@ class XmlSitemapCustomEditForm extends FormBase {
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $link = $form_state->getValues();
 
-    if (Unicode::substr($link['loc'], 0, 1) !== '/') {
+    if (strpos($link['loc'], '/') !== 0) {
       $form_state->setErrorByName('loc', $this->t('The path should start with /.'));
       return;
     }
@@ -189,9 +187,10 @@ class XmlSitemapCustomEditForm extends FormBase {
       $client = $this->httpClientFactory->fromOptions(['config/curl', [CURLOPT_FOLLOWLOCATION => FALSE]]);
       $client->get(Url::fromUserInput($link['loc'], ['absolute' => TRUE])->toString());
     }
-    catch (ClientException $e) {
+    catch (\Exception $e) {
       $form_state->setErrorByName('loc', $this->t('The custom link @link is either invalid or it cannot be accessed by anonymous users.', ['@link' => $link['loc']]));
     }
+
     parent::validateForm($form, $form_state);
   }
 
@@ -202,7 +201,7 @@ class XmlSitemapCustomEditForm extends FormBase {
     $form_state->cleanValues();
     $link = $form_state->getValues();
     $this->linkStorage->save($link);
-    drupal_set_message($this->t('The custom link for %loc was saved.', ['%loc' => $link['loc']]));
+    $this->messenger()->addStatus($this->t('The custom link for %loc was saved.', ['%loc' => $link['loc']]));
 
     $form_state->setRedirect('xmlsitemap_custom.list');
   }

@@ -260,12 +260,12 @@ function hook_xmlsitemap_root_attributes_alter(array &$attributes, \Drupal\xmlsi
 function hook_query_xmlsitemap_generate_alter(QueryAlterableInterface $query) {
   $sitemap = $query->getMetaData('sitemap');
   if (!empty($sitemap->context['vocabulary'])) {
-    $node_condition = db_and();
+    $node_condition = $query->andConditionGroup();
     $node_condition->condition('type', 'taxonomy_term');
     $node_condition->condition('subtype', $sitemap->context['vocabulary']);
-    $normal_condition = db_and();
+    $normal_condition = $query->andConditionGroup();
     $normal_condition->condition('type', 'taxonomy_term', '<>');
-    $condition = db_or();
+    $condition = $query->orConditionGroup();
     $condition->condition($node_condition);
     $condition->condition($normal_condition);
     $query->condition($condition);
@@ -289,7 +289,7 @@ function hook_xmlsitemap_sitemap_operations() {
  *   The XML sitemap object that was deleted.
  */
 function hook_xmlsitemap_sitemap_delete(\Drupal\xmlsitemap\XmlSitemapInterface $sitemap) {
-  db_query("DELETE FROM {mytable} WHERE smid = '%s'", $sitemap->smid);
+  \Drupal::database()->query("DELETE FROM {mytable} WHERE smid = '%s'", $sitemap->smid);
 }
 
 /**

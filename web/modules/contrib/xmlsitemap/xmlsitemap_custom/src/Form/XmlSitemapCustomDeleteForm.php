@@ -98,7 +98,7 @@ class XmlSitemapCustomDeleteForm extends ConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->linkStorage->delete('custom', $this->custom_link['id']);
     $this->logger('xmlsitemap')->debug('The custom link for %loc has been deleted.', ['%loc' => $this->custom_link['loc']]);
-    drupal_set_message($this->t('The custom link for %loc has been deleted.', ['%loc' => $this->custom_link['loc']]));
+    $this->messenger()->addStatus($this->t('The custom link for %loc has been deleted.', ['%loc' => $this->custom_link['loc']]));
 
     $form_state->setRedirectUrl($this->getCancelUrl());
   }

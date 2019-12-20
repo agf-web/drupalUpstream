@@ -77,6 +77,8 @@ class XmlSitemapFunctionalTest extends XmlSitemapTestBase {
    * report.
    */
   public function testStatusReport() {
+    $cron_warning_threshold = $this->config('system.cron')->get('threshold.requirements_warning');
+
     // Test the rebuild flag.
     $this->drupalLogin($this->admin_user);
     $this->state->set('xmlsitemap_generated_last', REQUEST_TIME);
@@ -86,9 +88,18 @@ class XmlSitemapFunctionalTest extends XmlSitemapTestBase {
     $this->assertResponse(200);
     $this->state->set('xmlsitemap_rebuild_needed', FALSE);
     $this->assertNoXMLSitemapProblems();
+
+    // Test the regenerate flag (and cron has run recently).
+    $this->state->set('xmlsitemap_regenerate_needed', TRUE);
+    $this->state->set('xmlsitemap_generated_last', REQUEST_TIME - $cron_warning_threshold - 600);
+    $this->state->set('system.cron_last', REQUEST_TIME - $cron_warning_threshold + 600);
+    $this->assertNoXMLSitemapProblems();
+
     // Test the regenerate flag (and cron hasn't run in a while).
     $this->state->set('xmlsitemap_regenerate_needed', TRUE);
-    $this->state->set('xmlsitemap_generated_last', REQUEST_TIME - $this->config->get('cron_threshold_warning') - 100);
+    $this->state->set('system.cron_last', 0);
+    $this->state->set('install_time', 0);
+    $this->state->set('xmlsitemap_generated_last', REQUEST_TIME - $cron_warning_threshold - 600);
     $this->assertXMLSitemapProblems(t('The XML cached files are out of date and need to be regenerated. You can run cron manually to regenerate the sitemap files.'));
     $this->clickLink(t('run cron manually'));
     $this->assertResponse(200);

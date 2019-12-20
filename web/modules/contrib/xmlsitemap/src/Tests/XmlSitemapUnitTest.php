@@ -76,14 +76,15 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
   public function testGetChunkCount() {
     // Set a low chunk size for testing.
     $this->config->set('chunk_size', 4)->save();
+    $database = \Drupal::database();
 
     // Make the total number of links just equal to the chunk size.
-    $count = db_query("SELECT COUNT(id) FROM {xmlsitemap}")->fetchField();
+    $count = $database->query("SELECT COUNT(id) FROM {xmlsitemap}")->fetchField();
     for ($i = $count; $i < 4; $i++) {
       $this->addSitemapLink();
       $this->assertEqual(xmlsitemap_get_chunk_count(TRUE), 1);
     }
-    $this->assertEqual(db_query("SELECT COUNT(id) FROM {xmlsitemap}")->fetchField(), 4);
+    $this->assertEqual($database->query("SELECT COUNT(id) FROM {xmlsitemap}")->fetchField(), 4);
 
     // Add a disabled link, should not change the chunk count.
     $this->addSitemapLink(['status' => FALSE]);
@@ -94,13 +95,13 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
     $this->assertEqual(xmlsitemap_get_chunk_count(TRUE), 2);
 
     // Change all links to disabled. The chunk count should be 1 not 0.
-    db_query("UPDATE {xmlsitemap} SET status = 0");
+    $database->query("UPDATE {xmlsitemap} SET status = 0");
     $this->assertEqual(xmlsitemap_get_chunk_count(TRUE), 1);
     $this->assertEqual(xmlsitemap_get_link_count(), 0);
 
     // Delete all links. The chunk count should be 1 not 0.
-    db_query("DELETE FROM {xmlsitemap}");
-    $this->assertEqual(db_query("SELECT COUNT(id) FROM {xmlsitemap}")->fetchField(), 0);
+    $database->query("DELETE FROM {xmlsitemap}");
+    $this->assertEqual($database->query("SELECT COUNT(id) FROM {xmlsitemap}")->fetchField(), 0);
     $this->assertEqual(xmlsitemap_get_chunk_count(TRUE), 1);
   }
 
@@ -157,7 +158,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
       'type' => 'testing',
       'subtype' => '',
       'id' => 1,
-      'loc' => 'testing',
+      'loc' => '/testing',
       'status' => 1,
     ];
     $this->linkStorage->save($link);
@@ -168,7 +169,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
     $this->assertFlag('xmlsitemap_regenerate_needed', TRUE);
 
     $link['priority'] = 0.5;
-    $link['loc'] = 'new_location';
+    $link['loc'] = '/new_location';
     $link['status'] = 1;
     $this->linkStorage->save($link);
     $this->assertFlag('xmlsitemap_regenerate_needed', TRUE);

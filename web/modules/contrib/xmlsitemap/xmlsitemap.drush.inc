@@ -7,8 +7,6 @@
  * @ingroup xmlsitemap
  */
 
-use Drupal\Component\Utility\Timer;
-
 /**
  * Implements hook_drush_command().
  */
@@ -38,16 +36,9 @@ function xmlsitemap_drush_command() {
  * Regenerate the sitemap files from existing data.
  */
 function drush_xmlsitemap_regenerate() {
-  // Run the batch process.
-  Timer::start('xmlsitemap_regenerate');
-  xmlsitemap_run_unprogressive_batch('xmlsitemap_regenerate_batch');
-
-  $vars = [
-    '@timer' => Timer::read('xmlsitemap_regenerate'),
-    '@memory-peak' => format_size(memory_get_peak_usage(TRUE)),
-  ];
-  drush_print(dt('XML sitemap files regenerated in @timer ms. Peak memory usage: @memory-peak.', $vars));
-  Timer::stop('xmlsitemap_regenerate');
+  $batch = xmlsitemap_regenerate_batch();
+  batch_set($batch);
+  drush_backend_batch_process();
 }
 
 /**
@@ -57,19 +48,12 @@ function drush_xmlsitemap_rebuild() {
   // Build a list of rebuildable link types.
   $rebuild_types = xmlsitemap_get_rebuildable_link_types();
   if (empty($rebuild_types)) {
-    return drush_set_error("No link types are rebuildable.");
+    return drush_log(dt('No link types are rebuildable.'), 'warning');
   }
 
-  // Run the batch process.
-  Timer::start('xmlsitemap_rebuild');
-  xmlsitemap_run_unprogressive_batch('xmlsitemap_rebuild_batch', $rebuild_types, TRUE);
-
-  $vars = [
-    '@timer' => Timer::read('xmlsitemap_rebuild'),
-    '@memory-peak' => format_size(memory_get_peak_usage(TRUE)),
-  ];
-  drush_print(dt('XML sitemap files rebuilt in @timer ms. Peak memory usage: @memory-peak.', $vars));
-  Timer::stop('xmlsitemap_rebuild');
+  $batch = xmlsitemap_rebuild_batch($rebuild_types, TRUE);
+  batch_set($batch);
+  drush_backend_batch_process();
 }
 
 /**
@@ -77,11 +61,11 @@ function drush_xmlsitemap_rebuild() {
  */
 function drush_xmlsitemap_index() {
   $limit = (int) drush_get_option('limit', \Drupal::config('xmlsitemap.settings')->get('batch_limit'));
-  $count_before = db_select('xmlsitemap', 'x')->countQuery()->execute()->fetchField();
+  $count_before = \Drupal::database()->select('xmlsitemap', 'x')->countQuery()->execute()->fetchField();
 
   \Drupal::moduleHandler()->invokeAll('xmlsitemap_index_links', ['limit' => $limit]);
 
-  $count_after = db_select('xmlsitemap', 'x')->countQuery()->execute()->fetchField();
+  $count_after = \Drupal::database()->select('xmlsitemap', 'x')->countQuery()->execute()->fetchField();
 
   if ($count_after == $count_before) {
     drush_print(dt('No new XML sitemap links to index.'));

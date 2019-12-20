@@ -6,16 +6,16 @@ use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\State\StateInterface;
 
 /**
  * Configure what entities will be included in sitemap.
  */
-class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements ContainerInjectionInterface {
+class XmlSitemapEntitiesSettingsForm extends ConfigFormBase {
 
   /**
    * The entity type manager.
@@ -30,6 +30,13 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
    * @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface
    */
   protected $entityTypeBundleInfo;
+
+  /**
+   * The state.
+   *
+   * @var \Drupal\Core\State\StateInterface
+   */
+  protected $state;
 
   /**
    * {@inheritdoc}
@@ -47,12 +54,15 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
    *   The entity type manager.
    * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info
    *   The entity type bundle info.
+   * @param \Drupal\Core\State\StateInterface $state
+   *   The object State.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, EntityTypeBundleInfoInterface $entity_type_bundle_info) {
+  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, EntityTypeBundleInfoInterface $entity_type_bundle_info, StateInterface $state) {
     parent::__construct($config_factory);
 
     $this->entityTypeManager = $entity_type_manager;
     $this->entityTypeBundleInfo = $entity_type_bundle_info;
+    $this->state = $state;
   }
 
   /**
@@ -62,7 +72,8 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
     return new static(
       $container->get('config.factory'),
       $container->get('entity_type.manager'),
-      $container->get('entity_type.bundle.info')
+      $container->get('entity_type.bundle.info'),
+      $container->get('state')
     );
   }
 
@@ -92,9 +103,7 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
 
     asort($labels);
 
-    $form = [
-      '#labels' => $labels,
-    ];
+    $form['#labels'] = $labels;
 
     $form['entity_types'] = [
       '#title' => $this->t('Custom sitemap entities settings'),
@@ -156,7 +165,7 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
                   'entity' => $entity_type_id,
                   'bundle' => $bundle,
                 ]),
-                'query' => drupal_get_destination(),
+                'query' => $this->getDestinationArray(),
               ],
             ],
           ],
@@ -188,10 +197,8 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
           if (!$values['settings'][$key]['types'][$bundle_key]) {
             xmlsitemap_link_bundle_delete($key, $bundle_key, TRUE);
           }
-          else {
-            if (!xmlsitemap_link_bundle_check_enabled($key, $bundle_key)) {
-              xmlsitemap_link_bundle_enable($key, $bundle_key);
-            }
+          elseif (!xmlsitemap_link_bundle_check_enabled($key, $bundle_key)) {
+            xmlsitemap_link_bundle_enable($key, $bundle_key);
           }
         }
       }
@@ -201,7 +208,7 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
         }
       }
     }
-    \Drupal::state()->set('xmlsitemap_regenerate_needed', TRUE);
+    $this->state->set('xmlsitemap_regenerate_needed', TRUE);
     parent::submitForm($form, $form_state);
   }
 

@@ -7,10 +7,10 @@
  * @ingroup xmlsitemap
  */
 
-use Drupal\Core\Database\Database;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\Core\Url;
+use Drupal\user\RoleInterface;
 
 /**
  * Implements hook_requirements().
@@ -73,7 +73,7 @@ function xmlsitemap_requirements($phase) {
         $requirements['xmlsitemap_directory']['description'] = $t('The following directories were not found or are not writable by the server. See <a href="@docpage">@docpage</a> for more information. @directories', ['@directories' => \Drupal::service('renderer')->renderPlain($items), '@docpage' => 'https://www.drupal.org/node/244924']);
       }
     }
-    $sitemaps = xmlsitemap_sitemap_load_multiple();
+    $sitemaps = \Drupal::entityTypeManager()->getStorage('xmlsitemap')->loadMultiple();
     $max_links = -1;
     $max_chunks = -1;
     $max_filesize = -1;
@@ -121,11 +121,11 @@ function xmlsitemap_requirements($phase) {
 
     // Check when the cached files were last generated.
     $generated_last = \Drupal::state()->get('xmlsitemap_generated_last', 0);
-    $generated_ago = REQUEST_TIME - $generated_last;
+    $generated_ago = \Drupal::time()->getRequestTime() - $generated_last;
     $requirements['xmlsitemap_generated'] = [
       'title' => $t('XML sitemap'),
       'value' => $generated_last ? $t('Last attempted generation on @date (@interval ago).', [
-        '@date' => format_date($generated_last, 'small'),
+        '@date' => \Drupal::service('date.formatter')->format($generated_last, 'small'),
         '@interval' => \Drupal::service('date.formatter')->formatInterval($generated_ago),
       ]) : $t('Cached files have not been generated yet.'),
       'severity' => REQUIREMENT_OK,
@@ -135,20 +135,36 @@ function xmlsitemap_requirements($phase) {
       $requirements['xmlsitemap_generated']['description'] = $t('The XML sitemap data is out of sync and needs to be <a href="@link-rebuild">completely rebuilt<a>.', ['@link-rebuild' => Url::fromRoute('xmlsitemap.admin_rebuild')->toString()]);
     }
     elseif (\Drupal::state()->get('xmlsitemap_regenerate_needed')) {
+      $last_run = $generated_last;
+      // If cron regeneration is enabled, factor in the last time cron was run
+      // because the regenerate flag might have been set between the last cron
+      // run and now.
+      if (!\Drupal::config('xmlsitemap.settings')->get('disable_cron_regeneration')) {
+        $last_run = max($generated_last, \Drupal::state()->get('system.cron_last', 0), \Drupal::state()->get('install_time', 0));
+      }
+      $last_run_ago = \Drupal::time()->getRequestTime() - $last_run;
+      $cron_warning_threshold = \Drupal::config('system.cron')->get('threshold.requirements_warning');
+      $cron_error_threshold = \Drupal::config('system.cron')->get('threshold.requirements_error');
       if ($max_filesize == 0) {
         // A maximum sitemap file size of 0 indicates an error in generation.
         $requirements['xmlsitemap_generated']['severity'] = REQUIREMENT_ERROR;
       }
-      elseif ($generated_ago >= \Drupal::config('xmlsitemap.settings')->get('cron_threshold_error')) {
+      elseif ($last_run_ago >= $cron_error_threshold) {
         $requirements['xmlsitemap_generated']['severity'] = REQUIREMENT_ERROR;
       }
-      elseif ($generated_ago >= \Drupal::config('xmlsitemap.settings')->get('cron_threshold_warning')) {
+      elseif ($last_run_ago >= $cron_warning_threshold) {
         $requirements['xmlsitemap_generated']['severity'] = REQUIREMENT_WARNING;
       }
       if ($requirements['xmlsitemap_generated']['severity']) {
-        $requirements['xmlsitemap_generated']['description'] = $t('The XML cached files are out of date and need to be regenerated. You can <a href="@link-cron">run cron manually</a> to regenerate the sitemap files.', [
-          '@link-cron' => Url::fromRoute('system.run_cron', [], ['query' => drupal_get_destination()])->toString(),
-        ]);
+        if (\Drupal::config('xmlsitemap.settings')->get('disable_cron_regeneration')) {
+          // Don't show the link to run cron if cron regeneration is disabled.
+          $requirements['xmlsitemap_generated']['description'] = $t('The XML cached files are out of date and need to be regenerated.');
+        }
+        else {
+          $requirements['xmlsitemap_generated']['description'] = $t('The XML cached files are out of date and need to be regenerated. You can <a href="@link-cron">run cron manually</a> to regenerate the sitemap files.', [
+            '@link-cron' => Url::fromRoute('system.run_cron', [], ['query' => \Drupal::destination()->getAsArray()])->toString(),
+          ]);
+        }
       }
     }
     $anonymous_accout = new AnonymousUserSession();
@@ -158,7 +174,7 @@ function xmlsitemap_requirements($phase) {
         'title' => $t('XML sitemap user'),
         'value' => $t('Anonymous access to user profiles'),
         'description' => $t('In order to list user profile links in the sitemap, the anonymous user must have the <a href="@perm-link"><em>View user profiles</em> permission</a>.', [
-          '@perm-link' => Url::fromRoute('entity.user_role.edit_permissions_form', ['user_role' => DRUPAL_ANONYMOUS_RID], ['fragment' => 'module-user'])->toString(),
+          '@perm-link' => Url::fromRoute('entity.user_role.edit_permissions_form', ['user_role' => RoleInterface::ANONYMOUS_ID], ['fragment' => 'module-user'])->toString(),
         ]),
         'severity' => REQUIREMENT_ERROR,
       ];
@@ -287,7 +303,7 @@ function xmlsitemap_install() {
 
   // Insert the homepage link into the {xmlsitemap} table so we do not show an
   // empty sitemap after install.
-  db_insert('xmlsitemap')
+  \Drupal::database()->insert('xmlsitemap')
     ->fields([
       'type' => 'frontpage',
       'id' => 0,
@@ -300,7 +316,8 @@ function xmlsitemap_install() {
 
   $state_variables = xmlsitemap_state_variables();
   \Drupal::state()->setMultiple($state_variables);
-  \Drupal::state()->set('xmlsitemap_base_url', Url::fromRoute('<front>', [], ['absolute' => TRUE])->toString());
+  $xmlsitemap_base_url = rtrim(Url::fromRoute('<front>', [], ['absolute' => TRUE])->toString(), '/');
+  \Drupal::state()->set('xmlsitemap_base_url', $xmlsitemap_base_url);
   $context = xmlsitemap_get_current_context();
   $sitemap = \Drupal::entityTypeManager()->getStorage('xmlsitemap')->create([
     'id' => xmlsitemap_sitemap_get_context_hash($context),
@@ -317,13 +334,6 @@ function xmlsitemap_install() {
  * Implements hook_uninstall().
  */
 function xmlsitemap_uninstall() {
-  // Remove config variables.
-  $variables = array_keys(xmlsitemap_config_variables());
-  $editable = \Drupal::configFactory()->getEditable('xmlsitemap.settings');
-  foreach ($variables as $variable) {
-    $editable->clear($variable);
-  }
-
   $variables = array_keys(xmlsitemap_state_variables());
   foreach ($variables as $variable) {
     \Drupal::state()->delete($variable);
@@ -365,4 +375,11 @@ function xmlsitemap_update_8002() {
     ->fields(['loc' => '/'])
     ->condition('type', 'frontpage')
     ->execute();
+}
+
+/**
+ * Update the path of the frontpage link in case it was reset again.
+ */
+function xmlsitemap_update_8003() {
+  xmlsitemap_update_8002();
 }

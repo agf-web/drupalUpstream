@@ -36,13 +36,13 @@ class XmlSitemapMultilingualTest extends XmlSitemapMultilingualTestBase {
     $this->regenerateSitemap();
 
     // Check that the frontpage link is correct for default and non-default
-    // languages.
+    // languages. The link ends with a slash.
     $frontpage_link = Url::fromRoute('<front>', [], ['absolute' => TRUE])->toString();
     $this->drupalGet('sitemap.xml');
     $this->assertRaw($frontpage_link, "English frontpage link found in the sitemap.");
 
     $this->drupalGet('fr/sitemap.xml');
-    $this->assertRaw($frontpage_link . '/fr', "French frontpage link found in the sitemap.");
+    $this->assertRaw($frontpage_link . 'fr', "French frontpage link found in the sitemap.");
   }
 
   /**

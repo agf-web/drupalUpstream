@@ -55,21 +55,21 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
     // @codingStandardsIgnoreStart
     // $this->drupalLogin($this->admin_user);
     //
-    //    $edit = array(
+    //    $edit = [
     //      'label' => $this->randomMachineName(),
-    //      'id' => Unicode::strtolower($this->randomMachineName()),
+    //      'id' => mb_strtolower($this->randomMachineName()),
     //      'xmlsitemap[status]' => '1',
     //      'xmlsitemap[priority]' => '1.0',
-    //    );
+    //    ];
     //    $this->drupalPostForm('admin/structure/menu/add', $edit, 'Save');
     //
-    //    xmlsitemap_link_bundle_settings_save('menu', $edit['id'], array('status' => 0, 'priority' => 0.5, 'changefreq' => 0));
+    //    xmlsitemap_link_bundle_settings_save('menu', $edit['id'], ['status' => 0, 'priority' => 0.5, 'changefreq' => 0]);
     //
     //    $this->drupalGet('admin/structure/menu/manage/' . $edit['id']);
     //
     //    $menu_id = $edit['id'];
     //    $this->clickLink('Add link');
-    //    $edit = array(
+    //    $edit = [
     //      'link[0][uri]' => 'node',
     //      'title[0][value]' => $this->randomMachineName(),
     //      'description[0][value]' => '',
@@ -77,7 +77,7 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
     //      'expanded[value]' => FALSE,
     //      'menu_parent' => $menu_id . ':',
     //      'weight[0][value]' => 0,
-    //    );
+    //    ];
     //    $this->drupalPostForm(NULL, $edit, 'Save');.
     // @codingStandardsIgnoreEnd
   }

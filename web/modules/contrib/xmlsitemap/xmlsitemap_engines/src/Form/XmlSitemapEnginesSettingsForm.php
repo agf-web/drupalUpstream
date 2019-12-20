@@ -8,7 +8,7 @@ use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\State\StateInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Datetime\DateFormatter;
+use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -26,7 +26,7 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
   /**
    * The date formatter service.
    *
-   * @var \Drupal\Core\Datetime\DateFormatter
+   * @var \Drupal\Core\Datetime\DateFormatterInterface
    */
   protected $date;
 
@@ -35,12 +35,12 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The factory for configuration objects.
-   * @param \Drupal\Core\Datetime\DateFormatter $date
+   * @param \Drupal\Core\Datetime\DateFormatterInterface $date
    *   The date service.
    * @param \Drupal\Core\State\StateInterface $state
    *   The state store service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, DateFormatter $date, StateInterface $state) {
+  public function __construct(ConfigFactoryInterface $config_factory, DateFormatterInterface $date, StateInterface $state) {
     parent::__construct($config_factory);
 
     $this->date = $date;

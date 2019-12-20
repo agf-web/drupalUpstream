@@ -1,0 +1,21 @@
+--- src/Plugin/field_group/FieldGroupFormatter/Details.php
++++ src/Plugin/field_group/FieldGroupFormatter/Details.php
+@@ -27,10 +28,17 @@ class Details extends FieldGroupFormatterBase {
+   public function preRender(&$element, $rendering_object) {
+     parent::preRender($element, $rendering_object);
+ 
++    $is_open = $this->getSetting('open');
++    $children = Element::children($element);
++    foreach ($children as $child) {
++      if (!empty($rendering_object[$element['#group_name']][$child]['#children_errors'])) {
++        $is_open = TRUE;
++      }
++    }
+     $element += array(
+       '#type' => 'details',
+       '#title' => Html::escape($this->t($this->getLabel())),
+-      '#open' => $this->getSetting('open')
++      '#open' => $is_open,
+     );
+ 
+     if ($this->getSetting('id')) {

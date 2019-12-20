@@ -4,9 +4,8 @@ namespace Drupal\xmlsitemap\Form;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityStorageException;
-use Drupal\Core\Language\LanguageInterface;
-use Drupal\Core\Render\Element;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Language\LanguageInterface;
 
 /**
  * Provides a form for creating and editing xmlsitemap entities.
@@ -27,7 +26,6 @@ class XmlSitemapForm extends EntityForm {
     $form = parent::form($form, $form_state);
     if ($this->entity->getContext() == NULL) {
       $this->entity->context = [];
-      $this->entity->setOriginalId(NULL);
     }
     $xmlsitemap = $this->entity;
     $form['#entity'] = $xmlsitemap;
@@ -36,17 +34,17 @@ class XmlSitemapForm extends EntityForm {
       '#title' => $this->t('Label'),
       '#maxlength' => 255,
       '#default_value' => $xmlsitemap->label(),
-      '#description' => $this->t('Label for the Example.'),
+      '#description' => $this->t('Label for the XML sitemap.'),
       '#required' => TRUE,
     ];
     $form['context'] = [
       '#tree' => TRUE,
     ];
-    $visible_children = Element::getVisibleChildren($form['context']);
-    if (empty($visible_children)) {
+
+    if (!xmlsitemap_get_context_info()) {
       $form['context']['empty'] = [
         '#type' => 'markup',
-        '#markup' => '<p>' . t('There are currently no XML sitemap contexts available.') . '</p>',
+        '#markup' => '<p>' . $this->t('There are currently no XML sitemap contexts available.') . '</p>',
       ];
     }
 
@@ -74,18 +72,18 @@ class XmlSitemapForm extends EntityForm {
     try {
       $status = $this->entity->save();
       if ($status == SAVED_NEW) {
-        drupal_set_message($this->t('Saved the %label sitemap.', [
+        $this->messenger()->addStatus($this->t('Saved the %label sitemap.', [
           '%label' => $this->entity->label(),
         ]));
       }
       elseif ($status == SAVED_UPDATED) {
-        drupal_set_message($this->t('Updated the %label sitemap.', [
+        $this->messenger()->addStatus($this->t('Updated the %label sitemap.', [
           '%label' => $this->entity->label(),
         ]));
       }
     }
     catch (EntityStorageException $ex) {
-      drupal_set_message($this->t('There is another sitemap saved with the same context.'), 'error');
+      $this->messenger()->addError($this->t('There is another sitemap saved with the same context.'));
     }
 
     $form_state->setRedirect('xmlsitemap.admin_search');
