@@ -115,6 +115,7 @@ function agfirst_feed_layer_preprocess_paragraph(array &$variables) {
         $query->condition('field_tags', $paragraph->field_filter_term->target_id);
       }
       $query->sort('field_publication_date', 'DESC');
+      $query->sort('created', 'DESC');
       break;
 
     case 'event':
