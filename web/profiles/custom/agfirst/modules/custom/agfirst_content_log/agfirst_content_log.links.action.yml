@@ -1,0 +1,5 @@
+agfirst_content_log.export:
+  route_name: agfirst_content_log.export
+  title: 'Export to CSV'
+  appears_on:
+    - agfirst_content_log.display

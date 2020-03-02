@@ -1,0 +1,12 @@
+agfirst_content_log.functions:
+  version: 0.0
+  css:
+    layout:
+      css/agfirst-content-log.css: {}
+  js:
+    js/agfirst-content-log.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal
+    - core/drupalSettings

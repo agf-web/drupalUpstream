@@ -1,0 +1,14 @@
+
+agfirst_content_log.display:
+  title: 'Content Log'
+  description: 'Content Log'
+  parent: system.admin_content
+  route_name: agfirst_content_log.display
+  weight: 0
+
+agfirst_content_log.admin:
+  title: 'Content Log Settings'
+  description: 'View Content Log Settings.'
+  parent: system.admin_config_content
+  route_name: agfirst_content_log.settings
+  weight: 0

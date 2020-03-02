@@ -1,0 +1,40 @@
+
+#agfirst_content_log.display:
+#  path: '/admin/content/agfirst-content-log'
+#  defaults:
+#    _form: '\Drupal\agfirst_content_log\Form\AgFirstContentLogDisplayForm'
+#    _title: 'Content Log'
+#  requirements:
+#    _permission: 'administer agfirst_content_log settings'
+
+agfirst_content_log.display:
+  path: '/admin/content/agfirst-content-log'
+  defaults:
+    _controller: '\Drupal\agfirst_content_log\Controller\AgFirstContentLogExportController::content'
+    _title: 'Content Log'
+  requirements:
+    _permission: 'administer agfirst_content_log settings'
+
+agfirst_content_log.settings:
+  path: '/admin/config/content/agfirst-content-log'
+  defaults:
+    _form: '\Drupal\agfirst_content_log\Form\AgFirstContentLogSettingsForm'
+    _title: 'Content Log Settings'
+  requirements:
+    _permission: 'administer agfirst_content_log settings'
+
+agfirst_content_log.export:
+  path: '/admin/content/agfirst-content-log/export'
+  defaults:
+    _controller: '\Drupal\agfirst_content_log\Controller\AgFirstContentLogExportController::export_csv'
+    _title: 'Export to CSV'
+  requirements:
+    _permission: 'administer agfirst_content_log settings'
+
+agfirst_content_log.delete:
+  path: '/admin/config/content/agfirst-content-log/delete'
+  defaults:
+    _form: '\Drupal\agfirst_content_log\Form\AgFirstContentLogConfirmDeleteForm'
+    _title: 'Confirm Deletion'
+  requirements:
+    _permission: 'administer agfirst_content_log settings'

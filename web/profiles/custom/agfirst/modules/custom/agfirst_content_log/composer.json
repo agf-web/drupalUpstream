@@ -1,0 +1,20 @@
+{
+  "name": "cyberwoven/agfirst_content_log",
+  "type": "drupal-module",
+  "description": "Implements a global content modification log on AgFirst sites.",
+  "keywords": [
+    "Drupal"
+  ],
+  "homepage": "https://github.com/cyberwoven/agfirst_content_log",
+  "license": "GPL-2.0+",
+  "minimum-stability": "dev",
+  "extra": {
+    "branch-alias": {
+      "8.x-1.x": "1.x-dev"
+    }
+  },
+  "support": {
+    "source": "https://github.com/cyberwoven/agfirst_content_log.git"
+  },
+  "require": {}
+}

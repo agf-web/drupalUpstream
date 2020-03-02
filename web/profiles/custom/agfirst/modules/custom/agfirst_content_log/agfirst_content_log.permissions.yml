@@ -1,0 +1,4 @@
+administer agfirst_content_log settings:
+  title: 'Administer Content Log settings'
+  description: 'Allow to access the settings form of the Content Log module.'
+  restrict access: true

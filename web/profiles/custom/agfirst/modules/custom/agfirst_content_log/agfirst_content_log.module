@@ -1,0 +1,244 @@
+<?php
+
+/**
+ * @file
+ * Contains agfirst_content_log.module..
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Entity\EntityInterface;
+
+/**
+ * Implements hook_help().
+ */
+function agfirst_content_log_help($route_name, RouteMatchInterface $route_match) {
+  $output = null;
+  switch ($route_name) {
+    // Main module help for the agfirst_content_log module.
+    case 'help.page.agfirst_content_log':
+      $output = '';
+      $output .= '<h3>' . t("About") . '</h3>';
+      $output .= '<p>' . t("Implements a global content modification log on AgFirst sites.") . '</p>';
+    default:
+  }
+  return $output;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function agfirst_content_log_theme($existing, $type, $theme, $path) {
+
+  return [
+    'agfirst_content_log' => [
+      'template' => 'agfirst-content-log',
+      'variables' => [
+        'attributes' => [],
+        'content' => [],
+      ],
+    ],
+  ];
+
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function agfirst_content_log_preprocess_block__agfirst_content_log(&$variables) {
+  $variables['#attached']['library'][] =  'agfirst_content_log/agfirst_content_log.functions';
+}
+
+/**
+ * Implements hook_entity_insert().
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *
+ * @throws \Exception
+ */
+function agfirst_content_log_entity_insert(EntityInterface $entity) {
+
+  $entity_type = $entity->getEntityTypeId();
+
+  if (in_array($entity_type, ['node', 'file'])) {
+
+    $current_user = \Drupal::currentUser();
+    $request = \Drupal::request();
+
+    $timestamp = \Drupal::time()->getCurrentTime();
+
+    $info = [
+      'uid' => $current_user->id(),
+      'timestamp' => $timestamp,
+      'client_ip' => $request->getClientIp(),
+      'entity_type' => $entity->getEntityTypeId(),
+      'entity_id' => $entity->id(),
+      'entity_title' => $entity->label(),
+      'entity_bundle' => $entity->bundle(),
+      'action' => 'created',
+    ];
+
+    $connection = \Drupal::database();
+    $result = $connection->insert('agfirst_content_log')
+      ->fields($info)
+      ->execute();
+  }
+}
+
+/**
+ * Implements hook_entity_update().
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *
+ * @throws \Exception
+ */
+function agfirst_content_log_entity_update(EntityInterface $entity) {
+
+  $entity_type = $entity->getEntityTypeId();
+
+  if ($entity_type == 'node') {
+
+    $current_user = \Drupal::currentUser();
+    $request = \Drupal::request();
+
+    $timestamp = \Drupal::time()->getCurrentTime();
+
+    $info = [
+      'uid' => $current_user->id(),
+      'timestamp' => $timestamp,
+      'client_ip' => $request->getClientIp(),
+      'entity_type' => $entity->getEntityTypeId(),
+      'entity_id' => $entity->id(),
+      'entity_title' => $entity->label(),
+      'entity_bundle' => $entity->bundle(),
+      'action' => 'updated',
+    ];
+
+    $connection = \Drupal::database();
+    $result = $connection->insert('agfirst_content_log')
+      ->fields($info)
+      ->execute();
+
+  }
+
+}
+
+/**
+ * Implements hook_entity_delete().
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *
+ * @throws \Exception
+ */
+function agfirst_content_log_entity_delete(EntityInterface $entity) {
+
+  $entity_type = $entity->getEntityTypeId();
+
+  if (in_array($entity_type, ['node', 'file'])) {
+
+    $current_user = \Drupal::currentUser();
+    $request = \Drupal::request();
+
+    $timestamp = \Drupal::time()->getCurrentTime();
+
+    $info = [
+      'uid' => $current_user->id(),
+      'timestamp' => $timestamp,
+      'client_ip' => $request->getClientIp(),
+      'entity_type' => $entity->getEntityTypeId(),
+      'entity_id' => $entity->id(),
+      'entity_title' => $entity->label(),
+      'entity_bundle' => (($entity->bundle()) ?: NULL),
+      'action' => 'deleted',
+    ];
+
+    $connection = \Drupal::database();
+    $result = $connection->insert('agfirst_content_log')
+      ->fields($info)
+      ->execute();
+  }
+}
+
+/**
+ *
+ */
+function agfirst_content_log_schema() {
+  $schema['agfirst_content_log'] = [
+    'description' => t('Logs entity saves.'),
+    'fields' => [
+      'lid' => [
+        'description' => t('Primary Key: unique ID for log entries.'),
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'uid' => [
+        'description' => t('User ID who made the change.'),
+        'type' => 'int',
+        'size' => 'normal',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'timestamp' => [
+        'description' => t('User ID who made the change.'),
+        'type' => 'int',
+        'size' => 'normal',
+        'unsigned' => FALSE,
+        'not null' => TRUE,
+      ],
+      'client_ip' => [
+        'description' => t('IP address'),
+        'type' => 'varchar',
+        'length' => 40,
+        'not null' => FALSE,
+        'default' => NULL,
+      ],
+      'entity_type' => [
+        'description' => t('Type ID of the entity.'),
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => FALSE,
+        'default' => NULL,
+      ],
+      'entity_id' => [
+        'description' => t('Entity ID of the item changed.'),
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => FALSE,
+        'default' => NULL,
+      ],
+      'entity_title' => [
+        'description' => t('Entity label of the item changed.'),
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'default' => NULL,
+      ],
+      'entity_bundle' => [
+        'description' => t('Machine name of the entity\'s bundle.'),
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => FALSE,
+        'default' => NULL,
+      ],
+      'action' => [
+        'description' => t('The action taken on the entity.'),
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => FALSE,
+        'default' => NULL,
+      ]
+    ],
+    'indexes' => [
+      'uid' => [
+        'uid',
+      ],
+      'timestamp' => [
+        'timestamp',
+      ],
+    ],
+    'primary key' => [
+      'lid',
+    ],
+  ];
+  return $schema;
+}
