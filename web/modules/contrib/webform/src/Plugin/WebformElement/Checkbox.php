@@ -21,17 +21,25 @@ class Checkbox extends BooleanBase {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultProperties() {
+  protected function defineDefaultProperties() {
     $properties = [
       'title_display' => 'after',
       // Checkbox.
       'exclude_empty' => FALSE,
-      // iCheck settings.
-      'icheck' => '',
-    ] + parent::getDefaultProperties();
-    unset($properties['unique'], $properties['unique_entity'], $properties['unique_user'], $properties['unique_error']);
+    ] + parent::defineDefaultProperties();
+    unset(
+      $properties['unique'],
+      $properties['unique_entity'],
+      $properties['unique_user'],
+      $properties['unique_error'],
+      $properties['format_items'],
+      $properties['format_items_html'],
+      $properties['format_items_text']
+    );
     return $properties;
   }
+
+  /****************************************************************************/
 
   /**
    * {@inheritdoc}

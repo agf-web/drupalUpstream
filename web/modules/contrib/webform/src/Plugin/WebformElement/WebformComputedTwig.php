@@ -4,7 +4,7 @@ namespace Drupal\webform\Plugin\WebformElement;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\webform\Utility\WebformElementHelper;
-use Drupal\webform\Twig\TwigExtension;
+use Drupal\webform\Twig\WebformTwigExtension;
 
 /**
  * Provides a 'webform_computed_twig' element.
@@ -21,11 +21,13 @@ class WebformComputedTwig extends WebformComputedBase {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultProperties() {
+  protected function defineDefaultProperties() {
     return [
       'whitespace' => '',
-    ] + parent::getDefaultProperties();
+    ] + parent::defineDefaultProperties();
   }
+
+  /****************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -33,7 +35,7 @@ class WebformComputedTwig extends WebformComputedBase {
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
 
-    $form['computed']['help'] = TwigExtension::buildTwigHelp();
+    $form['computed']['help'] = WebformTwigExtension::buildTwigHelp();
     $form['computed']['template']['#mode'] = 'twig';
 
     // Set #access so that help is always visible.

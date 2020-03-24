@@ -19,6 +19,7 @@ use Drupal\webform\WebformSubmissionInterface;
  *   label = @Translation("Text format"),
  *   description = @Translation("Provides a text format form element."),
  *   category = @Translation("Advanced elements"),
+ *   states_wrapper = TRUE,
  *   composite = TRUE,
  *   multiline = TRUE,
  * )
@@ -28,12 +29,13 @@ class TextFormat extends WebformElementBase {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultProperties() {
-    $properties = parent::getDefaultProperties() + [
+  protected function defineDefaultProperties() {
+    $properties = [
+      'default_value' => [],
       // Text format settings.
       'allowed_formats' => [],
       'hide_help' => FALSE,
-    ];
+    ] + parent::defineDefaultProperties();
     unset(
       $properties['disabled'],
       $properties['attributes'],
@@ -42,10 +44,14 @@ class TextFormat extends WebformElementBase {
       $properties['description_display'],
       $properties['field_prefix'],
       $properties['field_suffix'],
-      $properties['help']
+      $properties['format_items'],
+      $properties['format_items_html'],
+      $properties['format_items_text']
     );
     return $properties;
   }
+
+  /****************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -59,8 +65,46 @@ class TextFormat extends WebformElementBase {
    */
   public function prepare(array &$element, WebformSubmissionInterface $webform_submission = NULL) {
     parent::prepare($element, $webform_submission);
+    $this->setElementDefaultCallback($element, 'process');
+    $element['#process'][] = [get_class($this), 'process'];
     $element['#after_build'] = [[get_class($this), 'afterBuild']];
     $element['#attached']['library'][] = 'webform/webform.element.text_format';
+  }
+
+  /**
+   * Fix text format #more property.
+   *
+   * @param array $element
+   *   The form element to process. See main class documentation for properties.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param array $complete_form
+   *   The complete form structure.
+   *
+   * @return array
+   *   The form element.
+   *
+   * @see template_preprocess_text_format_wrapper()
+   * @see text-format-wrapper.html.twig
+   */
+  public static function process(&$element, FormStateInterface $form_state, &$complete_form) {
+    if (!empty($element['#more'])) {
+      // Process #more and append to #description.
+      $variables = ['element' => $element, 'description' => []];
+      _webform_preprocess_element($variables);
+
+      // Update element description.
+      $element['#description'] = $variables['description'];
+
+      // Remove attributes which causes conflicts.
+      unset($element['#description']['attributes']);
+
+      // Unset old #more attributes.
+      unset($element['value']['#more']);
+      unset($element['#more']);
+    }
+
+    return $element;
   }
 
   /**
@@ -101,7 +145,46 @@ class TextFormat extends WebformElementBase {
       // Can't hide the format via #access but we can use CSS.
       $element['format']['#attributes']['style'] = 'display: none';
     }
+    return $element;
+  }
 
+  /**
+   * Set an elements #states and flexbox wrapper.
+   *
+   * @param array $element
+   *   An element.
+   */
+  protected function prepareWrapper(array &$element) {
+    $element['#pre_render'][] = [get_class($this), 'preRenderFixTextFormatStates'];
+    parent::prepareWrapper($element);
+  }
+
+  /**
+   * Fix state .js-webform-states-hidden wrapper for text format element.
+   *
+   * Adds .js-webform-states-hidden to wrapper to text format because
+   * text format's wrapper is hard-coded.
+   *
+   * @param array $element
+   *   An element.
+   *
+   * @return array
+   *   An element with .js-webform-states-hidden added to the #prefix
+   *   and #suffix.
+   *
+   * @see \Drupal\webform\Utility\WebformElementHelper::fixStatesWrapper
+   * @see text-format-wrapper.html.twig
+   */
+  public static function preRenderFixTextFormatStates(array $element) {
+    if (isset($element['#attributes']) && isset($element['#attributes']['class'])) {
+      $index = array_search('js-webform-states-hidden', $element['#attributes']['class']);
+      if ($index !== FALSE) {
+        unset($element['#attributes']['class'][$index]);
+        $element += ['#prefix' => '', '#suffix' => ''];
+        $element['#prefix'] = '<div class="js-webform-text-format-hidden">';
+        $element['#suffix'] = $element['#suffix'] . '</div>';
+      }
+    }
     return $element;
   }
 
@@ -189,8 +272,8 @@ class TextFormat extends WebformElementBase {
   protected function getElementSelectorInputsOptions(array $element) {
     $title = $this->getAdminLabel($element);
     return [
-      'value' => $title . ' [' . t('Textarea') . ']',
-      'format' => $title . ' [' . t('Select') . ']',
+      'value' => $title . ' [' . $this->t('Textarea') . ']',
+      'format' => $title . ' [' . $this->t('Select') . ']',
     ];
   }
 

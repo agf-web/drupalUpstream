@@ -4,6 +4,20 @@
  */
 
 /**
+ * Element states.
+ * @see \Drupal\webform\WebformSubmissionConditionsValidator::buildForm
+ * @see \Drupal\webform\Utility\WebformElementHelper::fixStatesWrapper
+ * @see \Drupal\webform\Plugin\WebformElement\TextFormat::preRenderFixTextFormatStates
+ * @see text-format-wrapper.html.twig
+ */
+.js-form-item.js-webform-states-hidden,
+.js-form-submit.js-webform-states-hidden,
+.js-form-wrapper.js-webform-states-hidden,
+.js-webform-text-format-hidden > .js-text-format-wrapper {
+  display: none;
+}
+
+/**
  * Container inline
  */
 .form-item .container-inline {
@@ -19,11 +33,15 @@
 }
 
 /**
- * Element title inline.
+ * Element title inline.z
  */
 .webform-element--title-inline > label {
   display: inline;
   padding-right: 0.5em;
+}
+
+.webform-element--title-inline > div.container-inline {
+  display: inline;
 }
 
 /**
@@ -33,8 +51,14 @@
  * @see webform_preprocess_fieldset()
  */
 .form-composite.webform-fieldset--title-inline legend {
-  float: left;
-  margin: 0.4em 0.5em 0.4em 0;
+  float: left; /* LTR */
+  margin: 0.4em 0.5em 0.4em 0; /* LTR */
+}
+
+[dir=rtl] .form-composite.webform-fieldset--title-inline legend {
+  float: right; /* RTL */
+  margin-right: 0; /* RTL */
+  margin-left: 0.5em; /* RTL */
 }
 
 .form-composite.webform-fieldset--title-inline .fieldset-wrapper,
@@ -65,7 +89,7 @@
 .webform-readonly input[type="time"],
 .webform-readonly input[type="url"],
 .webform-readonly textarea {
-  background: #ededed;
-  border-color: #bbb;
   color: #717171;
+  border-color: #bbb;
+  background: #ededed;
 }

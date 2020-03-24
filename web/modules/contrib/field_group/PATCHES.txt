@@ -6,6 +6,6 @@ Source: patches/field_group-validation-2787179-9.patch
 
 
 Fields with errors are not visible
-Source: patches/fields_with_errors_are-2894213-3.patch
+Source: https://www.drupal.org/files/issues/2020-01-16/field_group-open-groups-with-errors-server-side-2894213-14.patch
 
 

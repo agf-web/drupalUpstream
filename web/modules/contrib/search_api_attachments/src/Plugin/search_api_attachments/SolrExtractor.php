@@ -70,6 +70,11 @@ class SolrExtractor extends TextExtractorPluginBase {
     // Get the Solr backend.
     /** @var \Drupal\search_api_solr\Plugin\search_api\backend\SearchApiSolrBackend $backend */
     $backend = $server->getBackend();
+
+    if (!$backend->isAvailable()) {
+      throw new \Exception('Solr Exctractor is not available.');
+    }
+
     // Extract the content.
     $xml_data = $backend->extractContentFromFile($filepath);
 

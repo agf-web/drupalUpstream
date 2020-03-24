@@ -32,7 +32,7 @@
 
         // Skip if date inputs are supported by the browser and input is not a text field.
         // @see \Drupal\webform\Element\WebformDatetime
-        if (window.Modernizr && Modernizr.inputtypes.date === true && $input.attr('type') !== 'text') {
+        if (window.Modernizr && Modernizr.inputtypes && Modernizr.inputtypes.date === true && $input.attr('type') !== 'text') {
           return;
         }
 
@@ -42,7 +42,7 @@
         }, Drupal.webform.datePicker.options);
 
         // Add datepicker button.
-        if ($input.hasData('datepicker-button')) {
+        if ($input.hasData && $input.hasData('datepicker-button')) {
           options = $.extend({
             showOn: 'both',
             buttonImage: settings.webform.datePicker.buttonImage,
@@ -88,10 +88,18 @@
         // First day of the week.
         options.firstDay = settings.webform.dateFirstDay;
 
+        // Days of the week.
+        // @see https://stackoverflow.com/questions/2968414/disable-specific-days-of-the-week-on-jquery-ui-datepicker
+        if ($input.attr('data-days')) {
+          var days = $input.attr('data-days').split(',');
+          options.beforeShowDay = function (date) {
+            var day = date.getDay().toString();
+            return [(days.indexOf(day) !== -1) ? true : false];
+          };
+        }
+
         // Disable autocomplete.
-        // @see https://gist.github.com/niksumeiko/360164708c3b326bd1c8
-        var isChrome = /Chrome/.test(window.navigator.userAgent) && /Google Inc/.test(window.navigator.vendor);
-        $input.attr('autocomplete', (isChrome) ? 'off' : 'false');
+        $input.attr('autocomplete', 'off');
 
         $input.datepicker(options);
       });

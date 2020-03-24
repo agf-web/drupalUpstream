@@ -28,6 +28,7 @@ class PdftotextExtractor extends TextExtractorPluginBase {
    */
   public function extract(File $file) {
     if (in_array($file->getMimeType(), $this->getPdfMimeTypes())) {
+      $output = '';
       $pdftotext_path = $this->configuration['pdftotext_path'];
       $filepath = $this->getRealpath($file->getFileUri());
       // UTF-8 multibyte characters will be stripped by escapeshellargs() for
@@ -44,7 +45,11 @@ class PdftotextExtractor extends TextExtractorPluginBase {
       // Support UTF-8 commands.
       // @see http://www.php.net/manual/en/function.shell-exec.php#85095
       shell_exec("LANG=en_US.utf-8");
-      return shell_exec($cmd);
+      $output = shell_exec($cmd);
+      if (is_null($output)) {
+        throw new \Exception('Pdftotext Exctractor is not available.');
+      }
+      return $output;
     }
     else {
       return NULL;

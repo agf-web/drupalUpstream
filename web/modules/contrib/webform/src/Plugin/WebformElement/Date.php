@@ -22,7 +22,7 @@ class Date extends DateBase {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultProperties() {
+  protected function defineDefaultProperties() {
     $date_format = '';
     // Date formats cannot be loaded during install or update.
     if (!defined('MAINTENANCE_MODE')) {
@@ -37,10 +37,13 @@ class Date extends DateBase {
       'datepicker' => FALSE,
       'datepicker_button' => FALSE,
       'date_date_format' => $date_format,
+      'placeholder' => '',
       'step' => '',
       'size' => '',
-    ] + parent::getDefaultProperties();
+    ] + parent::defineDefaultProperties();
   }
+
+  /****************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -55,6 +58,11 @@ class Date extends DateBase {
     // Set default date format to HTML date.
     if (!isset($element['#date_date_format'])) {
       $element['#date_date_format'] = $this->getDefaultProperty('date_date_format');
+    }
+
+    // Set placeholder attribute.
+    if (!empty($element['#placeholder'])) {
+      $element['#attributes']['placeholder'] = $element['#placeholder'];
     }
 
     // Prepare element after date format has been updated.
@@ -117,7 +125,7 @@ class Date extends DateBase {
     $form['date']['datepicker'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Use date picker'),
-      '#description' => $this->t('If checked, the HTML5 date element will be replaced with <a href="https://jqueryui.com/datepicker/">jQuery UI datepicker</a>'),
+      '#description' => $this->t('If checked, the HTML5 date element will be replaced with a <a href="https://jqueryui.com/datepicker/">jQuery UI datepicker</a>'),
       '#return_value' => TRUE,
     ];
     $form['date']['datepicker_button'] = [
@@ -151,19 +159,26 @@ class Date extends DateBase {
         ],
       ],
     ];
-    $form['date']['step'] = [
+    $form['date']['date_container']['step'] = [
       '#type' => 'number',
       '#title' => $this->t('Step'),
       '#description' => $this->t('Specifies the legal number intervals.'),
       '#min' => 1,
       '#size' => 4,
-      '#weight' => 10,
       '#states' => [
         'invisible' => [
           ':input[name="properties[datepicker]"]' => ['checked' => TRUE],
         ],
       ],
     ];
+
+    // Show placeholder for the datepicker only.
+    $form['form']['placeholder']['#states'] = [
+      'visible' => [
+        ':input[name="properties[datepicker]"]' => ['checked' => TRUE],
+      ],
+    ];
+
     return $form;
   }
 

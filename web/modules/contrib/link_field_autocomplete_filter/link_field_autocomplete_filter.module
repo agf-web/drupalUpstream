@@ -43,26 +43,31 @@ function link_field_autocomplete_filter_help($route_name, RouteMatchInterface $r
 function link_field_autocomplete_filter_form_field_config_edit_form_alter(&$form, FormStateInterface $form_state) {
   $entity = $form_state->getFormObject()->getEntity();
   if ($entity->get('field_type') == 'link') {
-
-    // Get all node types.
-    $node_types = NodeType::loadMultiple();
-    $options = [];
-    foreach ($node_types as $node_type) {
-      $options[$node_type->id()] = $node_type->label();
-    }
     $form['third_party_settings']['link_field_autocomplete_filter'] = [
       '#type' => 'fieldset',
       '#collapsible' => FALSE,
-      '#title' => ('Autocomplete Filter'),
+      '#title' => t('Autocomplete Filter'),
     ];
-    $settings = $entity->getThirdPartySetting('link_field_autocomplete_filter', 'allowed_content_types');
-    $default = is_array($settings) ? $settings : [];
+
+    // Do negate the selection.
+    $negate = $entity->getThirdPartySetting('link_field_autocomplete_filter', 'negate', NULL);
+    $form['third_party_settings']['link_field_autocomplete_filter']['negate'] = [
+      '#type' => 'radios',
+      '#options' => [
+        0 => t('Include the selected below'),
+        1 => t('Exclude the selected below'),
+      ],
+      '#title' => t('Which content types should be allowed for internal links?'),
+      '#default_value' => $negate,
+    ];
+
+    $bundles = $entity->getThirdPartySetting('link_field_autocomplete_filter', 'allowed_content_types', NULL);
     $form['third_party_settings']['link_field_autocomplete_filter']['allowed_content_types'] = [
       '#type' => 'checkboxes',
-      '#title' => t('Allowed content types for internal links'),
-      '#description' => t('Check allowed content types. If none are checked, then all are allowed.'),
-      '#options' => $options,
-      '#default_value' => $default,
+      '#title' => t('Content types'),
+      '#description' => t('If none are checked, then all are allowed.'),
+      '#options' => _link_field_autocomplete_content_types_options(TRUE),
+      '#default_value' => is_array($bundles) ? $bundles : [],
     ];
   }
 }
@@ -70,7 +75,7 @@ function link_field_autocomplete_filter_form_field_config_edit_form_alter(&$form
 /**
  * Implements hook_field_widget_form_alter().
  */
-function link_field_autocomplete_filter_field_widget_form_alter(&$element, \Drupal\Core\Form\FormStateInterface $form_state, $context) {
+function link_field_autocomplete_filter_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
   $widget_type = $context['widget']->getPluginId();
   if ($widget_type === 'link_default' || $widget_type === 'link_attributes' || $widget_type === 'link_target_field_widget') {
     $fieldDefinitions = $context['items']->getFieldDefinition();
@@ -83,6 +88,11 @@ function link_field_autocomplete_filter_field_widget_form_alter(&$element, \Drup
     $bundles = array_filter($settings);
     // Only alter and validate if a value is set.
     if (count($bundles) > 0) {
+      $negate = $fieldDefinitions->getThirdPartySetting('link_field_autocomplete_filter', 'negate', NULL);
+      if (!is_null($negate) && $negate == '1') {
+        $bundles = array_diff_key(_link_field_autocomplete_content_types_options(FALSE), $bundles);
+      }
+
       $element['uri']['#selection_handler'] = 'default:node';
       $element['uri']['#selection_settings'] = [
         'target_bundles' => $bundles,
@@ -119,4 +129,21 @@ function _link_field_autocomplete_filter_validate_widget($element, FormStateInte
       }
     }
   }
+}
+
+/**
+ * Return the list of all content types as options.
+ *
+ * @return array
+ *   An options array.
+ */
+function _link_field_autocomplete_content_types_options($label = TRUE) {
+  $options = [];
+
+  $node_types = NodeType::loadMultiple();
+  foreach ($node_types as $node_type) {
+    $options[$node_type->id()] = $label ? $node_type->label() : $node_type->id();
+  }
+
+  return $options;
 }

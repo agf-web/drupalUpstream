@@ -10,9 +10,8 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\KeyValueStore\KeyValueFactoryInterface;
-use Drupal\Core\Utility\Error;
 use Drupal\Core\Plugin\PluginFormInterface;
-use Drupal\field\Entity\FieldConfig;
+use Drupal\Core\Utility\Error;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\search_api\Datasource\DatasourceInterface;
@@ -45,6 +44,10 @@ class FilesExtractor extends ProcessorPluginBase implements PluginFormInterface 
    * Name of the config being edited.
    */
   const CONFIGNAME = 'search_api_attachments.admin_config';
+
+  const FALLBACK_QUEUE_LOCK = 'search_api_attachments_fallback_queue';
+
+  const FALLBACK_QUEUE_KV = 'search_api_attachments:queued';
 
   /**
    * Name of the "virtual" field that handles file entity type extractions.
@@ -203,19 +206,22 @@ class FilesExtractor extends ProcessorPluginBase implements PluginFormInterface 
             // Get type to manage media entity reference case.
             $type = $entity->get($field_name)->getFieldDefinition()->getType();
             if ($type == 'entity_reference') {
+              /** @var \Drupal\Core\Field\BaseFieldDefinition $field_def */
               $field_def = $entity->get($field_name)->getFieldDefinition();
-              if ($field_def instanceof FieldConfig) {
-                $deps = $field_def->getDependencies();
-                if (in_array('media.type.file', $deps['config'])) {
-                  // This is a media field.
-                  $filefield_values = $entity->get($field_name)->filterEmptyItems()->getValue();
-                  foreach ($filefield_values as $media_value) {
-                    $media = Media::load($media_value['target_id']);
-                    // Supporting only the default media file field for now.
-                    if ($media && $media->bundle() == 'file') {
-                      $mediafilefield_values = $media->field_media_file->getValue();
-                      foreach ($mediafilefield_values as $filefield_value) {
-                        $all_fids[] = $filefield_value['target_id'];
+              if ($field_def->getItemDefinition()->getSetting('target_type') === 'media') {
+                // This is a media field.
+                $filefield_values = $entity->get($field_name)->filterEmptyItems()->getValue();
+                foreach ($filefield_values as $media_value) {
+                  $media = Media::load($media_value['target_id']);
+                  if ($media !== NULL) {
+                    $bundle_configuration = $media->getSource()->getConfiguration();
+                    if (isset($bundle_configuration['source_field'])) {
+                      /** @var \Drupal\Core\Field\FieldItemListInterface $field_item */
+                      foreach ($media->get($bundle_configuration['source_field'])->filterEmptyItems() as $field_item) {
+                        if ($field_item->getFieldDefinition()->getType() === 'file') {
+                          $value = $field_item->getValue();
+                          $all_fids[] = $value['target_id'];
+                        }
                       }
                     }
                   }
@@ -276,8 +282,17 @@ class FilesExtractor extends ProcessorPluginBase implements PluginFormInterface 
     }
     else {
       try {
-        $extracted_data = $extractor_plugin->extract($file);
-        $extracted_data = $this->limitBytes($extracted_data);
+        // Only extract if this file has not previously failed and was queued.
+        $fallback_collection = $this->keyValue->get(FilesExtractor::FALLBACK_QUEUE_KV);
+        $queued_files = $fallback_collection->get($file->id());
+        if (empty($queued_files[$entity->getEntityTypeId()][$entity->id()])) {
+          $extracted_data = $extractor_plugin->extract($file);
+          $extracted_data = $this->limitBytes($extracted_data);
+          $this->keyValue->get($collection)->set($key, $extracted_data);
+        }
+        else {
+          $this->queueItem($entity, $file);
+        }
       }
       catch (\Exception $e) {
         $error = Error::decodeException($e);
@@ -292,10 +307,49 @@ class FilesExtractor extends ProcessorPluginBase implements PluginFormInterface 
           '@file' => $error['%file'],
         ];
         $this->logger->log(LogLevel::ERROR, 'Error extracting text from file @file_id for @entity_type @entity_id. @type: @message in @function (line @line of @file).', $message_params);
+        $this->queueItem($entity, $file);
       }
-      $this->keyValue->get($collection)->set($key, $extracted_data);
     }
     return $extracted_data;
+  }
+
+  /**
+   * Queue a failed extraction for later processing.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity the file is attached to.
+   * @param \Drupal\file\Entity\File $file
+   *   A file object.
+   *
+   * @return bool
+   *   Success of queueing process.
+   */
+  private function queueItem(EntityInterface $entity, File $file) {
+
+    if (\Drupal::lock()->acquire(static::FALLBACK_QUEUE_LOCK)) {
+      $queued_file_collection = $this->keyValue->get(static::FALLBACK_QUEUE_KV);
+      $queued_files = $queued_file_collection->get($file->id());
+      $queued_files[$entity->getEntityTypeId()][$entity->id()] = TRUE;
+      $queued_file_collection->set($file->id(), $queued_files);
+      \Drupal::lock()->release(static::FALLBACK_QUEUE_LOCK);
+
+      // Add file to queue.
+      $queue = \Drupal::queue('search_api_attachments');
+      $item = new \stdClass();
+      $item->fid = $file->id();
+      $item->entity_id = $entity->id();
+      $item->entity_type = $entity->getEntityTypeId();
+      $item->extract_attempts = 1;
+      $queue->createItem($item);
+
+      $this->logger->log(LogLevel::INFO, 'File added to the queue for text extraction @file_id for @entity_type @entity_id.', [
+        '@file_id' => $file->id(),
+        '@entity_id' => $entity->id(),
+        '@entity_type' => $entity->getEntityTypeId(),
+      ]);
+      return TRUE;
+    }
+    return FALSE;
   }
 
   /**
@@ -334,7 +388,10 @@ class FilesExtractor extends ProcessorPluginBase implements PluginFormInterface 
    *   The first N bytes of the extracted text that will be indexed and cached.
    */
   public function limitBytes($extracted_text) {
-    $bytes = 0;
+    // Default the configuration to a sensible amount of text to extract and
+    // cache in the database. 1 million characters should be enough for most
+    // cases.
+    $bytes = Bytes::toInt('1 MB');
     if (isset($this->configuration['number_first_bytes'])) {
       $bytes = Bytes::toInt($this->configuration['number_first_bytes']);
     }
@@ -418,10 +475,23 @@ class FilesExtractor extends ProcessorPluginBase implements PluginFormInterface 
             $file_elements[$property->getName()] = $property->getLabel();
           }
           if ($property->getType() == "entity_reference") {
-            if ($property instanceof FieldConfig) {
-              $deps = $property->getDependencies();
-              if (in_array('media.type.file', $deps['config'])) {
-                $file_elements[$property->getName()] = $property->getLabel();
+            if ($property->getSetting('target_type') === 'media') {
+              $settings = $property->getItemDefinition()->getSettings();
+              if (isset($settings['handler_settings']['target_bundles'])) {
+                // For each media bundle allowed, check if the source field is a
+                // file field.
+                foreach ($settings['handler_settings']['target_bundles'] as $bundle_name) {
+                  if (!empty($this->entityTypeManager->getStorage('media_type')->load($bundle_name))) {
+                    $bundle_configuration = $this->entityTypeManager->getStorage('media_type')->load($bundle_name)->toArray();
+                    if (isset($bundle_configuration['source_configuration']['source_field'])) {
+                      $source_field = $bundle_configuration['source_configuration']['source_field'];
+                      $field_config = $this->entityTypeManager->getStorage('field_storage_config')->load(sprintf('media.%s', $source_field))->toArray();
+                      if (isset($field_config['type']) && $field_config['type'] === 'file') {
+                        $file_elements[$property->getName()] = $property->getLabel();
+                      }
+                    }
+                  }
+                }
               }
             }
           }
@@ -461,11 +531,11 @@ class FilesExtractor extends ProcessorPluginBase implements PluginFormInterface 
     $form['number_first_bytes'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Limit size of the extracted string before indexing.'),
-      '#default_value' => isset($this->configuration['number_first_bytes']) ? $this->configuration['number_first_bytes'] : '0',
+      '#default_value' => isset($this->configuration['number_first_bytes']) ? $this->configuration['number_first_bytes'] : '1 MB',
       '#size' => 5,
       '#min' => 0,
       '#max' => 99999,
-      '#description' => $this->t('Enter a value like "1000", "10 KB", "10 MB" or "10 GB" in order to restrict the size of the content after extraction.<br /> 0 to index the full extracted content without bytes limitation.'),
+      '#description' => $this->t('Enter a value like "1000", "10 KB", "10 MB" or "10 GB" in order to restrict the size of the content after extraction.<br /> "0" to index the full extracted content without bytes limitation.'),
     ];
     $form['max_filesize'] = [
       '#type' => 'textfield',

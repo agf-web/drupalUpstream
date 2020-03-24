@@ -25,13 +25,7 @@ class WebformSourceEntityManager extends DefaultPluginManager implements Webform
    *   The module handler to invoke the alter hook with.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
-    parent::__construct(
-      'Plugin/WebformSourceEntity',
-      $namespaces,
-      $module_handler,
-      'Drupal\webform\Plugin\WebformSourceEntityInterface',
-      'Drupal\webform\Annotation\WebformSourceEntity'
-    );
+    parent::__construct('Plugin/WebformSourceEntity', $namespaces, $module_handler, 'Drupal\webform\Plugin\WebformSourceEntityInterface', 'Drupal\webform\Annotation\WebformSourceEntity');
     $this->alterInfo('webform_source_entity_info');
     $this->setCacheBackend($cache_backend, 'webform_source_entity_info_plugins');
   }
@@ -71,8 +65,10 @@ class WebformSourceEntityManager extends DefaultPluginManager implements Webform
    * @see \Drupal\webform\Plugin\WebformSourceEntity\QueryStringWebformSourceEntity::getSourceEntity
    */
   public static function getMainSourceEntity(EntityInterface $source_entity) {
-    while ($source_entity && $source_entity->getEntityTypeId() === 'paragraph') {
-      $source_entity = $source_entity->getParentEntity();
+    if (\Drupal::moduleHandler()->moduleExists('paragraphs')) {
+      while ($source_entity instanceof \Drupal\paragraphs\Entity\Paragraph) {
+        $source_entity = $source_entity->getParentEntity();
+      }
     }
     return $source_entity;
   }

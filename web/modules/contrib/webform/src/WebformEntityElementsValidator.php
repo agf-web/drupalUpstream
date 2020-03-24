@@ -2,6 +2,7 @@
 
 namespace Drupal\webform;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Render\RendererInterface;
@@ -91,6 +92,13 @@ class WebformEntityElementsValidator implements WebformEntityElementsValidatorIn
   protected $formBuilder;
 
   /**
+   * The configuration object factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
    * Element keys/names that are reserved.
    *
    * @var array
@@ -114,12 +122,17 @@ class WebformEntityElementsValidator implements WebformEntityElementsValidatorIn
    *   The 'entity_type.manager' service.
    * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
    *   The 'form_builder' service.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The configuration object factory.
+   *
+   * @todo Webform 8.x-6.x: Move $config_factory before $renderer.
    */
-  public function __construct(RendererInterface $renderer, WebformElementManagerInterface $element_manager, EntityTypeManagerInterface $entity_type_manager, FormBuilderInterface $form_builder) {
+  public function __construct(RendererInterface $renderer, WebformElementManagerInterface $element_manager, EntityTypeManagerInterface $entity_type_manager, FormBuilderInterface $form_builder, ConfigFactoryInterface $config_factory = NULL) {
     $this->renderer = $renderer;
     $this->elementManager = $element_manager;
     $this->entityTypeManager = $entity_type_manager;
     $this->formBuilder = $form_builder;
+    $this->configFactory = $config_factory ?: \Drupal::configFactory();
   }
 
   /**
@@ -133,6 +146,7 @@ class WebformEntityElementsValidator implements WebformEntityElementsValidatorIn
       'names' => TRUE,
       'properties' => TRUE,
       'submissions' => TRUE,
+      'variants' => TRUE,
       'hierarchy' => TRUE,
       'rendering' => TRUE,
     ];
@@ -182,6 +196,11 @@ class WebformEntityElementsValidator implements WebformEntityElementsValidatorIn
 
     // Validate submission data.
     if ($options['submissions'] && ($messages = $this->validateSubmissions())) {
+      return $messages;
+    }
+
+    // Validate variants data.
+    if ($options['variants'] && ($messages = $this->validateVariants())) {
       return $messages;
     }
 
@@ -244,15 +263,36 @@ class WebformEntityElementsValidator implements WebformEntityElementsValidatorIn
    *   If not valid, an array of error messages.
    */
   protected function validateNames() {
+    // @see \Drupal\webform_ui\Form\WebformUiElementFormBase::buildForm
+    $machine_name_pattern = $this->configFactory->get('webform.settings')->get('element.machine_name_pattern') ?: 'a-z0-9_';
+    switch ($machine_name_pattern) {
+      case 'a-z0-9_':
+        $machine_name_requirement = $this->t('lowercase letters, numbers, and underscores');
+        break;
+
+      case 'a-zA-Z0-9_':
+        $machine_name_requirement = $this->t('letters, numbers, and underscores');
+        break;
+
+      case 'a-z0-9_-':
+        $machine_name_requirement = $this->t('lowercase letters, numbers, and underscores');
+        break;
+
+      case 'a-zA-Z0-9_-':
+        $machine_name_requirement = $this->t('letters, numbers, underscores, and dashes');
+        break;
+    }
+
     $messages = [];
     foreach ($this->elementKeys as $name) {
-      if (!preg_match('/^[_a-z0-9]+$/', $name)) {
+      if (!preg_match('/^[' . $machine_name_pattern . ']+$/', $name)) {
         $line_numbers = $this->getLineNumbers('/^\s*(["\']?)' . preg_quote($name, '/') . '\1\s*:/');
         $t_args = [
           '%name' => $name,
           '@line_number' => WebformArrayHelper::toString($line_numbers),
+          '@requirement' => $machine_name_requirement,
         ];
-        $messages[] = $this->t('The element key %name on line @line_number must contain only lowercase letters, numbers, and underscores.', $t_args);
+        $messages[] = $this->t('The element key %name on line @line_number must contain only @requirement.', $t_args);
       }
       elseif (in_array($name, static::$reservedNames)) {
         $line_numbers = $this->getLineNumbers('/^\s*(["\']?)' . preg_quote($name, '/') . '\1\s*:/');
@@ -396,6 +436,43 @@ class WebformEntityElementsValidator implements WebformEntityElementsValidatorIn
           ],
         ];
         $messages[] = $this->renderer->renderPlain($build);
+      }
+      return $messages;
+    }
+
+    return NULL;
+  }
+
+  /**
+   * Validate that element are not deleted when the webform has related variants.
+   *
+   * @return array|null
+   *   If not valid, an array of error messages.
+   */
+  protected function validateVariants() {
+    if (!$this->webform->hasVariants()) {
+      return NULL;
+    }
+
+    $element_keys = [];
+    if ($this->elements) {
+      $this->getElementKeysRecursive($this->elements, $element_keys);
+    }
+    $original_element_keys = [];
+    if ($this->originalElements) {
+      $this->getElementKeysRecursive($this->originalElements, $original_element_keys);
+    }
+    if ($missing_element_keys = array_diff_key($original_element_keys, $element_keys)) {
+      $messages = [];
+      foreach ($missing_element_keys as $missing_element_key) {
+        if ($this->webform->getVariants(NULL, NULL, $missing_element_key)->count()) {
+          $t_args = [
+            '%title' => $this->webform->label(),
+            '%key' => $missing_element_key,
+            ':href' => $this->webform->toUrl('variants')->toString(),
+          ];
+          $messages[] = $this->t('The %key element can not be removed because the %title webform has related <a href=":href">variants</a>.', $t_args);
+        }
       }
       return $messages;
     }

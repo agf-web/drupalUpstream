@@ -23,7 +23,7 @@ class Range extends NumericBase {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultProperties() {
+  protected function defineDefaultProperties() {
     $properties = [
       // Number settings.
       'min' => 0,
@@ -34,16 +34,21 @@ class Range extends NumericBase {
       'output__field_prefix' => '',
       'output__field_suffix' => '',
       'output__attributes' => [],
-    ] + parent::getDefaultProperties();
+    ] + parent::defineDefaultProperties();
     unset(
       $properties['size'],
       $properties['minlength'],
       $properties['maxlength'],
       $properties['placeholder'],
-      $properties['autocomplete']
+      $properties['autocomplete'],
+      $properties['format_items'],
+      $properties['format_items_html'],
+      $properties['format_items_text']
     );
     return $properties;
   }
+
+  /****************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -56,8 +61,6 @@ class Range extends NumericBase {
       '#min' => $this->getDefaultProperty('min'),
       '#max' => $this->getDefaultProperty('max'),
     ];
-
-    $element['#element_validate'][] = [get_class($this), 'validateRange'];
 
     // If no custom range output is defined then exit.
     if (empty($element['#output'])) {
@@ -155,6 +158,14 @@ class Range extends NumericBase {
   /**
    * {@inheritdoc}
    */
+  protected function prepareElementValidateCallbacks(array &$element, WebformSubmissionInterface $webform_submission = NULL) {
+    parent::prepareElementValidateCallbacks($element, $webform_submission);
+    $element['#element_validate'][] = [get_class($this), 'validateRange'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function preview() {
     return parent::preview() + [
       '#min' => 0,
@@ -183,10 +194,10 @@ class Range extends NumericBase {
       '#title' => $this->t("Output the range's value"),
       '#empty_option' => $this->t('- None -'),
       '#options' => [
-        'right' => t('Right'),
-        'left' => t('Left'),
-        'above' => t('Above (Floating)'),
-        'below' => t('Below (Floating)'),
+        'right' => $this->t('Right'),
+        'left' => $this->t('Left'),
+        'above' => $this->t('Above (Floating)'),
+        'below' => $this->t('Below (Floating)'),
       ],
     ];
 
@@ -226,10 +237,9 @@ class Range extends NumericBase {
    * @see \Drupal\Core\Render\Element\Range::valueCallback
    */
   public static function validateRange(array &$element, FormStateInterface $form_state, array &$completed_form) {
-    $name = $element['#name'];
-    $value = $form_state->getValue($name);
+    $value = $element['#value'];
     $value = ($value === 0) ? '0' : (string) $value;
-    $form_state->setValue($name, $value);
+    $form_state->setValueForElement($element, $value);
   }
 
 }

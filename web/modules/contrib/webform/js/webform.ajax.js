@@ -268,12 +268,26 @@
     // @see https://stackoverflow.com/questions/6944744/javascript-get-portion-of-url-path
     var a = document.createElement('a');
     a.href = response.url;
+    var forceReload = (response.url.match(/\?reload=([^&]+)($|&)/)) ? RegExp.$1 : null;
+    if (forceReload) {
+      response.url = response.url.replace(/\?reload=([^&]+)($|&)/, '');
+      this.redirect(ajax, response, status);
+      return;
+    }
+
     if (a.pathname === window.location.pathname && $('.webform-ajax-refresh').length) {
       updateKey = (response.url.match(/[?|&]update=([^&]+)($|&)/)) ? RegExp.$1 : null;
       addElement = (response.url.match(/[?|&]add_element=([^&]+)($|&)/)) ? RegExp.$1 : null;
       $('.webform-ajax-refresh').click();
     }
     else {
+      // Clear unsaved information flag so that the current webform page
+      // can be redirected.
+      // @see Drupal.behaviors.webformUnsaved.clear
+      if (Drupal.behaviors.webformUnsaved) {
+        Drupal.behaviors.webformUnsaved.clear();
+      }
+
       this.redirect(ajax, response, status);
     }
   };
@@ -319,23 +333,19 @@
   };
 
   /**
-   * Triggers audio UAs to read the supplied text.
+   * Triggers confirm page reload.
    *
    * @param {Drupal.Ajax} [ajax]
    *   A {@link Drupal.ajax} object.
    * @param {object} response
    *   Ajax response.
-   * @param {string} response.text
-   *   A string to be read by the UA.
-   * @param {string} [response.priority='polite']
-   *   A string to indicate the priority of the message. Can be either
-   *   'polite' or 'assertive'.
-   *
-   * @see Drupal.announce
+   * @param {string} response.message
+   *   A message to be displayed in the confirm dialog.
    */
-  Drupal.AjaxCommands.prototype.webformAnnounce = function (ajax, response) {
-    // Delay the announcement.
-    setTimeout(function () {Drupal.announce(response.text, response.priority);}, 200);
+  Drupal.AjaxCommands.prototype.webformConfirmReload = function (ajax, response) {
+    if (window.confirm(response.message)) {
+      window.location.reload(true);
+    }
   };
 
   /** ********************************************************************** **/

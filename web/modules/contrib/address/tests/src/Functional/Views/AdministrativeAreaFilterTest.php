@@ -24,6 +24,11 @@ class AdministrativeAreaFilterTest extends BrowserTestBase {
   ];
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * A simple user with 'access content' permission.
    *
    * @var \Drupal\user\UserInterface
@@ -166,10 +171,10 @@ class AdministrativeAreaFilterTest extends BrowserTestBase {
         'Cairo Governorate' => 'Cairo Governorate',
       ],
       'MX' => [
-        'CHIS' => 'Chiapas',
-        'JAL' => 'Jalisco',
-        'OAX' => 'Oaxaca',
-        'VER' => 'Veracruz',
+        'Chis.' => 'Chiapas',
+        'Jal.' => 'Jalisco',
+        'Oax.' => 'Oaxaca',
+        'Ver.' => 'Veracruz',
       ],
       'US' => [
         'LA' => 'Louisiana',

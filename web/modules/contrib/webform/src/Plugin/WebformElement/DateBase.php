@@ -5,11 +5,14 @@ namespace Drupal\webform\Plugin\WebformElement;
 use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Datetime\DateHelper;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Datetime\Entity\DateFormat;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
 use Drupal\webform\Element\WebformMessage as WebformMessageElement;
 use Drupal\webform\Plugin\WebformElementBase;
+use Drupal\webform\Utility\WebformArrayHelper;
 use Drupal\webform\Utility\WebformDateHelper;
 use Drupal\webform\WebformSubmissionInterface;
 use Drupal\webform\WebformInterface;
@@ -22,12 +25,14 @@ abstract class DateBase extends WebformElementBase {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultProperties() {
+  protected function defineDefaultProperties() {
     return [
       // Form validation.
       'date_date_min' => '',
       'date_date_max' => '',
-    ] + parent::getDefaultProperties() + $this->getDefaultMultipleProperties();
+      'date_days' => ['0', '1', '2', '3', '4', '5', '6'],
+    ] + parent::defineDefaultProperties()
+      + $this->defineDefaultMultipleProperties();
   }
 
   /****************************************************************************/
@@ -60,20 +65,22 @@ abstract class DateBase extends WebformElementBase {
     // This overrides extra attributes set via Datetime::processDatetime.
     // @see \Drupal\Core\Datetime\Element\Datetime::processDatetime
     if (isset($element['#date_date_format'])) {
-      $date_min = $this->getElementProperty($element, 'date_date_min') ?: $this->getElementProperty($element,'date_min');
+      $date_min = $this->getElementProperty($element, 'date_date_min') ?: $this->getElementProperty($element, 'date_min');
       if ($date_min) {
         $element['#attributes']['min'] = static::formatDate($element['#date_date_format'], strtotime($date_min));
         $element['#attributes']['data-min-year'] = static::formatDate('Y', strtotime($date_min));
       }
-      $date_max = $this->getElementProperty($element, 'date_date_max') ?: $this->getElementProperty($element,'date_max');
+      $date_max = $this->getElementProperty($element, 'date_date_max') ?: $this->getElementProperty($element, 'date_max');
       if (!empty($date_max)) {
         $element['#attributes']['max'] = static::formatDate($element['#date_date_format'], strtotime($date_max));
         $element['#attributes']['data-max-year'] = static::formatDate('Y', strtotime($date_max));
       }
     }
 
-    $element['#element_validate'] = array_merge([[get_class($this), 'preValidateDate']], $element['#element_validate']);
-    $element['#element_validate'][] = [get_class($this), 'validateDate'];
+    // Set date days (of week) attributes.
+    if (!empty($element['#date_days'])) {
+      $element['#attributes']['data-days'] = implode(',', $element['#date_days']);
+    }
 
     // Display datepicker button.
     if (!empty($element['#datepicker_button']) || !empty($element['#date_date_datepicker_button'])) {
@@ -88,6 +95,17 @@ abstract class DateBase extends WebformElementBase {
     $cacheability->applyTo($element);
 
     $element['#attached']['library'][] = 'webform/webform.element.date';
+
+    $element['#after_build'][] = [get_class($this), 'afterBuild'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function prepareElementValidateCallbacks(array &$element, WebformSubmissionInterface $webform_submission = NULL) {
+    $element['#element_validate'] = array_merge([[get_class($this), 'preValidateDate']], $element['#element_validate']);
+    $element['#element_validate'][] = [get_class($this), 'validateDate'];
+    parent::prepareElementValidateCallbacks($element, $webform_submission);
   }
 
   /**
@@ -105,6 +123,31 @@ abstract class DateBase extends WebformElementBase {
         $element['#default_value'] = ($element['#default_value']) ? DrupalDateTime::createFromTimestamp(strtotime($element['#default_value'])) : NULL;
       }
     }
+  }
+
+  /**
+   * After build handler for date elements.
+   */
+  public static function afterBuild(array $element, FormStateInterface $form_state) {
+    // Add parent title to sub-elements to child elements which applies to
+    // datetime and datelist elements.
+    $child_keys = Element::children($element);
+    foreach ($child_keys as $child_key) {
+      if (isset($element[$child_key]['#title'])) {
+        $t_args = [
+          '@parent' => $element['#title'],
+          '@child' => $element[$child_key]['#title'],
+        ];
+        $element[$child_key]['#title'] = t('@parent: @child', $t_args);
+      }
+    }
+
+    // Remove orphaned form label.
+    if ($child_keys) {
+      $element['#label_attributes']['webform-remove-for-attribute'] = TRUE;
+    }
+
+    return $element;
   }
 
   /****************************************************************************/
@@ -153,8 +196,8 @@ abstract class DateBase extends WebformElementBase {
     // If a default format is defined update the fallback date formats label.
     // @see \Drupal\webform\Plugin\WebformElementBase::getItemFormat
     $default_format = $this->configFactory->get('webform.settings')->get('format.' . $this->getPluginId() . '.item');
-    if ($default_format && isset($formats[$default_format])) {
-      $formats['fallback'] = t('Default date format (@label)', ['@label' => $date_formats[$default_format]->label()]);
+    if ($default_format && isset($date_formats[$default_format])) {
+      $formats['fallback'] = $this->t('Default date format (@label)', ['@label' => $date_formats[$default_format]->label()]);
     }
     return $formats;
   }
@@ -198,17 +241,36 @@ abstract class DateBase extends WebformElementBase {
     ];
 
     // Date min/max validation.
-    $form['date']['date_date_min'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Date minimum'),
-      '#description' => $this->t('Specifies the minimum date.') . '<br /><br />' . $this->t('Accepts any date in any <a href="https://www.gnu.org/software/tar/manual/html_chapter/tar_7.html#Date-input-formats">GNU Date Input Format</a>. Strings such as today, +2 months, and Dec 9 2004 are all valid.'),
+    $form['date']['date_container'] = $this->getFormInlineContainer() + [
       '#weight' => 10,
     ];
-    $form['date']['date_date_max'] = [
+    $form['date']['date_container']['date_date_min'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Date minimum'),
+      '#description' => $this->t('Specifies the minimum date.')
+        . ' ' . $this->t('To limit the minimum date to the submission date use the <code>[webform_submission:created:html_date]</code> token.')
+        . '<br /><br />'
+        . $this->t('Accepts any date in any <a href="https://www.gnu.org/software/tar/manual/html_chapter/tar_7.html#Date-input-formats">GNU Date Input Format</a>. Strings such as today, +2 months, and Dec 9 2004 are all valid.'),
+    ];
+    $form['date']['date_container']['date_date_max'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Date maximum'),
-      '#description' => $this->t('Specifies the maximum date.') . '<br /><br />' . $this->t('Accepts any date in any <a href="https://www.gnu.org/software/tar/manual/html_chapter/tar_7.html#Date-input-formats">GNU Date Input Format</a>. Strings such as today, +2 months, and Dec 9 2004 are all valid.'),
-      '#weight' => 10,
+      '#description' => $this->t('Specifies the maximum date.')
+        . ' ' . $this->t('To limit the maximum date to the submission date use the <code>[webform_submission:created:html_date]</code> token.')
+        . '<br /><br />'
+        . $this->t('Accepts any date in any <a href="https://www.gnu.org/software/tar/manual/html_chapter/tar_7.html#Date-input-formats">GNU Date Input Format</a>. Strings such as today, +2 months, and Dec 9 2004 are all valid.'),
+    ];
+
+    // Date days of the week validation.
+    $form['date']['date_days'] = [
+      '#type' => 'checkboxes',
+      '#title' => $this->t('Date days of the week'),
+      '#options' => DateHelper::weekDaysAbbr(TRUE),
+      '#element_validate' => [['\Drupal\webform\Utility\WebformElementHelper', 'filterValues']],
+      '#description' => $this->t('Specifies the day(s) of the week. Please note, the date picker will disable unchecked days of the week.'),
+      '#options_display' => 'side_by_side',
+      '#required' => TRUE,
+      '#weight' => 20,
     ];
 
     // Date/time min/max validation.
@@ -233,17 +295,23 @@ abstract class DateBase extends WebformElementBase {
         ],
       ];
     }
-    $form['validation']['date_min'] = [
+    $form['validation']['date_container'] = $this->getFormInlineContainer();
+    $form['validation']['date_container']['date_min'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Date/time minimum'),
-      '#description' => $this->t('Specifies the minimum date/time.') . '<br /><br />' . $this->t('Accepts any date in any <a href="https://www.gnu.org/software/tar/manual/html_chapter/tar_7.html#Date-input-formats">GNU Date/Time Input Format</a>. Strings such as today, +2 months, and Dec 9 2004 10:00 PM are all valid.'),
+      '#description' => $this->t('Specifies the minimum date/time.')
+        . ' ' . $this->t('To limit the minimum date/time to the submission date/time use the <code>[webform_submission:created:html_datetime]</code> token.')
+        . '<br /><br />'
+        . $this->t('Accepts any date in any <a href="https://www.gnu.org/software/tar/manual/html_chapter/tar_7.html#Date-input-formats">GNU Date/Time Input Format</a>. Strings such as today, +2 months, and Dec 9 2004 10:00 PM are all valid.'),
     ];
-    $form['validation']['date_max'] = [
+    $form['validation']['date_container']['date_max'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Date/time maximum'),
-      '#description' => $this->t('Specifies the maximum date/time.') . '<br /><br />' . $this->t('Accepts any date in any <a href="https://www.gnu.org/software/tar/manual/html_chapter/tar_7.html#Date-input-formats">GNU Date/Time Input Format</a>. Strings such as today, +2 months, and Dec 9 2004 10:00 PM are all valid.'),
+      '#description' => $this->t('Specifies the maximum date/time.')
+        . ' ' . $this->t('To limit the maximum date/time to the submission date/time use the <code>[webform_submission:created:html_datetime]</code> token.')
+        . '<br /><br />'
+        . $this->t('Accepts any date in any <a href="https://www.gnu.org/software/tar/manual/html_chapter/tar_7.html#Date-input-formats">GNU Date/Time Input Format</a>. Strings such as today, +2 months, and Dec 9 2004 10:00 PM are all valid.'),
     ];
-
     return $form;
   }
 
@@ -401,6 +469,11 @@ abstract class DateBase extends WebformElementBase {
       $input_exists = FALSE;
       $input = NestedArray::getValue($form_state->getValues(), $element['#parents'], $input_exists);
       if (!isset($input['object'])) {
+        // Time picker converts all submitted time values to H:i:s format.
+        // @see \Drupal\webform\Element\WebformTime::validateWebformTime
+        if (isset($element['#date_time_element']) && $element['#date_time_element'] === 'timepicker') {
+          $element['#date_time_format'] = 'H:i:s';
+        }
         $input = $date_class::valueCallback($element, $input, $form_state);
         $form_state->setValueForElement($element, $input);
         $element['#value'] = $input;
@@ -411,7 +484,7 @@ abstract class DateBase extends WebformElementBase {
   /**
    * Webform element validation handler for date elements.
    *
-   * Note that #required is validated by _form_valistatic::formatDate() already.
+   * Note that #required is validated by _form_validate() already.
    *
    * @see \Drupal\Core\Render\Element\Number::validateNumber
    */
@@ -427,7 +500,7 @@ abstract class DateBase extends WebformElementBase {
     }
     elseif ($value) {
       $datetime = WebformDateHelper::createFromFormat($date_date_format, $value);
-      if ($datetime === FALSE || static::formatDate($date_date_format, $datetime->getTimestamp()) != $value) {
+      if ($datetime === FALSE || static::formatDate($date_date_format, $datetime->getTimestamp()) !== $value) {
         $form_state->setError($element, t('%name must be a valid date.', ['%name' => $name]));
         $value = '';
       }
@@ -493,6 +566,19 @@ abstract class DateBase extends WebformElementBase {
         ]));
       }
     }
+
+    // Ensure that the input is a day of week.
+    if (!empty($element['#date_days'])) {
+      $days = $element['#date_days'];
+      $day = date('w', $time);
+      if (!in_array($day, $days)) {
+        $form_state->setError($element, t('%name must be a %days.', [
+          '%name' => $name,
+          '%days' => WebformArrayHelper::toString(array_intersect_key(DateHelper::weekDays(TRUE), array_combine($days, $days)), t('or')),
+        ]));
+      }
+    }
+
   }
 
   /**
@@ -577,7 +663,7 @@ abstract class DateBase extends WebformElementBase {
    * @return string
    *   Formatted date.
    */
-   protected static function formatDate($custom_format, $timestamp = NULL) {
+  protected static function formatDate($custom_format, $timestamp = NULL) {
     /** @var \Drupal\Core\Datetime\DateFormatterInterface $date_formatter */
     $date_formatter = \Drupal::service('date.formatter');
     return $date_formatter->format($timestamp ?: time(), 'custom', $custom_format);

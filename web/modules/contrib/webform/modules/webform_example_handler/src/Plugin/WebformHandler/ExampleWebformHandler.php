@@ -2,6 +2,7 @@
 
 namespace Drupal\webform_example_handler\Plugin\WebformHandler;
 
+use Drupal\Component\Utility\Xss;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -154,15 +155,15 @@ class ExampleWebformHandler extends WebformHandlerBase {
    */
   public function confirmForm(array &$form, FormStateInterface $form_state, WebformSubmissionInterface $webform_submission) {
     $message = $this->configuration['message'];
-    $message = $this->tokenManager->replace($message, $this->getWebformSubmission());
-    $this->messenger()->addStatus(Markup::create($message), FALSE);
+    $message = $this->replaceTokens($message, $this->getWebformSubmission());
+    $this->messenger()->addStatus(Markup::create(Xss::filter($message)), FALSE);
     $this->debug(__FUNCTION__);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function preCreate(array $values) {
+  public function preCreate(array &$values) {
     $this->debug(__FUNCTION__);
   }
 

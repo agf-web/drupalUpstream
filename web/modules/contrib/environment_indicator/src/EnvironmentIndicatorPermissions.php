@@ -4,6 +4,9 @@ namespace Drupal\environment_indicator;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
+/**
+ * Undocumented class.
+ */
 class EnvironmentIndicatorPermissions {
 
   use StringTranslationTrait;
@@ -17,7 +20,6 @@ class EnvironmentIndicatorPermissions {
   public function permissions() {
     $permissions = [];
     // TODO: Learn how to inject the EntityConfig loader.
-    // $environments = environment_indicator_get_all();
     $environments = [];
     foreach ($environments as $machine => $environment) {
       $permissions['access environment indicator ' . $environment->machine] = [
@@ -27,4 +29,5 @@ class EnvironmentIndicatorPermissions {
     }
     return $permissions;
   }
+
 }

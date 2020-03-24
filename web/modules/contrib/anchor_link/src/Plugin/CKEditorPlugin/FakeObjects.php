@@ -18,9 +18,9 @@ use Drupal\ckeditor\CKEditorPluginInterface;
 class FakeObjects extends PluginBase implements CKEditorPluginInterface {
 
   /**
-  * Implements \Drupal\ckeditor\Plugin\CKEditorPluginInterface::getFile().
-  */
-  function getFile() {
+   * Implements \Drupal\ckeditor\Plugin\CKEditorPluginInterface::getFile().
+   */
+  public function getFile() {
     return drupal_get_path('module', 'anchor_link') . '/js/plugins/fakeobjects/plugin.js';
   }
 
@@ -51,4 +51,5 @@ class FakeObjects extends PluginBase implements CKEditorPluginInterface {
   public function getConfig(Editor $editor) {
     return [];
   }
+
 }

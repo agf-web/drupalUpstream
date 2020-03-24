@@ -28,6 +28,7 @@ class PythonPdf2txtExtractor extends TextExtractorPluginBase {
    */
   public function extract(File $file) {
     if (in_array($file->getMimeType(), $this->getPdfMimeTypes())) {
+      $output = '';
       $filepath = $this->getRealpath($file->getFileUri());
       // Restore the locale.
       $python_path = $this->configuration['python_path'];
@@ -43,7 +44,11 @@ class PythonPdf2txtExtractor extends TextExtractorPluginBase {
       // Support UTF-8 commands.
       // @see http://www.php.net/manual/en/function.shell-exec.php#85095
       shell_exec("LANG=en_US.utf-8");
-      return shell_exec($cmd);
+      $output = shell_exec($cmd);
+      if (is_null($output)) {
+        throw new \Exception('Python Pdf2txt Exctractor is not available.');
+      }
+      return $output;
     }
     else {
       return NULL;

@@ -35,6 +35,12 @@ Go to the configuration: admin/config/search/search_api_attachments
 Choose an extraction method and follow the instructions under the respective
 heading below.
 
+DEVELOPMENT
+-----------
+To generate a pareview.sh report, submit the form in https://bit.ly/2TmdFFz
+To check the number of items in search_api_attachments queue: drush queue-list
+Items are added to the queue table in the database
+To run items in the queue : drush queue-run search_api_attachments
 
 EXTRACTION CONFIGURATION: TIKA APP
 ----------------------------------
@@ -106,7 +112,7 @@ Install docconv as described in https://github.com/sajari/docconv
 SIMPLE USAGE EXAMPLE 1: FILE FIELDS CONTENT: FILE ENTITIES
 ----------------------------------------------------------
 0) This is tested with :
-   drupal 8.6.x
+   drupal 8.8.x
    search_api 8.x-1.x
    search_api_attachments 8.x-1.x
 
@@ -129,7 +135,7 @@ SIMPLE USAGE EXAMPLE 1: FILE FIELDS CONTENT: FILE ENTITIES
 7) Go to admin/config/search/search-api/index/my_index/processors and enable
    the File attachments processor.
 
-8) Go to admin/config/search/search-api/index/my_index/fields/add and:
+8) Go to admin/config/search/search-api/index/my_index/fields/add/nojs and:
    - in the General section, add the "Search api attachments: My pdfs" field.
    - in the Content section, add the "Title".
    - in the Content section, add the "Body".
@@ -142,7 +148,7 @@ SIMPLE USAGE EXAMPLE 1: FILE FIELDS CONTENT: FILE ENTITIES
     - View settings:Show: Index My index
     - Page settings: Check Create a page with title and path 'saa' that
       displays "Rendered entity" format.
-    ("Search results" format seems not working for now)
+      ("Search results" format seems not working for now)
 
 11) Add a filter to the view: the 'Fulltext search' with
     - Operator : Contains any of these words
@@ -158,17 +164,17 @@ SIMPLE USAGE EXAMPLE 1: FILE FIELDS CONTENT: FILE ENTITIES
 
 
 
-SIMPLE USAGE EXAMPLE 2: MEDIA FIELDS CONTENT OR MEDIA ENTITIES OF TYPE FILE
----------------------------------------------------------------------------
+SIMPLE USAGE EXAMPLE 2: MEDIA FIELDS CONTENT : MEDIA ENTITIES OF TYPE FILE
+--------------------------------------------------------------------------
 0) This is tested with :
-   drupal 8.6.x
+   drupal 8.8.x
    search_api 8.x-1.x
    search_api_attachments 8.x-1.x
 
 1) Install drupal, media, search_api search_api_db and search_api_attachments.
 
 2) Go to admin/structure/types/manage/article/fields/add-field and add a
-   file field 'My medias' (field_my_medias).
+   media field 'My medias' (field_my_medias).
    (choose File in the Media type settings)
 
 3 ) Go to media/add/file and add a media with a pdf file
@@ -186,7 +192,7 @@ SIMPLE USAGE EXAMPLE 2: MEDIA FIELDS CONTENT OR MEDIA ENTITIES OF TYPE FILE
 7) Go to admin/config/search/search-api/index/my_index/processors and enable
    the File attachments processor.
 
-8) Go to admin/config/search/search-api/index/my_index/fields/add and:
+8) Go to admin/config/search/search-api/index/my_index/fields/add/nojs and:
    - in the General section, add the "Search api attachments: My medias" field.
    - in the Content section, add the "Title".
    - in the Content section, add the "Body".

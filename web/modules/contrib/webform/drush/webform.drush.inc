@@ -3,11 +3,13 @@
 // @codingStandardsIgnoreFile
 
 /**
- * This is file was generated using Drush. DO NOT EDIT. 
+ * This is file was generated using Drush. DO NOT EDIT.
  *
  * @see drush webform-generate-commands
  * @see \Drupal\webform\Commands\DrushCliServiceBase::generate_commands_drush8
  */
+
+require_once __DIR__ . '/webform.drush.hooks.inc';
 
 /**
  * Implements hook_drush_command().
@@ -24,15 +26,18 @@ function webform_drush_command() {
         'webform' => 'The webform ID you want to export (required unless --entity-type and --entity-id are specified)',
       ),
       'options' => array(
+        'exporter' => 'The type of export. (delimited, table, yaml, or json)',
         'delimiter' => 'Delimiter between columns (defaults to site-wide setting). This option may need to be wrapped in quotes. i.e. --delimiter="\t".',
         'multiple-delimiter' => 'Delimiter between an element with multiple values (defaults to site-wide setting).',
         'file-name' => 'File name used to export submission and uploaded filed. You may use tokens.',
+        'archive-type' => 'Archive file type for submission file uploadeds and generated records. (tar or zip)',
         'header-format' => 'Set to "label" (default) or "key"',
         'options-item-format' => 'Set to "label" (default) or "key". Set to "key" to print select list values by their keys instead of labels.',
         'options-single-format' => 'Set to "separate" (default) or "compact" to determine how single select list values are exported.',
         'options-multiple-format' => 'Set to "separate" (default) or "compact" to determine how multiple select list values are exported.',
         'entity-reference-items' => 'Comma-separated list of entity reference items (id, title, and/or url) to be exported.',
         'excluded-columns' => 'Comma-separated list of component IDs or webform keys to exclude.',
+        'uuid' => ' Use UUIDs for all entity references. (Only applies to CSV download)',
         'entity-type' => 'The entity type to which this submission was submitted from.',
         'entity-id' => 'The ID of the entity of which this webform submission was submitted from.',
         'range-type' => 'Range of submissions to export: "all", "latest", "serial", "sid", or "date".',
@@ -43,10 +48,32 @@ function webform_drush_command() {
         'state' => 'Submission state to be included: "completed", "draft" or "all" (default).',
         'sticky' => 'Flagged/starred submission status.',
         'files' => 'Download files: "1" or "0" (default). If set to 1, the exported CSV file and any submission file uploads will be download in a gzipped tar file.',
-        'destination' => 'The full path and filename in which the CSV or archive should be stored. If omitted the CSV file or archive will be outputted to the commandline.',
+        'destination' => 'The full path and filename in which the CSV or archive should be stored. If omitted the CSV file or archive will be outputted to the command line.',
       ),
       'aliases' => array(
         'wfx',
+        'webform:export',
+      ),
+    ),
+    'webform-import' => array(
+      'description' => 'Imports webform submissions from a CSV file.',
+      'core' => array(
+        '8+',
+      ),
+      'bootstrap' => 2,
+      'arguments' => array(
+        'webform' => 'The webform ID you want to import (required unless --entity-type and --entity-id are specified)',
+        'import_uri' => 'The path or URI for the CSV file to be imported.',
+      ),
+      'options' => array(
+        'skip_validation' => 'Skip form validation.',
+        'treat_warnings_as_errors' => 'Treat all warnings as errors.',
+        'entity-type' => 'The entity type to which this submission was submitted from.',
+        'entity-id' => 'The ID of the entity of which this webform submission was submitted from.',
+      ),
+      'aliases' => array(
+        'wfi',
+        'webform:import',
       ),
     ),
     'webform-purge' => array(
@@ -70,6 +97,7 @@ function webform_drush_command() {
       ),
       'aliases' => array(
         'wfp',
+        'webform:purge',
       ),
     ),
     'webform-tidy' => array(
@@ -90,6 +118,7 @@ function webform_drush_command() {
       ),
       'aliases' => array(
         'wft',
+        'webform:tidy',
       ),
     ),
     'webform-libraries-status' => array(
@@ -103,6 +132,7 @@ function webform_drush_command() {
       ),
       'aliases' => array(
         'wfls',
+        'webform:libraries:status',
       ),
     ),
     'webform-libraries-make' => array(
@@ -116,6 +146,7 @@ function webform_drush_command() {
       ),
       'aliases' => array(
         'wflm',
+        'webform:libraries:make',
       ),
     ),
     'webform-libraries-composer' => array(
@@ -132,6 +163,7 @@ function webform_drush_command() {
       ),
       'aliases' => array(
         'wflc',
+        'webform:libraries:composer',
       ),
     ),
     'webform-libraries-download' => array(
@@ -145,6 +177,7 @@ function webform_drush_command() {
       ),
       'aliases' => array(
         'wfld',
+        'webform:libraries:download',
       ),
     ),
     'webform-libraries-remove' => array(
@@ -158,6 +191,7 @@ function webform_drush_command() {
       ),
       'aliases' => array(
         'wflr',
+        'webform:libraries:remove',
       ),
     ),
     'webform-generate' => array(
@@ -174,6 +208,7 @@ function webform_drush_command() {
       ),
       'aliases' => array(
         'wfg',
+        'webform:generate',
       ),
     ),
     'webform-repair' => array(
@@ -187,6 +222,7 @@ function webform_drush_command() {
       ),
       'aliases' => array(
         'wfr',
+        'webform:repair',
       ),
     ),
     'webform-docs' => array(
@@ -200,6 +236,7 @@ function webform_drush_command() {
       ),
       'aliases' => array(
         'wfd',
+        'webform:docs',
       ),
     ),
     'webform-composer-update' => array(
@@ -216,6 +253,7 @@ function webform_drush_command() {
       ),
       'aliases' => array(
         'wfcu',
+        'webform:composer:update',
       ),
     ),
     'webform-generate-commands' => array(
@@ -229,6 +267,7 @@ function webform_drush_command() {
       ),
       'aliases' => array(
         'wfgc',
+        'webform:generate:commands',
       ),
     ),
   );
@@ -250,6 +289,24 @@ function drush_webform_export_validate() {
  */
 function drush_webform_export() {
   return call_user_func_array([\Drupal::service('webform.cli_service'), 'drush_webform_export'], func_get_args());
+}
+
+/******************************************************************************/
+// drush webform-import. DO NOT EDIT.
+/******************************************************************************/
+
+/**
+ * Implements drush_hook_COMMAND_validate().
+ */
+function drush_webform_import_validate() {
+  return call_user_func_array([\Drupal::service('webform.cli_service'), 'drush_webform_import_validate'], func_get_args());
+}
+
+/**
+ * Implements drush_hook_COMMAND().
+ */
+function drush_webform_import() {
+  return call_user_func_array([\Drupal::service('webform.cli_service'), 'drush_webform_import'], func_get_args());
 }
 
 /******************************************************************************/

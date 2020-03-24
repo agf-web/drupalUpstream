@@ -6,9 +6,9 @@
  */
 
 .form-type-webform-multiple:after {
-  content: " ";
   display: table;
   clear: both;
+  content: " ";
 }
 
 .webform-multiple-table table {
@@ -16,19 +16,20 @@
 }
 
 .webform-multiple-table td {
-  white-space: nowrap;
   vertical-align: top;
+  white-space: nowrap;
 }
 
-.webform-multiple-table td .description {
+.webform-multiple-table td .description,
+.webform-multiple-table td .form-item--error-message {
   white-space: normal;
 }
 
 .webform-multiple-table td.webform-multiple-table--handle {
-  padding: 0 0 0 1em;
   width: 26px;
-  vertical-align: middle;
+  padding: 0 0 0 1em;
   text-align: center;
+  vertical-align: middle;
 }
 
 .webform-multiple-table td.webform-multiple-table--weight {
@@ -36,10 +37,10 @@
 }
 
 .webform-multiple-table td.webform-multiple-table--operations {
-  padding: 0 2px;
-  vertical-align: middle;
-  text-align: center;
   width: 30px;
+  padding: 0 2px;
+  text-align: center;
+  vertical-align: middle;
 }
 .webform-multiple-table td.webform-multiple-table--operations-two {
   width: 60px;
@@ -76,14 +77,27 @@
   width: auto;
 }
 
+.webform-multiple-table td .form-type-datetime .form-type-textfield input {
+  width: 12em;
+}
 .webform-multiple-table .webform-multiple-sort-weight {
   width: 4em;
 }
 
 .webform-multiple-table td input[type="image"] {
-  padding: 0;
-  width: 16px;
-  height: 16px;
+  box-sizing: border-box;
+  width: 20px;
+  min-width: initial;
+  max-width: initial;
+  height: auto;
+  margin: 0;
+  padding: 2px;
+  border: 2px solid #333;
+  border-radius: 50%;
+}
+
+.webform-multiple-table td input[type="image"] + input[type="image"] {
+  margin-left: 2px;
 }
 
 .webform-multiple-table .container-inline input[type="submit"] {
@@ -94,7 +108,16 @@
  * Add margin between stacked form items.
  */
 .webform-multiple-table .form-item + .form-item {
-  margin-top: .2em;
+  margin-top: 0.2em;
+}
+
+/**
+ * Fix margin be checkboxes and radios.
+ */
+.webform-multiple-table .form-checkboxes .form-item,
+.webform-multiple-table .form-radios .form-item {
+  margin-top: 0.4em;
+  margin-bottom: 0.4em;
 }
 
 /**
@@ -116,9 +139,9 @@
  * Tweak tabledrag toggle weight.
  */
 .tabledrag-toggle-weight-wrapper.webform-multiple-tabledrag-toggle-weight {
-  float: right;
-  display: inherit;
   position: inherit;
+  display: inherit;
+  float: right;
 }
 
 .tabledrag-toggle-weight-wrapper.webform-multiple-tabledrag-toggle-weight button {
@@ -144,22 +167,22 @@
 
   .webform-multiple-table-responsive tr {
     display: block;
-    padding: .5em 0;
+    padding: 0.5em 0;
   }
 
   .webform-multiple-table-responsive td {
     display: block;
+    width: inherit;
+    padding: 0.5em 1em;
+    text-align: inherit;
     border: 0;
     background: transparent;
-    text-align: inherit;
-    width: inherit;
-    padding: .5em 1em;
   }
 
   .webform-multiple-table-responsive td:after {
-    content: "";
     display: table;
     clear: both;
+    content: "";
   }
 
   .webform-multiple-table-responsive td.webform-multiple-table--handle,
@@ -172,13 +195,12 @@
   }
 
   .webform-multiple-table-responsive td > div > label.visually-hidden {
-    display: block;
     position: inherit !important;
-    clip: inherit;
+    display: block;
     overflow: inherit;
-    height: inherit;
+    clip: inherit;
     width: inherit;
-    margin: .2em 0;
+    height: inherit;
+    margin: 0.2em 0;
   }
-
 }

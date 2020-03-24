@@ -7,7 +7,7 @@
 
   'use strict';
 
-  var isChrome = /Chrome/.test(window.navigator.userAgent) && /Google Inc/.test(window.navigator.vendor);
+  var isChrome = (/chrom(e|ium)/.test(window.navigator.userAgent.toLowerCase()));
 
   /**
    * Initialize input hiding.

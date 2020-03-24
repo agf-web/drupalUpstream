@@ -4,8 +4,6 @@ namespace Drupal\environment_indicator\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
-use Drupal\Core\Entity\Annotation\EntityType;
-use Drupal\Core\Annotation\Translation;
 
 /**
  * Defines a Environment configuration entity.
@@ -75,7 +73,6 @@ class EnvironmentIndicator extends ConfigEntityBase implements ConfigEntityInter
    */
   public $bg_color;
 
-
   /**
    * {@inheritdoc}
    */
@@ -94,6 +91,7 @@ class EnvironmentIndicator extends ConfigEntityBase implements ConfigEntityInter
    * Gets the URL.
    *
    * @return string
+   *   The URL to switch to.
    */
   public function getUrl() {
     return $this->get('url');
@@ -103,6 +101,7 @@ class EnvironmentIndicator extends ConfigEntityBase implements ConfigEntityInter
    * Gets the foreground color.
    *
    * @return string
+   *   The color code for the indicator.
    */
   public function getFgColor() {
     return $this->get('fg_color');
@@ -112,6 +111,7 @@ class EnvironmentIndicator extends ConfigEntityBase implements ConfigEntityInter
    * Gets the background color.
    *
    * @return string
+   *   The color code for the indicator.
    */
   public function getBgColor() {
     return $this->get('bg_color');
@@ -121,6 +121,7 @@ class EnvironmentIndicator extends ConfigEntityBase implements ConfigEntityInter
    * Gets the machine name.
    *
    * @param string $machine
+   *   The machine-readable ID for the configurable.
    */
   public function setMachine($machine) {
     $this->set('machine', $machine);
@@ -130,6 +131,7 @@ class EnvironmentIndicator extends ConfigEntityBase implements ConfigEntityInter
    * Sets the name.
    *
    * @param string $name
+   *   The environment name.
    */
   public function setName($name) {
     $this->set('name', $name);
@@ -139,6 +141,7 @@ class EnvironmentIndicator extends ConfigEntityBase implements ConfigEntityInter
    * Sets the URL.
    *
    * @param string $url
+   *   The environment url.
    */
   public function setUrl($url) {
     $this->set('url', $url);
@@ -148,6 +151,7 @@ class EnvironmentIndicator extends ConfigEntityBase implements ConfigEntityInter
    * Sets the foreground color.
    *
    * @param string $fg_color
+   *   The foreground color.
    */
   public function setFgColor($fg_color) {
     $this->set('fg_color', $fg_color);
@@ -157,6 +161,7 @@ class EnvironmentIndicator extends ConfigEntityBase implements ConfigEntityInter
    * Sets the background color.
    *
    * @param string $bg_color
+   *   The background color.
    */
   public function setBgColor($bg_color) {
     $this->set('bg_color', $bg_color);

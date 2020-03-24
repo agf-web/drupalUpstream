@@ -13,6 +13,13 @@ use Drupal\webform_access\WebformAccessGroupInterface;
  * @ConfigEntityType(
  *   id = "webform_access_group",
  *   label = @Translation("Webform access group"),
+ *   label_collection = @Translation("Access groups"),
+ *   label_singular = @Translation("access group"),
+ *   label_plural = @Translation("access groups"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count access group",
+ *     plural = "@count access groups",
+ *   ),
  *   handlers = {
  *     "storage" = "\Drupal\webform_access\WebformAccessGroupStorage",
  *     "access" = "Drupal\webform_access\WebformAccessGroupAccessControlHandler",
@@ -30,7 +37,7 @@ use Drupal\webform_access\WebformAccessGroupInterface;
  *     "label" = "label",
  *   },
  *   links = {
- *     "add-form" = "/admin/structure/webform/config/access/group/add",
+ *     "add-form" = "/admin/structure/webform/config/access/group/manage/add",
  *     "edit-form" = "/admin/structure/webform/config/access/group/manage/{webform_access_group}",
  *     "duplicate-form" = "/admin/structure/webform/config/access/group/manage/{webform_access_group}/duplicate",
  *     "delete-form" = "/admin/structure/webform/config/access/group/manage/{webform_access_group}/delete",
@@ -43,6 +50,7 @@ use Drupal\webform_access\WebformAccessGroupInterface;
  *     "description",
  *     "type",
  *     "permissions",
+ *     "emails",
  *   }
  * )
  */
@@ -93,6 +101,13 @@ class WebformAccessGroup extends ConfigEntityBase implements WebformAccessGroupI
   protected $permissions = [];
 
   /**
+   * The webform access group admin user ids.
+   *
+   * @var array
+   */
+  protected $adminIds = [];
+
+  /**
    * The webform access group user ids.
    *
    * @var array
@@ -105,6 +120,13 @@ class WebformAccessGroup extends ConfigEntityBase implements WebformAccessGroupI
    * @var array
    */
   protected $entityIds = [];
+
+  /**
+   * The webform access group emails.
+   *
+   * @var array
+   */
+  protected $emails = [];
 
   /**
    * {@inheritdoc}
@@ -123,6 +145,21 @@ class WebformAccessGroup extends ConfigEntityBase implements WebformAccessGroupI
 
     $webform_access_type = WebformAccessType::load($this->type);
     return ($webform_access_type) ? $webform_access_type->label() : '';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setAdminIds(array $uids) {
+    $this->adminIds = $uids;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAdminIds() {
+    return $this->adminIds;
   }
 
   /**
@@ -158,10 +195,28 @@ class WebformAccessGroup extends ConfigEntityBase implements WebformAccessGroupI
   /**
    * {@inheritdoc}
    */
-  public function addEntityId($entity_type, $entity_id, $field_name, $webform_id) {
-    $entity = "$entity_type:$entity_id:$field_name:$webform_id";
-    if (!in_array($entity, $this->entityIds)) {
-      $this->entityIds[] = $entity;
+  public function setEmails(array $emails) {
+    $this->emails = $emails;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getEmails() {
+    return $this->emails;
+  }
+
+  /****************************************************************************/
+  // Add/Remote methods.
+  /****************************************************************************/
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addAdminId($uid) {
+    if (!in_array($uid, $this->adminIds)) {
+      $this->adminIds[] = $uid;
     }
     return $this;
   }
@@ -169,14 +224,13 @@ class WebformAccessGroup extends ConfigEntityBase implements WebformAccessGroupI
   /**
    * {@inheritdoc}
    */
-  public function removeEntityId($entity_type, $entity_id, $field_name, $webform_id) {
-    $entity = "$entity_type:$entity_id:$field_name:$webform_id";
-    foreach ($this->entityIds as $index => $entityId) {
-      if ($entity == $entityId) {
-        unset($this->entityIds[$index]);
+  public function removeAdminId($uid) {
+    foreach ($this->adminIds as $index => $adminId) {
+      if ($adminId == $uid) {
+        unset($this->adminIds[$index]);
       }
     }
-    array_values($this->entityIds);
+    $this->adminIds = array_values($this->adminIds);
     return $this;
   }
 
@@ -199,9 +253,61 @@ class WebformAccessGroup extends ConfigEntityBase implements WebformAccessGroupI
         unset($this->userIds[$index]);
       }
     }
-    array_values($this->userIds);
+    $this->userIds = array_values($this->userIds);
     return $this;
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addEntityId($entity_type, $entity_id, $field_name, $webform_id) {
+    $entity = "$entity_type:$entity_id:$field_name:$webform_id";
+    if (!in_array($entity, $this->entityIds)) {
+      $this->entityIds[] = $entity;
+    }
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function removeEntityId($entity_type, $entity_id, $field_name, $webform_id) {
+    $entity = "$entity_type:$entity_id:$field_name:$webform_id";
+    foreach ($this->entityIds as $index => $entityId) {
+      if ($entity == $entityId) {
+        unset($this->entityIds[$index]);
+      }
+    }
+    $this->entityIds = array_values($this->entityIds);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addEmail($email) {
+    if (!in_array($email, $this->emails)) {
+      $this->emails[] = $email;
+    }
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function removeEmail($email) {
+    foreach ($this->emails as $index => $email_address) {
+      if ($email_address == $email) {
+        unset($this->emails[$index]);
+      }
+    }
+    $this->emails = array_values($this->emails);
+    return $this;
+  }
+
+  /****************************************************************************/
+  // Caching methods.
+  /****************************************************************************/
 
   /**
    * {@inheritdoc}

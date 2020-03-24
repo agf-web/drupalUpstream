@@ -203,7 +203,7 @@ class ScheduleEmailWebformHandler extends EmailWebformHandler {
     // Ignore past.
     $form['scheduled']['ignore_past'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Do not schedule email if the action should be triggered in the past.'),
+      '#title' => $this->t('Do not schedule email if the action should be triggered in the past'),
       '#description' => $this->t('You can use this setting to prevent an action to be scheduled if it should have been triggered in the past.'),
       '#default_value' => $this->configuration['ignore_past'],
       '#return_value' => TRUE,
@@ -249,13 +249,14 @@ class ScheduleEmailWebformHandler extends EmailWebformHandler {
       '#theme' => 'item_list',
       '#items' => [
         $this->t("Only one email can be scheduled per handler and submission."),
+        $this->t('Email will be rescheduled when a draft or submission is updated.'),
         $this->t("Multiple handlers can be used to schedule multiple emails."),
         $this->t('Deleting this handler will unschedule all scheduled emails.'),
         ['#markup' => $this->t('Scheduled emails are automatically sent starting at midnight using <a href=":href">cron</a>, which is executed at predefined interval.', [':href' => 'https://www.drupal.org/docs/7/setting-up-cron/overview'])],
       ],
     ];
 
-    $form['scheduled']['token_tree_link'] = $this->tokenManager->buildTreeElement();
+    $form['scheduled']['token_tree_link'] = $this->buildTokenTreeElement();
 
     $form = parent::buildConfigurationForm($form, $form_state);
 
@@ -265,7 +266,7 @@ class ScheduleEmailWebformHandler extends EmailWebformHandler {
     // Development.
     $form['development']['test_send'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Immediately send email when testing a webform.'),
+      '#title' => $this->t('Immediately send email when testing a webform'),
       '#return_value' => TRUE,
       '#default_value' => $this->configuration['test_send'],
     ];

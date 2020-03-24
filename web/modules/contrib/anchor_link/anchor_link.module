@@ -42,6 +42,5 @@ function anchor_link_theme() {
  * Implements hook_page_attachments().
  */
 function anchor_link_page_attachments(array &$attachments) {
-  $config = \Drupal::config('anchor_link.settings');
   $attachments['#attached']['library'][] = 'anchor_link/drupal.anchor_link';
 }

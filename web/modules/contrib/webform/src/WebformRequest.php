@@ -149,16 +149,20 @@ class WebformRequest implements WebformRequestInterface {
    * {@inheritdoc}
    */
   public function getCurrentWebform() {
-    $source_entity = static::getCurrentSourceEntity('webform');
-    if ($source_entity && ($webform = $this->webformEntityReferenceManager->getWebform($source_entity))) {
-      return $webform;
-    }
-
     $webform = $this->routeMatch->getParameter('webform');
     if (is_string($webform)) {
       $webform = $this->entityTypeManager->getStorage('webform')->load($webform);
     }
-    return $webform;
+    if ($webform) {
+      return $webform;
+    }
+
+    $source_entity = static::getCurrentSourceEntity('webform');
+    if ($source_entity && ($source_entity_webform = $this->webformEntityReferenceManager->getWebform($source_entity))) {
+      return $source_entity_webform;
+    }
+
+    return NULL;
   }
 
   /**
@@ -170,6 +174,24 @@ class WebformRequest implements WebformRequestInterface {
       $webform_submission = $this->entityTypeManager->getStorage('webform_submission')->load($webform_submission);
     }
     return $webform_submission;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCurrentWebformUrl($route_name, array $route_options = []) {
+    $webform_entity = $this->getCurrentWebform();
+    $source_entity = $this->getCurrentSourceEntity();
+    return $this->getUrl($webform_entity, $source_entity, $route_name, $route_options);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCurrentWebformSubmissionUrl($route_name, array $route_options = []) {
+    $webform_entity = $this->getCurrentWebformSubmission();
+    $source_entity = $this->getCurrentSourceEntity();
+    return $this->getUrl($webform_entity, $source_entity, $route_name, $route_options);
   }
 
   /**

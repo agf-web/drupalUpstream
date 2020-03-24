@@ -3,7 +3,7 @@
 namespace Drupal\search_api_attachments;
 
 use Drupal\Core\Plugin\PluginFormInterface;
-use Drupal\Component\Plugin\ConfigurablePluginInterface;
+use Drupal\Component\Plugin\ConfigurableInterface;
 use Drupal\file\Entity\File;
 
 /**
@@ -11,7 +11,7 @@ use Drupal\file\Entity\File;
  *
  * @ingroup plugin_api
  */
-interface TextExtractorPluginInterface extends PluginFormInterface, ConfigurablePluginInterface {
+interface TextExtractorPluginInterface extends PluginFormInterface, ConfigurableInterface {
 
   /**
    * Extract method.

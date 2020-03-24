@@ -10,6 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\SubformState;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Url;
+use Drupal\webform\Plugin\WebformElementVariantInterface;
 use Drupal\webform\Utility\WebformDialogHelper;
 use Drupal\webform\Form\WebformDialogFormTrait;
 use Drupal\webform\Plugin\WebformElementManagerInterface;
@@ -220,6 +221,7 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
           '#title' => $this->t('Cancel'),
           '#url' => new Url('entity.webform_ui.element.edit_form', $route_parameters),
           '#attributes' => WebformDialogHelper::getOffCanvasDialogAttributes(WebformDialogHelper::DIALOG_NORMAL, ['button', 'button--small']),
+          '#prefix' => ' ',
         ];
         $form['properties']['element']['type']['#description'] = '(' . $this->t('Changing from %type', ['%type' => $original_webform_element->getPluginLabel()]) . ')';
       }
@@ -229,32 +231,62 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
           '#title' => $this->t('Change'),
           '#url' => new Url('entity.webform_ui.change_element', $route_parameters),
           '#attributes' => WebformDialogHelper::getModalDialogAttributes(WebformDialogHelper::DIALOG_NORMAL, ['button', 'button--small']),
+          '#prefix' => ' ',
         ];
       }
     }
 
     // Set element key reserved word warning message.
+    // @see Drupal.behaviors.webformUiElementKey
     if (!$key) {
-      $reserved_keys = ['form_build_id', 'form_token', 'form_id', 'data', 'op'];
+      $reserved_keys = ['form_build_id', 'form_token', 'form_id', 'data', 'op', 'destination'];
       $reserved_keys = array_merge($reserved_keys, array_keys($this->entityFieldManager->getBaseFieldDefinitions('webform_submission')));
       $form['#attached']['drupalSettings']['webform_ui']['reserved_keys'] = $reserved_keys;
       $form['properties']['element']['key_warning'] = [
         '#type' => 'webform_message',
         '#message_type' => 'warning',
-        '#message_message' => $this->t("Please avoid using the reserved word '@key' as the element's key."),
+        '#message_message' => [
+          '#markup' => $this->t("Please avoid using the reserved word '@key' as the element's key."),
+          '#prefix' => '<div id="webform-ui-reserved-key-warning">',
+          '#suffix' => '</div>',
+        ],
         '#weight' => -99,
         '#attributes' => ['style' => 'display:none'],
       ];
     }
 
-    // Set element key.
+    // Set element key with custom machine name pattern.
+    // @see \Drupal\webform\WebformEntityElementsValidator::validateNames
+    $machine_name_pattern = $this->config('webform.settings')->get('element.machine_name_pattern') ?: 'a-z0-9_';
+    switch ($machine_name_pattern) {
+      case 'a-z0-9_':
+        $machine_name_requirements = $this->t('lowercase letters, numbers, and underscores');
+        break;
+
+      case 'a-zA-Z0-9_':
+        $machine_name_requirements = $this->t('letters, numbers, and underscores');
+        break;
+
+      case 'a-z0-9_-':
+        $machine_name_requirements = $this->t('lowercase letters, numbers, and underscores');
+        break;
+
+      case 'a-zA-Z0-9_-':
+        $machine_name_requirements = $this->t('letters, numbers, underscores, and dashes');
+        break;
+    }
+    $t_args = ['@requirements' => $machine_name_requirements];
+
     $form['properties']['element']['key'] = [
       '#type' => 'machine_name',
       '#title' => $this->t('Key'),
+      '#description' => $this->t('A unique element key. Can only contain @requirements.', $t_args),
       '#machine_name' => [
         'label' => '<br/>' . $this->t('Key'),
         'exists' => [$this, 'exists'],
         'source' => ['title'],
+        'replace_pattern' => '[^' . $machine_name_pattern . ']+',
+        'error' => $this->t('The element key name must contain only @requirements.', $t_args),
       ],
       '#required' => TRUE,
       '#parents' => ['key'],
@@ -406,9 +438,16 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
     }
 
     // Still set the redirect URL just to be safe.
-    $query = ['update' => $key];
-    if ($save_and_add_element) {
-      $query['add_element'] = $add_element;
+    // Variants require the entire page to be reloaded so that Variants tab
+    // is made visible,
+    if ($this->getWebformElementPlugin() instanceof WebformElementVariantInterface) {
+      $query = ['reload' => 'true'];
+    }
+    else {
+      $query = ['update' => $key];
+      if ($save_and_add_element) {
+        $query['add_element'] = $add_element;
+      }
     }
     $form_state->setRedirectUrl($this->webform->toUrl('edit-form', ['query' => $query]));
   }
@@ -612,9 +651,7 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
         '#type' => 'submit',
         '#value' => $this->t('Set default value'),
         '#submit' => ['::setDefaultValue'],
-        // Disable client-site validation to allow tokens to be posted back to
-        // server.
-        '#attributes' => ['class' => ['js-webform-novalidate']],
+        '#attributes' => ['formnovalidate' => 'formnovalidate'],
         '#_validate_form' => TRUE,
       ];
 

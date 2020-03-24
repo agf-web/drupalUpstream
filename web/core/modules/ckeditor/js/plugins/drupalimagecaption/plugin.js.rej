@@ -1,7 +1,0 @@
---- modules/ckeditor/js/plugins/drupalimagecaption/plugin.js
-+++ modules/ckeditor/js/plugins/drupalimagecaption/plugin.js
-@@ -208,4 +208,4 @@
-     }, CKEDITOR.NODE_ELEMENT);
-     return found;
-   }
--})(CKEDITOR);+})(CKEDITOR);

@@ -141,10 +141,10 @@
         // CKEDITOR.style is an immutable object: we cannot modify its
         // definition to extend requiredContent. Hence we get the definition,
         // modify it, and pass it to a new CKEDITOR.style instance.
-        const requiredContent = widgetDefinition.requiredContent.getDefinition();
-        requiredContent.attributes['data-entity-type'] = '';
-        requiredContent.attributes['data-entity-uuid'] = '';
-        widgetDefinition.requiredContent = new CKEDITOR.style(requiredContent);
+        //const requiredContent = widgetDefinition.requiredContent.getDefinition();
+        //requiredContent.attributes['data-entity-type'] = '';
+        //requiredContent.attributes['data-entity-uuid'] = '';
+        //widgetDefinition.requiredContent = new CKEDITOR.style(requiredContent);
         widgetDefinition.allowedContent.img.attributes[
           '!data-entity-type'
         ] = true;
@@ -158,10 +158,10 @@
         widgetDefinition.downcast = function(element) {
           element.attributes['data-entity-type'] = this.data[
             'data-entity-type'
-          ];
+          ] ? this.data['data-entity-type'] : 'image';
           element.attributes['data-entity-uuid'] = this.data[
             'data-entity-uuid'
-          ];
+          ] ? this.data['data-entity-uuid'] : 0;
         };
 
         // We want to upcast <img> elements to a DOM structure required by the

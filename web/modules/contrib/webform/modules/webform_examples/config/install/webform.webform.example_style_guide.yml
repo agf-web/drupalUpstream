@@ -84,15 +84,6 @@ elements: |
         one: 'One -- This is a description.'
         two: 'Two -- This is a description.'
         three: 'Three -- This is a description.'
-    checkboxes_icheck:
-      '#type': checkboxes
-      '#title': 'Checkboxes (iCheck)'
-      '#options_display': side_by_side
-      '#options':
-        one: One
-        two: Two
-        three: Three
-      '#icheck': minimal
     radios:
       '#type': radios
       '#title': Radios
@@ -101,15 +92,14 @@ elements: |
         one: One
         two: Two
         three: Three
-    radios_icheck:
+    radios_buttons:
       '#type': radios
-      '#title': 'Radios (iCheck)'
-      '#options_display': side_by_side
+      '#title': Radios (Buttons)
+      '#options_display': buttons
       '#options':
         one: One
         two: Two
         three: Three
-      '#icheck': minimal
   date_elements:
     '#type': details
     '#title': 'Date elements'
@@ -151,6 +141,7 @@ elements: |
       '#type': tel
       '#title': 'Telephone (International)'
       '#international': true
+      '#telephone_validation_format': '0'
     url:
       '#type': url
       '#title': URL
@@ -341,16 +332,26 @@ elements: |
     '#type': details
     '#title': 'Webform composites'
     '#open': true
-    webform_address:
-      '#type': webform_address
-      '#title': Address
-      '#flexbox': false
-    webform_location_geocomplete:
-      '#type': webform_location_places
-      '#title': Location
-      '#map': true
-      '#geolocation': true
-      '#format': map
+    webform_addresses:
+      '#type': fieldset
+      '#title': 'Addresses'
+      webform_address:
+        '#type': webform_address
+        '#title': First address
+        '#flexbox': false
+        '#title_display': above
+      webform_same_address:
+        '#type': webform_same
+        '#title': Second address same as the first address
+        '#source': webform_address
+        '#destination': webform_address_other
+        '#destination_state': 'visible-slide'
+        '#default_value': true
+      webform_address_other:
+        '#type': webform_address
+        '#title': 'Second address'
+        '#flexbox': false
+        '#title_display': above
     webform_link_multiple:
       '#type': webform_link
       '#title': 'Link multiple'
@@ -367,7 +368,7 @@ elements: |
           '#type': textfield
           '#title': 'Last name'
         gender:
-          '#type': select_other
+          '#type': webform_select_other
           '#options': gender
           '#title': Gender
         martial_status:
@@ -409,6 +410,7 @@ elements: |
       '#type': textfield
       '#title': 'Form element (Input mask: Phone)'
       '#input_mask': '(999) 999-9999'
+      '#test': ''
     form_element_input_hide:
       '#type': textfield
       '#title': 'Form element (Input hiding)'
@@ -565,15 +567,19 @@ elements: |
       '#type': address
       '#title': Address
       '#description': '@see <a href="https://www.drupal.org/project/address">https://www.drupal.org/project/address</a>'
-  
+
 css: ''
 javascript: ''
 settings:
   ajax: false
   ajax_scroll_top: form
+  ajax_progress_type: ''
+  ajax_effect: ''
+  ajax_speed: null
   page: true
   page_submit_path: ''
   page_confirm_path: ''
+  page_admin_theme: false
   form_title: source_entity_webform
   form_submit_once: false
   form_exception_message: ''
@@ -627,6 +633,7 @@ settings:
   wizard_progress_pages: true
   wizard_progress_percentage: true
   wizard_progress_link: false
+  wizard_progress_states: false
   wizard_start_label: ''
   wizard_preview_link: false
   wizard_confirmation: true
@@ -645,6 +652,8 @@ settings:
   draft_auto_save: false
   draft_saved_message: ''
   draft_loaded_message: ''
+  draft_pending_single_message: ''
+  draft_pending_multiple_message: ''
   confirmation_type: page
   confirmation_title: ''
   confirmation_message: ''
@@ -655,6 +664,7 @@ settings:
   confirmation_back_attributes: {  }
   confirmation_exclude_query: false
   confirmation_exclude_token: false
+  confirmation_update: false
   limit_total: null
   limit_total_interval: null
   limit_total_message: ''
@@ -671,6 +681,7 @@ settings:
   purge_days: null
   results_disabled: false
   results_disabled_ignore: false
+  token_view: false
   token_update: false
 access:
   create:

@@ -29,7 +29,7 @@ class WebformLikert extends WebformElementBase {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultProperties() {
+  protected function defineDefaultProperties() {
     return [
       'title' => '',
       'default_value' => [],
@@ -42,6 +42,7 @@ class WebformLikert extends WebformElementBase {
       // Form display.
       'title_display' => '',
       'description_display' => '',
+      'help_display' => '',
       'disabled' => FALSE,
       // Form validation.
       'required' => FALSE,
@@ -64,17 +65,17 @@ class WebformLikert extends WebformElementBase {
       // Attributes.
       'wrapper_attributes' => [],
       'label_attributes' => [],
-      // iCheck settings.
-      'icheck' => '',
-    ] + $this->getDefaultBaseProperties();
+    ] + $this->defineDefaultBaseProperties();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getTranslatableProperties() {
-    return array_merge(parent::getTranslatableProperties(), ['questions', 'answers', 'na_answer_text']);
+  protected function defineTranslatableProperties() {
+    return array_merge(parent::defineTranslatableProperties(), ['questions', 'answers', 'na_answer_text']);
   }
+
+  /****************************************************************************/
 
   /**
    * {@inheritdoc}

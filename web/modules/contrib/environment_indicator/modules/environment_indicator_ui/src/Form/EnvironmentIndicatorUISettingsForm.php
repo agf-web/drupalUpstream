@@ -6,12 +6,15 @@ use Drupal\Core\Form\FormInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
+/**
+ * Configuration form for Environment Indicator.
+ */
 class EnvironmentIndicatorUISettingsForm extends ConfigFormBase implements FormInterface {
 
   /**
    * {@inheritdoc}
    */
-  public function getFormID() {
+  public function getFormId() {
     return 'environment_indicator_ui_settings_form';
   }
 

@@ -15,6 +15,13 @@ use Drupal\webform_image_select\WebformImageSelectImagesInterface;
  * @ConfigEntityType(
  *   id = "webform_image_select_images",
  *   label = @Translation("Webform images"),
+ *   label_collection = @Translation("Images"),
+ *   label_singular = @Translation("images"),
+ *   label_plural = @Translation("images"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count images",
+ *     plural = "@count images",
+ *   ),
  *   handlers = {
  *     "storage" = "\Drupal\webform_image_select\WebformImageSelectImagesStorage",
  *     "access" = "Drupal\webform_image_select\WebformImageSelectImagesAccessControlHandler",
@@ -33,7 +40,7 @@ use Drupal\webform_image_select\WebformImageSelectImagesInterface;
  *     "label" = "label",
  *   },
  *   links = {
- *     "add-form" = "/admin/structure/webform/config/images/add",
+ *     "add-form" = "/admin/structure/webform/config/images/manage/add",
  *     "edit-form" = "/admin/structure/webform/config/images/manage/{webform_image_select_images}/edit",
  *     "source-form" = "/admin/structure/webform/config/images/manage/{webform_image_select_images}/source",
  *     "duplicate-form" = "/admin/structure/webform/config/images/manage/{webform_image_select_images}/duplicate",
@@ -106,7 +113,7 @@ class WebformImageSelectImages extends ConfigEntityBase implements WebformImageS
         $options = (is_array($options)) ? $options : [];
       }
       catch (\Exception $exception) {
-        $link = $this->link($this->t('Edit'), 'edit-form');
+        $link = $this->toLink($this->t('Edit'), 'edit-form')->toString();
         \Drupal::logger('webform_image_select')->notice('%title images are not valid. @message', ['%title' => $this->label(), '@message' => $exception->getMessage(), 'link' => $link]);
         $options = FALSE;
       }

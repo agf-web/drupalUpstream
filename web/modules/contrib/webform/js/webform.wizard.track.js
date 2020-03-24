@@ -21,16 +21,6 @@
       // since conditional logic can skip pages.
       // Note: window.history is only supported by IE 10+.
       if (window.history && window.history.replaceState) {
-        // Track the form's current page for 8.5.x and below.
-        // @todo Remove the below code once only 8.6.x is supported.
-        // @see https://www.drupal.org/project/drupal/issues/2508796
-        $('form[data-webform-wizard-current-page]', context)
-          .once('webform-wizard-current-page')
-          .each(function () {
-            trackPage(this);
-          });
-
-        // Track the form's current page for 8.6.x and above.
         if ($(context).hasData('webform-wizard-current-page')) {
           trackPage(context);
         }
@@ -42,7 +32,7 @@
       // expected page name or index may not be accurate.
       $(':button[data-webform-wizard-page], :submit[data-webform-wizard-page]', context).once('webform-wizard-page').on('click', function () {
         var page = $(this).attr('data-webform-wizard-page');
-        this.form.action = this.form.action.replace(/\?.+$/, '') + '?page=' + page;
+        this.form.action = setUrlPageParameter(this.form.action, page);
       });
 
       /**
@@ -56,11 +46,32 @@
         // Make sure the form is visible before updating the URL.
         if ($form.is(':visible')) {
           var page = $form.attr('data-webform-wizard-current-page');
-          var url = window.location.toString().replace(/\?.+$/, '') +
-            '?page=' + page;
+          var url = setUrlPageParameter(window.location.toString(), page);
           window.history.replaceState(null, null, url);
         }
       }
+
+      /**
+       * Set URLs page parameter.
+       *
+       * @param {string} url
+       *   A url.
+       * @param {string} page
+       *   The current page.
+       *
+       * @return {string}
+       *   A URL with page parameter.
+       */
+      function setUrlPageParameter(url, page) {
+        var regex = /([?&])page=[^?&]+/;
+        if (url.match(regex)) {
+          return url.replace(regex, '$1page=' + page);
+        }
+        else {
+          return url + (url.indexOf('?') !== -1 ? '&page=' : '?page=') + page;
+        }
+      }
+
     }
   };
 

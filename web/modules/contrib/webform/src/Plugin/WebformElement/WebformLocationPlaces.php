@@ -24,13 +24,17 @@ class WebformLocationPlaces extends WebformLocationBase {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultProperties() {
+  protected function defineDefaultProperties() {
     return [
       'app_id' => '',
       'api_key' => '',
       'placeholder' => '',
-    ] + parent::getDefaultProperties();
+      'geolocation' => FALSE,
+      'hidden' => FALSE,
+    ] + parent::defineDefaultProperties();
   }
+
+  /****************************************************************************/
 
   /**
    * {@inheritdoc}

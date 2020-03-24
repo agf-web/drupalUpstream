@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Drupal\bg_image_formatter\Plugin\Field\FieldFormatter;
 
+use Drupal;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Ajax\AjaxHelperTrait;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -23,9 +24,9 @@ use Zend\Stdlib\ArrayUtils;
  * Class BgImageFormatter.
  *
  * @FieldFormatter(
- *  id = "bg_image_formatter",
- *  label = @Translation("Background Image"),
- *  field_types = {"image"}
+ *     id="bg_image_formatter",
+ *     label=@Translation("Background Image"),
+ *     field_types={"image"}
  * )
  */
 class BgImageFormatter extends ImageFormatter {
@@ -72,28 +73,28 @@ class BgImageFormatter extends ImageFormatter {
    *   The current request.
    */
   public function __construct(
-        $plugin_id,
-        $plugin_definition,
-        FieldDefinitionInterface $field_definition,
-        array $settings,
-        $label,
-        $view_mode,
-        array $third_party_settings,
-        AccountInterface $current_user,
-        EntityStorageInterface $image_style_storage,
-        RendererInterface $renderer,
-        Request $request
-    ) {
+    $plugin_id,
+    $plugin_definition,
+    FieldDefinitionInterface $field_definition,
+    array $settings,
+    $label,
+    $view_mode,
+    array $third_party_settings,
+    AccountInterface $current_user,
+    EntityStorageInterface $image_style_storage,
+    RendererInterface $renderer,
+    Request $request
+  ) {
     parent::__construct(
-        $plugin_id,
-        $plugin_definition,
-        $field_definition,
-        $settings,
-        $label,
-        $view_mode,
-        $third_party_settings,
-        $current_user,
-        $image_style_storage
+      $plugin_id,
+      $plugin_definition,
+      $field_definition,
+      $settings,
+      $label,
+      $view_mode,
+      $third_party_settings,
+      $current_user,
+      $image_style_storage
     );
     $this->renderer = $renderer;
     $this->request = $request;
@@ -133,6 +134,7 @@ class BgImageFormatter extends ImageFormatter {
         'bg_image_repeat' => 'no-repeat',
         'bg_image_background_size' => '',
         'bg_image_background_size_ie8' => 0,
+        'bg_image_gradient' => '',
         'bg_image_media_query' => 'all',
         'bg_image_important' => 1,
         'bg_image_z_index' => 'auto',
@@ -182,6 +184,7 @@ class BgImageFormatter extends ImageFormatter {
     $important = $css_settings['bg_image_important'];
     $background_size = Xss::filter($css_settings['bg_image_background_size']);
     $background_size_ie8 = $css_settings['bg_image_background_size_ie8'];
+    $background_gradient = !empty($css_settings['bg_image_gradient']) ? $css_settings['bg_image_gradient'] . ',' : '';
     $media_query = Xss::filter($css_settings['bg_image_media_query']);
     $z_index = Xss::filter($css_settings['bg_image_z_index']);
 
@@ -196,6 +199,7 @@ class BgImageFormatter extends ImageFormatter {
     // Handle the background size property.
     $bg_size = '';
     $ie_bg_size = '';
+
     if ($background_size) {
       // CSS3.
       $bg_size = sprintf('background-size: %s %s;', $background_size, $important);
@@ -206,12 +210,12 @@ class BgImageFormatter extends ImageFormatter {
       // IE filters to apply the cover effect.
       if ($background_size === 'cover' && $background_size_ie8) {
         $ie_bg_size = sprintf(
-        "filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='%s', sizingMethod='scale');",
-        $image_path
+          "filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='%s', sizingMethod='scale');",
+          $image_path
         );
         $ie_bg_size .= sprintf(
-        "-ms-filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='%s', sizingMethod='scale');",
-        $image_path
+          "-ms-filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='%s', sizingMethod='scale');",
+          $image_path
         );
       }
     }
@@ -219,19 +223,24 @@ class BgImageFormatter extends ImageFormatter {
     // Add the css if we have everything we need.
     if ($selector && $image_path) {
       $style = sprintf('%s {', $selector);
+
       if ($bg_color) {
         $style .= sprintf('background-color: %s %s;', $bg_color, $important);
       }
-      $style .= sprintf("background-image: url('%s') %s;", $image_path, $important);
+      $style .= sprintf("background-image: %s url('%s') %s;", $background_gradient, $image_path, $important);
+
       if ($repeat) {
         $style .= sprintf('background-repeat: %s %s;', $repeat, $important);
       }
+
       if ($attachment) {
         $style .= sprintf('background-attachment: %s %s;', $attachment, $important);
       }
+
       if ($bg_x && $bg_y) {
         $style .= sprintf('background-position: %s %s %s;', $bg_x, $bg_y, $important);
       }
+
       if ($z_index) {
         $style .= sprintf('z-index: %s;', $z_index);
       }
@@ -264,10 +273,10 @@ class BgImageFormatter extends ImageFormatter {
       '#empty_option' => $this->t('None (original image)'),
       '#options' => image_style_options(),
       '#description' => $this->t(
-            'Select <a href="@href_image_style">the image style</a> to apply on images',
-            [
-              '@href_image_style' => Url::fromRoute('image.style_add')->toString(),
-            ]
+        'Select <a href="@href_image_style">the image style</a> to apply on images',
+        [
+          '@href_image_style' => Url::fromRoute('image.style_add')->toString(),
+        ]
       ),
     ];
 
@@ -276,7 +285,7 @@ class BgImageFormatter extends ImageFormatter {
       '#type' => 'fieldset',
       '#title' => $this->t('Default CSS Settings'),
       '#description' => $this->t(
-            'Default CSS settings for outputting the background property.
+        'Default CSS settings for outputting the background property.
                 These settings will be concatenated to form a complete css statementthat uses the "background"
                 property. For more information on the css background property see
                 http://www.w3schools.com/css/css_background.asp"'
@@ -287,7 +296,7 @@ class BgImageFormatter extends ImageFormatter {
       '#type' => 'textarea',
       '#title' => $this->t('Selector(s)'),
       '#description' => $this->t(
-            'A valid CSS selector that will be used to apply the background image. One per line.
+        'A valid CSS selector that will be used to apply the background image. One per line.
                       If the field is a multivalue field, the first line will be applied to the first value,
                       the second to the second value... and so on. Tokens are supported.'
       ),
@@ -311,7 +320,7 @@ class BgImageFormatter extends ImageFormatter {
       '#type' => 'textfield',
       '#title' => $this->t('Z Index'),
       '#description' => $this->t(
-            'The z-index property specifies the stack order of an element. An element with greater stack order is
+        'The z-index property specifies the stack order of an element. An element with greater stack order is
                       always in front of an element with a lower stack order. Note: z-index only works on positioned
                       elements (position:absolute, position:relative, or position:fixed)'
       ),
@@ -323,11 +332,11 @@ class BgImageFormatter extends ImageFormatter {
       '#type' => 'textarea',
       '#title' => $this->t('Color'),
       '#description' => $this->t(
-            'The background color formatted as any valid css color format (e.g. hex, rgb, text, hsl)
+        'The background color formatted as any valid css color format (e.g. hex, rgb, text, hsl)
                       [<a href="@url">css property: background-color</a>]. One per line. If the field is a multivalue
                       field, the first line will be applied to the first value, the second to the second value...
                       and so on.',
-            ['@url' => 'http://www.w3schools.com/css/pr_background-color.asp']
+        ['@url' => 'https://developer.mozilla.org/en-US/docs/Web/CSS/linear-gradient']
       ),
       '#default_value' => $settings['css_settings']['bg_image_color'],
     ];
@@ -337,7 +346,7 @@ class BgImageFormatter extends ImageFormatter {
       '#type' => 'textfield',
       '#title' => $this->t('Horizontal Alignment'),
       '#description' => $this->t(
-            'The horizontal alignment of the background image formatted as any valid css alignment.
+        'The horizontal alignment of the background image formatted as any valid css alignment.
                       [<a href="http://www.w3schools.com/css/pr_background-position.asp">
                       css property: background-position
                       </a>]'
@@ -349,7 +358,7 @@ class BgImageFormatter extends ImageFormatter {
       '#type' => 'textfield',
       '#title' => $this->t('Vertical Alignment'),
       '#description' => $this->t(
-            'The vertical alignment of the background image formatted as any valid css alignment.
+        'The vertical alignment of the background image formatted as any valid css alignment.
                       [<a href="http://www.w3schools.com/css/pr_background-position.asp">
                       css property: background-position
                       </a>]'
@@ -361,7 +370,7 @@ class BgImageFormatter extends ImageFormatter {
       '#type' => 'radios',
       '#title' => $this->t('Background Attachment'),
       '#description' => $this->t(
-            'The attachment setting for the background image.
+        'The attachment setting for the background image.
                       [<a href="http://www.w3schools.com/css/pr_background-attachment.asp">
                       css property: background-attachment
                       </a>]'
@@ -378,7 +387,7 @@ class BgImageFormatter extends ImageFormatter {
       '#type' => 'radios',
       '#title' => $this->t('Background Repeat'),
       '#description' => $this->t(
-            'Define the repeat settings for the background image.
+        'Define the repeat settings for the background image.
                       [<a href="http://www.w3schools.com/css/pr_background-repeat.asp">
                       css property: background-repeat
                       </a>]'
@@ -397,7 +406,7 @@ class BgImageFormatter extends ImageFormatter {
       '#type' => 'textfield',
       '#title' => $this->t('Background Size'),
       '#description' => $this->t(
-            'The size of the background (NOTE: CSS3 only. Useful for responsive designs)
+        'The size of the background (NOTE: CSS3 only. Useful for responsive designs)
                       [<a href="http://www.w3schools.com/cssref/css3_pr_background-size.asp">
                       css property: background-size
                       </a>]'
@@ -409,7 +418,7 @@ class BgImageFormatter extends ImageFormatter {
       '#type' => 'checkbox',
       '#title' => $this->t('Add background-size:cover support for ie8'),
       '#description' => $this->t(
-            'The background-size css property is only supported on browsers that support CSS3.
+        'The background-size css property is only supported on browsers that support CSS3.
                       However, there is a workaround for IE using Internet Explorer\'s built-in filters
                       (http://msdn.microsoft.com/en-us/library/ms532969%28v=vs.85%29.aspx).
                       Check this box to add the filters to the css. Sometimes it works well, sometimes it doesn\'t.
@@ -417,12 +426,23 @@ class BgImageFormatter extends ImageFormatter {
       ),
       '#default_value' => $settings['css_settings']['bg_image_background_size_ie8'],
     ];
+    // Add gradient to background-image.
+    $element['css_settings']['bg_image_gradient'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Gradient'),
+      '#description' => $this->t(
+        'Apply this background image gradient css.
+                  Example: linear-gradient(red, yellow)
+                  [<a href="https://www.w3schools.com/css/css3_gradients.asp">Read about gradients</a>]'
+      ),
+      '#default_value' => $settings['css_settings']['bg_image_gradient'],
+    ];
     // The media query specifics.
     $element['css_settings']['bg_image_media_query'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Media Query'),
       '#description' => $this->t(
-            'Apply this background image css using a media query. CSS3 Only. Useful for responsive designs.
+        'Apply this background image css using a media query. CSS3 Only. Useful for responsive designs.
                       Example: only screen and (min-width:481px) and (max-width:768px)
                       [<a href="http://www.w3.org/TR/css3-mediaqueries/">Read about media queries</a>]'
       ),
@@ -432,7 +452,7 @@ class BgImageFormatter extends ImageFormatter {
       '#type' => 'checkbox',
       '#title' => $this->t('Add "!important" to the background property.'),
       '#description' => $this->t(
-            'This can be helpful to override any existing background image or color properties added by the theme.'
+        'This can be helpful to override any existing background image or color properties added by the theme.'
       ),
       '#default_value' => $settings['css_settings']['bg_image_important'],
     ];
@@ -444,7 +464,7 @@ class BgImageFormatter extends ImageFormatter {
         'relative' => $this->t('Relative'),
       ],
       '#description' => $this->t(
-          'Defaults to absolute URLs, however relative URLs maybe solve issues with mixed content errors on websites being served on HTTPS.'
+        'Defaults to absolute URLs, however relative URLs maybe solve issues with mixed content errors on websites being served on HTTPS.'
       ),
       '#default_value' => $settings['css_settings']['bg_image_path_format'],
     ];
@@ -461,6 +481,7 @@ class BgImageFormatter extends ImageFormatter {
 
     $image_styles = image_style_options(FALSE);
     unset($image_styles['']);
+
     if (isset($settings['css_settings']['bg_image_selector'])) {
       $summary[] = $this->t(
         'CSS Selector: @selector',
@@ -498,12 +519,14 @@ class BgImageFormatter extends ImageFormatter {
     $css_settings = $settings['css_settings'];
     // Replace views tokens.
     $selector = $css_settings['bg_image_selector'];
-    $token_start = strpos($selector, '{{');
+    $token_start = mb_strpos($selector, '{{');
+
     if ($token_start !== FALSE) {
-      $token_length = strpos($selector, '}}') - strpos($selector, '{{') + 2;
-      $token = substr($selector, strpos($selector, '{{'), $token_length);
+      $token_length = mb_strpos($selector, '}}') - mb_strpos($selector, '{{') + 2;
+      $token = mb_substr($selector, mb_strpos($selector, '{{'), $token_length);
       $cleaned_token = trim(str_replace(['{{', '}}'], '', $token));
       $entity = $items->getEntity();
+
       if ($entity->$cleaned_token && $entity->$cleaned_token->value) {
         $selector = str_replace($token, $entity->$cleaned_token->value, $selector);
         $css_settings['bg_image_selector'] = $selector;
@@ -511,11 +534,11 @@ class BgImageFormatter extends ImageFormatter {
     }
     $image_style = $settings['image_style'] ? $settings['image_style'] : NULL;
     $path_format = $css_settings['bg_image_path_format'];
-    $selectors = explode(PHP_EOL, trim($css_settings['bg_image_selector']));
-    $colors = explode(PHP_EOL, trim($css_settings['bg_image_color']));
+    $selectors = explode(\PHP_EOL, trim($css_settings['bg_image_selector']));
+    $colors = explode(\PHP_EOL, trim($css_settings['bg_image_color']));
 
     // Filter out empty selectors.
-    $selectors = array_map(function ($value) {
+    $selectors = array_map(static function ($value) {
       return trim($value, ',');
     }, $selectors);
 
@@ -531,20 +554,22 @@ class BgImageFormatter extends ImageFormatter {
 
     // Prepare token data in bg image css selector.
     $token_data = [
-      'user' => \Drupal::currentUser(),
+      'user' => Drupal::currentUser(),
       $items->getEntity()->getEntityTypeId() => $items->getEntity(),
     ];
+
     foreach ($selectors as &$selector) {
-      $selector = \Drupal::token()->replace($selector, $token_data);
+      $selector = Drupal::token()->replace($selector, $token_data);
     }
 
     // Need an empty element so views renderer will see something to render.
     $elements[0] = [];
 
     foreach ($files as $delta => $file) {
-      $css_settings['bg_image_selector'] = $selectors[$delta % count($selectors)];
+      $css_settings['bg_image_selector'] = $selectors[$delta % \count($selectors)];
+
       if ($colors) {
-        $css_settings['bg_image_color'] = $colors[$delta % count($colors)];
+        $css_settings['bg_image_color'] = $colors[$delta % \count($colors)];
       }
 
       if ($image_style) {

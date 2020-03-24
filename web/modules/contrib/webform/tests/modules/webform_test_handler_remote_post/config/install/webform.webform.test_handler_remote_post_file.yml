@@ -26,15 +26,19 @@ elements: |
     '#required': true
     '#multiple': true
     '#file_extensions': txt
-  
+
 css: ''
 javascript: ''
 settings:
   ajax: false
   ajax_scroll_top: form
+  ajax_progress_type: ''
+  ajax_effect: ''
+  ajax_speed: null
   page: true
   page_submit_path: ''
   page_confirm_path: ''
+  page_admin_theme: false
   form_title: source_entity_webform
   form_submit_once: false
   form_exception_message: ''
@@ -88,6 +92,7 @@ settings:
   wizard_progress_pages: false
   wizard_progress_percentage: false
   wizard_progress_link: false
+  wizard_progress_states: false
   wizard_start_label: ''
   wizard_preview_link: false
   wizard_confirmation: true
@@ -106,11 +111,13 @@ settings:
   draft_auto_save: false
   draft_saved_message: ''
   draft_loaded_message: ''
+  draft_pending_single_message: ''
+  draft_pending_multiple_message: ''
   confirmation_type: inline
   confirmation_title: ''
   confirmation_message: |
     <p>Your confirmation number is [webform_submission:values:confirmation_number].</p>
-    
+
   confirmation_url: ''
   confirmation_attributes: {  }
   confirmation_back: true
@@ -118,6 +125,7 @@ settings:
   confirmation_back_attributes: {  }
   confirmation_exclude_query: false
   confirmation_exclude_token: false
+  confirmation_update: false
   limit_total: null
   limit_total_interval: null
   limit_total_message: ''
@@ -134,6 +142,7 @@ settings:
   purge_days: null
   results_disabled: false
   results_disabled_ignore: false
+  token_view: false
   token_update: false
 access:
   create:
@@ -216,6 +225,7 @@ handlers:
         confirmation_number: confirmation_number
       custom_data: ''
       custom_options: ''
+      cast: false
       debug: true
       completed_url: 'http://webform-test-handler-remote-post/completed'
       completed_custom_data: ''
@@ -223,9 +233,12 @@ handlers:
       updated_custom_data: ''
       deleted_url: 'http://webform-test-handler-remote-post/deleted'
       deleted_custom_data: ''
-      draft_url: 'http://webform-test-handler-remote-post/draft'
-      draft_custom_data: ''
+      draft_created_url: 'http://webform-test-handler-remote-post/draft_created'
+      draft_created_custom_data: ''
+      draft_updated_url: 'http://webform-test-handler-remote-post/draft_updated'
+      draft_updated_custom_data: ''
       converted_url: 'http://webform-test-handler-remote-post/converted'
       converted_custom_data: ''
       message: ''
       messages: {  }
+      error_url: ''

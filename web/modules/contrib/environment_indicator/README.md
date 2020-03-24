@@ -31,7 +31,7 @@ INSTALLATION
 ------------
 
  * Install as you would normally install a contributed Drupal module. See:
-   https://drupal.org/documentation/install/modules-themes/modules-7
+   https://www.drupal.org/docs/8/extending-drupal-8/installing-drupal-8-modules
    for further information.
 
 CONFIGURATION
@@ -84,7 +84,7 @@ configure Environment Indicator by adding some configuration overrides to
  * `$config['environment_indicator.indicator']['name']`:
 
    A string of text to display indicate the environment name. Note that Drupal's
-   translation system has not yet been boostrapped when `settings.local.php` is
+   translation system has not yet been bootstrapped when `settings.local.php` is
    run, so you cannot use the t() function here.
 
    This configuration is optional. If you do not set it, Environment Indicator
@@ -108,9 +108,9 @@ To add links to switch to other environments, you must add a configuration for
 each environment at admin/config/development/environment-indicator/switcher.
 This configuration can copied to other environments using Drupal core's
 configuration management system. See
-https://www.drupal.org/documentation/administer/config for more information. In
-order for a user to add environment switchers, they will need the "Administer
-environment_indicator settings" permission.
+https://www.drupal.org/docs/8/configuration-management/managing-your-sites-configuration
+for more information. In order for a user to add environment switchers, they
+will need the "Administer environment_indicator settings" permission.
 
 TROUBLESHOOTING
 ---------------
@@ -160,4 +160,4 @@ Current maintainers:
 
 This project has been sponsored by:
 * Lullabot (Development and maintenance for the 7.x-2.x & 8.x-2.x branches).
-* SystemSeed (Development and maintenance for hte 6.x-1.x & 7.x-1.x branches).
+* SystemSeed (Development and maintenance for the 6.x-1.x & 7.x-1.x branches).

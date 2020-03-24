@@ -39,6 +39,9 @@ abstract class WebformOtherBase extends FormElement {
     '#required_error',
     '#options',
     '#options_display',
+    '#options_randomize',
+    '#options_description_display',
+    '#options__properties',
     '#default_value',
     '#attributes',
   ];
@@ -109,11 +112,6 @@ abstract class WebformOtherBase extends FormElement {
     }
     $element[$type]['#error_no_message'] = TRUE;
 
-    // Prevent nested fieldset by removing fieldset theme wrapper around
-    // radios and checkboxes.
-    // @see \Drupal\Core\Render\Element\CompositeFormElementTrait
-    $element[$type]['#pre_render'] = [];
-
     // Build other textfield.
     $element += ['other' => []];
     foreach ($element as $key => $value) {
@@ -151,21 +149,30 @@ abstract class WebformOtherBase extends FormElement {
       $element['other']['#parents'] = array_merge($element['#parents'], ['other']);
     }
 
-    // Initialize the other element to allow for webform enhancements.
+    // Initialize the type and other elements to allow for webform enhancements.
     /** @var \Drupal\webform\Plugin\WebformElementManagerInterface $element_manager */
     $element_manager = \Drupal::service('plugin.manager.webform.element');
+    $element_manager->buildElement($element[$type], $complete_form, $form_state);
     $element_manager->buildElement($element['other'], $complete_form, $form_state);
 
-    // Add attributes to the composite fieldset wrapper.
-    // @see \Drupal\webform\Element\WebformCompositeFormElementTrait
+    // Prevent nested fieldset by removing fieldset theme wrapper around
+    // radios and checkboxes.
+    // @see \Drupal\Core\Render\Element\CompositeFormElementTrait
+    $element[$type]['#pre_render'] = [];
 
-    // Add js trigger to fieldset.
-    $element['#attributes']['class'][] = "js-webform-$type-other";
-    $element['#attributes']['class'][] = "webform-$type-other";
+    // Add js trigger attributes to the composite wrapper.
+    // @see \Drupal\webform\Element\WebformCompositeFormElementTrait
+    $is_form_element_wrapper = (isset($element['#wrapper_type']) && $element['#wrapper_type'] === 'form_element');
+    $wrapper_attributes = ($is_form_element_wrapper) ? '#wrapper_attributes' : '#attributes';
+    $element[$wrapper_attributes]['class'][] = "js-webform-$type-other";
+    $element[$wrapper_attributes]['class'][] = "webform-$type-other";
 
     // Apply the element id to the wrapper so that inline form errors point
     // to the correct element.
     $element['#attributes']['id'] = $element['#id'];
+
+    // Make sure form element label has no 'for' attribute.
+    $element['#label_attributes']['webform-remove-for-attribute'] = TRUE;
 
     // Remove options.
     unset($element['#options']);
@@ -192,7 +199,7 @@ abstract class WebformOtherBase extends FormElement {
     // Determine if the element is visible. (#access !== FALSE)
     $has_access = (!isset($element['#access']) || $element['#access'] === TRUE);
 
-    // Determine if the element has mulitple values.
+    // Determine if the element has multiple values.
     $is_multiple = static::isMultiple($element);
 
     // Get value.

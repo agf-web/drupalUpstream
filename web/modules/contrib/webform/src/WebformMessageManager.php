@@ -236,8 +236,17 @@ class WebformMessageManager implements WebformMessageManagerInterface {
     $webform = $this->webform;
     $source_entity = $this->sourceEntity;
 
-    // Get custom message from settings with arguments.
+    // Get custom messages with :href argument.
     switch ($key) {
+      case WebformMessageManagerInterface::DRAFT_PENDING_SINGLE:
+        $webform_draft = $this->entityStorage->loadDraft($webform, $source_entity, $this->currentUser);
+        $args = [':href' => $webform_draft->getTokenUrl()->toString()];
+        return $this->getCustomMessage('draft_pending_single_message', $args);
+
+      case WebformMessageManagerInterface::DRAFT_PENDING_MULTIPLE:
+        $args = [':href' => $this->requestHandler->getUrl($webform, $source_entity, 'webform.user.drafts')->toString()];
+        return $this->getCustomMessage('draft_pending_multiple_message', $args);
+
       case WebformMessageManagerInterface::PREVIOUS_SUBMISSION:
         $webform_submission = $this->entityStorage->getLastSubmission($webform, $source_entity, $this->currentUser);
         $args = [':href' => $this->requestHandler->getUrl($webform_submission, $source_entity, 'webform.user.submission')->toString()];
@@ -275,15 +284,6 @@ class WebformMessageManager implements WebformMessageManagerInterface {
       case WebformMessageManagerInterface::HANDLER_SUBMISSION_REQUIRED:
         $t_args = [':href' => $webform->toUrl('handlers')->toString()];
         return $this->t('This webform\'s <a href=":href">submission handlers</a> requires submissions to be saved to the database.', $t_args);
-
-      case WebformMessageManagerInterface::DRAFT_PREVIOUS:
-        $webform_draft = $this->entityStorage->loadDraft($webform, $source_entity, $this->currentUser);
-        $t_args = [':href' => $webform_draft->getTokenUrl()->toString()];
-        return $this->t('You have a pending draft for this webform.') . ' ' . $this->t('<a href=":href">Load your pending draft</a>.', $t_args);
-
-      case WebformMessageManagerInterface::DRAFTS_PREVIOUS:
-        $t_args = [':href' => $this->requestHandler->getUrl($webform, $source_entity, 'webform.user.drafts')->toString()];
-        return $this->t('You have pending drafts for this webform.') . ' ' . $this->t('<a href=":href">View your pending drafts</a>.', $t_args);
 
       case WebformMessageManagerInterface::SUBMISSION_UPDATED:
         $t_args = ['%form' => ($source_entity) ? $source_entity->label() : $webform->label()];
@@ -354,12 +354,19 @@ class WebformMessageManager implements WebformMessageManagerInterface {
    *   The name of webform settings message to be displayed.
    *
    * @return string|bool
-   *   A message or FALSE if no message is found.
+   *   A message or FALSE when no message is found or the message
+   *   is set to [none].
    */
   protected function getSetting($key) {
     $webform_settings = ($this->webform) ? $this->webform->getSettings() : [];
     if (!empty($webform_settings[$key])) {
-      return $webform_settings[$key];
+      $value = $webform_settings[$key];
+      if ($value === '[none]' || $value === (string) $this->t('[none]')) {
+        return FALSE;
+      }
+      else {
+        return $value;
+      }
     }
 
     $default_settings = $this->configFactory->get('webform.settings')->get('settings');

@@ -159,12 +159,12 @@
     },
     "patches": {
       "drupal/core": {
-        "Notice: Undefined index: type in drupal_process_states()": "patches/2700667-29.patch",
+        "Notice: Undefined index: type in drupal_process_states()": "https://www.drupal.org/files/issues/2020-03-11/2700667-104.patch",
         "Files widget with states": "patches/states_not_affecting-2847425-24.patch",
-        "Image handling patch": "patches/drupalimage_ckeditor-2771837-17.patch"
+        "Image handling patch": "https://www.drupal.org/files/issues/2020-02-20/drupalimage_ckeditor-2771837-50.patch"
       },
       "drupal/draggableviews": {
-        "Allow sort handler to select the view that stored the order": "patches/2767437-36.patch"
+        "Allow sort handler to select the view that stored the order": "https://www.drupal.org/files/issues/2019-12-17/draggableviews-sort_handler_specify_order_view-2767437-66.patch"
       },
       "drupal/simple_gmap": {
         "Address Field Support": "patches/simple_gmap-address-formatter-2863979-30.patch"
@@ -174,7 +174,7 @@
       },
       "drupal/field_group": {
         "HTML5 validation for fields which are currently not part of the visible group": "patches/field_group-validation-2787179-9.patch",
-        "Fields with errors are not visible": "patches/fields_with_errors_are-2894213-3.patch"
+        "Fields with errors are not visible": "https://www.drupal.org/files/issues/2020-01-16/field_group-open-groups-with-errors-server-side-2894213-14.patch"
       }
     }
   },

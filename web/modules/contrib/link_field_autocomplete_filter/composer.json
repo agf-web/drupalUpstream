@@ -1,14 +1,11 @@
 {
-  "name": "drupal/link_field_autocomplete_filter",
-  "type": "drupal-module",
-  "description": "Link Field Autocomplete Filter",
-  "keywords": ["Drupal"],
-  "license": "GPL-2.0+",
-  "homepage": "https://www.drupal.org/project/link_field_autocomplete_filter",
-  "minimum-stability": "dev",
-  "support": {
-    "issues": "https://www.drupal.org/project/issues/link_field_autocomplete_filter",
-    "source": "http://cgit.drupalcode.org/link_field_autocomplete_filter"
-  },
-  "require": { }
+    "name": "drupal/link_field_autocomplete_filter",
+    "description": "Link Field Autocomplete Filter",
+    "type": "drupal-module",
+    "keywords": ["Drupal", "Linkfield"],
+    "license": "GPL-2.0+",
+    "minimum-stability": "dev",
+    "require": {
+        "drupal/core": "^8 || ^9"
+    }
 }

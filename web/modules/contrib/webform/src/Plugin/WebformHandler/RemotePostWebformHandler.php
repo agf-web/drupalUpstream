@@ -4,6 +4,7 @@ namespace Drupal\webform\Plugin\WebformHandler;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Serialization\Yaml;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -11,7 +12,11 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\webform\Element\WebformMessage;
+use Drupal\webform\Plugin\WebformElement\BooleanBase;
+use Drupal\webform\Plugin\WebformElement\NumericBase;
+use Drupal\webform\Plugin\WebformElement\WebformCompositeBase;
 use Drupal\webform\Plugin\WebformElement\WebformManagedFileBase;
+use Drupal\webform\Plugin\WebformElementInterface;
 use Drupal\webform\Plugin\WebformElementManagerInterface;
 use Drupal\webform\Plugin\WebformHandlerBase;
 use Drupal\webform\WebformInterface;
@@ -130,7 +135,8 @@ class RemotePostWebformHandler extends WebformHandlerBase {
       $settings['deleted_url'] = '';
     }
     if (!$this->isDraftEnabled()) {
-      $settings['draft_url'] = '';
+      $settings['draft_created_url'] = '';
+      $settings['draft_updated_url'] = '';
     }
     if (!$this->isConvertEnabled()) {
       $settings['converted_url'] = '';
@@ -153,6 +159,7 @@ class RemotePostWebformHandler extends WebformHandlerBase {
       'excluded_data' => $excluded_data,
       'custom_data' => '',
       'custom_options' => '',
+      'cast' => FALSE,
       'debug' => FALSE,
       // States.
       'completed_url' => '',
@@ -161,13 +168,17 @@ class RemotePostWebformHandler extends WebformHandlerBase {
       'updated_custom_data' => '',
       'deleted_url' => '',
       'deleted_custom_data' => '',
-      'draft_url' => '',
-      'draft_custom_data' => '',
+      'draft_created_url' => '',
+      'draft_created_custom_data' => '',
+      'draft_updated_url' => '',
+      'draft_updated_custom_data' => '',
       'converted_url' => '',
       'converted_custom_data' => '',
-      // Custom response messages.
+      // Custom error response messages.
       'message' => '',
       'messages' => [],
+      // Custom error response redirect URL.
+      'error_url' => '',
     ];
   }
 
@@ -182,31 +193,37 @@ class RemotePostWebformHandler extends WebformHandlerBase {
       WebformSubmissionInterface::STATE_COMPLETED => [
         'state' => $this->t('completed'),
         'label' => $this->t('Completed'),
-        'description' => $this->t('Post data when submission is <b>completed</b>.'),
+        'description' => $this->t('Post data when <b>submission is completed</b>.'),
         'access' => TRUE,
       ],
       WebformSubmissionInterface::STATE_UPDATED => [
         'state' => $this->t('updated'),
         'label' => $this->t('Updated'),
-        'description' => $this->t('Post data when submission is <b>updated</b>.'),
+        'description' => $this->t('Post data when <b>submission is updated</b>.'),
         'access' => $this->isResultsEnabled(),
       ],
       WebformSubmissionInterface::STATE_DELETED => [
         'state' => $this->t('deleted'),
         'label' => $this->t('Deleted'),
-        'description' => $this->t('Post data when submission is <b>deleted</b>.'),
+        'description' => $this->t('Post data when <b>submission is deleted</b>.'),
         'access' => $this->isResultsEnabled(),
       ],
-      WebformSubmissionInterface::STATE_DRAFT => [
-        'state' => $this->t('draft'),
-        'label' => $this->t('Draft'),
-        'description' => $this->t('Post data when <b>draft</b> is saved.'),
+      WebformSubmissionInterface::STATE_DRAFT_CREATED => [
+        'state' => $this->t('draft created'),
+        'label' => $this->t('Draft created'),
+        'description' => $this->t('Post data when <b>draft is created.</b>'),
+        'access' => $this->isDraftEnabled(),
+      ],
+      WebformSubmissionInterface::STATE_DRAFT_UPDATED => [
+        'state' => $this->t('draft updated'),
+        'label' => $this->t('Draft updated'),
+        'description' => $this->t('Post data when <b>draft is updated.</b>'),
         'access' => $this->isDraftEnabled(),
       ],
       WebformSubmissionInterface::STATE_CONVERTED => [
         'state' => $this->t('converted'),
         'label' => $this->t('Converted'),
-        'description' => $this->t('Post data when anonymous submission is <b>converted</b> to authenticated.'),
+        'description' => $this->t('Post data when anonymous <b>submission is converted</b> to authenticated.'),
         'access' => $this->isConvertEnabled(),
       ],
     ];
@@ -280,6 +297,13 @@ class RemotePostWebformHandler extends WebformHandlerBase {
       ],
       '#default_value' => $this->configuration['type'],
     ];
+    $form['additional']['cast'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Cast posted data'),
+      '#description' => $this->t('If checked, posted data will be casted to booleans and floats as needed.'),
+      '#return_value' => TRUE,
+      '#default_value' => $this->configuration['cast'],
+    ];
     $form['additional']['custom_data'] = [
       '#type' => 'webform_codemirror',
       '#mode' => 'yaml',
@@ -327,7 +351,7 @@ class RemotePostWebformHandler extends WebformHandlerBase {
             '504' => $this->t('504 Gateway Timeout'),
           ],
           '#other__type' => 'number',
-          '#other__description' => t('<a href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes">List of HTTP status codes</a>.'),
+          '#other__description' => $this->t('<a href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes">List of HTTP status codes</a>.'),
         ],
         'message' => [
           '#type' => 'webform_html_editor',
@@ -335,6 +359,13 @@ class RemotePostWebformHandler extends WebformHandlerBase {
         ],
       ],
       '#default_value' => $this->configuration['messages'],
+    ];
+    $form['additional']['error_url'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Custom error response redirect URL'),
+      '#description' => $this->t('The URL or path to redirect to when a remote fails.', $t_args),
+      '#default_value' => $this->configuration['error_url'],
+      '#pattern' => '(https?:\/\/|\/).+',
     ];
 
     // Development.
@@ -375,7 +406,7 @@ class RemotePostWebformHandler extends WebformHandlerBase {
       '#default_value' => $this->configuration['excluded_data'],
     ];
 
-    $this->tokenManager->elementValidate($form);
+    $this->elementTokenValidate($form);
 
     return $this->setSettingsParents($form);
   }
@@ -389,9 +420,6 @@ class RemotePostWebformHandler extends WebformHandlerBase {
     if ($this->configuration['method'] === 'GET') {
       $this->configuration['type'] = '';
     }
-
-    // Cast debug.
-    $this->configuration['debug'] = (bool) $this->configuration['debug'];
   }
 
   /**
@@ -414,26 +442,28 @@ class RemotePostWebformHandler extends WebformHandlerBase {
    *
    * @param string $state
    *   The state of the webform submission.
-   *   Either STATE_NEW, STATE_DRAFT, STATE_COMPLETED, STATE_UPDATED, or
-   *   STATE_CONVERTED depending on the last save operation performed.
+   *   Either STATE_NEW, STATE_DRAFT_CREATED, STATE_DRAFT_UPDATED,
+   *   STATE_COMPLETED, STATE_UPDATED, or STATE_CONVERTED
+   *   depending on the last save operation performed.
    * @param \Drupal\webform\WebformSubmissionInterface $webform_submission
    *   The webform submission to be posted.
    */
   protected function remotePost($state, WebformSubmissionInterface $webform_submission) {
-    if (empty($this->configuration[$state . '_url'])) {
+    $state_url = $state . '_url';
+    if (empty($this->configuration[$state_url])) {
       return;
     }
 
     $this->messageManager->setWebformSubmission($webform_submission);
 
-    $request_url = $this->configuration[$state . '_url'];
-    $request_url = $this->tokenManager->replace($request_url, $webform_submission);
+    $request_url = $this->configuration[$state_url];
+    $request_url = $this->replaceTokens($request_url, $webform_submission);
     $request_method = (!empty($this->configuration['method'])) ? $this->configuration['method'] : 'POST';
     $request_type = ($request_method !== 'GET') ? $this->configuration['type'] : NULL;
 
     // Get request options with tokens replaced.
     $request_options = (!empty($this->configuration['custom_options'])) ? Yaml::decode($this->configuration['custom_options']) : [];
-    $request_options = $this->tokenManager->replaceNoRenderContext($request_options, $webform_submission);
+    $request_options = $this->replaceTokens($request_options, $webform_submission);
 
     try {
       if ($request_method === 'GET') {
@@ -477,7 +507,7 @@ class RemotePostWebformHandler extends WebformHandlerBase {
     if ($submission_has_token) {
       $response_data = $this->getResponseData($response);
       $token_data = ['webform_handler' => [$this->getHandlerId() => [$state => $response_data]]];
-      $submission_data = $this->tokenManager->replaceNoRenderContext($submission_data, $webform_submission, $token_data);
+      $submission_data = $this->replaceTokens($submission_data, $webform_submission, $token_data);
       $webform_submission->setData($submission_data);
       // Resave changes to the submission data without invoking any hooks
       // or handlers.
@@ -492,8 +522,9 @@ class RemotePostWebformHandler extends WebformHandlerBase {
    *
    * @param string $state
    *   The state of the webform submission.
-   *   Either STATE_NEW, STATE_DRAFT, STATE_COMPLETED, STATE_UPDATED, or
-   *   STATE_CONVERTED depending on the last save operation performed.
+   *   Either STATE_NEW, STATE_DRAFT_CREATED, STATE_DRAFT_UPDATED,
+   *   STATE_COMPLETED, STATE_UPDATED, or STATE_CONVERTED
+   *   depending on the last save operation performed.
    * @param \Drupal\webform\WebformSubmissionInterface $webform_submission
    *   The webform submission to be posted.
    *
@@ -531,20 +562,22 @@ class RemotePostWebformHandler extends WebformHandlerBase {
       }
 
       $element_plugin = $this->elementManager->getElementInstance($element);
-      if (!($element_plugin instanceof WebformManagedFileBase)) {
-        continue;
-      }
 
-      if ($element_plugin->hasMultipleValues($element)) {
-        foreach ($element_value as $fid) {
-          $data['_' . $element_key][] = $this->getResponseFileData($fid);
+      if ($element_plugin instanceof WebformManagedFileBase) {
+        if ($element_plugin->hasMultipleValues($element)) {
+          foreach ($element_value as $fid) {
+            $data['_' . $element_key][] = $this->getResponseFileData($fid);
+          }
+        }
+        else {
+          $data['_' . $element_key] = $this->getResponseFileData($element_value);
+          // @deprecated in Webform 8.x-5.0-rc17. Use new format
+          // This code will be removed in 8.x-6.x.
+          $data += $this->getResponseFileData($element_value, $element_key . '__');
         }
       }
-      else {
-        $data['_' . $element_key] = $this->getResponseFileData($element_value);
-        // @deprecated in Webform 8.x-5.0-rc17. Use new format
-        // The code needs to be removed before 8.x-5.0 or 8.x-6.x.
-        $data += $this->getResponseFileData($element_value, $element_key . '__');
+      elseif (!empty($this->configuration['cast'])) {
+        $data[$element_key] = $this->castRequestValues($element, $element_plugin, $element_value);
       }
     }
 
@@ -559,13 +592,76 @@ class RemotePostWebformHandler extends WebformHandlerBase {
     }
 
     // Replace tokens.
-    $data = $this->tokenManager->replaceNoRenderContext($data, $webform_submission);
+    $data = $this->replaceTokens($data, $webform_submission);
 
     return $data;
   }
 
   /**
-   * Get response file data.
+   * Cast request values.
+   *
+   * @param array $element
+   *   An element.
+   * @param \Drupal\webform\Plugin\WebformElementInterface $element_plugin
+   *   The element's webform plugin.
+   * @param mixed $value
+   *   The element's value.
+   *
+   * @return mixed
+   *   The element's values cast to boolean or float when appropriate.
+   */
+  protected function castRequestValues(array $element, WebformElementInterface $element_plugin, $value) {
+    $element_plugin->initialize($element);
+    if ($element_plugin->hasMultipleValues($element)) {
+      foreach ($value as $index => $item) {
+        $value[$index] = $this->castRequestValue($element, $element_plugin, $item);
+      }
+      return $value;
+    }
+    else {
+      return $this->castRequestValue($element, $element_plugin, $value);
+    }
+  }
+
+  /**
+   * Cast request value.
+   *
+   * @param array $element
+   *   An element.
+   * @param \Drupal\webform\Plugin\WebformElementInterface $element_plugin
+   *   The element's webform plugin.
+   * @param mixed $value
+   *   The element's value.
+   *
+   * @return mixed
+   *   The element's value cast to boolean or float when appropriate.
+   */
+  protected function castRequestValue(array $element, WebformElementInterface $element_plugin, $value) {
+    if ($element_plugin instanceof BooleanBase) {
+      return (boolean) $value;
+    }
+    elseif ($element_plugin instanceof NumericBase) {
+      return (float) $value;
+    }
+    elseif ($element_plugin instanceof WebformCompositeBase) {
+      $composite_elements = (isset($element['#element']))
+        ? $element['#element']
+        : $element_plugin->getCompositeElements();
+      foreach ($composite_elements as $key => $composite_element) {
+        if (isset($value[$key])) {
+          $composite_element_plugin = $this->elementManager->getElementInstance($composite_element);
+          $value[$key] = $this->castRequestValue($composite_element, $composite_element_plugin, $value[$key]);
+        }
+      }
+      return $value;
+    }
+    else {
+      return $value;
+    }
+  }
+
+  /**
+   * Get request file data.
    *
    * @param int $fid
    *   A file id.
@@ -672,8 +768,9 @@ class RemotePostWebformHandler extends WebformHandlerBase {
    *   Message to be displayed.
    * @param string $state
    *   The state of the webform submission.
-   *   Either STATE_NEW, STATE_DRAFT, STATE_COMPLETED, STATE_UPDATED, or
-   *   STATE_CONVERTED depending on the last save operation performed.
+   *   Either STATE_NEW, STATE_DRAFT_CREATED, STATE_DRAFT_UPDATED,
+   *   STATE_COMPLETED, STATE_UPDATED, or STATE_CONVERTED
+   *   depending on the last save operation performed.
    * @param string $request_url
    *   The remote URL the request is being posted to.
    * @param string $request_method
@@ -681,7 +778,7 @@ class RemotePostWebformHandler extends WebformHandlerBase {
    * @param string $request_type
    *   The type of remote post.
    * @param string $request_options
-   *   The requests options including the submission data..
+   *   The requests options including the submission data.
    * @param \Psr\Http\Message\ResponseInterface|null $response
    *   The response returned by the remote server.
    * @param string $type
@@ -796,7 +893,7 @@ class RemotePostWebformHandler extends WebformHandlerBase {
     }
     else {
       $build['response_code'] = [
-        '#markup' => t('No response. Please see the recent log messages.'),
+        '#markup' => $this->t('No response. Please see the recent log messages.'),
         '#prefix' => '<p>',
         '#suffix' => '</p>',
       ];
@@ -819,8 +916,9 @@ class RemotePostWebformHandler extends WebformHandlerBase {
    *
    * @param string $state
    *   The state of the webform submission.
-   *   Either STATE_NEW, STATE_DRAFT, STATE_COMPLETED, STATE_UPDATED, or
-   *   STATE_CONVERTED depending on the last save operation performed.
+   *   Either STATE_NEW, STATE_DRAFT_CREATED, STATE_DRAFT_UPDATED,
+   *   STATE_COMPLETED, STATE_UPDATED, or STATE_CONVERTED
+   *   depending on the last save operation performed.
    * @param string $message
    *   Message to be displayed.
    * @param string $request_url
@@ -830,11 +928,13 @@ class RemotePostWebformHandler extends WebformHandlerBase {
    * @param string $request_type
    *   The type of remote post.
    * @param string $request_options
-   *   The requests options including the submission data..
+   *   The requests options including the submission data.
    * @param \Psr\Http\Message\ResponseInterface|null $response
    *   The response returned by the remote server.
    */
   protected function handleError($state, $message, $request_url, $request_method, $request_type, $request_options, $response) {
+    global $base_url, $base_path;
+
     // If debugging is enabled, display the error message on screen.
     $this->debug($message, $state, $request_url, $request_method, $request_type, $request_options, $response, 'error');
 
@@ -845,11 +945,14 @@ class RemotePostWebformHandler extends WebformHandlerBase {
       '@type' => $request_type,
       '@url' => $request_url,
       '@message' => $message,
+      'webform_submission' => $this->getWebformSubmission(),
+      'handler_id' => $this->getHandlerId(),
+      'operation' => 'error',
       'link' => $this->getWebform()
         ->toLink($this->t('Edit'), 'handlers')
         ->toString(),
     ];
-    $this->getLogger()
+    $this->getLogger('webform_submission')
       ->error('@form webform remote @type post (@state) to @url failed. @message', $context);
 
     // Display custom or default exception message.
@@ -860,12 +963,23 @@ class RemotePostWebformHandler extends WebformHandlerBase {
         ],
       ];
       $build_message = [
-        '#markup' => $this->tokenManager->replaceNoRenderContext($custom_response_message, $this->getWebform(), $token_data),
+        '#markup' => $this->replaceTokens($custom_response_message, $this->getWebform(), $token_data),
       ];
       $this->messenger()->addError(\Drupal::service('renderer')->renderPlain($build_message));
     }
     else {
       $this->messageManager->display(WebformMessageManagerInterface::SUBMISSION_EXCEPTION_MESSAGE, 'error');
+    }
+
+    // Redirect the current request to the error url.
+    $error_url = $this->configuration['error_url'];
+    if ($error_url && PHP_SAPI !== 'cli') {
+      // Convert error path to URL.
+      if (strpos($error_url, '/') === 0) {
+        $error_url = $base_url . preg_replace('#^' . $base_path . '#', '/', $error_url);
+      }
+      $response = new TrustedRedirectResponse($error_url);
+      $response->send();
     }
   }
 
@@ -888,6 +1002,14 @@ class RemotePostWebformHandler extends WebformHandlerBase {
       }
     }
     return (!empty($this->configuration['message'])) ? $this->configuration['message'] : '';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function buildTokenTreeElement(array $token_types = ['webform', 'webform_submission'], $description = NULL) {
+    $description = $description ?: $this->t('Use [webform_submission:values:ELEMENT_KEY:raw] to get plain text values.');
+    return parent::buildTokenTreeElement($token_types, $description);
   }
 
 }

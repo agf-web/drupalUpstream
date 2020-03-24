@@ -2,10 +2,12 @@
 
 namespace Drupal\environment_indicator;
 
-
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
 
+/**
+ * Form field specifications.
+ */
 class EnvironmentIndicatorForm extends EntityForm {
 
   /**

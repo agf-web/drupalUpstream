@@ -20,7 +20,7 @@ class WebformSection extends ContainerBase {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultProperties() {
+  protected function defineDefaultProperties() {
     return [
       // Description/Help.
       'help' => '',
@@ -31,8 +31,11 @@ class WebformSection extends ContainerBase {
       // Title.
       'title_tag' => \Drupal::config('webform.settings')->get('element.default_section_title_tag'),
       'title_display' => '',
-    ] + parent::getDefaultProperties();
+      'help_display' => '',
+    ] + parent::defineDefaultProperties();
   }
+
+  /****************************************************************************/
 
   /**
    * {@inheritdoc}

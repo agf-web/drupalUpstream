@@ -81,15 +81,13 @@ class WebformEntityReferenceManager implements WebformEntityReferenceManagerInte
    */
   public function isUserWebformRoute(EntityInterface $entity) {
     $entity_type = $entity->getEntityTypeId();
+    $route_name = $this->routeMatch->getRouteName();
     $user_routes = [
       "entity.$entity_type.webform.test_form",
-      "entity.$entity_type.webform.results_submissions",
-      "entity.$entity_type.webform.results_export",
-      "entity.$entity_type.webform.results_clear",
-      "entity.$entity_type.webform.results_log",
       "entity.$entity_type.webform.api_form",
     ];
-    return in_array($this->routeMatch->getRouteName(), $user_routes);
+    return in_array($this->routeMatch->getRouteName(), $user_routes)
+      || (strpos($route_name, "entity.$entity_type.webform.results_") === 0);
   }
 
   /**
@@ -243,7 +241,6 @@ class WebformEntityReferenceManager implements WebformEntityReferenceManagerInte
    * {@inheritdoc}
    */
   public function getTableNames() {
-    // @todo Figure out a better way to determine webform field table names.
     /** @var \Drupal\field\FieldStorageConfigInterface[] $field_storage_configs */
     $field_storage_configs = FieldStorageConfig::loadMultiple();
     $tables = [];

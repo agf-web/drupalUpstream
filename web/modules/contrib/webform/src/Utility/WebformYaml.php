@@ -16,6 +16,10 @@ class WebformYaml implements SerializationInterface {
    * {@inheritdoc}
    */
   public static function encode($data) {
+    // Convert \r\n to \n so that multiline strings are properly formatted.
+    // @see \Symfony\Component\Yaml\Dumper::dump
+    static::normalize($data);
+
     $dumper = new Dumper(2);
     $yaml = $dumper->dump($data, PHP_INT_MAX, 0, SymfonyYaml::DUMP_EXCEPTION_ON_INVALID_TYPE | SymfonyYaml::DUMP_MULTI_LINE_LITERAL_BLOCK);
 
@@ -80,13 +84,30 @@ class WebformYaml implements SerializationInterface {
    *
    * @return string
    *   The encoded data.
-   *
-   * @see https://www.drupal.org/project/drupal/issues/2844452
-   * @see \Drupal\Component\Serialization\YamlSymfony::encode
    */
   public static function tidy($yaml) {
-    $data = self::decode($yaml);
-    return self::encode($data);
+    return self::encode(self::decode($yaml));
+  }
+
+  /****************************************************************************/
+  // Helper methods.
+  /****************************************************************************/
+
+  /**
+   * Convert \r\n to \n inside data.
+   *
+   * @param array $data
+   *   Data with all converted \r\n to \n.
+   */
+  protected static function normalize(array &$data) {
+    foreach ($data as $key => &$value) {
+      if (is_string($value)) {
+        $data[$key] = preg_replace('/\r\n?/', "\n", $value);
+      }
+      elseif (is_array($value)) {
+        static::normalize($value);
+      }
+    }
   }
 
 }

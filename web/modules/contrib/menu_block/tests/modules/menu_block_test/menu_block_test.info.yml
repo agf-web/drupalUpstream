@@ -1,0 +1,5 @@
+name: 'Menu block test module'
+type: module
+description: 'Support module for menu_block testing.'
+package: Testing
+core: 8.x

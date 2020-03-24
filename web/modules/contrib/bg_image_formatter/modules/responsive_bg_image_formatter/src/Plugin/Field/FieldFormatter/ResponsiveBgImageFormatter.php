@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Drupal\responsive_bg_image_formatter\Plugin\Field\FieldFormatter;
 
+use Drupal;
 use Drupal\bg_image_formatter\Plugin\Field\FieldFormatter\BgImageFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -15,9 +16,9 @@ use Drupal\responsive_image\Entity\ResponsiveImageStyle;
  * Class ResponsiveBgImageFormatter.
  *
  * @FieldFormatter(
- *  id = "responsive_bg_image_formatter",
- *  label = @Translation("Responsive Background Image"),
- *  field_types = {"image"}
+ *     id="responsive_bg_image_formatter",
+ *     label=@Translation("Responsive Background Image"),
+ *     field_types={"image"}
  * )
  */
 class ResponsiveBgImageFormatter extends BgImageFormatter {
@@ -29,11 +30,10 @@ class ResponsiveBgImageFormatter extends BgImageFormatter {
     $element = parent::settingsForm($form, $form_state);
     $element['image_style']['#options'] = $this->getResponsiveImageStyles(TRUE);
     $element['image_style']['#description'] = $this->t(
-        'Select <a href="@href_image_style">the responsive image style</a> to use.',
-        [
-          '@href_image_style' =>
-          Url::fromRoute('entity.responsive_image_style.collection')->toString(),
-        ]
+      'Select <a href="@href_image_style">the responsive image style</a> to use.',
+      [
+        '@href_image_style' => Url::fromRoute('entity.responsive_image_style.collection')->toString(),
+      ]
     );
 
     unset($element['css_settings']['bg_image_media_query']);
@@ -71,7 +71,7 @@ class ResponsiveBgImageFormatter extends BgImageFormatter {
     $files = $this->getEntitiesToView($items, $langcode);
 
     // Filter out empty selectors.
-    $selectors = array_map(function ($value) {
+    $selectors = array_map(static function ($value) {
       return trim($value, ',');
     }, $selectors);
 
@@ -82,11 +82,12 @@ class ResponsiveBgImageFormatter extends BgImageFormatter {
 
     // Prepare token data in bg image css selector.
     $token_data = [
-      'user' => \Drupal::currentUser(),
+      'user' => Drupal::currentUser(),
       $items->getEntity()->getEntityTypeId() => $items->getEntity(),
     ];
+
     foreach ($selectors as &$selector) {
-      $selector = \Drupal::token()->replace($selector, $token_data);
+      $selector = Drupal::token()->replace($selector, $token_data);
     }
 
     // Need an empty element so views renderer will see something to render.
@@ -94,13 +95,17 @@ class ResponsiveBgImageFormatter extends BgImageFormatter {
 
     foreach ($files as $delta => $file) {
       // Use specified selectors in round-robin order.
-      $selector = $selectors[$index % count($selectors)];
+      $selector = $selectors[$index % \count($selectors)];
 
       $vars = [
         'uri' => $file->getFileUri(),
         'responsive_image_style_id' => $settings['image_style'],
       ];
       template_preprocess_responsive_image($vars);
+
+      if (empty($vars['sources'])) {
+        continue;
+      }
 
       // Split each source into multiple rules.
       foreach (array_reverse($vars['sources']) as $source_i => $source) {
@@ -115,7 +120,7 @@ class ResponsiveBgImageFormatter extends BgImageFormatter {
 
           // Add "retina" to media query if this is a 2x image.
           if ($res && $res === '2x') {
-            $media = "$media and (-webkit-min-device-pixel-ratio: 2), $media and (min-resolution: 192dpi)";
+            $media = "{$media} and (-webkit-min-device-pixel-ratio: 2), {$media} and (min-resolution: 192dpi)";
           }
 
           // Correct a bug in template_preprocess_responsive_image which
@@ -131,14 +136,14 @@ class ResponsiveBgImageFormatter extends BgImageFormatter {
           // Define unique key to prevent collisions when displaying multiple
           // background images on the same page.
           $html_head_key = 'responsive_bg_image_formatter_css__' . sha1(
-          implode('__', [
-            $items->getEntity()->uuid(),
-            $items->getName(),
-            $settings['image_style'],
-            $delta,
-            $src_i,
-            $source_i,
-          ])
+            implode('__', [
+              $items->getEntity()->uuid(),
+              $items->getName(),
+              $settings['image_style'],
+              $delta,
+              $src_i,
+              $source_i,
+            ])
           );
 
           $style_element = [
@@ -160,7 +165,7 @@ class ResponsiveBgImageFormatter extends BgImageFormatter {
         }
       }
 
-      $index++;
+      ++$index;
     }
 
     return $elements;

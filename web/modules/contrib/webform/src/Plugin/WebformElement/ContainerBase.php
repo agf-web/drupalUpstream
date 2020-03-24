@@ -17,7 +17,7 @@ abstract class ContainerBase extends WebformElementBase {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultProperties() {
+  protected function defineDefaultProperties() {
     return [
       'title' => '',
       // Form validation.
@@ -31,17 +31,19 @@ abstract class ContainerBase extends WebformElementBase {
       'format_html' => '',
       'format_text' => '',
       'format_attributes' => [],
-    ] + $this->getDefaultBaseProperties();
+    ] + $this->defineDefaultBaseProperties();
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getDefaultBaseProperties() {
-    $properties = parent::getDefaultBaseProperties();
+  protected function defineDefaultBaseProperties() {
+    $properties = parent::defineDefaultBaseProperties();
     unset($properties['prepopulate']);
     return $properties;
   }
+
+  /****************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -201,7 +203,7 @@ abstract class ContainerBase extends WebformElementBase {
   /**
    * {@inheritdoc}
    */
-  protected function formatCustomItem($type, array &$element, WebformSubmissionInterface $webform_submission, array $options = []) {
+  protected function formatCustomItem($type, array &$element, WebformSubmissionInterface $webform_submission, array $options = [], array $context = []) {
     $name = strtolower($type);
 
     // Parse children from template and children to context.
@@ -209,12 +211,10 @@ abstract class ContainerBase extends WebformElementBase {
     if (strpos($template, 'children') != FALSE) {
       /** @var \Drupal\webform\WebformSubmissionViewBuilderInterface $view_builder */
       $view_builder = \Drupal::entityTypeManager()->getViewBuilder('webform_submission');
-      $options['context'] = [
-        'children' => $view_builder->buildElements($element, $webform_submission, $options, $name),
-      ];
+      $context['children'] = $view_builder->buildElements($element, $webform_submission, $options, $name);
     }
 
-    return parent::formatCustomItem($type, $element, $webform_submission, $options);
+    return parent::formatCustomItem($type, $element, $webform_submission, $options, $context);
   }
 
   /**
@@ -261,10 +261,6 @@ abstract class ContainerBase extends WebformElementBase {
       'invisible' => $this->t('Invisible'),
     ];
 
-    // Remove value from item custom display replacement patterns.
-    $item_patterns = &$form['display']['item']['patterns']['#value']['items']['#items'];
-    unset($item_patterns['value']);
-    $item_patterns = ['children' => '{{ children }}'] + $item_patterns;
     return $form;
   }
 

@@ -20,8 +20,8 @@ class Details extends ContainerBase {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultProperties() {
-    $properties = [
+  protected function defineDefaultProperties() {
+    return [
       // Description/Help.
       'help' => '',
       'help_title' => '',
@@ -30,19 +30,14 @@ class Details extends ContainerBase {
       'more_title' => '',
       // Title.
       'title_display' => '',
+      'help_display' => '',
       // Details.
       'open' => FALSE,
-    ] + parent::getDefaultProperties();
-
-    // Issue #2971848: [8.6.x] Details elements allow specifying attributes
-    // for the <summary> element.
-    // @todo Remove the below if/then when only 8.6.x is supported.
-    if (version_compare(\Drupal::VERSION, '8.6', '>=')) {
-      $properties['summary_attributes'] = [];
-    }
-
-    return $properties;
+      'summary_attributes' => [],
+    ] + parent::defineDefaultProperties();
   }
+
+  /****************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -53,6 +48,8 @@ class Details extends ContainerBase {
     if (isset($element['#webform_key'])) {
       $element['#attributes']['data-webform-key'] = $element['#webform_key'];
     }
+
+    $element['#attached']['library'][] = 'webform/webform.element.details';
   }
 
   /**

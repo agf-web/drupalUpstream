@@ -25,7 +25,7 @@ class TextExtractorFormSettings extends ConfigFormBase {
   /**
    * Text extractor plugin Manager.
    *
-   * @var Drupal\search_api_attachments\TextExtractorPluginManagerservice
+   * @var \Drupal\search_api_attachments\TextExtractorPluginManager
    */
   private $textExtractorPluginManager;
 

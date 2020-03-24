@@ -15,6 +15,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 abstract class WebformSubmissionsDeleteFormBase extends WebformDeleteFormBase {
 
   /**
+   * Total number of submissions.
+   *
+   * @var int
+   */
+  protected $submissionTotal;
+
+  /**
    * Default number of submission to be deleted during batch processing.
    *
    * @var int
@@ -34,6 +41,13 @@ abstract class WebformSubmissionsDeleteFormBase extends WebformDeleteFormBase {
    * @var \Drupal\Core\Entity\EntityInterface
    */
   protected $sourceEntity;
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
 
   /**
    * The webform submission storage.
@@ -58,6 +72,7 @@ abstract class WebformSubmissionsDeleteFormBase extends WebformDeleteFormBase {
    *   The webform request handler.
    */
   public function __construct(EntityTypeManagerInterface $entity_type_manager, WebformRequestInterface $request_handler) {
+    $this->entityTypeManager = $entity_type_manager;
     $this->submissionStorage = $entity_type_manager->getStorage('webform_submission');
     $this->requestHandler = $request_handler;
 
@@ -187,7 +202,7 @@ abstract class WebformSubmissionsDeleteFormBase extends WebformDeleteFormBase {
 
     if (empty($context['sandbox'])) {
       $context['sandbox']['progress'] = 0;
-      $context['sandbox']['max'] = $this->submissionStorage->getTotal($webform, $entity);
+      $context['sandbox']['max'] = $this->submissionStorage->getTotal($webform, $entity, NULL, ['in_draft' => NULL]);
       $context['results']['webform'] = $webform;
       $context['results']['entity'] = $entity;
     }
@@ -220,6 +235,19 @@ abstract class WebformSubmissionsDeleteFormBase extends WebformDeleteFormBase {
     else {
       $this->messenger()->addStatus($this->getFinishedMessage());
     }
+  }
+
+  /**
+   * Get total number of submissions.
+   *
+   * @return int
+   *   Total number of submissions.
+   */
+  protected function getSubmissionTotal() {
+    if (!isset($this->submissionTotal)) {
+      $this->submissionTotal = $this->submissionStorage->getTotal($this->webform, $this->sourceEntity, NULL, ['in_draft' => NULL]);
+    }
+    return $this->submissionTotal;
   }
 
 }

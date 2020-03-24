@@ -181,8 +181,21 @@ class WebformResultsExportController extends ControllerBase implements Container
    *   A response object containing the CSV file.
    */
   public function downloadFile($file_path, $download = TRUE) {
-    $response = new BinaryFileResponse($file_path, 200, [], FALSE, $download ? 'attachment' : 'inline');
-    $response->deleteFileAfterSend(TRUE);
+    $headers = [];
+
+    // If the file is not meant to be downloaded, allow CSV files to be
+    // displayed as plain text.
+    if (!$download && preg_match('/\.csv$/', $file_path)) {
+      $headers['Content-Type'] = 'text/plain';
+    }
+
+    $response = new BinaryFileResponse($file_path, 200, $headers, FALSE, $download ? 'attachment' : 'inline');
+    // Don't delete the file during automated tests.
+    // @see \Drupal\webform\Tests\WebformResultsExportDownloadTest
+    // @see \Drupal\Tests\webform_entity_print\Functional\WebformEntityPrintFunctionalTest
+    if (!drupal_valid_test_ua()) {
+      $response->deleteFileAfterSend(TRUE);
+    }
     return $response;
   }
 

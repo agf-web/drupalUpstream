@@ -21,6 +21,7 @@ class DocconvExtractor extends TextExtractorPluginBase {
    * {@inheritdoc}
    */
   public function extract(File $file) {
+    $output = '';
     $docconv_path = $this->configuration['docconv_path'];
     $filepath = $this->getRealpath($file->getFileUri());
     $cmd = escapeshellarg($docconv_path) . ' -input ' . escapeshellarg($filepath);
@@ -35,7 +36,11 @@ class DocconvExtractor extends TextExtractorPluginBase {
     // @see http://www.php.net/manual/en/function.shell-exec.php#85095
     shell_exec("LANG=en_US.utf-8");
 
-    return shell_exec($cmd);
+    $output = shell_exec($cmd);
+    if (is_null($output)) {
+      throw new \Exception('Docconv Exctractor is not available.');
+    }
+    return $output;
   }
 
   /**

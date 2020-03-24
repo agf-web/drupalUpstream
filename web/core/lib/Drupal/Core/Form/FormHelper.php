@@ -196,6 +196,11 @@ class FormHelper {
    *   ],
    * @endcode
    *
+   * Drupal form elements are not required to support states. For states to
+   * work, the element has to print #attributes. Item elements work using
+   * #wrapper_attributes instead. States are not supported by render arrays
+   * where #type is markup.
+   *
    * @param array $elements
    *   A render array element having a #states property as described above.
    */
@@ -205,7 +210,7 @@ class FormHelper {
     // still want to be able to show/hide them. Since there's no actual HTML
     // input element available, setting #attributes does not make sense, but a
     // wrapper is available, so setting #wrapper_attributes makes it work.
-    $key = ($elements['#type'] == 'item') ? '#wrapper_attributes' : '#attributes';
+    $key = isset($elements['#type']) && $elements['#type'] === 'item' ? '#wrapper_attributes' : '#attributes';
     $elements[$key]['data-drupal-states'] = Json::encode($elements['#states']);
   }
 

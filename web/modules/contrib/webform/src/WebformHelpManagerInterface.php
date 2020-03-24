@@ -62,11 +62,7 @@ interface WebformHelpManagerInterface {
    *   The notification to be displayed to webform administrators.
    * @param string $type
    *   (optional) The message's type. Defaults to 'status'. These values are
-   *   supported:
-   *   - 'info'
-   *   - 'status'
-   *   - 'warning'
-   *   - 'error'
+   *   supported: 'info', 'status', 'warning', 'error'.
    *
    * @internal
    *   Currently being used to display notifications related to updates.
@@ -78,11 +74,7 @@ interface WebformHelpManagerInterface {
    *
    * @param string $type
    *   (optional) The message's type. These values are
-   *   supported:
-   *   - 'info'
-   *   - 'status'
-   *   - 'warning'
-   *   - 'error'
+   *   supported: 'info', 'status', 'warning', 'error'.
    *
    * @return array
    *   An array of messages for specified message type or
@@ -135,6 +127,23 @@ interface WebformHelpManagerInterface {
    *   An render array containing the videos section.
    */
   public function buildVideos($docs = FALSE);
+
+  /**
+   * Build video link.
+   *
+   * @param string $video_id
+   *   Video id.
+   * @param string|null $video_display
+   *   Video displa type.
+   * @param string|null $title
+   *   Link title.
+   * @param array $options
+   *   Link options.
+   *
+   * @return array
+   *   A renderable array containing a link to a video.
+   */
+  public function buildVideoLink($video_id, $video_display = NULL, $title = NULL, array $options = []);
 
   /**
    * Build the add-ons section.

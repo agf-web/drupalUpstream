@@ -24,7 +24,7 @@ class DateTime extends DateBase {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultProperties() {
+  protected function defineDefaultProperties() {
     $date_format = '';
     $time_format = '';
 
@@ -45,17 +45,28 @@ class DateTime extends DateBase {
       'date_max' => '',
       // Date settings.
       'date_date_format' => $date_format,
-      'date_date_datepicker_button' => TRUE,
+      'date_date_datepicker_button' => FALSE,
       'date_date_element' => 'date',
       'date_year_range' => '1900:2050',
+      'date_date_placeholder' => '',
       // Time settings.
       'date_time_format' => $time_format,
       'date_time_element' => 'time',
       'date_time_min' => '',
       'date_time_max' => '',
       'date_time_step' => '',
-    ] + parent::getDefaultProperties();
+      'date_time_placeholder' => '',
+    ] + parent::defineDefaultProperties();
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function defineTranslatableProperties() {
+    return array_merge(parent::defineTranslatableProperties(), ['date_date_placeholder', 'date_time_placeholder']);
+  }
+
+  /****************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -67,6 +78,9 @@ class DateTime extends DateBase {
     if (!isset($element['#default_value'])) {
       $element['#default_value'] = NULL;
     }
+
+    // Remove 'for' from the element's label.
+    $element['#label_attributes']['webform-remove-for-attribute'] = TRUE;
 
     /* Date */
 
@@ -81,9 +95,9 @@ class DateTime extends DateBase {
     // Set date year range.
     $element += ['#date_year_range' => ''];
     if (empty($element['#date_year_range'])) {
-      $date_min = $this->getElementProperty($element,'date_date_min') ?: $this->getElementProperty($element,'date_min');
+      $date_min = $this->getElementProperty($element, 'date_date_min') ?: $this->getElementProperty($element, 'date_min');
       $min_year = ($date_min) ? static::formatDate('Y', strtotime($date_min)) : '1900';
-      $date_max = $this->getElementProperty($element,'date_date_max') ?: $this->getElementProperty($element,'date_max');
+      $date_max = $this->getElementProperty($element, 'date_date_max') ?: $this->getElementProperty($element, 'date_max');
       $max_year = ($date_max) ? static::formatDate('Y', strtotime($date_max)) : '2050';
       $element['#date_year_range'] = "$min_year:$max_year";
     }
@@ -108,6 +122,21 @@ class DateTime extends DateBase {
 
     // Prepare element after date/time formats have been updated.
     parent::prepare($element, $webform_submission);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function afterBuild(array $element, FormStateInterface $form_state) {
+    $element = parent::afterBuild($element, $form_state);
+    // Date and time custom placeholder
+    if (isset($element['#date_date_placeholder'])) {
+      $element['date']['#attributes']['placeholder'] = $element['#date_date_placeholder'];
+    }
+    if (isset($element['#date_time_placeholder'])) {
+      $element['time']['#attributes']['placeholder'] = $element['#date_time_placeholder'];
+    }
+    return $element;
   }
 
   /**
@@ -151,7 +180,7 @@ class DateTime extends DateBase {
 
     $form['date']['date_date_element'] = [
       '#type' => 'select',
-      '#title' => t('Date element'),
+      '#title' => $this->t('Date element'),
       '#options' => [
         'datetime' => $this->t('HTML datetime - Use the HTML5 datetime element type.'),
         'datetime-local' => $this->t('HTML datetime input (localized) - Use the HTML5 datetime-local element type.'),
@@ -171,7 +200,6 @@ class DateTime extends DateBase {
           [':input[name="properties[date_date_element]"]' => ['value' => 'datepicker']],
         ],
       ],
-
     ];
     $form['date']['date_date_element_datetime_warning'] = [
       '#type' => 'webform_message',
@@ -194,6 +222,18 @@ class DateTime extends DateBase {
       '#states' => [
         'visible' => [
           ':input[name="properties[date_date_element]"]' => ['value' => 'none'],
+        ],
+      ],
+    ];
+    $form['date']['date_date_placeholder'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Date placeholder'),
+      '#description' => $this->t('The placeholder will be shown in the element until the user starts entering a value.'),
+      '#states' => [
+        'visible' => [
+          [':input[name="properties[date_date_element]"]' => ['value' => 'text']],
+          'or',
+          [':input[name="properties[date_date_element]"]' => ['value' => 'datepicker']],
         ],
       ],
     ];
@@ -240,7 +280,7 @@ class DateTime extends DateBase {
     ];
     $form['time']['date_time_element'] = [
       '#type' => 'select',
-      '#title' => t('Time element'),
+      '#title' => $this->t('Time element'),
       '#options' => [
         'time' => $this->t('HTML time input - Use a HTML5 time element type.'),
         'text' => $this->t('Text input - No HTML5 element, use a normal text field.'),
@@ -252,6 +292,18 @@ class DateTime extends DateBase {
           [':input[name="properties[date_date_element]"]' => ['value' => 'datetime']],
           'or',
           [':input[name="properties[date_date_element]"]' => ['value' => 'datetime-local']],
+        ],
+      ],
+    ];
+    $form['time']['date_time_placeholder'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Time placeholder'),
+      '#description' => $this->t('The placeholder will be shown in the element until the user starts entering a value.'),
+      '#states' => [
+        'visible' => [
+          [':input[name="properties[date_time_element]"]' => ['value' => 'text']],
+          'or',
+          [':input[name="properties[date_time_element]"]' => ['value' => 'timepicker']],
         ],
       ],
     ];
@@ -306,8 +358,8 @@ class DateTime extends DateBase {
       '#title' => $this->t('Time step'),
       '#description' => $this->t('Specifies the minute intervals.'),
       '#options' => [
-        '' => $this->t('1 minute'),
-        30 => $this->t('5 minutes'),
+        60 => $this->t('1 minute'),
+        300 => $this->t('5 minutes'),
         600 => $this->t('10 minutes'),
         900 => $this->t('15 minutes'),
         1200 => $this->t('20 minutes'),

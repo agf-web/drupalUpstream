@@ -34,8 +34,14 @@ trait WebformEntityTrait {
    *
    * @see \Drupal\system\Controller\EntityAutocompleteController
    */
-  public static function setOptions(array &$element, $settings = []) {
+  public static function setOptions(array &$element, array $settings = []) {
     if (!empty($element['#options'])) {
+      return;
+    }
+
+    // Make sure #target_type is not empty.
+    if (empty($element['#target_type'])) {
+      $element['#options'] = [];
       return;
     }
 
@@ -48,10 +54,13 @@ trait WebformEntityTrait {
       '_webform_settings' => $settings,
     ];
 
+    // Make sure settings has a limit.
+    $settings += ['limit' => 0];
+
     /** @var \Drupal\Core\Entity\EntityReferenceSelection\SelectionPluginManagerInterface $selection_manager */
     $selection_manager = \Drupal::service('plugin.manager.entity_reference_selection');
     $handler = $selection_manager->getInstance($selection_handler_options);
-    $referenceable_entities = $handler->getReferenceableEntities();
+    $referenceable_entities = $handler->getReferenceableEntities(NULL, 'CONTAINS', $settings['limit']);
 
     // Flatten all bundle grouping since they are not applicable to
     // WebformEntity elements.
@@ -66,8 +75,13 @@ trait WebformEntityTrait {
       $options = self::translateOptions($options, $element);
     }
 
-    // Only select menu can support optgroups.
-    if ($element['#type'] !== 'webform_entity_select') {
+    if ($element['#type'] === 'webform_entity_select') {
+      // Strip tags from options since <option> element does
+      // not support HTML tags.
+      $options = WebformOptionsHelper::stripTagsOptions($options);
+    }
+    else {
+      // Only select menu can support optgroups.
       $options = OptGroup::flattenOptions($options);
     }
 

@@ -27,6 +27,7 @@ class TikaExtractor extends TextExtractorPluginBase {
    *   The text extracted from the file.
    */
   public function extract(File $file) {
+    $output = '';
     $filepath = $this->getRealpath($file->getFileUri());
     $tika = realpath($this->configuration['tika_path']);
     $java = $this->configuration['java_path'];
@@ -53,7 +54,11 @@ class TikaExtractor extends TextExtractorPluginBase {
     // Support UTF-8 commands:
     // @see http://www.php.net/manual/en/function.shell-exec.php#85095
     shell_exec("LANG=en_US.utf-8");
-    return shell_exec($cmd);
+    $output = shell_exec($cmd);
+    if (is_null($output)) {
+      throw new \Exception('Tika Exctractor is not available.');
+    }
+    return $output;
   }
 
   /**

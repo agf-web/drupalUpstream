@@ -3,8 +3,10 @@
 namespace Drupal\mailchimp\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\Core\Url;
+use Symfony\Component\HttpFoundation\Response;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Mailchimp Webhook controller.
@@ -12,10 +14,58 @@ use Drupal\Core\Url;
 class MailchimpWebhookController extends ControllerBase {
 
   /**
+   * Module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
+   * A logger instance.
+   *
+   * @var \Psr\Log\LoggerInterface
+   */
+  protected $logger;
+
+  /**
+   * Constructs a MailchimpWebhookController.
+   *
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
+   *   Module handler.
+   * @param \Psr\Log\LoggerInterface $logger
+   *   A logger instance.
+   */
+  public function __construct(ModuleHandlerInterface $moduleHandler, LoggerInterface $logger) {
+    $this->moduleHandler = $moduleHandler;
+    $this->logger = $logger;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('module_handler'),
+      $container->get('logger.factory')->get('mailchimp')
+    );
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function endpoint($hash) {
     $return = 0;
+
+    // Return early if the hash in the request does not match.
+    $webhook_hash = $this->config('mailchimp.settings')->get('webhook_hash');
+    if (!empty($webhook_hash) && $webhook_hash !== $hash) {
+      $response = new Response(
+        $return,
+        Response::HTTP_FORBIDDEN,
+        ['content-type' => 'text/plain']
+      );
+      return $response;
+    }
 
     if (!empty($_POST)) {
       $data = $_POST['data'];
@@ -39,20 +89,21 @@ class MailchimpWebhookController extends ControllerBase {
       }
 
       // Allow other modules to act on a webhook.
-      \Drupal::moduleHandler()->invokeAll('mailchimp_process_webhook', array($type, $data));
+      $this->moduleHandler->invokeAll('mailchimp_process_webhook', array($type, $data));
 
       // Log event.
-      \Drupal::logger('mailchimp')->info('Webhook type {type} has been processed.', array(
+      $this->logger->info('Webhook type {type} has been processed.', array(
         'type' => $type));
 
       $return = 1;
     }
 
-    // TODO: There should be a better way of doing this.
-    // D8 routing doesn't seem to allow us to return a single character
-    // or string from a controller.
-    echo $return;
-    exit();
+    $response = new Response(
+      $return,
+      Response::HTTP_OK,
+      ['content-type' => 'text/plain']
+    );
+    return $response;
   }
 
 }

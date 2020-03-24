@@ -2,13 +2,12 @@
 
 namespace Drupal\webform\Plugin\WebformElement;
 
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Mail\MailFormatHelper;
-use Drupal\Core\Render\Element;
 use Drupal\webform\Element\WebformComputedTwig as WebformComputedTwigElement;
 use Drupal\webform\Element\WebformComputedBase as WebformComputedBaseElement;
 use Drupal\webform\Plugin\WebformElementBase;
+use Drupal\webform\Plugin\WebformElementComputedInterface;
 use Drupal\webform\Plugin\WebformElementDisplayOnInterface;
 use Drupal\webform\WebformInterface;
 use Drupal\webform\WebformSubmissionInterface;
@@ -16,14 +15,14 @@ use Drupal\webform\WebformSubmissionInterface;
 /**
  * Provides a base class for 'webform_computed' elements.
  */
-abstract class WebformComputedBase extends WebformElementBase implements WebformElementDisplayOnInterface {
+abstract class WebformComputedBase extends WebformElementBase implements WebformElementDisplayOnInterface, WebformElementComputedInterface {
 
   use WebformDisplayOnTrait;
 
   /**
    * {@inheritdoc}
    */
-  public function getDefaultProperties() {
+  protected function defineDefaultProperties() {
     return [
       // Element settings.
       'title' => '',
@@ -47,8 +46,10 @@ abstract class WebformComputedBase extends WebformElementBase implements Webform
       // Attributes.
       'wrapper_attributes' => [],
       'label_attributes' => [],
-    ] + $this->getDefaultBaseProperties();
+    ] + $this->defineDefaultBaseProperties();
   }
+
+  /****************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -75,19 +76,14 @@ abstract class WebformComputedBase extends WebformElementBase implements Webform
     if (!$this->isDisplayOn($element, static::DISPLAY_ON_FORM)) {
       $element['#access'] = FALSE;
     }
-
-    $element['#element_validate'][] = [get_class($this), 'validateWebformComputed'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function replaceTokens(array &$element, EntityInterface $entity = NULL) {
-    foreach ($element as $key => $value) {
-      if (!Element::child($key) && !in_array($key, ['#template'])) {
-        $element[$key] = $this->tokenManager->replace($value, $entity);
-      }
-    }
+  protected function prepareElementValidateCallbacks(array &$element, WebformSubmissionInterface $webform_submission = NULL) {
+    parent::prepareElementValidateCallbacks($element, $webform_submission);
+    $element['#element_validate'][] = [get_class($this), 'validateWebformComputed'];
   }
 
   /**
@@ -101,15 +97,13 @@ abstract class WebformComputedBase extends WebformElementBase implements Webform
    * {@inheritdoc}
    */
   public function getValue(array $element, WebformSubmissionInterface $webform_submission, array $options = []) {
-    if (!empty($element['#store'])) {
-      // Get stored value if it is set.
-      $value = $webform_submission->getElementData($element['#webform_key']);
-      if (isset($value)) {
-        return $value;
-      }
+    // Get stored value if it is set.
+    $value = $webform_submission->getElementData($element['#webform_key']);
+    if (isset($value)) {
+      return $value;
     }
 
-    return $this->processValue($element, $webform_submission);
+    return $this->computeValue($element, $webform_submission);
   }
 
   /**
@@ -184,9 +178,9 @@ abstract class WebformComputedBase extends WebformElementBase implements Webform
       '#type' => 'select',
       '#title' => $this->t('Mode'),
       '#options' => [
-        WebformComputedBaseElement::MODE_AUTO => t('Auto-detect'),
-        WebformComputedBaseElement::MODE_HTML => t('HTML'),
-        WebformComputedBaseElement::MODE_TEXT => t('Plain text'),
+        WebformComputedBaseElement::MODE_AUTO => $this->t('Auto-detect'),
+        WebformComputedBaseElement::MODE_HTML => $this->t('HTML'),
+        WebformComputedBaseElement::MODE_TEXT => $this->t('Plain text'),
       ],
     ];
     $form['computed']['template'] = [
@@ -240,22 +234,6 @@ abstract class WebformComputedBase extends WebformElementBase implements Webform
   /**
    * {@inheritdoc}
    */
-  public function preSave(array &$element, WebformSubmissionInterface $webform_submission) {
-    $key = $element['#webform_key'];
-    $data = $webform_submission->getData();
-    if (!empty($element['#store'])) {
-      $data[$key] = (string) $this->processValue($element, $webform_submission);
-    }
-    else {
-      // Always unset the value.
-      unset($data[$key]);
-    }
-    $webform_submission->setData($data);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function postSave(array &$element, WebformSubmissionInterface $webform_submission, $update = TRUE) {
     if ($update || empty($element['#store']) || $webform_submission->getWebform()->getSetting('results_disabled')) {
       return;
@@ -264,7 +242,7 @@ abstract class WebformComputedBase extends WebformElementBase implements Webform
     // Recalculate the stored computed value to account new a submission's
     // generated sid and serial.
     $key = $element['#webform_key'];
-    $value = (string) $this->processValue($element, $webform_submission);
+    $value = (string) $this->computeValue($element, $webform_submission);
 
     // Update the submission's value.
     $webform_submission->setElementData($key, $value);
@@ -303,19 +281,11 @@ abstract class WebformComputedBase extends WebformElementBase implements Webform
   }
 
   /**
-   * Process computed element value.
-   *
-   * @param array $element
-   *   An element.
-   * @param \Drupal\webform\WebformSubmissionInterface $webform_submission
-   *   A webform submission.
-   *
-   * @return string
-   *   Processed markup.
+   * {@inheritdoc}
    */
-  protected function processValue(array $element, WebformSubmissionInterface $webform_submission) {
+  public function computeValue(array $element, WebformSubmissionInterface $webform_submission) {
     $class = $this->getFormElementClassDefinition();
-    return $class::processValue($element, $webform_submission);
+    return $class::computeValue($element, $webform_submission);
   }
 
   /**
@@ -330,7 +300,7 @@ abstract class WebformComputedBase extends WebformElementBase implements Webform
    * {@inheritdoc}
    */
   public function getElementSelectorInputValue($selector, $trigger, array $element, WebformSubmissionInterface $webform_submission) {
-    return (string) $this->processValue($element, $webform_submission);
+    return (string) $this->computeValue($element, $webform_submission);
   }
 
 }

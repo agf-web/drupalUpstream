@@ -3,7 +3,6 @@
 namespace Drupal\field_group\Plugin\field_group\FieldGroupFormatter;
 
 use Drupal\Component\Utility\Html;
-use Drupal\Core\Render\Element;
 use Drupal\field_group\FieldGroupFormatterBase;
 
 /**

@@ -14,7 +14,7 @@ class EnvironmentIndicatorListBuilder extends ConfigEntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function getFormID() {
+  public function getFormId() {
     return 'environment_indicator_overview_environments';
   }
 
