@@ -9,7 +9,7 @@ use Drupal\Tests\migrate\Unit\MigrateSqlSourceTestCase;
  *
  * @group metatag
  */
-class MetatagD7FieldTest extends MigrateSqlSourceTestCase {
+class MetatagFieldTest extends MigrateSqlSourceTestCase {
 
   const PLUGIN_CLASS = 'Drupal\metatag\Plugin\migrate\source\d7\MetatagField';
 
@@ -36,7 +36,10 @@ class MetatagD7FieldTest extends MigrateSqlSourceTestCase {
    * {@inheritdoc}
    */
   protected function setUp() {
+    // Make sure that the 'entity_type' values stay the same, so this is really
+    // just a regression test.
     $this->databaseContents['metatag'] = $this->expectedResults;
+
     parent::setUp();
   }
 
