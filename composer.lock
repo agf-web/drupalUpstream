@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b6734bf8fc26e7b3eef3b41939370a0c",
+    "content-hash": "e04e8927f122b3372af9557c09c05c89",
     "packages": [
         {
             "name": "alchemy/zippy",
@@ -3657,8 +3657,7 @@
             "homepage": "https://www.drupal.org/project/menu_block",
             "support": {
                 "source": "https://git.drupalcode.org/project/menu_block"
-            },
-            "time": "2020-03-10T04:34:44+00:00"
+            }
         },
         {
             "name": "drupal/menu_link_attributes",
@@ -4226,6 +4225,66 @@
             }
         },
         {
+            "name": "drupal/robotstxt",
+            "version": "1.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/robotstxt.git",
+                "reference": "8.x-1.4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/robotstxt-8.x-1.4.zip",
+                "reference": "8.x-1.4",
+                "shasum": "8793121a58d2897c0523f3cf13c31f7d80f90154"
+            },
+            "require": {
+                "drupal/core": "^8.0 || ^9.0"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-1.x": "1.x-dev"
+                },
+                "drupal": {
+                    "version": "8.x-1.4",
+                    "datestamp": "1585290535",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "hass",
+                    "homepage": "https://www.drupal.org/u/hass"
+                },
+                {
+                    "name": "See other contributors",
+                    "homepage": "https://www.drupal.org/node/53579/committers"
+                },
+                {
+                    "name": "ccjjmartin",
+                    "homepage": "https://www.drupal.org/user/3210801"
+                },
+                {
+                    "name": "mikeegoulding",
+                    "homepage": "https://www.drupal.org/user/2867877"
+                }
+            ],
+            "description": "Generates the robots.txt file dynamically and gives you the chance to edit it, on a per-site basis, from the web UI.",
+            "homepage": "https://www.drupal.org/project/robotstxt",
+            "support": {
+                "source": "https://git.drupal.org/project/robotstxt.git",
+                "issues": "https://www.drupal.org/project/issues/robotstxt"
+            }
+        },
+        {
             "name": "drupal/scheduler",
             "version": "1.1.0",
             "source": {
@@ -4607,8 +4666,7 @@
             "homepage": "https://www.drupal.org/project/simple_gmap",
             "support": {
                 "source": "https://git.drupalcode.org/project/simple_gmap"
-            },
-            "time": "2020-03-26T17:22:39+00:00"
+            }
         },
         {
             "name": "drupal/smart_trim",

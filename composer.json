@@ -53,6 +53,7 @@
     "drupal/rebuild_cache_access": "^1.6",
     "drupal/redirect": "^1.0@alpha",
     "drupal/reroute_email": "^1.0@beta",
+    "drupal/robotstxt": "^1.4",
     "drupal/scheduler": "^1.0",
     "drupal/search_api": "^1.0",
     "drupal/search_api_attachments": "^1.0@beta",
