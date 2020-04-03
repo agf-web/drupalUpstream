@@ -19,6 +19,14 @@ details_validation:
   dependencies:
     - core/jquery
 
+tab_validation:
+  header: false
+  version: VERSION
+  js:
+    js/field_group.tab_validation.js: {}
+  dependencies:
+    - core/jquery
+
 tabs_validation:
   header: false
   version: VERSION

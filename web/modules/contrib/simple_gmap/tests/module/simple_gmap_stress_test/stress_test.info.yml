@@ -1,0 +1,7 @@
+name: simple_gmap_stress_test
+type: module
+description: 'Provides a stress_test content entity.'
+package: Custom
+core: 8.x
+dependencies:
+  - simple_gmap

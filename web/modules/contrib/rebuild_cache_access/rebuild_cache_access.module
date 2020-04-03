@@ -1,0 +1,47 @@
+<?php
+
+/**
+ * @file
+ * This module adds a 'Rebuild Cache' permission and button to the toolbar.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\rebuild_cache_access\ToolbarHandler;
+
+/**
+ * Implements hook_toolbar().
+ */
+function rebuild_cache_access_toolbar() {
+
+  return \Drupal::service('class_resolver')
+    ->getInstanceFromDefinition(ToolbarHandler::class)
+    ->toolbar();
+}
+
+/**
+ * Implements hook_help().
+ */
+function rebuild_cache_access_help($route_name, RouteMatchInterface $route_match) {
+
+  switch ($route_name) {
+    case 'help.page.rebuild_cache_access':
+
+      $text = file_get_contents(dirname(__FILE__) . "/README.md");
+
+      if (!\Drupal::moduleHandler()->moduleExists('markdown')) {
+        return '<pre>' . $text . '</pre>';
+      }
+      else {
+        // Use the Markdown filter to render the README.
+        $filter_manager = \Drupal::service('plugin.manager.filter');
+        $settings       = \Drupal::configFactory()
+          ->get('markdown.settings')
+          ->getRawData();
+        $config         = ['settings' => $settings];
+        $filter         = $filter_manager->createInstance('markdown', $config);
+        return $filter->process($text, 'en');
+      }
+  }
+
+  return NULL;
+}

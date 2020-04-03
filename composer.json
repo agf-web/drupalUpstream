@@ -50,6 +50,7 @@
     "drupal/paragraphs": "^1.1",
     "drupal/pathauto": "^1.0",
     "drupal/rabbit_hole": "^1.0@beta",
+    "drupal/rebuild_cache_access": "^1.6",
     "drupal/redirect": "^1.0@alpha",
     "drupal/reroute_email": "^1.0@beta",
     "drupal/scheduler": "^1.0",
@@ -167,13 +168,13 @@
         "Allow sort handler to select the view that stored the order": "https://www.drupal.org/files/issues/2019-12-17/draggableviews-sort_handler_specify_order_view-2767437-66.patch"
       },
       "drupal/simple_gmap": {
-        "Address Field Support": "patches/simple_gmap-address-formatter-2863979-30.patch"
+        "Address Field Support": "https://www.drupal.org/files/issues/2020-01-20/simple_gmap-address-formatter-2863979-49.patch"
       },
       "drupal/menu_block": {
         "Menu parent as block title": "patches/menu_block-label_configuration-2809699-51.patch"
       },
       "drupal/field_group": {
-        "HTML5 validation for fields which are currently not part of the visible group": "patches/field_group-validation-2787179-9.patch",
+        "HTML5 validation for fields which are currently not part of the visible group": "https://www.drupal.org/files/issues/2020-02-17/2787179-highlight-html5-validation-45.patch",
         "Fields with errors are not visible": "https://www.drupal.org/files/issues/2020-01-16/field_group-open-groups-with-errors-server-side-2894213-14.patch"
       }
     }

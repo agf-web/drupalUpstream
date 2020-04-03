@@ -3114,7 +3114,9 @@
                     "message": "Dev releases are not covered by Drupal security advisories."
                 }
             },
-            "patches_applied": []
+            "patches_applied": {
+                "Allow sort handler to select the view that stored the order": "https://www.drupal.org/files/issues/2019-12-17/draggableviews-sort_handler_specify_order_view-2767437-66.patch"
+            }
         },
         "installation-source": "source",
         "notification-url": "https://packages.drupal.org/8/downloads",
@@ -3553,6 +3555,7 @@
                 }
             },
             "patches_applied": {
+                "HTML5 validation for fields which are currently not part of the visible group": "https://www.drupal.org/files/issues/2020-02-17/2787179-highlight-html5-validation-45.patch",
                 "Fields with errors are not visible": "https://www.drupal.org/files/issues/2020-01-16/field_group-open-groups-with-errors-server-side-2894213-14.patch"
             }
         },
@@ -4865,6 +4868,55 @@
         }
     },
     {
+        "name": "drupal/rebuild_cache_access",
+        "version": "1.6.0",
+        "version_normalized": "1.6.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupalcode.org/project/rebuild_cache_access.git",
+            "reference": "8.x-1.6"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/rebuild_cache_access-8.x-1.6.zip",
+            "reference": "8.x-1.6",
+            "shasum": "5b53b5550ebdf253cba4d02d4ab8d39c36c8a624"
+        },
+        "require": {
+            "drupal/core": "^8 || ^9"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "branch-alias": {
+                "dev-1.x": "1.x-dev"
+            },
+            "drupal": {
+                "version": "8.x-1.6",
+                "datestamp": "1576265880",
+                "security-coverage": {
+                    "status": "covered",
+                    "message": "Covered by Drupal's security advisory policy"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0-or-later"
+        ],
+        "authors": [
+            {
+                "name": "leymannx",
+                "homepage": "https://www.drupal.org/user/2482808"
+            }
+        ],
+        "description": "Provide a Rebuild Cache admin toolbar button accessible to every role with the corresponding permission set.",
+        "homepage": "https://www.drupal.org/project/rebuild_cache_access",
+        "support": {
+            "source": "https://git.drupalcode.org/project/rebuild_cache_access"
+        }
+    },
+    {
         "name": "drupal/redirect",
         "version": "1.5.0",
         "version_normalized": "1.5.0.0",
@@ -5369,7 +5421,9 @@
                     "message": "Dev releases are not covered by Drupal security advisories."
                 }
             },
-            "patches_applied": []
+            "patches_applied": {
+                "Address Field Support": "https://www.drupal.org/files/issues/2020-01-20/simple_gmap-address-formatter-2863979-49.patch"
+            }
         },
         "installation-source": "source",
         "notification-url": "https://packages.drupal.org/8/downloads",
@@ -6779,7 +6833,8 @@
                 "homepage": "http://www.acci.cz/"
             }
         ],
-        "description": "Highlight PHP code in terminal"
+        "description": "Highlight PHP code in terminal",
+        "abandoned": "php-parallel-lint/php-console-highlighter"
     },
     {
         "name": "jcalderonzumba/gastonjs",

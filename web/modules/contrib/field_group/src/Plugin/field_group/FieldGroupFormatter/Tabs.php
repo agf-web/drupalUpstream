@@ -54,6 +54,7 @@ class Tabs extends FieldGroupFormatterBase {
       '#theme_wrappers' => [$this->getSetting('direction') . '_tabs'],
     ];
 
+    $element['#attached']['library'][] = 'field_group/tabs_validation';
   }
 
   /**
@@ -79,7 +80,6 @@ class Tabs extends FieldGroupFormatterBase {
     $element['group']['#groups'][$this->group->group_name] = [0 => []];
     $element['group']['#groups'][$this->group->group_name]['#group_exists'] = TRUE;
 
-    $element['#attached']['library'][] = 'field_group/tabs_validation';
   }
 
   /**
