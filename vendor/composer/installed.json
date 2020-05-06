@@ -3962,30 +3962,27 @@
     },
     {
         "name": "drupal/imce",
-        "version": "1.7.0",
-        "version_normalized": "1.7.0.0",
+        "version": "2.2.0",
+        "version_normalized": "2.2.0.0",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/imce.git",
-            "reference": "8.x-1.7"
+            "reference": "8.x-2.2"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/imce-8.x-1.7.zip",
-            "reference": "8.x-1.7",
-            "shasum": "55827d5c18c398269cea782a6bb8d9788a97576c"
+            "url": "https://ftp.drupal.org/files/projects/imce-8.x-2.2.zip",
+            "reference": "8.x-2.2",
+            "shasum": "afc77eff2cb146885dd115c303993a8f83ece003"
         },
         "require": {
-            "drupal/core": "~8.0"
+            "drupal/core": "^8.8 || ^9"
         },
         "type": "drupal-module",
         "extra": {
-            "branch-alias": {
-                "dev-1.x": "1.x-dev"
-            },
             "drupal": {
-                "version": "8.x-1.7",
-                "datestamp": "1540559280",
+                "version": "8.x-2.2",
+                "datestamp": "1586699977",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
@@ -3995,9 +3992,14 @@
         "installation-source": "dist",
         "notification-url": "https://packages.drupal.org/8/downloads",
         "license": [
-            "GPL-2.0+"
+            "GPL-2.0-or-later"
         ],
         "authors": [
+            {
+                "name": "See contributors",
+                "homepage": "https://www.drupal.org/node/2841111/committers",
+                "role": "Developer"
+            },
             {
                 "name": "ufku",
                 "homepage": "https://www.drupal.org/user/9910"
@@ -4006,7 +4008,8 @@
         "description": "Provides a file manager supporting personal folders.",
         "homepage": "https://drupal.org/project/imce",
         "support": {
-            "source": "http://cgit.drupalcode.org/imce"
+            "source": "https://git.drupalcode.org/project/imce",
+            "issues": "https://www.drupal.org/project/issues/imce?version=8.x"
         }
     },
     {
@@ -5766,40 +5769,35 @@
     },
     {
         "name": "drupal/video_embed_field",
-        "version": "1.6.0",
-        "version_normalized": "1.6.0.0",
+        "version": "2.4.0",
+        "version_normalized": "2.4.0.0",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/video_embed_field.git",
-            "reference": "8.x-1.6"
+            "reference": "8.x-2.4"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/video_embed_field-8.x-1.6.zip",
-            "reference": "8.x-1.6",
-            "shasum": "e5e6dc6baa538b54da1413f7c6a2f4c040c5fa05"
+            "url": "https://ftp.drupal.org/files/projects/video_embed_field-8.x-2.4.zip",
+            "reference": "8.x-2.4",
+            "shasum": "96b14bb93c1bb6a07b84315a4f87367870f8b574"
         },
         "require": {
-            "drupal/core": "*"
+            "drupal/core": "^8.8 || ^9"
         },
         "require-dev": {
-            "drupal/colorbox": "*",
-            "drupal/media_entity": "*",
-            "drupal/media_entity_embeddable_video": "*"
+            "drupal/colorbox": "^1.0",
+            "drupal/video_embed_media": "*"
         },
         "type": "drupal-module",
         "extra": {
-            "branch-alias": {
-                "dev-1.x": "1.x-dev"
-            },
             "drupal": {
-                "version": "8.x-1.x",
-                "datestamp": "1557724631",
+                "version": "8.x-2.4",
+                "datestamp": "1587686284",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
-                },
-                "package": "Field types"
+                }
             }
         },
         "installation-source": "dist",
@@ -5893,18 +5891,18 @@
     },
     {
         "name": "drupal/webform",
-        "version": "5.9.0",
-        "version_normalized": "5.9.0.0",
+        "version": "5.11.0",
+        "version_normalized": "5.11.0.0",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/webform.git",
-            "reference": "8.x-5.9"
+            "reference": "8.x-5.11"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/webform-8.x-5.9.zip",
-            "reference": "8.x-5.9",
-            "shasum": "fb49b16dd0c421512834fc50c811fa2cd6c48121"
+            "url": "https://ftp.drupal.org/files/projects/webform-8.x-5.11.zip",
+            "reference": "8.x-5.11",
+            "shasum": "2a8664687d2b0b6071bab011dbbb431e15c83710"
         },
         "require": {
             "drupal/core": "^8.7.7 || ^9"
@@ -5915,14 +5913,14 @@
             "drupal/captcha": "~1.0",
             "drupal/chosen": "~2.6",
             "drupal/devel": "*",
-            "drupal/entity_print": "^2.1",
+            "drupal/entity_print": "*",
             "drupal/gnode": "*",
-            "drupal/group": "~1.0",
+            "drupal/group": "*",
             "drupal/mailsystem": "~4.1",
             "drupal/select2": "~1.1",
             "drupal/smtp": "~1.0",
             "drupal/telephone_validation": "^2.2",
-            "drupal/token": "~1.3",
+            "drupal/token": "*",
             "drupal/webform_access": "*",
             "drupal/webform_attachment": "*",
             "drupal/webform_devel": "*",
@@ -5935,12 +5933,9 @@
         },
         "type": "drupal-module",
         "extra": {
-            "branch-alias": {
-                "dev-5.x": "5.x-dev"
-            },
             "drupal": {
-                "version": "8.x-5.9",
-                "datestamp": "1584560013",
+                "version": "8.x-5.11",
+                "datestamp": "1588785899",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
@@ -5955,7 +5950,7 @@
         "installation-source": "dist",
         "notification-url": "https://packages.drupal.org/8/downloads",
         "license": [
-            "GPL-2.0+"
+            "GPL-2.0-or-later"
         ],
         "authors": [
             {
@@ -5969,8 +5964,9 @@
                 "role": "Co-maintainer"
             },
             {
-                "name": "bucefal91",
-                "homepage": "https://www.drupal.org/user/504128"
+                "name": "Contributors",
+                "homepage": "https://www.drupal.org/node/7404/committers",
+                "role": "Contributor"
             },
             {
                 "name": "fenstrat",

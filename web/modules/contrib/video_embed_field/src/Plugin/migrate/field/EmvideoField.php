@@ -1,22 +1,22 @@
 <?php
 
-namespace Drupal\video_embed_field\Plugin\migrate\cckfield;
+namespace Drupal\video_embed_field\Plugin\migrate\field;
 
 use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\migrate\Row;
-use Drupal\migrate_drupal\Plugin\migrate\cckfield\CckFieldPluginBase;
+use Drupal\migrate_drupal\Plugin\migrate\field\FieldPluginBase;
 
 /**
  * Plugin to migrate from the Drupal 6 emfield module.
  *
- * @MigrateCckField(
+ * @MigrateField(
  *   id = "emvideo",
  *   core = {6},
  *   source_module = "emfield",
  *   destination_module = "video_embed_field",
  * )
  */
-class EmvideoField extends CckFieldPluginBase {
+class EmvideoField extends FieldPluginBase {
 
   /**
    * {@inheritdoc}
@@ -48,9 +48,9 @@ class EmvideoField extends CckFieldPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function processCckFieldValues(MigrationInterface $migration, $field_name, $data) {
+  public function defineValueProcessPipeline(MigrationInterface $migration, $field_name, $data) {
     $process = [
-      'plugin' => 'iterator',
+      'plugin' => 'sub_process',
       'source' => $field_name,
       'process' => [
         'value' => 'embed',
