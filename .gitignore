@@ -37,3 +37,4 @@ htpasswd
 pub/.well-known
 data/
 node_modules
+pub/robots.txt
