@@ -6,4 +6,6 @@ function agfirst_modal_message_preprocess_node(array &$vars) {
   }
 
   $vars['display_condition'] = $vars['node']->field_display_condition->value;
+
+  $vars['#attached']['drupalSettings']['modalMessage']['id'] = $vars['node']->id();
 }

@@ -4,3 +4,6 @@ modal_message:
     js/modal-message.js: {}
   dependencies:
     - agfirst_base/fancybox
+    - core/drupal
+    - core/jquery
+    - core/jquery.cookie
