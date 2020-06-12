@@ -28,7 +28,7 @@
                 }
 
                 $(document).on('afterClose.fb', function( e, instance, slide ) {
-                    $.cookie(modalCookieName, 1);
+                    $.cookie(modalCookieName, 1, { expires: 10 });
                 });
 
             });
