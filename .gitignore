@@ -34,7 +34,6 @@ files
 
 # Ignore Cyberwoven internals.
 htpasswd
-pub/.well-known
 data/
 node_modules
-pub/robots.txt
+web/robots.txt
