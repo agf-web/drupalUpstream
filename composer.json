@@ -43,7 +43,7 @@
     "drupal/linkit": "^4.3",
     "drupal/mailchimp": "^1.2",
     "drupal/masquerade": "^2.0@beta",
-    "drupal/menu_block": "1.x-dev",
+    "drupal/menu_block": "^1.6",
     "drupal/menu_link_attributes": "^1.0",
     "drupal/metatag": "^1.0",
     "drupal/module_filter": "^3.0",
@@ -171,12 +171,9 @@
       "drupal/simple_gmap": {
         "Address Field Support": "https://www.drupal.org/files/issues/2020-01-20/simple_gmap-address-formatter-2863979-49.patch"
       },
-      "drupal/menu_block": {
-        "Menu parent as block title": "patches/menu_block-label_configuration-2809699-51.patch"
-      },
       "drupal/field_group": {
-        "HTML5 validation for fields which are currently not part of the visible group": "https://www.drupal.org/files/issues/2020-02-17/2787179-highlight-html5-validation-45.patch",
-        "Fields with errors are not visible": "https://www.drupal.org/files/issues/2020-01-16/field_group-open-groups-with-errors-server-side-2894213-14.patch"
+        "HTML5 validation for fields which are currently not part of the visible group": "https://www.drupal.org/files/issues/2020-05-28/2787179-highlight-html5-validation-53.patch",
+        "Fields with errors are not visible": "https://www.drupal.org/files/issues/2020-06-11/field_group-open-groups-with-errors-server-side-2894213-15.patch"
       }
     }
   },

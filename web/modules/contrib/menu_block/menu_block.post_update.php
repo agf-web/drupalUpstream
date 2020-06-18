@@ -25,5 +25,5 @@ function menu_block_post_update_implement_schema_for_follow_and_follow_parent(&$
         return TRUE;
       }
       return FALSE;
-  });
+    });
 }

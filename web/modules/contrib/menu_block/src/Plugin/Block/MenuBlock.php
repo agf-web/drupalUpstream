@@ -4,9 +4,11 @@ namespace Drupal\menu_block\Plugin\Block;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Menu\MenuParentFormSelectorInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\system\Entity\Menu;
 use Drupal\system\Plugin\Block\SystemMenuBlock;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides an extended Menu block.
@@ -22,6 +24,36 @@ use Drupal\system\Plugin\Block\SystemMenuBlock;
  * )
  */
 class MenuBlock extends SystemMenuBlock {
+
+  /**
+   * The menu parent form selector service.
+   *
+   * @var \Drupal\Core\Menu\MenuParentFormSelectorInterface
+   */
+  protected $menuParentFormSelector;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+    $instance->setMenuParentFormSelector($container->get('menu.parent_form_selector'));
+
+    return $instance;
+  }
+
+  /**
+   * Set menu parent form selector service.
+   *
+   * @param \Drupal\Core\Menu\MenuParentFormSelectorInterface $menu_parent_form_selector
+   *   The menu parent form selector service.
+   *
+   * @return $this
+   */
+  public function setMenuParentFormSelector(MenuParentFormSelectorInterface $menu_parent_form_selector) {
+    $this->menuParentFormSelector = $menu_parent_form_selector;
+    return $this;
+  }
 
   /**
    * {@inheritdoc}
@@ -50,32 +82,11 @@ class MenuBlock extends SystemMenuBlock {
     $menus = Menu::loadMultiple([$menu_name]);
     $menus[$menu_name] = $menus[$menu_name]->label();
 
-    /** @var \Drupal\Core\Menu\MenuParentFormSelectorInterface $menu_parent_selector */
-    $menu_parent_selector = \Drupal::service('menu.parent_form_selector');
-    $form['advanced']['parent'] = $menu_parent_selector->parentSelectElement($config['parent'], '', $menus);
+    $form['advanced']['parent'] = $this->menuParentFormSelector->parentSelectElement($config['parent'], '', $menus);
 
     $form['advanced']['parent'] += [
       '#title' => $this->t('Fixed parent item'),
       '#description' => $this->t('Alter the options in “Menu levels” to be relative to the fixed parent item. The block will only contain children of the selected menu link.'),
-    ];
-
-    $form['advanced']['label_type'] = [
-      '#type' => 'select',
-      '#title' => $this->t("Use the following as title"),
-      '#options' => [
-        'block' => $this->t("Block title"),
-        'menu' => $this->t("Menu title"),
-        'active_item' => $this->t("Active item's title"),
-        'parent' => $this->t("Active trail's parent title"),
-        'root' => $this->t("Active trail's root title"),
-        'initial_menu_item' => $this->t("Initial menu item's title"),
-      ],
-      '#default_value' => $config['label_type'],
-      '#states' => [
-        'visible' => [
-          ':input[name="settings[label_display]"]' => ['checked' => TRUE],
-        ],
-      ],
     ];
 
     $form['style'] = [
@@ -153,7 +164,6 @@ class MenuBlock extends SystemMenuBlock {
     $this->configuration['expand'] = $form_state->getValue('expand');
     $this->configuration['parent'] = $form_state->getValue('parent');
     $this->configuration['suggestion'] = $form_state->getValue('suggestion');
-    $this->configuration['label_type'] = $form_state->getValue('label_type');
   }
 
   /**
@@ -300,7 +310,6 @@ class MenuBlock extends SystemMenuBlock {
       'depth' => 0,
       'expand' => 0,
       'parent' => $this->getDerivativeId() . ':',
-      'label_type' => 'block',
       'suggestion' => strtr($this->getDerivativeId(), '-', '_'),
     ];
   }

@@ -8,7 +8,7 @@
   Drupal.behaviors.fieldGroupTabValidation = {
     attach: function () {
       var openTabsWithInvalidFields = function() {
-        $('.field-group-tab input:invalid').parents('details').children('summary[aria-expanded=false]').click();
+        $('.field-group-tab :invalid').parents('details').children('summary[aria-expanded=false]').click();
       }
 
       // When a form is first loaded, open tabs with invalid fields.
