@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.branch.body
+    - field.field.node.branch.field_get_farm_credit_id
+    - node.type.branch
+  module:
+    - user
+id: node.branch.default
+targetEntityType: node
+bundle: branch
+mode: default
+content: {  }
+hidden:
+  body: true
+  field_get_farm_credit_id: true
+  links: true

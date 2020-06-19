@@ -1,0 +1,4 @@
+agfirst_branch_locator.client:
+  version: 1.0
+  js:
+    //www.getfarmcredit.com/modules/custom/getfarmcreditmap/js/getfarmcreditmap.js: { type: external, minified: true, preprocess: true }

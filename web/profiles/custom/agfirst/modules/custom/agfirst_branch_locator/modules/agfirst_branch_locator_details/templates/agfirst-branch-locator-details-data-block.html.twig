@@ -1,0 +1,66 @@
+<article class="branch-info">
+  {% if detail_data.address|trim or detail_data.city|trim or detail_data.state|trim or detail_data.zip|trim %}
+    <div class="branch-info__field branch-info__field--address">
+      <span class="branch-info__label">Address</span>
+      <div class="branch-info__value">
+        <p class="address" translate="no">
+          {% if detail_data.address|trim %}
+            <span class="address-line1">{{ detail_data.address }}</span>
+            <br>
+          {% endif %}
+          {% if detail_data.city|trim %}
+            <span class="locality">{{ detail_data.city }}</span>,
+          {% endif %}
+          {% if detail_data.state|trim %}
+            <span class="administrative-area">{{ detail_data.state }}</span>
+          {% endif %}
+          {% if detail_data.zip|trim %}
+            <span class="postal-code">{{ detail_data.zip }}</span>
+          {% endif %}
+          <br>
+          <span class="country">United States</span>
+        </p>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if detail_data.phone1|trim %}
+    <div class="branch-info__field">
+      <span class="branch-info__label">Phone</span>
+      <div class="branch-info__value">
+        <a href="tel:{{ detail_data.phone1 }}">{{ detail_data.phone1 }}</a>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if detail_data.phone2|trim %}
+    <div class="branch-info__field">
+      <span class="branch-info__label">Phone</span>
+      <div class="branch-info__value">
+        <a href="tel:{{ detail_data.phone2 }}">{{ detail_data.phone2 }}</a>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if detail_data.fax|trim %}
+    <div class="branch-info__field">
+      <span class="branch-info__label">Fax</span>
+      <div class="branch-info__value">
+        <a href="tel:{{ detail_data.fax }}">{{ detail_data.fax }}</a>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if detail_data.counties is not empty %}
+    <div class="branch-info__field branch-info__field--counties">
+      <span class="branch-info__label">Counties Served</span>
+      <div class="branch-info__value">
+        <ul>
+          {% for county in detail_data.counties %}
+            <li>{{ county }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  {% endif %}
+</article>

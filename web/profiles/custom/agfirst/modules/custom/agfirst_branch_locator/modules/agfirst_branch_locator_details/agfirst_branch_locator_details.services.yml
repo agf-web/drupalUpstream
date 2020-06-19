@@ -1,0 +1,3 @@
+services:
+  agfirst_branch_locator_details.detail_service:
+    class: Drupal\agfirst_branch_locator_details\Services\AgfirstBranchLocatorDetailsService

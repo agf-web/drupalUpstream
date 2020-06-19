@@ -1,0 +1,9 @@
+agfirst_branch_locator.settings:
+  path: '/admin/config/agfirst-branch-locator/settings'
+  defaults:
+    _form: '\Drupal\agfirst_branch_locator\Form\AgfirstBranchLocatorConfigForm'
+    _title: 'AgFirst Branch Locator Configuration Screen'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _admin_route: true

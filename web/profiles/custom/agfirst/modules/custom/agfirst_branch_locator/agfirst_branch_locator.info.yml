@@ -1,0 +1,6 @@
+name: AgFirst Branch Locator
+description: Branch Locator provided in a block (client-side vue app)
+package: AgFirst
+type: module
+core: 8.x
+configure: agfirst_branch_locator.settings
