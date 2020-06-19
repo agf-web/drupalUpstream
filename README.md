@@ -1,3 +1,5 @@
+# NOTE: THIS IS LEGACY UPSTREAM
+
 # AgFirst Core
 
 This repository is a start state for a Composer-based Drupal workflow with Pantheon.
