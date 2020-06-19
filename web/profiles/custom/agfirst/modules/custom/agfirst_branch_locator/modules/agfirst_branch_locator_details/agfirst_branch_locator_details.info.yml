@@ -1,0 +1,8 @@
+name: AgFirst Branch Locator Details
+type: module
+description: Installs Content Type of 'Branch' and provides Data Block, Map Block, and AppData (formerly extras) Block for detail pages.
+core: 8.x
+package: AgFirst
+dependencies:
+  - agfirst_branch_locator:agfirst_branch_locator
+

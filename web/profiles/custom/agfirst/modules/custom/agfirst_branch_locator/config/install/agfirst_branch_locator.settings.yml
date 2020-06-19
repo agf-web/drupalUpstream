@@ -1,0 +1,12 @@
+auth_key: ''
+use_drupal_detail_url: 1
+disable_logo: 0
+disable_title: 0
+custom_logo_enable: 0
+custom_logo_url: ''
+custom_intro_enable: 0
+custom_intro_text: ''
+filter_by_state: 0
+state_name: 'sc'
+filter_by_association: 0
+association_id: null

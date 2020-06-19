@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_get_farm_credit_id
+    - node.type.branch
+id: node.branch.field_get_farm_credit_id
+field_name: field_get_farm_credit_id
+entity_type: node
+bundle: branch
+label: 'Get Farm Credit ID'
+description: 'You can find this information at <a href="https://www.getfarmcredit.com">https://www.getfarmcredit.com</a>.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

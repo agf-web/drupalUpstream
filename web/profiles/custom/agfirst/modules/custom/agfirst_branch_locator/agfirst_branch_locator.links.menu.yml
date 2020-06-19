@@ -1,0 +1,5 @@
+agfirst_branch_locator.settings:
+  title: 'AgFirst Branch Locator Configuration'
+  route_name: agfirst_branch_locator.settings
+  description: 'AgFirst Branch Locator settings.'
+  parent: system.admin_config_system

@@ -1,0 +1,70 @@
+<?php
+
+/**
+ * @file
+ * Contains agfirst_branch_locator_details.module..
+ */
+
+// use Drupal\Core\Cache;
+use Drupal\Core\Cache\Cache;
+use Drupal\node\NodeInterface;
+
+/**
+ * Implements hook_theme().
+ */
+function agfirst_branch_locator_details_theme($existing, $type, $theme, $path) {
+  return [
+    'agfirst_branch_locator_details_data_block' => [
+      'variables' => [
+        'detail_data' => [],
+        'attributes' => [],
+      ],
+    ],
+    'agfirst_branch_locator_details_map_block' => [
+      'variables' => [
+        'detail_data' => [],
+        'attributes' => [],
+      ],
+    ],
+  ];
+}
+
+function agfirst_branch_locator_details_preprocess_node__branch(&$vars) {
+  $is_admin = \Drupal::service('router.admin_context')->isAdminRoute();
+
+  if (!$is_admin) {
+    // load the blocks. allows us to use these blocks without region placement via Block Layout :)
+    $branchDetail = \Drupal::service('plugin.manager.block')->createInstance('agfirst_branch_locator_details_data_block', []);
+    $mapBlock = \Drupal::service('plugin.manager.block')->createInstance('agfirst_branch_locator_details_map_block', []);
+
+    if (isset($branchDetail) && !empty($branchDetail)) {
+      $vars['content']['branch_details'] = $branchDetail->build();
+    }
+
+    if (isset($mapBlock) && !empty($mapBlock)) {
+      $vars['content']['branch_map'] = $mapBlock->build();
+    }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ */
+function agfirst_branch_locator_details_node_presave(NodeInterface $node) {
+  if ($node->bundle() === 'branch') {
+    // Allows for clearing of blocks based on node type.
+    $tags = ['node_type:' . $node->bundle()];
+    Cache::invalidateTags($tags);
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function agfirst_branch_locator_details_node_delete(NodeInterface $node) {
+  if ($node->bundle() === 'branch') {
+    // Allows for clearing of blocks based on node type.
+    $tags = ['node_type:' . $node->bundle()];
+    Cache::invalidateTags($tags);
+  }
+}
