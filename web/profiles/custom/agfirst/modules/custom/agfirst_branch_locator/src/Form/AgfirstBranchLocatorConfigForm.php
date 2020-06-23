@@ -113,7 +113,7 @@ class AgfirstBranchLocatorConfigForm extends ConfigFormBase {
       '#type' => 'select',
       '#title' => $this->t('Association'),
       '#description' => $this->t(''),
-      '#default_value' => $config->get('custom_intro_enable'),
+      '#default_value' => $config->get('association_id'),
       '#empty_option' => 'Select an Association',
       '#options' => [
         '0' => 'AgCarolina Farm Credit, ACA',
