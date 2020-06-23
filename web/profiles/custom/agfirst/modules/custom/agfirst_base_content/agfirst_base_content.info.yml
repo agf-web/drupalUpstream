@@ -33,7 +33,6 @@ dependencies:
   - field_ui
   - file
   - filter
-  - getfarmcredit_client
   - history
   - image
   - image_url_formatter
