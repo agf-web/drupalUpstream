@@ -13,6 +13,7 @@ class ComposerStaticInit06cfba171977e2e6c39b75884dc9cee6
         'bd9634f2d41831496de0d3dfe4c94881' => __DIR__ . '/..' . '/symfony/polyfill-php56/bootstrap.php',
         '023d27dca8066ef29e6739335ea73bad' => __DIR__ . '/..' . '/symfony/polyfill-php70/bootstrap.php',
         '7e9bd612cc444b3eed788ebbe46263a0' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/autoload.php',
+        'e69f7f6ee287b969198c3c9d6777bd38' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/bootstrap.php',
         '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
         'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
@@ -87,6 +88,7 @@ class ComposerStaticInit06cfba171977e2e6c39b75884dc9cee6
             'Symfony\\Polyfill\\Php70\\' => 23,
             'Symfony\\Polyfill\\Php56\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
+            'Symfony\\Polyfill\\Intl\\Normalizer\\' => 33,
             'Symfony\\Polyfill\\Intl\\Idn\\' => 26,
             'Symfony\\Polyfill\\Iconv\\' => 23,
             'Symfony\\Polyfill\\Ctype\\' => 23,
@@ -263,6 +265,10 @@ class ComposerStaticInit06cfba171977e2e6c39b75884dc9cee6
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+        ),
+        'Symfony\\Polyfill\\Intl\\Normalizer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer',
         ),
         'Symfony\\Polyfill\\Intl\\Idn\\' => 
         array (
@@ -2430,6 +2436,7 @@ class ComposerStaticInit06cfba171977e2e6c39b75884dc9cee6
         'Drupal\\Core\\Block\\BlockManager' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/Block/BlockManager.php',
         'Drupal\\Core\\Block\\BlockManagerInterface' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/Block/BlockManagerInterface.php',
         'Drupal\\Core\\Block\\BlockPluginInterface' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/Block/BlockPluginInterface.php',
+        'Drupal\\Core\\Block\\BlockPluginTrait' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/Block/BlockPluginTrait.php',
         'Drupal\\Core\\Block\\MainContentBlockPluginInterface' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/Block/MainContentBlockPluginInterface.php',
         'Drupal\\Core\\Block\\MessagesBlockPluginInterface' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/Block/MessagesBlockPluginInterface.php',
         'Drupal\\Core\\Block\\Plugin\\Block\\Broken' => __DIR__ . '/../..' . '/web/core/lib/Drupal/Core/Block/Plugin/Block/Broken.php',
@@ -4096,6 +4103,7 @@ class ComposerStaticInit06cfba171977e2e6c39b75884dc9cee6
         'Egulias\\EmailValidator\\Exception\\CommaInDomain' => __DIR__ . '/..' . '/egulias/email-validator/src/Exception/CommaInDomain.php',
         'Egulias\\EmailValidator\\Exception\\ConsecutiveAt' => __DIR__ . '/..' . '/egulias/email-validator/src/Exception/ConsecutiveAt.php',
         'Egulias\\EmailValidator\\Exception\\ConsecutiveDot' => __DIR__ . '/..' . '/egulias/email-validator/src/Exception/ConsecutiveDot.php',
+        'Egulias\\EmailValidator\\Exception\\DomainAcceptsNoMail' => __DIR__ . '/..' . '/egulias/email-validator/src/Exception/DomainAcceptsNoMail.php',
         'Egulias\\EmailValidator\\Exception\\DomainHyphened' => __DIR__ . '/..' . '/egulias/email-validator/src/Exception/DomainHyphened.php',
         'Egulias\\EmailValidator\\Exception\\DotAtEnd' => __DIR__ . '/..' . '/egulias/email-validator/src/Exception/DotAtEnd.php',
         'Egulias\\EmailValidator\\Exception\\DotAtStart' => __DIR__ . '/..' . '/egulias/email-validator/src/Exception/DotAtStart.php',
@@ -4106,6 +4114,7 @@ class ComposerStaticInit06cfba171977e2e6c39b75884dc9cee6
         'Egulias\\EmailValidator\\Exception\\ExpectingDomainLiteralClose' => __DIR__ . '/..' . '/egulias/email-validator/src/Exception/ExpectingDomainLiteralClose.php',
         'Egulias\\EmailValidator\\Exception\\ExpectingQPair' => __DIR__ . '/..' . '/egulias/email-validator/src/Exception/ExpectingQPair.php',
         'Egulias\\EmailValidator\\Exception\\InvalidEmail' => __DIR__ . '/..' . '/egulias/email-validator/src/Exception/InvalidEmail.php',
+        'Egulias\\EmailValidator\\Exception\\LocalOrReservedDomain' => __DIR__ . '/..' . '/egulias/email-validator/src/Exception/LocalOrReservedDomain.php',
         'Egulias\\EmailValidator\\Exception\\NoDNSRecord' => __DIR__ . '/..' . '/egulias/email-validator/src/Exception/NoDNSRecord.php',
         'Egulias\\EmailValidator\\Exception\\NoDomainPart' => __DIR__ . '/..' . '/egulias/email-validator/src/Exception/NoDomainPart.php',
         'Egulias\\EmailValidator\\Exception\\NoLocalPart' => __DIR__ . '/..' . '/egulias/email-validator/src/Exception/NoLocalPart.php',
@@ -4467,6 +4476,7 @@ class ComposerStaticInit06cfba171977e2e6c39b75884dc9cee6
         'Masterminds\\HTML5\\Serializer\\OutputRules' => __DIR__ . '/..' . '/masterminds/html5/src/HTML5/Serializer/OutputRules.php',
         'Masterminds\\HTML5\\Serializer\\RulesInterface' => __DIR__ . '/..' . '/masterminds/html5/src/HTML5/Serializer/RulesInterface.php',
         'Masterminds\\HTML5\\Serializer\\Traverser' => __DIR__ . '/..' . '/masterminds/html5/src/HTML5/Serializer/Traverser.php',
+        'Normalizer' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/Resources/stubs/Normalizer.php',
         'OS_Guess' => __DIR__ . '/..' . '/pear/pear-core-minimal/src/OS/Guess.php',
         'PEAR' => __DIR__ . '/..' . '/pear/pear-core-minimal/src/PEAR.php',
         'PEAR_Error' => __DIR__ . '/..' . '/pear/pear-core-minimal/src/PEAR.php',
@@ -6673,6 +6683,7 @@ class ComposerStaticInit06cfba171977e2e6c39b75884dc9cee6
         'Symfony\\Component\\Validator\\Mapping\\PropertyMetadataInterface' => __DIR__ . '/..' . '/symfony/validator/Mapping/PropertyMetadataInterface.php',
         'Symfony\\Component\\Validator\\Mapping\\TraversalStrategy' => __DIR__ . '/..' . '/symfony/validator/Mapping/TraversalStrategy.php',
         'Symfony\\Component\\Validator\\ObjectInitializerInterface' => __DIR__ . '/..' . '/symfony/validator/ObjectInitializerInterface.php',
+        'Symfony\\Component\\Validator\\Test\\AssertingContextualValidator' => __DIR__ . '/..' . '/symfony/validator/Test/ConstraintValidatorTestCase.php',
         'Symfony\\Component\\Validator\\Test\\ConstraintValidatorTestCase' => __DIR__ . '/..' . '/symfony/validator/Test/ConstraintValidatorTestCase.php',
         'Symfony\\Component\\Validator\\Test\\ConstraintViolationAssertion' => __DIR__ . '/..' . '/symfony/validator/Test/ConstraintValidatorTestCase.php',
         'Symfony\\Component\\Validator\\Test\\ForwardCompatTestTrait' => __DIR__ . '/..' . '/symfony/validator/Test/ForwardCompatTestTrait.php',
@@ -6743,6 +6754,10 @@ class ComposerStaticInit06cfba171977e2e6c39b75884dc9cee6
         'Symfony\\Polyfill\\Ctype\\Ctype' => __DIR__ . '/..' . '/symfony/polyfill-ctype/Ctype.php',
         'Symfony\\Polyfill\\Iconv\\Iconv' => __DIR__ . '/..' . '/symfony/polyfill-iconv/Iconv.php',
         'Symfony\\Polyfill\\Intl\\Idn\\Idn' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/Idn.php',
+        'Symfony\\Polyfill\\Intl\\Idn\\Info' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/Info.php',
+        'Symfony\\Polyfill\\Intl\\Idn\\Resources\\unidata\\DisallowedRanges' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/Resources/unidata/DisallowedRanges.php',
+        'Symfony\\Polyfill\\Intl\\Idn\\Resources\\unidata\\Regex' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/Resources/unidata/Regex.php',
+        'Symfony\\Polyfill\\Intl\\Normalizer\\Normalizer' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/Normalizer.php',
         'Symfony\\Polyfill\\Mbstring\\Mbstring' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/Mbstring.php',
         'Symfony\\Polyfill\\Php56\\Php56' => __DIR__ . '/..' . '/symfony/polyfill-php56/Php56.php',
         'Symfony\\Polyfill\\Php70\\Php70' => __DIR__ . '/..' . '/symfony/polyfill-php70/Php70.php',

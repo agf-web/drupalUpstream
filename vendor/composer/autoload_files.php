@@ -12,6 +12,7 @@ return array(
     'bd9634f2d41831496de0d3dfe4c94881' => $vendorDir . '/symfony/polyfill-php56/bootstrap.php',
     '023d27dca8066ef29e6739335ea73bad' => $vendorDir . '/symfony/polyfill-php70/bootstrap.php',
     '7e9bd612cc444b3eed788ebbe46263a0' => $vendorDir . '/laminas/laminas-zendframework-bridge/src/autoload.php',
+    'e69f7f6ee287b969198c3c9d6777bd38' => $vendorDir . '/symfony/polyfill-intl-normalizer/bootstrap.php',
     '25072dd6e2470089de65ae7bf11d3109' => $vendorDir . '/symfony/polyfill-php72/bootstrap.php',
     'f598d06aa772fa33d905e87be6398fb1' => $vendorDir . '/symfony/polyfill-intl-idn/bootstrap.php',
     '7b11c4dc42b3b3023073cb14e519683c' => $vendorDir . '/ralouphie/getallheaders/src/getallheaders.php',
