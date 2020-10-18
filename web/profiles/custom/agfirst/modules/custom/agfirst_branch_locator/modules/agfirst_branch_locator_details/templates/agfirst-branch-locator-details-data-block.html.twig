@@ -24,6 +24,31 @@
     </div>
   {% endif %}
 
+  {% if detail_data.mailaddress|trim %}
+    <div class="branch-info__field branch-info__field--address">
+      <span class="branch-info__label">Mailing Address</span>
+      <div class="branch-info__value">
+        <p class="address" translate="no">
+          {% if detail_data.mailaddress|trim %}
+            <span class="address-line1">{{ detail_data.mailaddress }}</span>
+            <br>
+          {% endif %}
+          {% if detail_data.city|trim %}
+            <span class="locality">{{ detail_data.city }}</span>,
+          {% endif %}
+          {% if detail_data.state|trim %}
+            <span class="administrative-area">{{ detail_data.state }}</span>
+          {% endif %}
+          {% if detail_data.mailzip|trim %}
+            <span class="postal-code">{{ detail_data.mailzip }}</span>
+          {% endif %}
+          <br>
+          <span class="country">United States</span>
+        </p>
+      </div>
+    </div>
+  {% endif %}
+
   {% if detail_data.phone1|trim %}
     <div class="branch-info__field">
       <span class="branch-info__label">Phone</span>

@@ -37,6 +37,8 @@ class AgfirstBranchLocatorDetailsService {
       $data['city'] = $object->City;
       $data['zip'] = $object->Zip;
       $data['address'] = $object->Address;
+      $data['mailaddress'] = $object->shipping_address->Address;
+      $data['mailzip'] = $object->shipping_address->Zip;
       $data['phone1'] = $object->{'Phone 1'};
       $data['phone2'] = $object->{'Phone 2'};
       $data['fax'] = $object->Fax;
