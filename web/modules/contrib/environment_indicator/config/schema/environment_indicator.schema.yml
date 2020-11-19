@@ -14,7 +14,7 @@ environment_indicator.switcher.*:
       type: string
       label: 'Name'
     url:
-      type: url
+      type: uri
       label: 'URL'
     fg_color:
       type: string

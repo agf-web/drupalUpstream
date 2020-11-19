@@ -55,7 +55,7 @@ class EnvironmentIndicatorDeleteForm extends EntityConfirmFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->entity->delete();
-    drupal_set_message($this->t('Deleted environment %name.', ['%name' => $this->entity->label()]));
+    $this->messenger()->addMessage($this->t('Deleted environment %name.', ['%name' => $this->entity->label()]));
     // TODO: Figure out how to log stuff to the watchdog.
     $form_state['redirect'] = 'admin/config/development/environment-indicator';
     Cache::invalidateTags(['content' => TRUE]);

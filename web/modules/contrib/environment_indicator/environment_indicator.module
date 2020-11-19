@@ -22,12 +22,12 @@ function environment_indicator_help($route_name, RouteMatchInterface $route_matc
       $output .= '<p>' . t('The Environment Indicator\'s visibility depends upon the permissions of the viewer. The <a href=":permissions">access environment indicator</a> permission must be enabled for a user role in order for users of that role to see the indicator.', [
         ':permissions' => $permissions_url,
       ]) . '</p>';
-      $output .= '<p>' . t('The recommended way to add information about your release is to set the \'environment_indicator.current_release\' state. Use your git hooks to set the state using drush: <code>drush sset environment_indicator.current_release v1.2.44</code>') . '</p>';
+      $output .= '<p>' . t('The recommended way to add information about your release is to set the "environment_indicator.current_release" state. Use your git hooks to set the state using drush: <code>drush sset environment_indicator.current_release v1.2.44</code>') . '</p>';
       return $output;
 
     case 'entity.environment_indicator.collection':
       $output = '<p>' . t('The environment indicator switcher allows you to create a menu to switch between your environments easily.') . '</p>';
-      $output .= '<p>' . t('You will need to declare all the environments you want to switch. It is advisable that you set your environments in the switcher with the same colors that you use in every environment\'s settings.php.') . '</p>';
+      $output .= '<p>' . t("You will need to declare all the environments you want to switch. It is advisable that you set your environments in the switcher with the same colors that you use in every environment's settings.php.") . '</p>';
       return $output;
 
     case 'help.page.environment_indicator':
@@ -36,11 +36,17 @@ function environment_indicator_help($route_name, RouteMatchInterface $route_matc
       $output .= '<p>' . t('The Environment Indicator\'s visibility depends upon the permissions of the viewer. The <a href=":permissions">access environment indicator</a> permission must be enabled for a user role in order for users of that role to see the indicator.', [':permissions' => $permissions_url]) . '</p>';
       $output .= '<p>' . t('Modify the "environment_indicator.indicator" configuration object to control how the environment indicator is presented:') . '</p>';
       $output .= '<dl>';
-      $output .= '<dt><em>$config[\'environment_indicator.indicator\'][\'bg_color\']</em></dt><dd>' . t('A valid CSS color for the background of the indicator.') . '<br/>$config[\'environment_indicator.indicator\'][\'bg_color\'];<br /></dd></dt>';
-      $output .= '<dt><em>$config[\'environment_indicator.indicator\'][\'fg_color\']</em></dt><dd>' . t('A valid CSS color for the text of the indicator.') . '<br/>$config[\'environment_indicator.indicator\'][\'fg_color\'] = \'#555533\';<br /></dd></dt>';
-      $output .= '<dt><em>$config[\'environment_indicator.indicator\'][\'name\']</em></dt><dd>' . t('The text that will be displayed on the indicator.') . '<br/>$config[\'environment_indicator.indicator\'][\'name\'] = \'Staging\';<br /></dd></dt>';
+      $output .= '<dt><em>$config[\'environment_indicator.indicator\'][\'bg_color\']</em></dt><dd>';
+      $output .= t('A valid CSS color for the background of the indicator.') . '<br/>';
+      $output .= '$config[\'environment_indicator.indicator\'][\'bg_color\'];<br /></dd></dt>';
+      $output .= '<dt><em>$config[\'environment_indicator.indicator\'][\'fg_color\']</em></dt><dd>';
+      $output .= t('A valid CSS color for the text of the indicator.') . '<br/>';
+      $output .= '$config[\'environment_indicator.indicator\'][\'fg_color\'] = \'#555533\';<br /></dd></dt>';
+      $output .= '<dt><em>$config[\'environment_indicator.indicator\'][\'name\']</em></dt><dd>';
+      $output .= t('The text that will be displayed on the indicator.') . '<br/>';
+      $output .= '$config[\'environment_indicator.indicator\'][\'name\'] = \'Staging\';<br /></dd></dt>';
       $output .= '</dl>';
-      $output .= '<p>' . t('The recommended way to add information about your release is to set the \'environment_indicator.current_release\' state. Use your git hooks to set the state using drush: <code>drush sset environment_indicator.current_release v1.2.44</code>') . '</p>';
+      $output .= '<p>' . t('The recommended way to add information about your release is to set the "environment_indicator.current_release" state. Use your git hooks to set the state using drush: <code>drush sset environment_indicator.current_release v1.2.44</code>') . '</p>';
 
       return $output;
   }
@@ -179,8 +185,8 @@ function _environment_indicator_parse_style($style) {
 function environment_indicator_toolbar() {
   $active_environment = \Drupal::config('environment_indicator.indicator');
   $title = $active_environment->get('name');
-  $permission = \Drupal::currentUser()
-    ->hasPermission('access environment indicator');
+  $currentUser = Drupal::currentUser();
+  $permission = $currentUser->hasPermission('access environment indicator');
   $items['environment_indicator'] = [
     '#attached' => [
       'library' => ['environment_indicator/drupal.environment_indicator'],
@@ -235,6 +241,7 @@ function environment_indicator_toolbar() {
       '#access' => $permission,
       'configure' => [
         '#type' => 'link',
+        '#access' => $currentUser->hasPermission('administer environment indicator settings'),
         '#title' => t('Configure'),
         '#url' => Url::fromRoute('environment_indicator.settings'),
         '#weight' => 100,
@@ -290,17 +297,25 @@ function _environment_indicator_switcher_links() {
       return $entity->status();
     }
   );
-  return array_map(function (EnvironmentIndicator $entity) use ($current_path) {
-    return [
-      'attributes' => [
-        'style' => 'color: ' . $entity->getFgColor() . '; background-color: ' . $entity->getBgColor() . ';',
-        'title' => t('Opens the current page in the selected environment.'),
-      ],
-      'title' => t('Open in: @label', ['@label' => $entity->label()]),
-      'url' => Url::fromUri($entity->getUrl() . $current_path),
-      'type' => 'link',
-    ];
-  }, $environment_entities);
+  return array_map(
+    function (EnvironmentIndicator $entity) use ($current_path) {
+      return [
+        'attributes' => [
+          'style' => 'color: ' . $entity->getFgColor() . '; background-color: ' . $entity->getBgColor() . ';',
+          'title' => t('Opens the current page in the selected environment.'),
+        ],
+        'title' => t('Open in: @label', ['@label' => $entity->label()]),
+        'url' => Url::fromUri($entity->getUrl() . $current_path),
+        'type' => 'link',
+      ];
+    },
+    array_filter(
+      $environment_entities,
+      function (EnvironmentIndicator $entity) {
+        return !empty($entity->getUrl());
+      }
+    )
+  );
 }
 
 /**
@@ -315,8 +330,8 @@ function _environment_indicator_switcher_links() {
 function _environment_indicator_external_integration_is_enabled($integration) {
   if ($integration == 'toolbar') {
     $access = \Drupal::moduleHandler()->moduleExists('toolbar');
-    $access = $access && in_array('toolbar', \Drupal::config('environment_indicator.settings')
-      ->get('toolbar_integration'));
+    $toolbar_integration = \Drupal::config('environment_indicator.settings')->get('toolbar_integration') ?? [];
+    $access = $access && in_array('toolbar', $toolbar_integration);
     $access = $access && \Drupal::currentUser()
       ->hasPermission('access toolbar');
     return $access;

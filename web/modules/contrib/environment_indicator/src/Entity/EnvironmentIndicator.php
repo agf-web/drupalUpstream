@@ -33,6 +33,14 @@ use Drupal\Core\Config\Entity\ConfigEntityInterface;
  *     "edit-permissions-form" = "/admin/people/permissions/{user_role}",
  *     "delete-form" = "/admin/config/development/environment-indicator/manage/{environment_indicator}/delete",
  *     "collection" = "/admin/config/development/environment-indicator"
+ *   },
+ *   config_export = {
+ *     "machine",
+ *     "description",
+ *     "name",
+ *     "url",
+ *     "fg_color",
+ *     "bg_color",
  *   }
  * )
  */
