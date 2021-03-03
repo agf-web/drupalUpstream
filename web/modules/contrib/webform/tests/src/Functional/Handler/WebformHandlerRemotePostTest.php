@@ -10,7 +10,7 @@ use Drupal\Tests\webform\Functional\WebformBrowserTestBase;
 /**
  * Tests for remote post webform handler functionality.
  *
- * @group Webform
+ * @group webform
  */
 class WebformHandlerRemotePostTest extends WebformBrowserTestBase {
 
@@ -72,7 +72,7 @@ options:
   response_type: '200'
   first_name: John
   last_name: Smith");
-    $this->assertRaw('Processed completed request.');
+    $this->assertRaw('This is a custom 200 success message.');
 
     // Check confirmation number is set via the
     // [webform:handler:remote_post:completed:confirmation_number] token.
@@ -85,7 +85,7 @@ options:
     sleep(1);
 
     // Check 'updated' operation.
-    $this->drupalPostForm("admin/structure/webform/manage/test_handler_remote_post/submission/$sid/edit", [], t('Save'));
+    $this->drupalPostForm("admin/structure/webform/manage/test_handler_remote_post/submission/$sid/edit", [], 'Save');
     $this->assertRaw("form_params:
   custom_updated: true
   custom_data: true
@@ -95,7 +95,7 @@ options:
     $this->assertRaw('Processed updated request.');
 
     // Check 'deleted`' operation.
-    $this->drupalPostForm("admin/structure/webform/manage/test_handler_remote_post/submission/$sid/delete", [], t('Delete'));
+    $this->drupalPostForm("admin/structure/webform/manage/test_handler_remote_post/submission/$sid/delete", [], 'Delete');
     $this->assertRaw("form_params:
   custom_deleted: true
   custom_data: true
@@ -108,7 +108,7 @@ options:
     $this->drupalLogout();
 
     // Check 'draft' operation.
-    $this->postSubmission($webform, [], t('Save Draft'));
+    $this->postSubmission($webform, [], 'Save Draft');
     $this->assertRaw("form_params:
   custom_draft_created: true
   custom_data: true
@@ -144,8 +144,14 @@ options:
     $this->assertRaw("sid: '$sid'");
     $this->assertNoRaw('Unable to process this submission. Please contact the site administrator.');
 
+    // Check 200 Success Error.
+    $this->postSubmission($webform, ['response_type' => '200']);
+    $this->assertRaw('This is a custom 200 success message.');
+    $this->assertRaw('Processed completed request.');
+
     // Check 500 Internal Server Error.
     $this->postSubmission($webform, ['response_type' => '500']);
+    $this->assertNoRaw('Processed completed request.');
     $this->assertRaw('Failed to process completed request.');
     $this->assertRaw('Unable to process this submission. Please contact the site administrator.');
 
@@ -160,6 +166,12 @@ options:
     $this->assertNoRaw('Unable to process this submission. Please contact the site administrator.');
     $this->assertRaw('This is a custom response message');
 
+    // Check 201 Completed with no custom message.
+    $this->postSubmission($webform, ['response_type' => '201']);
+
+    $this->assertNoRaw('Processed created request.');
+    $this->assertNoRaw('This is a custom 404 not found message.');
+
     // Check 404 Not Found with custom message.
     $this->postSubmission($webform, ['response_type' => '404']);
     $this->assertRaw('File not found');
@@ -171,6 +183,12 @@ options:
     $this->assertRaw('Unauthorized');
     $this->assertNoRaw('Unable to process this submission. Please contact the site administrator.');
     $this->assertRaw('This is a message token <strong>Unauthorized to process completed request.</strong>');
+
+    // Check 405 Method Not Allowed with custom message and token.
+    $this->postSubmission($webform, ['response_type' => '405']);
+    $this->assertRaw('Method Not Allowed');
+    $this->assertNoRaw('Unable to process this submission. Please contact the site administrator.');
+    $this->assertRaw('This is a array token <strong>[webform:handler:remote_post:options]</strong>');
 
     // Disable saving of results.
     $webform->setSetting('results_disabled', TRUE);
@@ -310,16 +328,18 @@ options:
     ];
     $this->postSubmission($webform, $edit);
     $this->assertRaw("form_params:
-    checkbox: true
-    number: 10
-    number_multiple:
-      - 10.5
-    custom_composite:
-      -
-        textfield: text
-        checkbox: true
-        number: 20.5");
-
+  boolean_true: true
+  integer: 100
+  float: 100.01
+  checkbox: true
+  number: !!float 10
+  number_multiple:
+    - 10.5
+  custom_composite:
+    -
+      textfield: text
+      checkbox: true
+      number: 20.5");
   }
 
 }

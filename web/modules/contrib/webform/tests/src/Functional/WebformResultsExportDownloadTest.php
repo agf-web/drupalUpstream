@@ -9,7 +9,7 @@ use Drupal\webform\Entity\WebformSubmission;
 /**
  * Tests for webform results export download.
  *
- * @group Webform
+ * @group webform
  */
 class WebformResultsExportDownloadTest extends WebformBrowserTestBase {
 
@@ -58,13 +58,13 @@ class WebformResultsExportDownloadTest extends WebformBrowserTestBase {
         'files' => TRUE,
         'archive_type' => $archive_type,
       ];
-      $this->drupalPostForm('/admin/structure/webform/manage/test_element_managed_file/results/download', $edit, t('Download'));
+      $this->drupalPostForm('/admin/structure/webform/manage/test_element_managed_file/results/download', $edit, 'Download');
 
       // Load the archive and get a list of files.
       $files = $this->getArchiveContents($submission_exporter->getArchiveFilePath());
 
       // Check that CSV file exists.
-      $this->assert(isset($files['test_element_managed_file/test_element_managed_file.csv']));
+      $this->assertArrayHasKey('test_element_managed_file/test_element_managed_file.csv', $files);
 
       // Check submission file directories.
       /** @var \Drupal\webform\WebformSubmissionInterface[] $submissions */
@@ -74,7 +74,7 @@ class WebformResultsExportDownloadTest extends WebformBrowserTestBase {
         $fid = $submission->getElementData('managed_file_single');
         $filename = File::load($fid)->getFilename();
 
-        $this->assert(isset($files["submission-$serial/$filename"]));
+        $this->assertArrayHasKey("submission-$serial/$filename", $files);
       }
 
       /* Download YAML */
@@ -85,13 +85,13 @@ class WebformResultsExportDownloadTest extends WebformBrowserTestBase {
         'exporter' => 'yaml',
         'archive_type' => $archive_type,
       ];
-      $this->drupalPostForm('/admin/structure/webform/manage/test_element_managed_file/results/download', $edit, t('Download'));
+      $this->drupalPostForm('/admin/structure/webform/manage/test_element_managed_file/results/download', $edit, 'Download');
 
       // Load the archive and get a list of files.
       $files = $this->getArchiveContents($submission_exporter->getArchiveFilePath());
 
       // Check that CSV file does not exists.
-      $this->assert(!isset($files['test_element_managed_file/test_element_managed_file.csv']));
+      $this->assertArrayNotHasKey('test_element_managed_file/test_element_managed_file.csv', $files);
 
       // Check submission file directories.
       /** @var \Drupal\webform\WebformSubmissionInterface[] $submissions */
@@ -101,8 +101,8 @@ class WebformResultsExportDownloadTest extends WebformBrowserTestBase {
         $fid = $submission->getElementData('managed_file_single');
         $filename = File::load($fid)->getFilename();
 
-        $this->assert(isset($files["submission-$serial.yml"]));
-        $this->assert(isset($files["submission-$serial/$filename"]));
+        $this->assertArrayHasKey("submission-$serial.yml", $files);
+        $this->assertArrayHasKey("submission-$serial/$filename", $files);
       }
     }
   }

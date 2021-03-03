@@ -24,6 +24,7 @@ class WebformTermCheckboxes extends Checkboxes {
       '#breadcrumb' => FALSE,
       '#breadcrumb_delimiter' => ' › ',
       '#scroll' => TRUE,
+      '#depth' => NULL,
     ] + parent::getInfo();
   }
 
@@ -79,7 +80,12 @@ class WebformTermCheckboxes extends Checkboxes {
       if (!$item->access('view')) {
         continue;
       }
-      
+
+      // Check depth.
+      if (!empty($element['#depth']) && $item->depth >= $element['#depth']) {
+        continue;
+      }
+
       $options[$item->id()] = $item->getName();
     }
     return $options;
