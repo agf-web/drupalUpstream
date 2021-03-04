@@ -352,10 +352,40 @@ class WebformEntitySettingsFormForm extends WebformEntitySettingsBaseForm {
     $form['wizard_settings']['wizard_progress_states'] = [
       '#type' => 'checkbox',
       '#title' => $this->t("Update wizard progress bar's pages based on conditions"),
-      '#description' => $this->t("If checked, the wizard's progress bar's pages will be hidden on shown based on each pages conditional logic."),
+      '#description' => $this->t("If checked, the wizard's progress bar's pages will be hidden or shown based on each pages conditional logic."),
       '#return_value' => TRUE,
       '#default_value' => $settings['wizard_progress_states'],
     ];
+    $form['wizard_settings']['wizard_auto_forward'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Auto-forward to next card when a card with a single click-able input is completed'),
+      '#description' => $this->t('If checked, the used will be moved to the next card when a single click-able input is checked (i.e. radios, rating, and image select).'),
+      '#return_value' => TRUE,
+      '#default_value' => $settings['wizard_auto_forward'],
+      '#access' => FALSE,
+    ];
+    $form['wizard_settings']['wizard_auto_forward_hide_next_button'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Hide the next button when auto-forwarding'),
+      '#description' => $this->t('If checked, the next button will be hidden when the input is not filled and can be auto-forwarded.'),
+      '#return_value' => TRUE,
+      '#default_value' => $settings['wizard_auto_forward_hide_next_button'],
+      '#access' => FALSE,
+      '#states' => [
+        'visible' => [
+          ':input[name="wizard_auto_forward"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+    $form['wizard_settings']['wizard_keyboard'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Navigate between cards using left or right arrow keys'),
+      '#description' => $this->t('If checked, users will be able to move between cards using the left or right arrow keys.'),
+      '#return_value' => TRUE,
+      '#default_value' => $settings['wizard_keyboard'],
+      '#access' => FALSE,
+    ];
+
     $form['wizard_settings']['wizard_confirmation'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Include confirmation page in progress'),
@@ -369,6 +399,38 @@ class WebformEntitySettingsFormForm extends WebformEntitySettingsBaseForm {
           [':input[name="wizard_progress_pages"]' => ['checked' => TRUE]],
           'or',
           [':input[name="wizard_progress_percentage"]' => ['checked' => TRUE]],
+        ],
+      ],
+    ];
+    $form['wizard_settings']['wizard_toggle'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Display show/hide all wizard pages link'),
+      '#description' => $this->t('If checked, a hide/show all elements link will be added to this webform when there are wizard pages.'),
+      '#return_value' => TRUE,
+      '#default_value' => $settings['wizard_auto_forward'],
+      '#access' => FALSE,
+    ];
+    $form['wizard_settings']['wizard_toggle_show_label'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Wizard show all elements label'),
+      '#size' => 20,
+      '#default_value' => $settings['wizard_toggle_show_label'],
+      '#access' => FALSE,
+      '#states' => [
+        'visible' => [
+          ':input[name="wizard_toggle"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+    $form['wizard_settings']['wizard_toggle_hide_label'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Wizard hide all elements label'),
+      '#size' => 20,
+      '#default_value' => $settings['wizard_toggle_hide_label'],
+      '#access' => FALSE,
+      '#states' => [
+        'visible' => [
+          ':input[name="wizard_toggle"]' => ['checked' => TRUE],
         ],
       ],
     ];
@@ -401,6 +463,20 @@ class WebformEntitySettingsFormForm extends WebformEntitySettingsBaseForm {
       ],
       '#empty_option' => $this->t('- None -'),
       '#default_value' => $settings['wizard_track'],
+    ];
+    $form['wizard_settings']['wizard_prev_button_label'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Wizard previous page button label'),
+      '#description' => $this->t('This is used for the previous page button within a wizard.'),
+      '#size' => 20,
+      '#default_value' => $settings['wizard_prev_button_label'],
+    ];
+    $form['wizard_settings']['wizard_next_button_label'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Wizard next page button label'),
+      '#description' => $this->t('This is used for the next page button within a wizard.'),
+      '#size' => 20,
+      '#default_value' => $settings['wizard_next_button_label'],
     ];
 
     // Preview settings.
@@ -731,7 +807,7 @@ class WebformEntitySettingsFormForm extends WebformEntitySettingsBaseForm {
         'group' => $this->t('Validation'),
         'title' => $this->t('Disable client-side validation'),
         'all_description' => $this->t('Client-side validation is disabled for all forms.'),
-        'form_description' => $this->t('If checked, the <a href=":href">novalidate</a> attribute, which disables client-side validation, will be added to this form.', [':href' => 'http://www.w3schools.com/tags/att_form_novalidate.asp']),
+        'form_description' => $this->t('If checked, the <a href=":href">novalidate</a> attribute, which disables client-side validation, will be added to this form.', [':href' => 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form']),
       ],
       'form_disable_inline_errors' => [
         'group' => $this->t('Validation'),
@@ -755,7 +831,7 @@ class WebformEntitySettingsFormForm extends WebformEntitySettingsBaseForm {
       'form_disable_autocomplete' => [
         'group' => $this->t('Elements'),
         'title' => $this->t('Disable autocompletion'),
-        'form_description' => $this->t('If checked, the <a href=":href">autocomplete</a> attribute will be set to off, which disables autocompletion for all form elements.', [':href' => 'http://www.w3schools.com/tags/att_form_autocomplete.asp']),
+        'form_description' => $this->t('If checked, the <a href=":href">autocomplete</a> attribute will be set to off, which disables autocompletion for all form elements.', [':href' => 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form']),
       ],
       'form_details_toggle' => [
         'group' => $this->t('Elements'),
