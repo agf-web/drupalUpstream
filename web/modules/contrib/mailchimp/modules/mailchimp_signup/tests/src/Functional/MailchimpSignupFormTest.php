@@ -53,7 +53,7 @@ class MailchimpSignupFormTest extends FunctionalMailchimpTestBase {
       'description' => 'Test description',
       'mode[1]' => TRUE,
       'mode[2]' => TRUE,
-      'settings[submit_button]' =>  'Sign up',
+      'settings[submit_button]' => 'Sign up',
       'settings[path]' => 'newsletter/signup',
       'settings[confirmation_message]' => 'You have signed up',
       'settings[destination]' => 'home',

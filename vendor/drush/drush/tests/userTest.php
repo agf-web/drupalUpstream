@@ -73,6 +73,7 @@ class userCase extends CommandUnishTestCase {
         $eval = "return user_authenticate('$name', '$newpass')";
         break;
       case 8:
+      case 9:
         $eval = "return \\Drupal::service('user.auth')->authenticate('$name', '$newpass');";
         break;
     }
@@ -127,8 +128,8 @@ class userCase extends CommandUnishTestCase {
   function testUserCancel() {
     // create content
     // @todo Creation of node types and content has changed in D8.
-    if (UNISH_DRUPAL_MAJOR_VERSION == 8) {
-      $this->markTestSkipped("@todo Creation of node types and content has changed in D8.");
+    if (UNISH_DRUPAL_MAJOR_VERSION >= 8) {
+      $this->markTestSkipped("@todo Creation of node types and content has changed in D8. Started to fix this");
     }
     if (UNISH_DRUPAL_MAJOR_VERSION >= 7) {
       // create_node_types script does not work for D6
@@ -141,7 +142,12 @@ class userCase extends CommandUnishTestCase {
       if (UNISH_DRUPAL_MAJOR_VERSION >= 8) {
         $eval .= " \$node = node_submit(entity_create('node', \$node));";
       }
-      $eval .= " node_save(\$node);";
+      if (UNISH_DRUPAL_MAJOR_VERSION >= 9) {
+        $eval .= " \\Drupal::entityTypeManager()->getStorage('node')->create(\$node)->save();";
+      }
+      else {
+        $eval .= " node_save(\$node);";
+      }
       $this->drush('php-eval', array($eval), $this->options());
       $this->drush('user-cancel', array(self::NAME), $this->options() + array('delete-content' => NULL));
       $eval = 'print (string) user_load(2)';

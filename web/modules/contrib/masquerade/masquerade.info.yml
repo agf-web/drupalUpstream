@@ -1,13 +1,13 @@
 name: Masquerade
 type: module
 description: 'Allows privileged users to masquerade as another user.'
-core_version_requirement: ^8.7.7 || ^9
+core_version_requirement: ^8.8 || ^9
 dependencies:
-  - drupal:user (>=8.7.7)
+  - drupal:user
 tags:
   - admin
 
-# Information added by Drupal.org packaging script on 2020-01-14
-version: '8.x-2.0-beta3'
+# Information added by Drupal.org packaging script on 2020-06-02
+version: '8.x-2.0-beta4'
 project: 'masquerade'
-datestamp: 1579041793
+datestamp: 1591126508

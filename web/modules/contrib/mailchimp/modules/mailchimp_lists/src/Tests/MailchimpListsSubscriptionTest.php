@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\mailchimp_lists\Tests;
+namespace Drupal\Tests\mailchimp_lists\Functional;
 
 /**
  * Tests list subscription functionality.
@@ -14,7 +14,7 @@ class MailchimpListsSubscriptionTest extends MailchimpListsTestBase {
    *
    * @var array
    */
-  public static $modules = array('mailchimp', 'mailchimp_lists', 'mailchimp_test');
+  public static $modules = ['mailchimp', 'mailchimp_lists', 'mailchimp_test'];
 
   /**
    * Tests retrieval of member info for a list and email address.
@@ -48,19 +48,19 @@ class MailchimpListsSubscriptionTest extends MailchimpListsTestBase {
     $list_id = '57afe96172';
     $email = 'test@example.org';
     $interest_category_id = 'a1e9f4b7f6';
-    $interest_ids = array(
+    $interest_ids = [
       '9143cf3bd1',
       '3a2a927344',
-    );
-    $merge_vars = array(
+    ];
+    $merge_vars = [
       'EMAIL' => $email,
-    );
+    ];
 
-    $interests = array();
-    $interests[$interest_category_id] = array(
+    $interests = [];
+    $interests[$interest_category_id] = [
       $interest_ids[0] => 1,
       $interest_ids[1] => 0,
-    );
+    ];
 
     $member_info = mailchimp_subscribe($list_id, $email, $merge_vars, $interests);
 
@@ -80,7 +80,7 @@ class MailchimpListsSubscriptionTest extends MailchimpListsTestBase {
 
     $updated = mailchimp_update_member($list_id, $email, NULL, NULL, 'text');
 
-    $this->assertTrue($updated, 'Tested user update.');
+    $this->assertNotEmpty($updated, 'Tested user update.');
   }
 
   /**
@@ -92,6 +92,7 @@ class MailchimpListsSubscriptionTest extends MailchimpListsTestBase {
 
     $unsubscribed = mailchimp_unsubscribe($list_id, $email);
 
-    $this->assertTrue($unsubscribed, 'Tested user unsubscription.');
+    $this->assertNotEmpty($unsubscribed, 'Tested user unsubscription.');
   }
+
 }

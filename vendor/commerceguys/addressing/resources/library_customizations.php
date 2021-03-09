@@ -5,10 +5,6 @@
  * https://github.com/googlei18n/libaddressinput/issues
  * Since Google has been slow to resolve them, the library maintains its own
  * list of customizations, in PHP format for easier contribution.
- *
- * @todo
- * PE subdivisions (https://github.com/googlei18n/libaddressinput/issues/50)
- * Other points raised in https://github.com/googlei18n/libaddressinput/issues/49
  */
 
 /**
@@ -29,6 +25,11 @@ function get_address_format_customizations($countryCode) {
     $formatCustomizations['DE'] = [
         'format' => '%organization\n%givenName %familyName\n%addressLine1\n%addressLine2\n%postalCode %locality',
     ];
+    // Revert the removal of %sortingCode.
+    // https://github.com/google/libaddressinput/issues/177
+    $formatCustomizations['FR'] = [
+        'format' => '%organization\n%givenName %familyName\n%addressLine1\n%addressLine2\n%postalCode %locality %sortingCode',
+    ];
     // Make the postal codes required, add administrative area fields (EE, LT).
     // https://github.com/googlei18n/libaddressinput/issues/64
     $formatCustomizations['EE'] = [
@@ -39,6 +40,12 @@ function get_address_format_customizations($countryCode) {
             'postalCode',
         ],
         'administrative_area_type' => 'county',
+    ];
+    // Revert the removal of %locality.
+    // https://github.com/google/libaddressinput/issues/177
+    $formatCustomizations['JP'] = [
+        'format' => '%familyName %givenName\n%organization\n%addressLine1\n%addressLine2\n%locality, %administrativeArea\n%postalCode',
+        'local_format' => '〒%postalCode\n%administrativeArea%locality\n%addressLine1\n%addressLine2\n%organization\n%familyName %givenName',
     ];
     $formatCustomizations['LT'] = [
         'format' => '%organization\n%givenName %familyName\n%addressLine1\n%addressLine2\n%postalCode %locality %administrativeArea',
@@ -239,6 +246,17 @@ function get_subdivision_customizations($group) {
             'iso_code' => 'CO-VID',
             'postal_code_pattern' => '99\d{4}',
         ],
+    ];
+    // Replace Iporá with Iporã.
+    // https://github.com/google/libaddressinput/issues/186
+    $subdivisionCustomizations['BR-e8f1a539a5489b18c33be768b1c3c799'] = [
+        '_remove' => [
+            'Iporá',
+        ],
+        '_add_after' => [
+            'Iporã' => 'Iracema do Oeste',
+        ],
+        'Iporã' => [],
     ];
 
     return isset($subdivisionCustomizations[$group]) ? $subdivisionCustomizations[$group] : [];

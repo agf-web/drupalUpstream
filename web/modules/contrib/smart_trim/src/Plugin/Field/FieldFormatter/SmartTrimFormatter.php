@@ -5,7 +5,6 @@ namespace Drupal\smart_trim\Plugin\Field\FieldFormatter;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Link;
 use Drupal\smart_trim\Truncate\TruncateHTML;
 
 /**
@@ -268,7 +267,7 @@ class SmartTrimFormatter extends FormatterBase {
       if ($this->getSetting('more_link') && $entity->id() && $entity->hasLinkTemplate('canonical')) {
         // But wait! Don't add a more link if the field ends in <!--break-->.
         if (strpos(strrev($output), strrev('<!--break-->')) !== 0) {
-          $more = $this->getSetting('more_text');
+          $more = $this->t($this->getSetting('more_text'));
           $class = $this->getSetting('more_class');
 
           $project_link = $entity->toLink($more)->toRenderable();

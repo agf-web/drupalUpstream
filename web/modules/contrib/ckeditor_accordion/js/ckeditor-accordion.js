@@ -30,7 +30,7 @@
             var $tab = $(this);
             var tabText = $tab.text().trim();
             var toggleClass = $tab.hasClass('active') ? ' active' : '';
-            $tab.html('<span class="ckeditor-accordion-toggle' + toggleClass + '"></span><a class="ckeditor-accordion-toggler" href="#">' + tabText + '</a>');
+            $tab.html('<a class="ckeditor-accordion-toggler" href="#"><span class="ckeditor-accordion-toggle' + toggleClass + '"></span>' + tabText + '</a>');
           });
 
           // Wrap the accordion in a div element so that quick edit function shows the source correctly.
@@ -51,11 +51,13 @@
             $t.next().slideUp();
           }
           else {
-            // Remove active classes.
-            $parent.children('dt.active').removeClass('active').children('a').removeClass('active');
-            $parent.children('dd.active').slideUp(function () {
-              $(this).removeClass('active');
-            });
+            if(!drupalSettings.ckeditorAccordion.accordionStyle.keepRowsOpen) {
+              // Remove active classes.
+              $parent.children('dt.active').removeClass('active').children('a').removeClass('active');
+              $parent.children('dd.active').slideUp(function () {
+                $(this).removeClass('active');
+              });
+            }
 
             // Show the selected tab.
             $t.addClass('active');

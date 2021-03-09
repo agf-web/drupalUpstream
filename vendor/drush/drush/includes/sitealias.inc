@@ -172,8 +172,8 @@ function drush_sitealias_resolve_sitespecs($site_specifications, $alias_path_con
 function drush_sitealias_valid_alias_format($alias) {
   return ( (strpos($alias, ',') !== false) ||
     ((strpos($alias, '@') === FALSE ? 0 : 1) + (strpos($alias, '/') === FALSE ? 0 : 1) + (strpos($alias, '#') === FALSE ? 0 : 1) >= 2) ||
-    ($alias{0} == '#') ||
-    ($alias{0} == '@')
+    ($alias[0] == '#') ||
+    ($alias[0] == '@')
   );
 }
 
@@ -629,12 +629,15 @@ function _drush_sitealias_find_alias_files($aliasname = NULL, $alias_path_contex
   // Do not scan into the files directory.
   $blacklist = array_merge(array('files'), drush_filename_blacklist());
 
+  // $alias_search_depth specifies max depth to search in the alias paths
+  $alias_search_depth = drush_get_option('alias-search-depth', TRUE);
+
   // Search each path in turn.
   foreach ($alias_path as $path) {
     // Find all of the matching files in this location
     foreach ($alias_files as $file_pattern_to_search_for) {
       drush_log(dt('Scanning into @path for @pattern', array('@path' => $path, '@pattern' => $file_pattern_to_search_for)), LogLevel::DEBUG_NOTIFY);
-      $alias_files_to_consider = array_merge($alias_files_to_consider, array_keys(drush_scan_directory($path, $file_pattern_to_search_for, $blacklist, 0, TRUE)));
+      $alias_files_to_consider = array_merge($alias_files_to_consider, array_keys(drush_scan_directory($path, $file_pattern_to_search_for, $blacklist, 0, $alias_search_depth)));
     }
   }
 
@@ -722,6 +725,9 @@ function _drush_sitealias_find_and_load_alias_from_file($aliasname, $alias_files
           $aliases[$group_name] = array('site-list' => implode(',', $alias_names), '#group' => $group_name, '#name' => $group_name);
         }
       }
+      // Wildcard check if necessary. This will insert a resolved alias
+      // record into the aliases list, allowing the existing code to match it.
+      _drush_sitealias_wildcard_check($aliasname, $aliases);
       // Store only the named alias into the alias cache
       if ((isset($aliases)) && !empty($aliasname) && array_key_exists($aliasname, $aliases)) {
         drush_set_config_special_contexts($options); // maybe unnecessary
@@ -749,6 +755,49 @@ function _drush_sitealias_find_and_load_alias_from_file($aliasname, $alias_files
     $result = array('site-list' => $result_names);
   }
 
+  return $result;
+}
+
+/**
+ * Convert a matching wildcard record into the requested record if needed.
+ */
+function _drush_sitealias_wildcard_check($aliasname, &$aliases) {
+  // Don't overwrite a specific alias record with a resolved wildcard record.
+  if (array_key_exists($aliasname, $aliases) || empty($aliasname)) {
+    return;
+  }
+  // If the alias is 'site.dev', then $alias_env is 'dev'
+  $alias_env = preg_replace('#^.*\.#', '', $aliasname);
+  // Check to see if there is a wildcard record.
+  // e.g. if alias is 'site.dev', then look for a record 'site.*'.
+  $wildcard_alias_name = preg_replace('#\.[^.]*$#', '.*', $aliasname);
+  if (($wildcard_alias_name == $aliasname) || empty($alias_env) || !array_key_exists($wildcard_alias_name, $aliases)) {
+    return;
+  }
+
+  $aliases[$aliasname] = _drush_sitealias_replace_wildcard_values($aliases[$wildcard_alias_name], $alias_env);
+  $aliases[$aliasname]['#name'] = $aliasname;
+}
+
+/**
+ * Make substitutions in a wildcard alias record.
+ */
+function _drush_sitealias_replace_wildcard_values($alias_record, $alias_env) {
+  $result = array();
+
+  foreach ($alias_record as $key => $value) {
+    if (is_array($value)) {
+      $result[$key] = _drush_sitealias_replace_wildcard_values($value, $alias_env);
+    }
+    elseif (is_string($value)) {
+      // This substitution looks just like a consolidation/config variable,
+      // although this is the only one we support.
+      $result[$key] = str_replace('${env-name}', $alias_env, $value);
+    }
+    else {
+      $result[$key] = $value;
+    }
+  }
   return $result;
 }
 
@@ -988,10 +1037,18 @@ function drush_sitealias_get_db_spec(&$alias_record, $default_to_self = FALSE, $
  */
 function drush_sitealias_add_db_settings(&$alias_record) {
   $altered_record = FALSE;
-  if (isset($alias_record['root'])) {
+  if (isset($alias_record['root']) || isset($alias_record['remote-host'])) {
     // If the alias record does not have a defined 'databases' entry,
     // then we'll need to look one up
     if (!isset($alias_record['db-url']) && !isset($alias_record['databases']) && !isset($alias_record['site-list'])) {
+      // If this alias record is remote, and it does NOT have a 'root' element
+      // explicitly set, and 'root' was not passed on the command line, then
+      // force the 'root' element in the alias record to NULL to prevent
+      // backend invoke from adding a --root using the locally-bootstrapped
+      // Drupal site's 'root' path.
+      if (isset($alias_record['remote-host']) && !isset($alias_record['root']) && (drush_get_option('root', NULL, 'cli') === NULL)) {
+        $alias_record['root'] = NULL;
+      }
       $values = drush_invoke_process($alias_record, "sql-conf", array(), array('all' => TRUE), array('integrate' => FALSE, 'override-simulated' => TRUE));
       if (is_array($values) && ($values['error_status'] == 0)) {
         $altered_record = TRUE;

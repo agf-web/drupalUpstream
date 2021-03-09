@@ -15,4 +15,5 @@ function ckeditor_accordion_page_attachments_alter(array &$page) {
 
   // Pass settings to JavaScript.
   $page['#attached']['drupalSettings']['ckeditorAccordion']['accordionStyle']['collapseAll'] = $config->get('collapse_all');
+  $page['#attached']['drupalSettings']['ckeditorAccordion']['accordionStyle']['keepRowsOpen'] = $config->get('keep_rows_open');
 }

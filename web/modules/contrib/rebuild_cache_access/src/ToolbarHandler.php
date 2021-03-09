@@ -29,7 +29,7 @@ class ToolbarHandler implements ContainerInjectionInterface {
    *   The current user.
    */
   public function __construct(AccountProxyInterface $account) {
-    $this->account      = $account;
+    $this->account = $account;
   }
 
   /**
@@ -59,12 +59,12 @@ class ToolbarHandler implements ContainerInjectionInterface {
 
     if ($this->account->hasPermission('rebuild cache access')) {
       $items['rebuild_cache_access'] += [
-        '#type'     => 'toolbar_item',
-        '#weight'   => 999,
-        'tab'       => [
-          '#type'       => 'link',
-          '#title'      => $this->t('Rebuild Cache'),
-          '#url'        => Url::fromRoute('rebuild_cache_access.rebuild_cache'),
+        '#type' => 'toolbar_item',
+        '#weight' => 999,
+        'tab' => [
+          '#type' => 'link',
+          '#title' => $this->t('Rebuild Cache'),
+          '#url' => Url::fromRoute('rebuild_cache_access.rebuild_cache'),
           '#attributes' => [
             'title' => $this->t('Rebuild Cache Access'),
             'class' => ['toolbar-icon', 'toolbar-icon-rebuild-cache-access'],

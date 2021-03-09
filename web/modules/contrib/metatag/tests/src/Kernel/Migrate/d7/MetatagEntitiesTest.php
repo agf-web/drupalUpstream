@@ -26,9 +26,11 @@ class MetatagEntitiesTest extends MigrateDrupal7TestBase {
     // Core modules.
     // @see testAvailableConfigEntities
     'comment',
+    'content_translation',
     'datetime',
     'filter',
     'image',
+    'language',
     'link',
     'menu_link_content',
     'menu_ui',
@@ -76,8 +78,11 @@ class MetatagEntitiesTest extends MigrateDrupal7TestBase {
    * {@inheritdoc}
    */
   protected function setUp() {
+    if (version_compare(\Drupal::VERSION, '8.9', '<')) {
+      $this->markTestSkipped('This test requires at least Drupal 8.9');
+    }
     parent::setUp();
-    $this->loadFixture(__DIR__ . '/../../../../fixtures/d7_metatag_entities.php');
+    $this->loadFixture(__DIR__ . '/../../../../fixtures/d7_metatag.php');
 
     $this->installEntitySchema('node');
     $this->installEntitySchema('comment');
@@ -89,6 +94,7 @@ class MetatagEntitiesTest extends MigrateDrupal7TestBase {
     $this->installEntitySchema('metatag_defaults');
 
     $this->executeMigrations([
+      'language',
       'd7_metatag_field',
       'd7_node_type',
       'd7_taxonomy_vocabulary',
@@ -99,14 +105,11 @@ class MetatagEntitiesTest extends MigrateDrupal7TestBase {
       'd7_comment_type',
       'd7_field',
       'd7_field_instance',
+      'd7_language_content_settings',
     ]);
     $this->fileMigrationSetup();
     $this->executeMigrations([
-      'd7_node:test_content_type',
-      'd7_node:article',
-      'd7_node:forum',
-      'd7_node:blog',
-      'd7_node_revision:test_content_type',
+      'd7_node_complete',
       'd7_taxonomy_term',
     ]);
   }
@@ -117,7 +120,7 @@ class MetatagEntitiesTest extends MigrateDrupal7TestBase {
   public function testMetatag() {
     /** @var \Drupal\node\Entity\Node $node */
     $node = Node::load(998);
-    $this->assertTrue($node instanceof NodeInterface);
+    $this->assertInstanceOf(NodeInterface::class, $node);
     $this->assertTrue($node->hasField('field_metatag'));
     // This should have the "current revision" keywords value, indicating it is
     // the current revision.
@@ -129,7 +132,7 @@ class MetatagEntitiesTest extends MigrateDrupal7TestBase {
     $this->assertSame(serialize($expected), $node->field_metatag->value);
 
     $node = node_revision_load(998);
-    $this->assertTrue($node instanceof NodeInterface);
+    $this->assertInstanceOf(NodeInterface::class, $node);
     $this->assertTrue($node->hasField('field_metatag'));
     // This should have the "old revision" keywords value, indicating it is
     // a non-current revision.
@@ -142,7 +145,7 @@ class MetatagEntitiesTest extends MigrateDrupal7TestBase {
 
     /** @var \Drupal\user\Entity\User $user */
     $user = User::load(2);
-    $this->assertTrue($user instanceof UserInterface);
+    $this->assertInstanceOf(UserInterface::class, $user);
     $this->assertTrue($user->hasField('field_metatag'));
     $expected = [
       'keywords' => 'a user',
@@ -152,7 +155,7 @@ class MetatagEntitiesTest extends MigrateDrupal7TestBase {
 
     /** @var \Drupal\taxonomy\Entity\Term $term */
     $term = Term::load(152);
-    $this->assertTrue($term instanceof TermInterface);
+    $this->assertInstanceOf(TermInterface::class, $term);
     $this->assertTrue($term->hasField('field_metatag'));
     $expected = [
       'keywords' => 'a taxonomy',

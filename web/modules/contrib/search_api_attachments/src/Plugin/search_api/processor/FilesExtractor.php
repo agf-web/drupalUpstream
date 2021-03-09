@@ -2,6 +2,8 @@
 
 namespace Drupal\search_api_attachments\Plugin\search_api\processor;
 
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Component\Utility\Bytes;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -181,6 +183,8 @@ class FilesExtractor extends ProcessorPluginBase implements PluginFormInterface 
     $files = [];
     $config = $this->configFactory->get(static::CONFIGNAME);
     $extractor_plugin_id = $config->get('extraction_method');
+    // Get the config option to read text files directly.
+    $this->configuration['read_text_files_directly'] = $config->get('read_text_files_directly');
     if ($extractor_plugin_id != '') {
       $configuration = $config->get($extractor_plugin_id . '_configuration');
       $extractor_plugin = $this->textExtractorPluginManager->createInstance($extractor_plugin_id, $configuration);
@@ -271,14 +275,16 @@ class FilesExtractor extends ProcessorPluginBase implements PluginFormInterface 
    */
   public function extractOrGetFromCache(EntityInterface $entity, File $file, TextExtractorPluginInterface $extractor_plugin) {
     // Directly process plaintext files.
-    if (substr($file->getMimeType(), 0, 5) == 'text/') {
-      return file_get_contents($file->getFileUri());
+    if (!empty($this->configuration['read_text_files_directly'])) {
+      if (substr($file->getMimeType(), 0, 5) == 'text/') {
+        return file_get_contents($file->getFileUri());
+      }
     }
     $collection = 'search_api_attachments';
     $key = $collection . ':' . $file->id();
     $extracted_data = '';
     if ($cache = $this->keyValue->get($collection)->get($key)) {
-      $extracted_data = $cache;
+      $extracted_data = $this->limitBytes($cache);
     }
     else {
       try {
@@ -481,15 +487,25 @@ class FilesExtractor extends ProcessorPluginBase implements PluginFormInterface 
                 // For each media bundle allowed, check if the source field is a
                 // file field.
                 foreach ($settings['handler_settings']['target_bundles'] as $bundle_name) {
-                  if (!empty($this->entityTypeManager->getStorage('media_type')->load($bundle_name))) {
-                    $bundle_configuration = $this->entityTypeManager->getStorage('media_type')->load($bundle_name)->toArray();
-                    if (isset($bundle_configuration['source_configuration']['source_field'])) {
-                      $source_field = $bundle_configuration['source_configuration']['source_field'];
-                      $field_config = $this->entityTypeManager->getStorage('field_storage_config')->load(sprintf('media.%s', $source_field))->toArray();
-                      if (isset($field_config['type']) && $field_config['type'] === 'file') {
-                        $file_elements[$property->getName()] = $property->getLabel();
+                  try {
+                    if (!empty($this->entityTypeManager->getStorage('media_type')->load($bundle_name))) {
+                      $bundle_configuration = $this->entityTypeManager->getStorage('media_type')->load($bundle_name)->toArray();
+                      if (isset($bundle_configuration['source_configuration']['source_field'])) {
+                        $source_field = $bundle_configuration['source_configuration']['source_field'];
+                        $field_config = $this->entityTypeManager->getStorage('field_storage_config')->load(sprintf('media.%s', $source_field))->toArray();
+                        if (isset($field_config['type']) && $field_config['type'] === 'file') {
+                          $file_elements[$property->getName()] = $property->getLabel();
+                        }
                       }
                     }
+                  }
+                  catch (InvalidPluginDefinitionException $e) {
+                    watchdog_exception('search_api_attachments', $e);
+                    continue;
+                  }
+                  catch (PluginNotFoundException $e) {
+                    watchdog_exception('search_api_attachments', $e);
+                    continue;
                   }
                 }
               }

@@ -216,7 +216,7 @@ class ResponseCacheStrategyTest extends TestCase
         $cacheStrategy->add($embeddedResponse);
         $cacheStrategy->update($masterResponse);
 
-        $this->assertEqualsWithDelta(60, (int) $masterResponse->headers->getCacheControlDirective('s-maxage'), 1);
+        $this->assertSame('60', $masterResponse->headers->getCacheControlDirective('s-maxage'));
     }
 
     public function testResponseIsExpirableButNotValidateableWhenMasterResponseCombinesExpirationAndValidation()

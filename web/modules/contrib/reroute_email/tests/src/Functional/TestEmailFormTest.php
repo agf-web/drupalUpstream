@@ -56,7 +56,7 @@ class TestEmailFormTest extends RerouteEmailTestBase {
       'bcc' => t('Originally bcc: @bcc', ['@bcc' => $mail['headers']['X-Rerouted-Original-Bcc']]),
     ];
     foreach ($copy_headers as $header => $message_line) {
-      $has_header = preg_match("/{$message_line}/", $mail['body']);
+      $has_header = (bool) preg_match("/{$message_line}/", $mail['body']);
       $this->assertTrue($has_header, new FormattableMarkup('Found the correct "@header" line in the body.', ['@header' => $header]));
     }
 

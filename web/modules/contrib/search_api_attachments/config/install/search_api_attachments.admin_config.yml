@@ -2,6 +2,8 @@ extraction_method: ''
 
 preserve_cache: true
 
+read_text_files_directly: false
+
 solr_extractor_configuration:
   solr_server: ''
 

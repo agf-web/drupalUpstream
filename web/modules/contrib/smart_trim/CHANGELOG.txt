@@ -1,3 +1,9 @@
+Smart Trim 8.x-1.3
+------------------
+Issue #3131842 by markie, Kristen Pol, PapaGrande: Read more still not translated
+Issue #3131394 by lolandese: License "GPL-2.0+" is a deprecated SPDX license identifier
+Issue #3092581 by jenlampton, DamienMcKenna: Drupal 9 Release plan for Smart Trim'
+
 Smart Trim 8.x-1.2
 ------------------
 Issue by ckaotik: Trimmed summary  markup.

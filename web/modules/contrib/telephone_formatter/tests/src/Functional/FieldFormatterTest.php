@@ -78,7 +78,9 @@ class FieldFormatterTest extends BrowserTestBase {
       'bundle' => 'page',
     ])->save();
 
-    entity_get_display('node', 'page', 'default')
+    \Drupal::entityTypeManager()
+      ->getStorage('entity_view_display')
+      ->load('node.page.default')
       ->setComponent('field_telephone', [
         'type' => 'telephone_formatter',
         'weight' => 1,

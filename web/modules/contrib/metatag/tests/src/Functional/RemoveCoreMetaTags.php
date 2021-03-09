@@ -28,6 +28,11 @@ class RemoveCoreMetaTags extends BrowserTestBase {
   ];
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * Tests core tags are removed on taxonomy term pages.
    */
   public function testTaxonomyPage() {
@@ -54,7 +59,7 @@ class RemoveCoreMetaTags extends BrowserTestBase {
     // Ensure there is only 1 canonical metatag.
     $this->drupalGet('taxonomy/term/' . $term->id());
     $xpath = $this->xpath("//link[@rel='canonical']");
-    $this->assertEquals(1, count($xpath), 'Exactly one canonical rel meta tag found.');
+    $this->assertCount(1, $xpath, 'Exactly one canonical rel meta tag found.');
   }
 
 }

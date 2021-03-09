@@ -24,6 +24,7 @@ class NodewordsFieldInstanceTest extends MigrateSqlSourceTestBase {
    */
   public static $modules = [
     // Core modules.
+    'field',
     'migrate_drupal',
     'node',
     'system',
@@ -43,7 +44,7 @@ class NodewordsFieldInstanceTest extends MigrateSqlSourceTestBase {
     $this->installEntitySchema('node');
     $this->installEntitySchema('taxonomy_term');
     $this->installEntitySchema('user');
-    $this->installConfig($this->modules);
+    $this->installConfig(static::$modules);
 
     // Create node types.
     $node_types = [
@@ -109,9 +110,6 @@ class NodewordsFieldInstanceTest extends MigrateSqlSourceTestBase {
       ],
     ];
 
-    // The source query has 3 rows, so hardcode this value so the test passes.
-    // @todo This feels like cheating?
-    $tests[0]['expected_count'] = 3;
     return $tests;
   }
 

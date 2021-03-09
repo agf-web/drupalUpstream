@@ -21,6 +21,7 @@ class MetatagFieldInstanceTest extends MigrateSqlSourceTestBase {
    */
   public static $modules = [
     // Core modules.
+    'field',
     'migrate_drupal',
     'node',
     'system',
@@ -40,7 +41,7 @@ class MetatagFieldInstanceTest extends MigrateSqlSourceTestBase {
     $this->installEntitySchema('node');
     $this->installEntitySchema('taxonomy_term');
     $this->installEntitySchema('user');
-    $this->installConfig($this->modules);
+    $this->installConfig(static::$modules);
 
     $node_types = [
       'first_content_type' => 'first_content_type',
@@ -104,9 +105,6 @@ class MetatagFieldInstanceTest extends MigrateSqlSourceTestBase {
       ],
     ];
 
-    // The source query has 3 rows, so hardcode this value so the test passes.
-    // @todo This feels like cheating?
-    $tests[0]['expected_count'] = 3;
     return $tests;
   }
 

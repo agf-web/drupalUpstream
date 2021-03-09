@@ -6,7 +6,7 @@ use Drupal\Core\Render\Markup;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\draggableviews\DraggableViews;
-use Drupal\system\Plugin\views\field\BulkForm;
+use Drupal\views\Plugin\views\field\BulkForm;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

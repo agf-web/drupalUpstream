@@ -8,7 +8,6 @@
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Egulias\EmailValidator\EmailParser;
 use Egulias\EmailValidator\EmailLexer;
-use Drupal\Component\Utility\Unicode;
 
 define('REROUTE_EMAIL_ENABLE', 'enable');
 define('REROUTE_EMAIL_ADDRESS', 'address');
@@ -215,7 +214,7 @@ function reroute_email_check(array &$message) {
   // Check configured mail keys filters.
   $keys = reroute_email_split_string($config->get(REROUTE_EMAIL_MAILKEYS, ''));
   if (!empty($keys) && !(in_array($message['id'], $keys, TRUE) || in_array($message['module'], $keys, TRUE))) {
-    $message['header']['X-Reroute-Status'] = 'MAILKEY-IGNORED';
+    $message['headers']['X-Reroute-Status'] = 'MAILKEY-IGNORED';
     return FALSE;
   }
 
@@ -231,7 +230,7 @@ function reroute_email_check(array &$message) {
       // The part after the @ sign is the domain and according to RFC 1035,
       // section 3.1: "Name servers and resolvers must compare [domains] in a
       // case-insensitive manner".
-      $domain = Unicode::strtolower($matches[1]);
+      $domain = mb_strtolower($matches[1]);
 
       $whitelisted_domains[$domain] = $domain;
       unset($whitelisted_addresses[$key]);
@@ -249,25 +248,25 @@ function reroute_email_check(array &$message) {
     }
 
     // Check whitelisted emails and domains.
-    $domain = Unicode::strtolower((new EmailParser(new EmailLexer()))->parse($email)['domain']);
+    $domain = mb_strtolower((new EmailParser(new EmailLexer()))->parse($email)['domain']);
     if (in_array($email, $whitelisted_addresses, TRUE) ||
       in_array($domain, $whitelisted_domains, TRUE)) {
       continue;
     }
 
     // No need to continue if at least one address should be rerouted.
-    $message['header']['X-Reroute-Status'] = 'REROUTED';
+    $message['headers']['X-Reroute-Status'] = 'REROUTED';
     return TRUE;
   }
 
   // Reroute if all addresses are invalid.
   if (count($original_addresses) === $invalid) {
-    $message['header']['X-Reroute-Status'] = 'INVALID-ADDRESSES';
+    $message['headers']['X-Reroute-Status'] = 'INVALID-ADDRESSES';
     return TRUE;
   }
 
   // All addresses passes whitelist checks.
-  $message['header']['X-Reroute-Status'] = 'WHITELISTED';
+  $message['headers']['X-Reroute-Status'] = 'WHITELISTED';
   return FALSE;
 }
 

@@ -14,26 +14,12 @@ class ToolbarTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['toolbar', 'rebuild_cache_access'];
+  protected $defaultTheme = 'stark';
 
   /**
-   * Tests that the necessary route works.
+   * {@inheritdoc}
    */
-  public function testRoute() {
-
-    // First, a user without rebuild cache permission should not be allowed
-    // to access the route.
-    $this->drupalGet('rebuild-cache-access/rebuild-cache');
-    $this->assertSession()->statusCodeEquals(403);
-
-    // Second, a user with rebuild cache permission should be allowed
-    // to access the route.
-    $account = $this->drupalCreateUser(['rebuild cache access']);
-    $this->drupalLogin($account);
-
-    $this->drupalGet('rebuild-cache-access/rebuild-cache');
-    $this->assertSession()->statusCodeEquals(200);
-  }
+  public static $modules = ['toolbar', 'rebuild_cache_access'];
 
   /**
    * Tests that the toolbar button works.

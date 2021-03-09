@@ -269,7 +269,9 @@ abstract class UnishTestCase extends \PHPUnit_Framework_TestCase {
   }
 
   function setUpDrupal($num_sites = 1, $install = FALSE, $version_string = NULL, $profile = NULL) {
+    $version_type = 'requested';
     if (!$version_string) {
+      $version_type = 'default';
       $version_string = $this->defaultInstallationVersion();
     }
     $sites_subdirs_all = array('dev', 'stage', 'prod', 'retired', 'elderly', 'dead', 'dust');
@@ -306,7 +308,8 @@ abstract class UnishTestCase extends \PHPUnit_Framework_TestCase {
     }
     // Write an empty sites.php if we are on D7+. Needed for multi-site on D8 and
     // used on D7 in \Unish\saCase::testBackendHonorsAliasOverride.
-    if ($major_version >= 7 && !file_exists($root . '/sites/sites.php')) {
+    // Skip if there is no example.sites.php, e.g. in Drupal 9.
+    if ($major_version >= 7 && !file_exists($root . '/sites/sites.php') && file_exists($root . '/sites/example.sites.php')) {
       copy($root . '/sites/example.sites.php', $root . '/sites/sites.php');
     }
 
@@ -317,7 +320,7 @@ abstract class UnishTestCase extends \PHPUnit_Framework_TestCase {
     );
     $this->drush('core-status', array('Drupal version'), $options);
     $header = "\nTesting on ";
-    fwrite(STDERR, $header . $this->getOutput() . "\n\n");
+    fwrite(STDERR, $header . $this->getOutput() . " given $version_type version $version_string\n\n");
 
     // Stash details about each site.
     foreach ($sites_subdirs as $subdir) {

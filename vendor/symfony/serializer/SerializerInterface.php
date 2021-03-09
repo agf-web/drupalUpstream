@@ -12,6 +12,8 @@
 namespace Symfony\Component\Serializer;
 
 /**
+ * Defines the interface of the Serializer.
+ *
  * @author Jordi Boggiano <j.boggiano@seld.be>
  */
 interface SerializerInterface

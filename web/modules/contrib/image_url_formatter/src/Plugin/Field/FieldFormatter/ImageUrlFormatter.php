@@ -1,9 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\image_url_formatter\Plugin\Field\FieldFormatter\ImageUrlFormatter.
- */
 
 namespace Drupal\image_url_formatter\Plugin\Field\FieldFormatter;
 
@@ -95,7 +91,7 @@ class ImageUrlFormatter extends ImageFormatterBase implements ContainerFactoryPl
       $configuration['third_party_settings'],
       $container->get('current_user'),
       $container->get('link_generator'),
-      $container->get('entity.manager')->getStorage('image_style')
+      $container->get('entity_type.manager')->getStorage('image_style')
     );
   }
 
@@ -103,54 +99,54 @@ class ImageUrlFormatter extends ImageFormatterBase implements ContainerFactoryPl
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    return array(
+    return [
       'url_type' => '',
       'image_style' => '',
       'image_link' => '',
-    ) + parent::defaultSettings();
+    ] + parent::defaultSettings();
   }
 
   /**
    * {@inheritdoc}
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
-    $element['url_type'] = array(
-      '#title' => t('URL type'),
+    $element['url_type'] = [
+      '#title' => $this->t('URL type'),
       '#type' => 'select',
-      '#options' => array(
-	    0 => t('Full URL'),
-        1 => t('Absolute file path'),
-        2 => t('Relative file path'),
-      ),
+      '#options' => [
+	    0 => $this->t('Full URL'),
+        1 => $this->t('Absolute file path'),
+        2 => $this->t('Relative file path'),
+      ],
       '#default_value' => $this->getSetting('url_type'),
-    );
-    //$element['url_type'][0]['#description'] = t("Like: 'http://example.com/sites/default/files/image.png'"); 
-    //$element['url_type'][1]['#description'] = t("With leading slash, no base URL, like: '/sites/default/files/image.png'");
-    //$element['url_type'][2]['#description'] = t("No base URL or leading slash, like: 'sites/default/files/image.png'");
+    ];
+    //$element['url_type'][0]['#description'] = $this->t("Like: 'http://example.com/sites/default/files/image.png'");
+    //$element['url_type'][1]['#description'] = $this->t("With leading slash, no base URL, like: '/sites/default/files/image.png'");
+    //$element['url_type'][2]['#description'] = $this->t("No base URL or leading slash, like: 'sites/default/files/image.png'");
 
     $image_styles = image_style_options(FALSE);
-    $element['image_style'] = array(
-      '#title' => t('Image style'),
+    $element['image_style'] = [
+      '#title' => $this->t('Image style'),
       '#type' => 'select',
       '#default_value' => $this->getSetting('image_style'),
-      '#empty_option' => t('None (original image)'),
+      '#empty_option' => $this->t('None (original image)'),
       '#options' => $image_styles,
-      '#description' => array(
+      '#description' => [
         '#markup' => $this->linkGenerator->generate($this->t('Configure Image Styles'), new Url('entity.image_style.collection')),
         '#access' => $this->currentUser->hasPermission('administer image styles'),
-      ),
-    );
-    $link_types = array(
-      'content' => t('Content'),
-      'file' => t('File'),
-    );
-    $element['image_link'] = array(
-      '#title' => t('Link image to'),
+      ],
+    ];
+    $link_types = [
+      'content' => $this->t('Content'),
+      'file' => $this->t('File'),
+    ];
+    $element['image_link'] = [
+      '#title' => $this->t('Link image to'),
       '#type' => 'select',
       '#default_value' => $this->getSetting('image_link'),
-      '#empty_option' => t('Nothing'),
+      '#empty_option' => $this->t('Nothing'),
       '#options' => $link_types,
-    );
+    ];
 
     return $element;
   }
@@ -159,19 +155,19 @@ class ImageUrlFormatter extends ImageFormatterBase implements ContainerFactoryPl
    * {@inheritdoc}
    */
   public function settingsSummary() {
-    $summary = array();
+    $summary = [];
 
     switch ($this->getSetting('url_type')) {
       case 2:
-        $summary[] = t('Use relative path');
+        $summary[] = $this->t('Use relative path');
         break;
 
       case 1:
-        $summary[] = t('Use absolute path');
+        $summary[] = $this->t('Use absolute path');
         break;
 
       case 0:
-        $summary[] = t('Use full URL');
+        $summary[] = $this->t('Use full URL');
         break;
     }
 
@@ -182,16 +178,16 @@ class ImageUrlFormatter extends ImageFormatterBase implements ContainerFactoryPl
     // their styles in code.
     $image_style_setting = $this->getSetting('image_style');
     if (isset($image_styles[$image_style_setting])) {
-      $summary[] = t('URL for Image style: @style', array('@style' => $image_styles[$image_style_setting]));
+      $summary[] = $this->t('URL for Image style: @style', ['@style' => $image_styles[$image_style_setting]]);
     }
     else {
-      $summary[] = t('Original image');
+      $summary[] = $this->t('Original image');
     }
 
-    $link_types = array(
-      'content' => t('Linked to content'),
-      'file' => t('Linked to file'),
-    );
+    $link_types = [
+      'content' => $this->t('Linked to content'),
+      'file' => $this->t('Linked to file'),
+    ];
     // Display this setting only if image is linked.
     $image_link_setting = $this->getSetting('image_link');
     if (isset($link_types[$image_link_setting])) {
@@ -204,7 +200,7 @@ class ImageUrlFormatter extends ImageFormatterBase implements ContainerFactoryPl
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
-    $elements = array();
+    $elements = [];
     $files = $this->getEntitiesToView($items, $langcode);
 
     // Early opt-out if the field is empty.
@@ -218,7 +214,7 @@ class ImageUrlFormatter extends ImageFormatterBase implements ContainerFactoryPl
     if ($image_link_setting == 'content') {
       $entity = $items->getEntity();
       if (!$entity->isNew()) {
-        $url = $entity->urlInfo();
+        $url = $entity->toUrl()->toString();
       }
     }
     elseif ($image_link_setting == 'file') {
@@ -228,7 +224,7 @@ class ImageUrlFormatter extends ImageFormatterBase implements ContainerFactoryPl
     $image_style_setting = $this->getSetting('image_style');
     $url_type_setting = $this->getSetting('url_type');
     // Collect cache tags to be added for each item in the field.
-    $cache_tags = array();
+    $cache_tags = [];
     if (!empty($image_style_setting)) {
       $image_style = $this->imageStyleStorage->load($image_style_setting);
       $cache_tags = $image_style->getCacheTags();
@@ -247,17 +243,17 @@ class ImageUrlFormatter extends ImageFormatterBase implements ContainerFactoryPl
       $item_attributes = $item->_attributes;
       unset($item->_attributes);
 
-      $elements[$delta] = array(
+      $elements[$delta] = [
         '#theme' => 'image_url_formatter',
         '#item' => $item,
         '#item_attributes' => $item_attributes,
         '#image_style' => $image_style_setting,
         '#url_type' => $url_type_setting,
         '#url' => $url,
-        '#cache' => array(
+        '#cache' => [
           'tags' => $cache_tags,
-        ),
-      );
+        ],
+      ];
     }
 
     return $elements;

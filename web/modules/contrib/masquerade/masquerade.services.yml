@@ -20,3 +20,6 @@ services:
     arguments: ['@request_stack']
     tags:
       - { name: cache.context }
+  masquerade.callbacks:
+    class: Drupal\masquerade\MasqueradeCallbacks
+    arguments: ['@entity_type.manager', '@masquerade']

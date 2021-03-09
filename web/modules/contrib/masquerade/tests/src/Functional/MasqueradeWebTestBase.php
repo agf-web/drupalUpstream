@@ -50,7 +50,7 @@ abstract class MasqueradeWebTestBase extends BrowserTestBase {
   protected $leadEditorUser;
 
   /**
-   * Supoer User.
+   * Super user.
    *
    * @var \Drupal\user\UserInterface
    */

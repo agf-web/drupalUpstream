@@ -10,9 +10,9 @@
     }
   ],
   "require": {
-    "composer/installers": "^1.0.20",
-    "cweagans/composer-patches": "^1.0",
-    "drupal-composer/drupal-scaffold": "^2.0.1",
+    "composer/installers": "^1.9",
+    "cweagans/composer-patches": "^1.7",
+    "drupal/core-composer-scaffold": "*",
     "drupal/address": "~1.0",
     "drupal/admin_toolbar": "^2.0",
     "drupal/allowed_formats": "^1.1",
@@ -22,7 +22,8 @@
     "drupal/config_direct_save": "^1.0",
     "drupal/config_installer": "^1.0",
     "drupal/console": "^1",
-    "drupal/core": "^8.6",
+    "drupal/core-recommended": "^8.6",
+    "pantheon-systems/drupal-integrations": "^8",
     "drupal/crop": "^1.2",
     "drupal/devel": "^2.0",
     "drupal/draggableviews": "1.x-dev",
@@ -67,10 +68,7 @@
     "drupal/viewsreference": "^1.2",
     "drupal/webform": "^5.0@beta",
     "drupal/xmlsitemap": "^1.0@alpha",
-    "drush/drush": "^8",
-    "rvtraveller/qs-composer-installer": "^1.1",
-    "webflo/drupal-core-strict": "^8",
-    "zaporylie/composer-drupal-optimizations": "^1.1"
+    "drush/drush": "^8"
   },
   "require-dev": {
     "mikey179/vfsstream": "^1.2",
@@ -134,6 +132,9 @@
       ],
       "drush/contrib/{$name}": [
         "type:drupal-drush"
+      ],
+      "web/private/scripts/quicksilver/{$name}/": [
+      	"type:quicksilver-script"
       ]
     },
     "build-env": {

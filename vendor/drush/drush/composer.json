@@ -38,11 +38,12 @@
     "psy/psysh": "~0.6",
     "consolidation/annotated-command": "^2.12.0",
     "consolidation/output-formatters": "~3",
-    "symfony/yaml": "~2.3|^3",
-    "symfony/var-dumper": "~2.7|^3",
-    "symfony/console": "~2.7|^3",
-    "symfony/event-dispatcher": "~2.7|^3",
-    "symfony/finder": "~2.7|^3",
+    "symfony/yaml": "~2.3|^3|^4.4",
+    "symfony/var-dumper": "~2.7|^3|^4.4|^5",
+    "symfony/console": "~2.7|^3|^4.4",
+    "symfony/event-dispatcher": "~2.7|^3|^4.4",
+    "symfony/finder": "~2.7|^3|^4.4",
+    "symfony/process": "~2.7|^3|^4.4",
     "pear/console_table": "~1.3.1",
     "webflo/drupal-finder": "^1.1.0",
     "webmozart/path-util": "~2"
@@ -62,8 +63,11 @@
   },
   "autoload": {
     "psr-0": {
-      "Drush":        "lib/",
-      "Consolidation": "lib/"
+      "Drush\\":        "lib/",
+      "Consolidation\\": "lib/"
+    },
+    "psr-4": {
+      "Drush\\":      "src/"
     }
   },
   "autoload-dev": {
@@ -72,6 +76,8 @@
     }
   },
   "scripts": {
+    "phar:install-tools": "curl -LSs https://box-project.github.io/box2/installer.php | php",
+    "phar:build": "php box.phar build",
     "lint": [
       "find includes -name '*.inc' -print0 | xargs -0 -n1 php -l",
       "find lib/Drush -name '*.php' -print0 | xargs -0 -n1 php -l"
@@ -79,7 +85,7 @@
   },
   "extra": {
     "branch-alias": {
-        "dev-master": "8.0.x-dev"
+        "dev-master": "8.3.x-dev"
     }
   }
 }

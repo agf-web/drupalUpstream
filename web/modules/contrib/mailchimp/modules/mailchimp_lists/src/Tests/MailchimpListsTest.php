@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\mailchimp_lists\Tests;
+namespace Drupal\Tests\mailchimp_lists\Functional;
 
 /**
  * Tests core lists functionality.
@@ -14,12 +14,12 @@ class MailchimpListsTest extends MailchimpListsTestBase {
    *
    * @var array
    */
-  public static $modules = array('mailchimp', 'mailchimp_lists', 'mailchimp_test');
+  public static $modules = ['mailchimp', 'mailchimp_lists', 'mailchimp_test'];
 
   /**
    * Tests that a list can be loaded.
    */
-  function testGetList() {
+  public function testGetList() {
     $list_id = '57afe96172';
 
     $list = mailchimp_get_list($list_id);
@@ -31,11 +31,11 @@ class MailchimpListsTest extends MailchimpListsTestBase {
   /**
    * Tests retrieval of a specific set of lists.
    */
-  function testMultiListRetrieval() {
-    $list_ids = array(
+  public function testMultiListRetrieval() {
+    $list_ids = [
       '57afe96172',
       'f4b7b26b2e',
-    );
+    ];
 
     $lists = mailchimp_get_lists($list_ids);
 
@@ -51,10 +51,10 @@ class MailchimpListsTest extends MailchimpListsTestBase {
   /**
    * Tests retrieval of mergevars for a set of lists.
    */
-  function testGetMergevars() {
-    $list_ids = array(
+  public function testGetMergevars() {
+    $list_ids = [
       '57afe96172',
-    );
+    ];
 
     $mergevars = mailchimp_get_mergevars($list_ids);
 

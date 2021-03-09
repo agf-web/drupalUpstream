@@ -852,6 +852,11 @@ function _drush_pm_find_common_path($project_type, $extensions) {
  * Command callback. Show a list of extensions with type and status.
  */
 function drush_pm_list() {
+  // Rebuild the cache if needed (Drupal 9 requirement)
+  if (drush_drupal_major_version() >= 9) {
+    drupal_flush_all_caches();
+  }
+
   //--package
   $package_filter = array();
   $package = strtolower(drush_get_option('package'));
@@ -978,6 +983,11 @@ function drush_pm_enable_find_project_from_extension($extension) {
  * Validate callback. Determine the modules and themes that the user would like enabled.
  */
 function drush_pm_enable_validate() {
+  // Rebuild the cache if needed (Drupal 9 requirement)
+  if (drush_drupal_major_version() >= 9) {
+    drupal_flush_all_caches();
+  }
+
   $args = pm_parse_arguments(func_get_args());
 
   $extension_info = drush_get_extensions();
@@ -1553,6 +1563,9 @@ function _pm_parse_version_compound($parts) {
  *   - 7.x-1.x-dev
  *   - 1.x
  *
+ * TODO: Currently does not support specific version releases of
+ *       contrib modules that use SEMVER release versions, e.g. devel-4.0.0.
+ *
  * @see pm_parse_request()
  *
  * @param string $version
@@ -1586,6 +1599,10 @@ function pm_parse_version($version, $is_core = FALSE) {
 
   // If no major version, we have no version at all. Pick a default.
   $drupal_version_default = drush_drupal_major_version();
+  // Make 9 act like 8, because release_xml is weird.
+  if ($drupal_version_default == 9) {
+    $drupal_version_default = 8;
+  }
   if ($core_parts['major'] == '') {
     $core_parts['major'] = ($drupal_version_default) ? $drupal_version_default : drush_get_option('default-major', 8);
   }
@@ -1760,9 +1777,9 @@ function pm_drush_engine_package_handler() {
       ),
     ),
     'git_drupalorg' => array(
-      'description' => 'Use git.drupal.org to checkout and update projects.',
+      'description' => 'Use git.drupalcode.org to checkout and update projects.',
       'options' => array(
-        'gitusername' => 'Your git username as shown on user/[uid]/edit/git. Typically, this is set this in drushrc.php. Omitting this prevents users from pushing changes back to git.drupal.org.',
+        'gitusername' => 'Your git username as shown on user/[uid]/edit/git. Typically, this is set this in drushrc.php. Omitting this prevents users from pushing changes back to git.drupalcode.org.',
         'gitsubmodule' => 'Use git submodules for checking out new projects. Existing git checkouts are unaffected, and will continue to (not) use submodules regardless of this setting.',
         'gitcheckoutparams' => 'Add options to the `git checkout` command.',
         'gitcloneparams' => 'Add options to the `git clone` command.',
@@ -2228,7 +2245,8 @@ function drush_find_empty_directories($dir, $exclude = array()) {
 function drush_pm_inject_info_file_metadata($project_dir, $project_name, $version, $datestamp) {
   // `drush_drupal_major_version()` cannot be used here because this may be running
   // outside of a Drupal context.
-  $yaml_format = substr($version, 0, 1) >= 8;
+  $regex = '/((\d*)\.\d*\.[\dx]*-?.*)|([89]\.x-\d*\.[\dx]*.*)/';
+  $yaml_format = preg_match($regex, $version);
   $pattern = preg_quote($yaml_format ? '.info.yml' : '.info');
   $info_files = drush_scan_directory($project_dir, '/.*' . $pattern . '$/');
   if (!empty($info_files)) {

@@ -6,15 +6,14 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'org\\bovigo\\vfs\\' => array($vendorDir . '/mikey179/vfsStream/src/main/php'),
+    'org\\bovigo\\vfs\\' => array($vendorDir . '/mikey179/vfsstream/src/main/php'),
     'WebDriver' => array($vendorDir . '/instaclick/php-webdriver/lib'),
     'Twig_' => array($vendorDir . '/twig/twig/lib'),
     'Stack' => array($vendorDir . '/stack/builder/src'),
     'Solarium\\' => array($vendorDir . '/solarium/solarium/library'),
-    'Prophecy\\' => array($vendorDir . '/phpspec/prophecy/src'),
     'Mailchimp' => array($baseDir . '/web/modules/contrib/mailchimp/src'),
     'EasyRdf_' => array($vendorDir . '/easyrdf/easyrdf/lib'),
-    'Drush' => array($vendorDir . '/drush/drush/lib'),
+    'Drush\\' => array($vendorDir . '/drush/drush/lib'),
     'Drupal\\Tests\\Driver' => array($vendorDir . '/drupal/drupal-driver/tests'),
     'Drupal\\Exception' => array($vendorDir . '/drupal/drupal-extension/src'),
     'Drupal\\DrupalExtension' => array($vendorDir . '/drupal/drupal-extension/src'),
@@ -24,13 +23,10 @@ return array(
     'Dflydev\\PlaceholderResolver' => array($vendorDir . '/dflydev/placeholder-resolver/src'),
     'Dflydev\\DotAccessData' => array($vendorDir . '/dflydev/dot-access-data/src'),
     'Dflydev\\DotAccessConfiguration' => array($vendorDir . '/dflydev/dot-access-configuration/src'),
-    'Consolidation' => array($vendorDir . '/drush/drush/lib'),
+    'Consolidation\\' => array($vendorDir . '/drush/drush/lib'),
     'Console' => array($vendorDir . '/pear/console_getopt'),
-    'Behat\\Transliterator' => array($vendorDir . '/behat/transliterator/src'),
-    'Behat\\Testwork' => array($vendorDir . '/behat/behat/src'),
     'Behat\\MinkExtension' => array($vendorDir . '/behat/mink-extension/src'),
     'Behat\\Gherkin' => array($vendorDir . '/behat/gherkin/src'),
-    'Behat\\Behat' => array($vendorDir . '/behat/behat/src'),
     'Archive_Tar' => array($vendorDir . '/pear/archive_tar'),
     '' => array($vendorDir . '/pear/pear-core-minimal/src'),
 );

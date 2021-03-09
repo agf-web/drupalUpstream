@@ -7,3 +7,4 @@ rebuild_cache_access.rebuild_cache:
     _admin_route: TRUE
   requirements:
     _permission: 'rebuild cache access'
+    _csrf_token: 'TRUE'

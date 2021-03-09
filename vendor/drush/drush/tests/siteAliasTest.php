@@ -172,6 +172,38 @@ EOD;
   }
 
   /**
+   * Test wildcard aliases
+   */
+  public function testWildcardAliases() {
+    $aliasPath = UNISH_SANDBOX . '/site-alias-directory';
+    file_exists($aliasPath) ?: mkdir($aliasPath);
+    $aliasFile = $aliasPath . '/wild.aliases.drushrc.php';
+    $aliasContents = <<<EOD
+  <?php
+  // Written by Unish. This file is safe to delete.
+  \$aliases['foo.*'] = array(
+    'remote-host' => '\${env-name}.remote-host.com',
+    'remote-user' => 'www-admin',
+    'root' => '/path/to/\${env-name}',
+    'uri' => 'https://\${env-name}.foo.example.com',
+  );
+EOD;
+    file_put_contents($aliasFile, $aliasContents);
+    $options = array(
+      'alias-path' => $aliasPath,
+      'yes' => NULL,
+    );
+    $this->drush('sa', array('@foo.bar'), $options, NULL, NULL, self::EXIT_SUCCESS);
+    $output = $this->getOutput();
+    $this->assertEquals("\$aliases[\"foo.bar\"] = array (
+  'remote-host' => 'bar.remote-host.com',
+  'remote-user' => 'www-admin',
+  'root' => '/path/to/bar',
+  'uri' => 'https://bar.foo.example.com',
+);", $output);
+  }
+
+  /**
    * Ensure that a --uri on CLI overrides on provided by site alias during a backend invoke.
    */
   public function testBackendHonorsAliasOverride() {
@@ -191,6 +223,7 @@ EOD;
     $sites = $this->setUpDrupal(1, TRUE);
     $name = key($sites);
     $sites_php = "\n\$sites['example.com'] = '$name';";
+    @mkdir($sites[$name]['root'] . '/sites');
     file_put_contents($sites[$name]['root'] . '/sites/sites.php', $sites_php, FILE_APPEND);
     $this->drush('pm-updatecode', array(), array('uri' => 'http://example.com', 'no' => NULL, 'no-core' => NULL, 'verbose' => NULL), '@' . $name);
     $this->assertContains('--uri=http://example.com', $this->getErrorOutput());
@@ -249,6 +282,8 @@ EOD;
     'uri' => 'default',
   );
 EOD;
+    @mkdir($root . "/sites");
+    @mkdir($root . "/sites/all");
     @mkdir($root . "/sites/all/drush");
     @mkdir($root . "/sites/all/drush/site-aliases");
     file_put_contents($root . "/sites/all/drush/site-aliases/sitefolder.aliases.drushrc.php", $aliasContents);

@@ -15,3 +15,21 @@ site configuration` permission being able to rebuild the caches.
 
 [1]: https://api.drupal.org/api/drupal/core%21includes%21common.inc/function/drupal_flush_all_caches/8.5.x
 [2]: https://www.drupal.org/files/project-images/drupal_rebuild_cache_access.png
+
+## Requirements
+
+```yaml
+dependencies:
+  - drupal:toolbar
+```
+
+## Installation
+
+* Install as you would normally install a contributed drupal module.
+  See: https://drupal.org/documentation/install/modules-themes/modules-8
+  for further information.
+
+## Configuration
+
+* Configure the user permissions in Administration > People > Permissions:
+  > Rebuild Cache Access > Rebuild Cache

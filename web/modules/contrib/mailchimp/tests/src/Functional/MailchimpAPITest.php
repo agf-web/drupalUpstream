@@ -12,7 +12,7 @@ class MailchimpAPITest extends FunctionalMailchimpTestBase {
   /**
    * Tests that the test API has been loaded.
    */
-  function testAPI() {
+  public function testApi() {
     $mailchimp_api = mailchimp_get_api_object();
 
     $this->assertNotNull($mailchimp_api);

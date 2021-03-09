@@ -24,7 +24,7 @@ class TelephoneItemTest extends BaseItemTest {
   /**
    * Enable validation on telephone field.
    */
-  protected function setUp() {
+  protected function setUp() : void {
     parent::setUp();
 
     $config = FieldConfig::loadByName('entity_test', 'entity_test', 'field_test');

@@ -8,8 +8,7 @@
     "issues": "http://drupal.org/project/issues/telephone_validation"
   },
   "require": {
-    "drupal/core": "^8.0",
-    "drupal/telephone": "^8.0",
+    "drupal/core": "^8 || ^9",
     "giggsey/libphonenumber-for-php": "~8.0"
   }
 }

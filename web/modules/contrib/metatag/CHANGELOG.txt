@@ -1,3 +1,103 @@
+Metatag 8.x-1.15, 2020-12-05
+----------------------------
+#3165112 by Wim Leers, tim.plunkett: Metatag migrations should be tagged
+  "Configuration".
+#2782797 by DamienMcKenna, Rolf van de Krol, michaelpetri, mvwensen, mxr576,
+  Alex G: Allow each tag to have its own permission (merge Metatag Access).
+#3180470 by SivaprasadC: Typos in couple of files.
+#3169952 by Wim Leers, tim.plunkett: Derive metatag migrations by entity type
+  (and bundle).
+#3171660 by richgerdes, DamienMcKenna: Migration Plugin Alter breaks with
+  commerce_migrate_commerce.
+#3176513 by mglaman: \Drupal\metatag\MetatagManager::defaultTagsFromEntity
+  should not return null.
+#3166569 by munish.kumar, yogeshmpawar, Dom.: Add Facebook verification meta
+  header.
+#2994433 by DamienMcKenna, ChandeepKhosa, vishnukumar, Berdir, joakland,
+  pdenooijer, benstjohn, muranod: Automatically parse URLs from image field
+  tokens.
+#3171302 by ankithashetty, DamienMcKenna: \Drupal calls should be avoided in
+  classes, use dependency injection instead.
+#2996883 by rokzabukovec, mrinalini9, thejimbirch, DamienMcKenna, Nchase,
+  Schwarz Developing: Sorting the output of meta tags.
+#3135365 by novchuk.v, mero.S: Replace assertions involving calls to empty()
+  with assertEmpty()/assertNotEmpty()/assertArrayNotHasKey().
+#2782797 by DamienMcKenna: Added missing $defaultTheme test variable.
+#3159192 by heddn: Hide from translation system from unsupported entities.
+#3175269 by mbovan, DamienMcKenna: Pass optional bubbleable metadata parameter
+  to generateRawElements to avoid issues with early rendering and JSON:API.
+#3154416 by novchuk.v: Replace assert* involving an instanceof operator with
+  assertInstanceOf()/assertNotInstanceOf().
+#3170298 by thejimbirch: Provide link to Facebook Open Graph debugger.
+#3136470 by novchuk.v: Replace assertEqual()/assertSame() with count() with
+  assertCount().
+#3108052 by Berdir, SpadXIII: metatag_get_default_tags() does not revert config
+  override language.
+#2862747 by JeroenT, DanielVeza, rwohleb, joshua.boltz, henrikakselsen,
+  Vitalyos, Phil Wolstenholme: Tokens to access individual meta tag values.
+#3154513 by rokzabukovec: Exclusive robots metatags (index, noindex, follow,
+  nofollow).
+
+
+Metatag 8.x-1.14, 2020-08-11
+----------------------------
+#3129664 by phenaproxima: Fix failure in MetatagPageManagerTest.
+#3154149 by alexpott, DamienMcKenna, mrinalini9, rokzabukovec: Refactored
+  entity migration test to use new API added in 8.9.x; skip this test on 8.8.
+#3154891 by DamienMcKenna: Rename test fixtures to be one file per source
+  module.
+#3129863 by DamienMcKenna, kyuubi, azedan, lcontreras, havran, markie: Revert
+  compatibility with GraphQL 4 to avoid breaking existing sites.
+#3131380 by lolandese, volkswagenchick: License "GPL-2.0+" is a deprecated SPDX
+  license identifier.
+#3130250 by Andrew Gorokhovets: Typo in the comment class name
+  (MetatagViewsTranslationForm).
+#3134665 by Neslee Canil Pinto, rokzabukovec: Correct description of
+  OgImageWidth.php file.
+#3158613 by huzooka, DamienMcKenna, Wim Leers: Metatag field instance migration
+  source plugins report incorrect number of items.
+#3136075 by s_leu, fjgarlin, mirom, DamienMcKenna: D9 Compatibility -
+  pre_render should be method implementing TrustedCallbackInterface.
+#3153911 by alexpott, mrinalini9: Improve logic in metatag_page_attachments()
+  and make code comments more clear.
+#3077782 by DamienMcKenna, rokzabukovec, rahulrasgon: Add missing OG tags.
+
+
+Metatag 8.x-1.13, 2020-04-21
+----------------------------
+#3123520 by DamienMcKenna, phenaproxima: Remove Schema.org Metatag dependency
+  for D9.
+#3123582 by DamienMcKenna: Remove Devel dependency for D9.
+#3123577 by DamienMcKenna: Remove RestUI dependency for D9.
+#3042590 by phenaproxima, SerShevchyk, chr.fritsch, Berdir, pixlkat, abramm,
+  Cary_Dean, pguillard, gmangones, DamienMcKenna, josephdpurcell, waverate,
+  joshi.rohit100, baikho, valthebald: Drupal 9 compatibility fixes.
+#3124039 by Grayle: Migration plugins alter does not check for presence of
+  migration_tags.
+#3124042 by Neslee Canil Pinto: t() calls should be avoided in classes, use
+  \Drupal\Core\StringTranslation\StringTranslationTrait and $this->t() instead.
+#3042590 by Berdir: Reworked NodewordsFieldInstance to make it compatible with
+  core 8.7.
+#3039627 by larowlan, acbramley: metatag_entity_view_alter runs for every
+  paragraph, resulting in a performance hit.
+#3124175 by Neslee Canil Pinto: Remove Unused .module file inside
+  tests/modules/metatag_test_tag.
+#3124205 by DamienMcKenna, Berdir: Remove test_dependencies from
+  metatag.info.yml.
+#3123578 by DamienMcKenna, Berdir: Add NodeJsonOutput test back again.
+#3124042 by Neslee Canil Pinto: Follow-up with more changes.
+#3123578 by DamienMcKenna: Removed restui dependency from test's modules list.
+#3123578 by DamienMcKenna: Some follow-up on D9 test compatibility.
+#3128281 by DamienMcKenna: Fix Page Manager tests in the 8.x-1.x branch.
+#3123665 by DamienMcKenna, Greenhorn, milan.durovic, explorerinruins, floown,
+  karenann, maxilein, Dave Reid, HNS-IT-Solutions, doar1004, sthomen: Filler
+  update script to trigger rebuild of caches due to service changes.
+#3129331 by DamienMcKenna: Resolve problems with MetatagViewsBasicsTest::
+  testViewsUi.
+#3129357 by DamienMcKenna: Standardize on assertSession()->statusCodeEquals
+  instead of assertResponse().
+
+
 Metatag 8.x-1.12, 2020-03-30
 -------------------------------
 #3102937 by yasmeensalah, Berdir: Plugin AlternateHandheld is misnamed.

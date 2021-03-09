@@ -39,6 +39,13 @@ class CkeditorAccordionSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('collapse_all') ?: 0,
     ];
 
+    $form['keep_rows_open'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Keep accordion rows open when opening another one'),
+      '#return_value' => 1,
+      '#default_value' => $config->get('keep_rows_open') ?: 0,
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -50,6 +57,7 @@ class CkeditorAccordionSettingsForm extends ConfigFormBase {
     $values = $form_state->getValues();
 
     $config->set('collapse_all', $values['collapse_all']);
+    $config->set('keep_rows_open', $values['keep_rows_open']);
     $config->save();
 
     parent::submitForm($form, $form_state);

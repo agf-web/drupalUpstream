@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\mailchimp_campaign\Tests;
+namespace Drupal\Tests\mailchimp_campaign\Functional;
 
 /**
  * Tests core campaign functionality.
@@ -14,7 +14,7 @@ class MailchimpCampaignTest extends MailchimpCampaignTestBase {
    *
    * @var array
    */
-  public static $modules = array('mailchimp', 'mailchimp_campaign', 'mailchimp_test');
+  public static $modules = ['mailchimp', 'mailchimp_campaign', 'mailchimp_test'];
 
   /**
    * Tests retrieval of a specific campaign.

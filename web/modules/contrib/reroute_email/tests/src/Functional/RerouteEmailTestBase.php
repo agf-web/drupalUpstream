@@ -37,6 +37,11 @@ abstract class RerouteEmailTestBase extends BrowserTestBase {
   public static $modules = ['reroute_email'];
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * User object to perform site browsing.
    *
    * @var \Drupal\user\Entity\User
@@ -157,7 +162,7 @@ abstract class RerouteEmailTestBase extends BrowserTestBase {
     // Search in $mailbody for "Originally to: $original_destination".
     $mail_body = end($mails)['body'];
     $search_for = t('Originally to: @to', ['@to' => $original_destination]);
-    $has_info = preg_match("/{$search_for}/", $mail_body);
+    $has_info = (bool) preg_match("/{$search_for}/", $mail_body);
 
     // Asserts whether searched text was found.
     $this->assertTrue($has_info, 'Found the correct "Originally to" line in the body.');

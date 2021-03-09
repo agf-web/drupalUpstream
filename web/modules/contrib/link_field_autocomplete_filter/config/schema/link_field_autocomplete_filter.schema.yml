@@ -1,0 +1,13 @@
+field.field.*.*.*.third_party.link_field_autocomplete_filter:
+  type: mapping
+  label: 'Autocomplete filter settings'
+  mapping:
+    negate:
+      type: boolean
+      label: 'Whether the selection should be inclusive or exclusive.'
+    allowed_content_types:
+      type: sequence
+      label: 'The allowed content types'
+      sequence:
+        type: string
+        label: 'Content type'

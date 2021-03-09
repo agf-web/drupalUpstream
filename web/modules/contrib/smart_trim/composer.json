@@ -14,6 +14,6 @@
     "issues": "https://drupal.org/project/issues/smart_trim",
     "source": "https://cgit.drupalcode.org/smart_trim"
   },
-  "license": "GPL-2.0+",
+  "license": "GPL-2.0-or-later",
   "minimum-stability": "dev"
 }

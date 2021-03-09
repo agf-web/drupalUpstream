@@ -7,6 +7,7 @@
   text-align: right; /* LTR */
   padding: 1em;
 }
+
 [dir="rtl"] .toolbar .toolbar-tray-vertical .edit-rebuild-cache-access-toolbar {
   text-align: left;
 }
@@ -14,6 +15,7 @@
 .toolbar .toolbar-tray-horizontal .edit-rebuild-cache-access-toolbar {
   float: right; /* LTR */
 }
+
 [dir="rtl"] .toolbar .toolbar-tray-horizontal .edit-rebuild-cache-access-toolbar {
   float: left;
 }
@@ -21,6 +23,7 @@
 .toolbar .toolbar-tray-horizontal .toolbar-menu {
   float: left; /* LTR */
 }
+
 [dir="rtl"] .toolbar .toolbar-tray-horizontal .toolbar-menu {
   float: right;
 }
@@ -28,6 +31,7 @@
 .toolbar .toolbar-bar .toolbar-icon-rebuild-cache-access:before {
   background-image: url(../icons/recycle.svg);
 }
+
 .toolbar-bar .toolbar-icon-rebuild-cache-access:active:before,
 .toolbar-bar .toolbar-icon-rebuild-cache-access.is-active:before {
   background-image: url(../icons/recycle.svg);

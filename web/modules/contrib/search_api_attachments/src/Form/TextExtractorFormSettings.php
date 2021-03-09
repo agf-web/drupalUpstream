@@ -103,6 +103,12 @@ class TextExtractorFormSettings extends ConfigFormBase {
       '#default_value' => $config->get('preserve_cache'),
       '#description' => $this->t('When checked, <a href=":url">clearing the sitewide cache</a> will not clear the cache of extracted files.', [':url' => $url]),
     ];
+    $form['read_text_files_directly'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Get contents of text attachments directly using file_get_contents.'),
+      '#default_value' => $config->get('use_text_files_directly'),
+      '#description' => $this->t('When checked, get contents of text files directly using file_get_contents, rather than sending the whole file to Solr. This may cause problems when reading non-UTF-8 text files.'),
+    ];
     $form['actions']['submit']['#value'] = $this->t('Submit and test extraction');
     return $form;
   }
@@ -143,6 +149,8 @@ class TextExtractorFormSettings extends ConfigFormBase {
     $config = $this->configFactory()->getEditable(static::CONFIGNAME);
     // Set the extraction method variable.
     $config->set('extraction_method', $extractor_plugin_id);
+    // Set the redad text files directly option.
+    $config->set('read_text_files_directly', $form_state->getValue('read_text_files_directly'));
     // Set the preserving cache option.
     $config->set('preserve_cache', $form_state->getValue('preserve_cache'));
     $config->save();

@@ -41,16 +41,21 @@ function link_field_autocomplete_filter_help($route_name, RouteMatchInterface $r
  * Implements hook_form__BASE_FORM_ID_alter().
  */
 function link_field_autocomplete_filter_form_field_config_edit_form_alter(&$form, FormStateInterface $form_state) {
+  /** @var \Drupal\field\FieldConfigInterface $entity */
   $entity = $form_state->getFormObject()->getEntity();
-  if ($entity->get('field_type') == 'link') {
+  if ($entity->getType() === 'link') {
     $form['third_party_settings']['link_field_autocomplete_filter'] = [
       '#type' => 'fieldset',
       '#collapsible' => FALSE,
       '#title' => t('Autocomplete Filter'),
     ];
 
-    // Do negate the selection.
+    // Selection negation.
     $negate = $entity->getThirdPartySetting('link_field_autocomplete_filter', 'negate', NULL);
+    $default_value = NULL;
+    if (!is_null($negate)) {
+      $default_value = $negate === TRUE ? 1 : 0;
+    }
     $form['third_party_settings']['link_field_autocomplete_filter']['negate'] = [
       '#type' => 'radios',
       '#options' => [
@@ -58,9 +63,10 @@ function link_field_autocomplete_filter_form_field_config_edit_form_alter(&$form
         1 => t('Exclude the selected below'),
       ],
       '#title' => t('Which content types should be allowed for internal links?'),
-      '#default_value' => $negate,
+      '#default_value' => $default_value,
     ];
 
+    // The allowed bundles.
     $bundles = $entity->getThirdPartySetting('link_field_autocomplete_filter', 'allowed_content_types', NULL);
     $form['third_party_settings']['link_field_autocomplete_filter']['allowed_content_types'] = [
       '#type' => 'checkboxes',

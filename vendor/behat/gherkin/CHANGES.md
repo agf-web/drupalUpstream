@@ -1,3 +1,37 @@
+4.7.3 / 2021-02-04
+==================
+
+* Refactored comments parsing to avoid Maximum function nesting level errors
+
+4.7.2 / 2021-02-03
+==================
+
+* Issue where Scenario Outline title was not populated into Examples
+* Updated translations from cucumber 16.0.0
+
+4.7.1 / 2021-01-26
+==================
+
+* Issue parsing comments before scenarios when following an Examples table
+
+4.7.0 / 2021-01-24
+==================
+
+ * Provides better messages for TableNode construct errors
+ * Now allows single character steps 
+ * Supports multiple Example Tables with tags
+
+4.6.2 / 2020-03-17
+==================
+
+ * Fixed issues due to incorrect cache key
+
+4.6.1 / 2020-02-27
+==================
+
+ * Fix AZ translations
+ * Correctly filter features, now that the base path is correctly set 
+
 4.6.0 / 2019-01-16
 ==================
 

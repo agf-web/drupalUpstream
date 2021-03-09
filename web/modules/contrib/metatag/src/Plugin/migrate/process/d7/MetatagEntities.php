@@ -26,26 +26,26 @@ class MetatagEntities extends ProcessPluginBase {
       return NULL;
     }
 
-    $tags_map = $this->tagsMap();
-
-    $metatags = [];
-
     // Re-shape D7 entries into for D8 entries.
     $old_tags = unserialize($value);
 
-    // This is expected to be an array, if it isn't something went wrong.
+    // This is expected to be an array, if it isn't then something went wrong.
     if (!is_array($old_tags)) {
       throw new MigrateException('Data from Metatag-D7 was not a serialized array.');
     }
 
-    foreach ($old_tags as $d7_metatag_name => $data) {
+    $tags_map = $this->tagsMap();
+
+    $metatags = [];
+
+    foreach ($old_tags as $d7_metatag_name => $metatag_value) {
       // If there's no data for this tag, ignore everything.
-      if (empty($data)) {
+      if (empty($metatag_value)) {
         continue;
       }
 
       // @todo Skip these values for now, maybe some version supported these?
-      if (!is_array($data) || empty($data['value'])) {
+      if (!is_array($metatag_value) || empty($metatag_value['value'])) {
         continue;
       }
 
@@ -57,18 +57,18 @@ class MetatagEntities extends ProcessPluginBase {
       $d8_metatag_name = $tags_map[$d7_metatag_name];
 
       // Convert the nested arrays to a flat structure.
-      if (is_array($data['value'])) {
+      if (is_array($metatag_value['value'])) {
         // Remove empty values.
-        $data['value'] = array_filter($data['value']);
+        $metatag_value['value'] = array_filter($metatag_value['value']);
         // Convert the array into a comma-separated list.
-        $data = implode(', ', $data['value']);
+        $metatag_value = implode(', ', $metatag_value['value']);
       }
       else {
-        $data = $data['value'];
+        $metatag_value = $metatag_value['value'];
       }
 
       // Keep the entire data structure.
-      $metatags[$d8_metatag_name] = $data;
+      $metatags[$d8_metatag_name] = $metatag_value;
     }
 
     return serialize($metatags);
@@ -295,9 +295,9 @@ class MetatagEntities extends ProcessPluginBase {
       'book:isbn' => 'book_isbn',
       'book:release_date' => 'book_release_date',
       'book:tag' => 'book_tag',
-      // @todo 'og:audio' => '',
-      // @todo 'og:audio:secure_url' => '',
-      // @todo 'og:audio:type' => '',
+      'og:audio' => 'og_audio',
+      'og:audio:secure_url' => 'og_audio_secure_url',
+      'og:audio:type' => 'og_audio_type',
       'og:country_name' => 'og_country_name',
       'og:description' => 'og_description',
       'og:determiner' => 'og_determiner',
@@ -333,18 +333,18 @@ class MetatagEntities extends ProcessPluginBase {
       'og:video:type' => 'og_video_type',
       'og:video:url' => 'og_video_url',
       'og:video:width' => 'og_video_width',
-      // @todo 'profile:first_name' => '',
-      // @todo 'profile:gender' => '',
-      // @todo 'profile:last_name' => '',
-      // @todo 'profile:username' => '',
-      // @todo 'video:actor' => '',
-      // @todo 'video:actor:role' => '',
-      // @todo 'video:director' => '',
+      'profile:first_name' => 'profile_first_name',
+      'profile:gender' => 'profile_gender',
+      'profile:last_name' => 'profile_last_name',
+      'profile:username' => 'profile_username',
+      'video:actor' => 'video_actor',
+      'video:actor:role' => 'video_actor_role',
+      'video:director' => 'video_director',
       // @todo 'video:duration' => '',
-      // @todo 'video:release_date' => '',
-      // @todo 'video:series' => '',
-      // @todo 'video:tag' => '',
-      // @todo 'video:writer' => '',
+      'video:release_date' => 'video_release_date',
+      'video:series' => 'video_series',
+      'video:tag' => 'video_tag',
+      'video:writer' => 'video_writer',
 
       // From metatag_opengraph_products.metatag.inc:
       // https://www.drupal.org/project/metatag/issues/2835925
@@ -424,6 +424,7 @@ class MetatagEntities extends ProcessPluginBase {
 
       // From metatag_verification.metatag.inc:
       'baidu-site-verification' => 'baidu',
+      'facebook-domain-verification' => 'facebook_domain_verification',
       'google-site-verification' => 'bing',
       'msvalidate.01' => 'google',
       'norton-safeweb-site-verification' => 'norton_safe_web',

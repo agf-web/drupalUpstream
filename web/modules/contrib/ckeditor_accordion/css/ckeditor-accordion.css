@@ -28,7 +28,7 @@
   position: relative;
 }
 
-.ckeditor-accordion-container > dl dt > .ckeditor-accordion-toggle {
+.ckeditor-accordion-container > dl dt > a > .ckeditor-accordion-toggle {
   display: inline-block;
   position: absolute;
   padding: 0 10px;
@@ -39,8 +39,8 @@
   left: 11px;
   box-sizing: border-box;
 }
-.ckeditor-accordion-container > dl dt > .ckeditor-accordion-toggle:before,
-.ckeditor-accordion-container > dl dt > .ckeditor-accordion-toggle:after {
+.ckeditor-accordion-container > dl dt > a > .ckeditor-accordion-toggle:before,
+.ckeditor-accordion-container > dl dt > a > .ckeditor-accordion-toggle:after {
   background: #fff;
   -webkit-transition: all 600ms cubic-bezier(0.4, 0, 0.2, 1);
   transition: all 600ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -56,21 +56,21 @@
   transform: rotate(-180deg);
   will-change: transform;
 }
-.ckeditor-accordion-container > dl dt > .ckeditor-accordion-toggle:before {
+.ckeditor-accordion-container > dl dt > a > .ckeditor-accordion-toggle:before {
   left: 13px;
   -webkit-transform: rotate(135deg);
   transform: rotate(135deg);
 }
-.ckeditor-accordion-container > dl dt > .ckeditor-accordion-toggle:after {
+.ckeditor-accordion-container > dl dt > a > .ckeditor-accordion-toggle:after {
   right: 13px;
   left: auto;
   -webkit-transform: rotate(-135deg);
   transform: rotate(-135deg);
 }
-.ckeditor-accordion-container > dl dt.active > .ckeditor-accordion-toggle:before {
+.ckeditor-accordion-container > dl dt.active > a > .ckeditor-accordion-toggle:before {
   transform: rotate(45deg);
 }
-.ckeditor-accordion-container > dl dt.active > .ckeditor-accordion-toggle:after {
+.ckeditor-accordion-container > dl dt.active > a > .ckeditor-accordion-toggle:after {
   transform: rotate(-45deg);
 }
 

@@ -37,6 +37,11 @@ if (!class_exists('Mailchimp\Mailchimp')) {
 abstract class FunctionalMailchimpTestBase extends BrowserTestBase {
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'classy';
+
+  /**
    * If Mailchimp config should be overridden.
    *
    * @var bool

@@ -38,7 +38,7 @@ abstract class InlineEntityFormTestBase extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->fieldStorageConfigStorage = $this->container->get('entity_type.manager')->getStorage('field_storage_config');
     $this->fieldConfigStorage = $this->container->get('entity_type.manager')->getStorage('field_config');
@@ -209,7 +209,7 @@ abstract class InlineEntityFormTestBase extends WebDriverTestBase {
   }
 
   /**
-   * Wait for an IEF table row to appear.
+   * Wait for an IEF table row to disappear.
    *
    * @param string $title
    *   The title of the row for which to wait.
@@ -219,10 +219,10 @@ abstract class InlineEntityFormTestBase extends WebDriverTestBase {
   }
 
   /**
-   * Asserts that an IEF table row appears.
+   * Asserts that an IEF table row exists.
    *
    * @param string $title
-   *   The title of the row for which to wait.
+   *   The title of the row to check.
    *
    * @return \Behat\Mink\Element\NodeElement
    *   The <td> element containing the label for the IEF row.
@@ -233,13 +233,72 @@ abstract class InlineEntityFormTestBase extends WebDriverTestBase {
   }
 
   /**
-   * Asserts that an IEF table row appears.
+   * Asserts that an IEF table row does not exist.
    *
    * @param string $title
-   *   The title of the row for which to wait.
+   *   The title of the row to check.
    */
   protected function assertNoRowByTitle($title) {
     $this->assertSession()->elementNotExists('xpath', '//td[@class="inline-entity-form-node-label" and text()="' . $title . '"]');
+  }
+
+  /**
+   * Returns xpath selector to the index-th input with label.
+   *
+   * Note: index starts at 1.
+   *
+   * @param string $label
+   *   The label text to select.
+   * @param int $index
+   *   The index of the input to select.
+   *
+   * @return string
+   *   The xpath selector for the input to select.
+   */
+  protected function getXpathForNthInputByLabelText($label, $index) {
+    return "(//*[@id=string((//label[.='{$label}']/@for)[{$index}])])";
+  }
+
+  /**
+   * Returns xpath selector to the first input with an auto-complete.
+   *
+   * @return string
+   *   The xpath selector for the first input with an auto-complete.
+   */
+  protected function getXpathForAutoCompleteInput() {
+    return '(//input[@data-autocomplete-path])';
+  }
+
+  /**
+   * Returns xpath selector to the index-th button with button text value.
+   *
+   * Note: index starts at 1.
+   *
+   * @param string @value
+   *   The text on the button to select.
+   * @param int $index
+   *   The index of the button to select.
+   *
+   * @return string
+   *   The xpath selector for the button to select.
+   */
+  protected function getXpathForButtonWithValue($value, $index) {
+    return "(//input[@type='submit' and @value='{$value}'][{$index}])";
+  }
+
+  /**
+   * Returns xpath selector for fieldset label.
+   *
+   * @param string $label
+   *   The label text to select.
+   * @param int $index
+   *   The index of the fieldset label to select.
+   *
+   * @return string
+   *   The xpath selector for the fieldset label to select.
+   */
+  protected function getXpathForFieldsetLabel($label, $index) {
+    return "(//fieldset/legend/span[.='{$label}'])[{$index}]";
   }
 
   /**

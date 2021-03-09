@@ -63,6 +63,9 @@ search_api_attachments.admin_config:
     preserve_cache:
       type: boolean
       label: 'Preserve cached extractions across cache clears.'
+    read_text_files_directly:
+      type: boolean
+      label: 'Get contents of text attachments directly using file_get_contents.'
 field.formatter.settings.file_extracted_text:
   type: mapping
   label: 'File extracted text'

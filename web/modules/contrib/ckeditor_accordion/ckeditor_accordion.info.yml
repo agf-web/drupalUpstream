@@ -1,7 +1,8 @@
 name: CKEditor Accordion
 type: module
 description: Allows users to create & display content in an accordion using CKEditor.
-# core: 8.x
+core: 8.x
+core_version_requirement: ^8 || ^9
 package: CKEditor
 libraries:
   - ckeditor_accordion/accordion_style
@@ -9,8 +10,7 @@ dependencies:
   - drupal:ckeditor
 configure: ckeditor_accordion.settings
 
-# Information added by Drupal.org packaging script on 2019-02-26
-version: '8.x-1.2'
-core: '8.x'
+# Information added by Drupal.org packaging script on 2020-04-06
+version: '8.x-1.3'
 project: 'ckeditor_accordion'
-datestamp: 1551184391
+datestamp: 1586158720

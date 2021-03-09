@@ -14,6 +14,8 @@ namespace Symfony\Component\Serializer\Encoder;
 use Symfony\Component\Serializer\Exception\UnexpectedValueException;
 
 /**
+ * Defines the interface of encoders.
+ *
  * @author Jordi Boggiano <j.boggiano@seld.be>
  */
 interface EncoderInterface

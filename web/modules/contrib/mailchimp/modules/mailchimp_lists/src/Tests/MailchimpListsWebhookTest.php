@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\mailchimp_lists\Tests;
+namespace Drupal\Tests\mailchimp_lists\Functional;
 
 /**
  * Tests list webhook functionality.
@@ -14,7 +14,7 @@ class MailchimpListsWebhookTest extends MailchimpListsTestBase {
    *
    * @var array
    */
-  public static $modules = array('mailchimp', 'mailchimp_lists', 'mailchimp_test');
+  public static $modules = ['mailchimp', 'mailchimp_lists', 'mailchimp_test'];
 
   /**
    * Tests retrieval of webhooks for a list.
@@ -39,14 +39,14 @@ class MailchimpListsWebhookTest extends MailchimpListsTestBase {
   public function testAddWebhook() {
     $list_id = '57afe96172';
     $url = 'http://example.org/web-hook-new';
-    $events = array(
+    $events = [
       'subscribe' => TRUE,
-    );
-    $sources = array(
+    ];
+    $sources = [
       'user' => TRUE,
       'admin' => TRUE,
       'api' => FALSE,
-    );
+    ];
 
     $webhook_id = mailchimp_webhook_add($list_id, $url, $events, $sources);
 

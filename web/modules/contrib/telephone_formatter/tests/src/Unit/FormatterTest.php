@@ -34,7 +34,7 @@ class FormatterTest extends UnitTestCase {
    */
   public function setUp() {
     parent::setUp();
-    $this->languageManager = $this->getMock('\Drupal\Core\Language\LanguageManagerInterface');
+    $this->languageManager = $this->createMock('\Drupal\Core\Language\LanguageManagerInterface');
     $this->formatterService = new Formatter($this->languageManager);
   }
 

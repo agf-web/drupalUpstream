@@ -2,6 +2,8 @@
 
 namespace Drupal\Tests\masquerade\Functional;
 
+use Drupal\block\Entity\Block;
+
 /**
  * Tests caching for masquerade.
  *
@@ -56,6 +58,9 @@ class MasqueradeCacheTest extends MasqueradeWebTestBase {
     $this->drupalLogin($nelle);
     $this->drupalGet('<front>');
     $this->assertBlockAppears($masquerade_block);
+
+    // Validate cache contexts for block with permissions of user.
+    $this->validateMasqueradeBlock($masquerade_block->id());
   }
 
   /**
@@ -83,6 +88,21 @@ class MasqueradeCacheTest extends MasqueradeWebTestBase {
     $this->drupalLogin($test_user);
     $this->assertSession()->linkNotExists('Unmasquerade');
     $this->assertCacheContext('session.is_masquerading');
+  }
+
+  /**
+   * Validates block entity cache contexts.
+   *
+   * @param string $bid
+   *   The block ID to load and validate.
+   */
+  protected function validateMasqueradeBlock($bid) {
+    /** @var \Drupal\block\Entity\Block $block */
+    $block = Block::load($bid);
+    $this->assertTrue(in_array('session.is_masquerading', $block->getPlugin()->getCacheContexts(), TRUE));
+    /** @var \Drupal\Core\Access\AccessResult $result */
+    $result = $block->access('view', NULL, TRUE);
+    $this->assertTrue(in_array('session.is_masquerading', $result->getCacheContexts()));
   }
 
 }

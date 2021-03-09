@@ -127,6 +127,10 @@ class ExtractorQueue extends QueueWorkerBase implements ContainerFactoryPluginIn
 
       $entity = $this->entityTypeManager->getStorage($data->entity_type)
         ->load($data->entity_id);
+
+      if(!$entity) {
+        return;
+      }
       $indexes = ContentEntity::getIndexesForEntity($entity);
 
       $item_ids = [];
