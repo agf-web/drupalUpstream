@@ -83,7 +83,8 @@
 
 {{ attach_library('agfirst_modal_message/modal_message') }}
 
-<article{{ attributes.addClass(classes) }} id="agfirst-modal-message" data-fancybox data-display-condition="{{ display_condition }}" style="display:none">
+<a data-fancybox data-touch="false" data-src="#agfirst-modal-message" href="" class="btn-fancybox-trigger">Fancybox Trigger</a>
+<article{{ attributes.addClass(classes) }} id="agfirst-modal-message" data-display-condition="{{ display_condition }}" style="display:none">
 
   {{ title_prefix }}
   {{ label }}

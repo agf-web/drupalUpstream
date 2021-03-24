@@ -10,15 +10,16 @@
                 var displayCondition = $('#agfirst-modal-message').data('display-condition');
                 var modalMessage = $('#agfirst-modal-message');
                 var modalCookieName = 'suppress-modal-' + settings.modalMessage.id;
+                var modalClick = $('.btn-fancybox-trigger');
 
 
                 if (typeof $.cookie(modalCookieName) == 'undefined') {
                     if (displayCondition == 'entrance') {
-                        modalMessage.trigger('click');
+                        modalClick.trigger('click');
                     } else if (displayCondition == 'exit') {
                         var showModal = function(e) {
                             if (modalMessage.is(':hidden') && typeof $.cookie(modalCookieName) == 'undefined') {
-                                modalMessage.trigger('click');
+                                modalClick.trigger('click');
                             }
                         };
 
