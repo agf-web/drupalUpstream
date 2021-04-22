@@ -15,6 +15,15 @@
       if (typeof(settings.environmentIndicator) != 'undefined') {
         $('#toolbar-bar', context).css('background-color', settings.environmentIndicator.bgColor);
         $('#toolbar-bar .toolbar-item, #toolbar-bar .toolbar-item a', context).css('color', settings.environmentIndicator.fgColor);
+
+        // Set environment color for gin_toolbar vertical toolbar.
+        if ($('body').hasClass('gin--vertical-toolbar')) {
+          $('.toolbar-menu-administration', context).css('border-color', settings.environmentIndicator.bgColor);
+        }
+        // Set environment color for gin_toolbar horizontal toolbar.
+        if ($('body').hasClass('gin--horizontal-toolbar')) {
+          $('#toolbar-item-administration-tray').css('border-color', settings.environmentIndicator.bgColor);
+        }
       }
     }
   };

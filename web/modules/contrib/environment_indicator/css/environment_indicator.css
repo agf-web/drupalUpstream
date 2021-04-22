@@ -81,3 +81,13 @@
 .toolbar .toolbar-tray-horizontal .edit-environments {
   float: right;
 }
+
+/* Style fixes for gin_toolbar */
+.gin--vertical-toolbar .toolbar-menu-administration {
+  border-left: 3px solid;
+}
+
+.gin--horizontal-toolbar #toolbar-item-administration-tray {
+  border-top: 3px solid;
+  border-bottom: 0;
+}
