@@ -20,6 +20,8 @@ use Composer\Semver\VersionParser;
 
 
 
+
+
 class InstalledVersions
 {
 private static $installed = array (
@@ -30,7 +32,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => '3fb735a0f1d68720360d16d758660fa79e5b4b06',
+    'reference' => 'dd2a772c5717c314e8dd17883cf52f6d45d4997a',
     'name' => 'agfirst/pantheon-upstream',
   ),
   'versions' => 
@@ -42,7 +44,7 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => '3fb735a0f1d68720360d16d758660fa79e5b4b06',
+      'reference' => 'dd2a772c5717c314e8dd17883cf52f6d45d4997a',
     ),
     'alchemy/zippy' => 
     array (
@@ -753,12 +755,12 @@ private static $installed = array (
     ),
     'drupal/ctools' => 
     array (
-      'pretty_version' => '3.5.0',
-      'version' => '3.5.0.0',
+      'pretty_version' => '3.6.0',
+      'version' => '3.6.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => '8.x-3.5',
+      'reference' => '8.x-3.6',
     ),
     'drupal/datetime' => 
     array (
@@ -2556,7 +2558,6 @@ foreach (self::getInstalled() as $installed) {
 $packages[] = array_keys($installed['versions']);
 }
 
-
 if (1 === \count($packages)) {
 return $packages[0];
 }
@@ -2748,6 +2749,7 @@ public static function reload($data)
 self::$installed = $data;
 self::$installedByVendor = array();
 }
+
 
 
 
