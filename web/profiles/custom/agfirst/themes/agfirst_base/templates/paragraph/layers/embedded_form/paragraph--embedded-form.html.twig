@@ -71,9 +71,9 @@
         {{ content.field_form }}
 
         {% if has_media %}
-          {% if media_type is sameas('video') %}
+          {% if media_type is same as('video') %}
             {{ content.field_video }}
-          {% elseif media_type is sameas('image') %}
+          {% elseif media_type is same as('image') %}
             {{ content.field_image }}
           {% endif %}
         {% endif %}

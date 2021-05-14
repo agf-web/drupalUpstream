@@ -54,7 +54,7 @@ class CyberwovenNodeType extends NodeType {
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $container->get('current_route_match'),
-      $container->get('entity.manager')->getStorage('node_type'),
+      $container->get('entity_type.manager')->getStorage('node_type'),
       $configuration,
       $plugin_id,
       $plugin_definition
