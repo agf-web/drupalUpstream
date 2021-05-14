@@ -4,11 +4,9 @@ namespace Drupal\webform\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Serialization\Yaml;
 use Drupal\webform\Plugin\WebformHandler\EmailWebformHandler;
 use Drupal\webform\WebformInterface;
-use Drupal\webform\WebformRequestInterface;
-use Drupal\webform\WebformSubmissionGenerateInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -33,6 +31,13 @@ class WebformTestController extends ControllerBase implements ContainerInjection
   protected $requestHandler;
 
   /**
+   * The webform entity reference manager.
+   *
+   * @var \Drupal\webform\WebformEntityReferenceManagerInterface
+   */
+  protected $entityReferenceManager;
+
+  /**
    * The webform submission generation service.
    *
    * @var \Drupal\webform\WebformSubmissionGenerateInterface
@@ -40,30 +45,15 @@ class WebformTestController extends ControllerBase implements ContainerInjection
   protected $generate;
 
   /**
-   * Constructs a WebformTestController object.
-   *
-   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
-   *   The messenger.
-   * @param \Drupal\webform\WebformRequestInterface $request_handler
-   *   The webform request handler.
-   * @param \Drupal\webform\WebformSubmissionGenerateInterface $submission_generate
-   *   The webform submission generation service.
-   */
-  public function __construct(MessengerInterface $messenger, WebformRequestInterface $request_handler, WebformSubmissionGenerateInterface $submission_generate) {
-    $this->messenger = $messenger;
-    $this->requestHandler = $request_handler;
-    $this->generate = $submission_generate;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('messenger'),
-      $container->get('webform.request'),
-      $container->get('webform_submission.generate')
-    );
+    $instance = parent::create($container);
+    $instance->messenger = $container->get('messenger');
+    $instance->requestHandler = $container->get('webform.request');
+    $instance->entityReferenceManager = $container->get('webform.entity_reference_manager');
+    $instance->generate = $container->get('webform_submission.generate');
+    return $instance;
   }
 
   /**
@@ -124,6 +114,15 @@ class WebformTestController extends ControllerBase implements ContainerInjection
     if ($source_entity) {
       $values['entity_type'] = $source_entity->getEntityTypeId();
       $values['entity_id'] = $source_entity->id();
+
+      // Add source entity's default data to values data.
+      $field_names = $this->entityReferenceManager->getFieldNames($source_entity);
+      foreach ($field_names as $field_name) {
+        if ($source_entity->get($field_name)->target_id === $webform->id()
+          && $source_entity->get($field_name)->default_data) {
+          $values['data'] = Yaml::decode($source_entity->get($field_name)->default_data);
+        }
+      }
     }
 
     return $webform->getSubmissionForm($values, 'test');

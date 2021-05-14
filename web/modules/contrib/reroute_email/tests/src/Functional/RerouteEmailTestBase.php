@@ -30,11 +30,9 @@ abstract class RerouteEmailTestBase extends BrowserTestBase {
   protected $rerouteConfig;
 
   /**
-   * An array of helper modules for the reroute email tests.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  public static $modules = ['reroute_email'];
+  protected static $modules = ['reroute_email'];
 
   /**
    * {@inheritdoc}
@@ -81,7 +79,7 @@ abstract class RerouteEmailTestBase extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->rerouteConfig = $this->config('reroute_email.settings');
 
@@ -132,8 +130,9 @@ abstract class RerouteEmailTestBase extends BrowserTestBase {
     ];
 
     // Submit Reroute Email Settings form and check if it was successful.
-    $this->drupalPostForm('admin/config/development/reroute_email', $post, t('Save configuration'));
-    $this->assertText(t('The configuration options have been saved.'));
+    $this->drupalGet('admin/config/development/reroute_email');
+    $this->submitForm($post, t('Save configuration'));
+    $this->assertSession()->pageTextContains(t('The configuration options have been saved.'));
 
     // Rebuild config values after form submit.
     $this->rerouteConfig = $this->config('reroute_email.settings');
@@ -150,7 +149,7 @@ abstract class RerouteEmailTestBase extends BrowserTestBase {
     // Check most recent email.
     $mails = $this->getMails();
     if (empty($mails)) {
-      $this->assert(FALSE, 'Email was not sent.');
+      $this->assertTrue(FALSE, 'Email was not sent.');
       return;
     }
 

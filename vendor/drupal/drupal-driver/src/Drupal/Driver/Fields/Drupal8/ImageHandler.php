@@ -3,7 +3,7 @@
 namespace Drupal\Driver\Fields\Drupal8;
 
 /**
- * Image field handler for Drupal 7.
+ * Image field handler for Drupal 8.
  */
 class ImageHandler extends AbstractHandler {
 
@@ -16,7 +16,7 @@ class ImageHandler extends AbstractHandler {
       throw new \Exception("Error reading file");
     }
 
-    /* @var \Drupal\file\FileInterface $file */
+    /** @var \Drupal\file\FileInterface $file */
     $file = file_save_data(
       $data,
       'public://' . uniqid() . '.jpg');
@@ -27,11 +27,11 @@ class ImageHandler extends AbstractHandler {
 
     $file->save();
 
-    $return = array(
+    $return = [
       'target_id' => $file->id(),
       'alt' => 'Behat test image',
       'title' => 'Behat test image',
-    );
+    ];
     return $return;
   }
 

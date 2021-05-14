@@ -81,6 +81,9 @@
         if ($invalidCards.length) {
           // Hide progress.
           $form.find('.webform-progress').hide();
+          // Hide next and previous and only show the submit button.
+          $previousButton.hide();
+          $nextButton.hide();
           // Show invalid cards and shake'em.
           $invalidCards
             .addClass('webform-card--error')
@@ -321,7 +324,7 @@
             var $cardStep = $progress.find(cardAttributeName);
 
             // Set card and page step.
-            $cardStep.find('[data-webform-progress-step]').html(card.step);
+            $cardStep.find('[data-webform-progress-step]').attr('data-text', card.step);
             if (card.type === 'page') {
               continue;
             }

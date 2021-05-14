@@ -145,7 +145,7 @@ class EntityFieldManagerTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->container = $this->prophesize(ContainerInterface::class);
@@ -253,7 +253,15 @@ class EntityFieldManagerTest extends UnitTestCase {
     $field_storage_definition = $this->prophesize(FieldStorageDefinitionInterface::class);
     $field_storage_definition->getName()->willReturn('field_storage');
 
-    $definitions = ['field_storage' => $field_storage_definition->reveal()];
+    $base_field_definition = $this->prophesize(BaseFieldDefinition::class);
+    $base_field_definition->setProvider('example_module')->shouldBeCalled();
+    $base_field_definition->setName('base_field')->shouldBeCalled();
+    $base_field_definition->setTargetEntityTypeId('test_entity_type')->shouldBeCalled();
+
+    $definitions = [
+      'base_field' => $base_field_definition->reveal(),
+      'field_storage' => $field_storage_definition->reveal(),
+    ];
 
     $this->moduleHandler->getImplementations('entity_base_field_info')->willReturn([]);
     $this->moduleHandler->getImplementations('entity_field_storage_info')->willReturn(['example_module']);
@@ -262,6 +270,7 @@ class EntityFieldManagerTest extends UnitTestCase {
 
     $expected = [
       'id' => $field_definition,
+      'base_field' => $base_field_definition->reveal(),
       'field_storage' => $field_storage_definition->reveal(),
     ];
     $this->assertSame($expected, $this->entityFieldManager->getFieldStorageDefinitions('test_entity_type'));
@@ -470,7 +479,7 @@ class EntityFieldManagerTest extends UnitTestCase {
   public function testGetFieldDefinitionsProvider() {
     $this->setUpEntityWithFieldDefinition(TRUE);
 
-    $module = 'entity_manager_test_module';
+    $module = 'entity_field_manager_test_module';
 
     // @todo Mock FieldDefinitionInterface once it exposes a proper provider
     //   setter. See https://www.drupal.org/node/2225961.

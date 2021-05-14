@@ -8,6 +8,7 @@ use Drupal\Core\Form\OptGroup;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\webform\Utility\WebformElementHelper;
+use Drupal\webform\Utility\WebformFormHelper;
 use Drupal\webform\Utility\WebformOptionsHelper;
 
 /**
@@ -199,7 +200,7 @@ abstract class WebformOtherBase extends FormElement {
     $element['#attached']['library'][] = 'webform/webform.element.other';
 
     // Process states.
-    webform_process_states($element, '#wrapper_attributes');
+    WebformFormHelper::processStates($element, '#wrapper_attributes');
 
     return $element;
   }

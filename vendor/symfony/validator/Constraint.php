@@ -34,17 +34,17 @@ abstract class Constraint
     /**
      * The name of the group given to all constraints with no explicit group.
      */
-    const DEFAULT_GROUP = 'Default';
+    public const DEFAULT_GROUP = 'Default';
 
     /**
      * Marks a constraint that can be put onto classes.
      */
-    const CLASS_CONSTRAINT = 'class';
+    public const CLASS_CONSTRAINT = 'class';
 
     /**
      * Marks a constraint that can be put onto properties.
      */
-    const PROPERTY_CONSTRAINT = 'property';
+    public const PROPERTY_CONSTRAINT = 'property';
 
     /**
      * Maps error codes to the names of their constants.
@@ -108,7 +108,7 @@ abstract class Constraint
         $defaultOption = $this->getDefaultOption();
         $invalidOptions = [];
         $missingOptions = array_flip((array) $this->getRequiredOptions());
-        $knownOptions = get_object_vars($this);
+        $knownOptions = get_class_vars(static::class);
 
         // The "groups" option is added to the object lazily
         $knownOptions['groups'] = true;
@@ -285,8 +285,6 @@ abstract class Constraint
 
     /**
      * Optimizes the serialized value to minimize storage space.
-     *
-     * @return array The properties to serialize
      *
      * @internal
      */

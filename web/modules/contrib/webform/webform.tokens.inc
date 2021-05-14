@@ -72,17 +72,17 @@ function webform_token_info() {
     'description' => t('The URL the user submitted the webform submission.'),
     'type' => 'url',
   ];
-  $webform_submission['view-url'] = [
+  $webform_submission['token-view-url'] = [
     'name' => t('View (token) URL'),
     'description' => t('The URL that can used to view the webform submission. The webform must be configured to allow users to view a submission using a secure token.'),
     'type' => 'url',
   ];
-  $webform_submission['update-url'] = [
+  $webform_submission['token-update-url'] = [
     'name' => t('Update (token) URL'),
     'description' => t('The URL that can used to update the webform submission. The webform must be configured to allow users to update a submission using a secure token.'),
     'type' => 'url',
   ];
-  $webform_submission['delete-url'] = [
+  $webform_submission['token-delete-url'] = [
     'name' => t('Delete (token) URL'),
     'description' => t('The URL that can used to delete the webform submission. The webform must be configured to allow users to delete a submission using a secure token.'),
     'type' => 'url',
@@ -298,7 +298,8 @@ function webform_token_info() {
 
   // Append link to token help to source-entity and submitted-to description.
   if (\Drupal::moduleHandler()->moduleExists('token') && \Drupal::moduleHandler()->moduleExists('help')) {
-    $t_args = [':href' => Url::fromRoute('help.page', ['name' => 'token'])->toString()];
+    $token_url = Url::fromRoute('help.page', ['name' => 'token']);
+    $t_args = [':href' => $token_url->toString(TRUE)->getGeneratedUrl()];
     $token_help = t('For a list of the currently available source entity related tokens, please see <a href=":href">token help</a>.', $t_args);
     $webform_submission['source-entity']['description'] = Markup::create($webform_submission['source-entity']['description'] . '<br/>' . $token_help);
     $webform_submission['submitted-to']['description'] = Markup::create($webform_submission['submitted-to']['description'] . '<br/>' . $token_help);
@@ -542,10 +543,10 @@ function webform_tokens($type, $tokens, array $data, array $options, BubbleableM
           $replacements[$original] = $webform_submission->getSourceUrl()->toString();
           break;
 
-        case 'view-url':
-        case 'update-url':
-        case 'delete-url':
-          $replacements[$original] = $webform_submission->getTokenUrl(str_replace('-url', '', $name))->toString();
+        case 'token-view-url':
+        case 'token-update-url':
+        case 'token-delete-url':
+          $replacements[$original] = $webform_submission->getTokenUrl(preg_replace('/^token-(view|update|delete)-url$/', '\1', $name))->toString();
           break;
 
         case 'token':
@@ -740,14 +741,14 @@ function webform_tokens($type, $tokens, array $data, array $options, BubbleableM
       $type = $submitted_to->getEntityType()->get('token_type') ?: $submitted_to->getEntityTypeId();
       $replacements += $token_service->generate($type, $submitted_to_tokens, [$type => $submitted_to], $options, $bubbleable_metadata);
     }
-    foreach (['view-url', 'update-url', 'delete-url', 'source-url'] as $token) {
+    foreach (['token-view-url', 'token-update-url', 'token-delete-url', 'source-url'] as $token) {
       if ($url_tokens = $token_service->findWithPrefix($tokens, $token)) {
         $url = NULL;
         switch ($token) {
-          case 'view-url':
-          case 'update-url':
-          case 'delete-url':
-            $url = $webform_submission->getTokenUrl(str_replace('-url', '', $token));
+          case 'token-view-url':
+          case 'token-update-url':
+          case 'token-delete-url':
+            $url = $webform_submission->getTokenUrl(preg_replace('/^token-(view|update|delete)-url$/', '\1', $token));
             break;
 
           case 'source-url':

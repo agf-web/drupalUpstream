@@ -12,20 +12,19 @@
   "require": {
     "composer/installers": "^1.9",
     "cweagans/composer-patches": "^1.7",
-    "drupal/core-composer-scaffold": "*",
     "drupal/address": "~1.0",
-    "drupal/admin_toolbar": "^2.0",
+    "drupal/admin_toolbar": "^3.0",
     "drupal/allowed_formats": "^1.1",
     "drupal/anchor_link": "^1.5",
     "drupal/bg_image_formatter": "^1.1",
     "drupal/ckeditor_accordion": "^1.1",
     "drupal/config_direct_save": "^1.0",
-    "drupal/config_installer": "^1.0",
-    "drupal/console": "^1",
-    "drupal/core-recommended": "^8.6",
-    "pantheon-systems/drupal-integrations": "^8",
-    "drupal/crop": "^1.2",
-    "drupal/devel": "^2.0",
+    "drupal/console": "^1.9.7",
+    "drupal/core-composer-scaffold": "^9.0.0",
+    "drupal/core-project-message": "^9.0.0",
+    "drupal/core-recommended": "^9.0.0",
+    "drupal/crop": "^2.1",
+    "drupal/devel": "^4.1",
     "drupal/draggableviews": "1.x-dev",
     "drupal/editor_advanced_link": "^1.4",
     "drupal/environment_indicator": "^4.0",
@@ -34,14 +33,13 @@
     "drupal/fontyourface": "^3.2",
     "drupal/google_analytics": "^2.2",
     "drupal/google_tag": "^1.0",
-    "drupal/honeypot": "^1.27",
     "drupal/image_url_formatter": "^1.0@beta",
     "drupal/image_widget_crop": "^2.0",
-    "drupal/imce": "^2.0",
+    "drupal/imce": "^2.3",
     "drupal/inline_entity_form": "^1.0@beta",
     "drupal/link_attributes": "^1.2",
     "drupal/link_field_autocomplete_filter": "^1.6",
-    "drupal/linkit": "^4.3",
+    "drupal/linkit": "^6.0@beta",
     "drupal/mailchimp": "^1.2",
     "drupal/masquerade": "^2.0@beta",
     "drupal/menu_block": "^1.6",
@@ -53,12 +51,11 @@
     "drupal/rabbit_hole": "^1.0@beta",
     "drupal/rebuild_cache_access": "^1.6",
     "drupal/redirect": "^1.0@alpha",
-    "drupal/reroute_email": "^1.0@beta",
+    "drupal/reroute_email": "^2.0",
     "drupal/robotstxt": "^1.4",
     "drupal/scheduler": "^1.0",
     "drupal/search_api": "^1.0",
     "drupal/search_api_attachments": "^1.0@beta",
-    "drupal/search_api_pantheon": "~1.0",
     "drupal/search_api_solr": "^1.0@beta",
     "drupal/simple_gmap": "1.x-dev",
     "drupal/smart_trim": "^1.0",
@@ -66,9 +63,10 @@
     "drupal/telephone_validation": "^2.0",
     "drupal/video_embed_field": "^2.4",
     "drupal/viewsreference": "^1.2",
-    "drupal/webform": "^5.0@beta",
+    "drupal/webform": "^6.0",
     "drupal/xmlsitemap": "^1.0@alpha",
-    "drush/drush": "^8"
+    "drush/drush": "^10.0",
+    "pantheon-systems/drupal-integrations": "^8"
   },
   "require-dev": {
     "mikey179/vfsstream": "^1.2",
@@ -78,11 +76,10 @@
     "behat/mink-goutte-driver": "^1.2",
     "jcalderonzumba/gastonjs": "^1.0.2",
     "jcalderonzumba/mink-phantomjs-driver": "^0.3.1",
-    "drupal/drupal-extension": "^3.1",
+    "drupal/drupal-extension": "^4.0",
     "drush-ops/behat-drush-endpoint": "^0.0.4",
     "pantheon-systems/quicksilver-pushback": "~1",
-    "phpunit/phpunit": "^4.8",
-    "symfony/css-selector": "^2.8"
+    "phpunit/phpunit": "^8.4"
   },
   "conflict": {
     "drupal/drupal": "*"
@@ -176,8 +173,7 @@
         "Address Field Support": "https://www.drupal.org/files/issues/2020-01-20/simple_gmap-address-formatter-2863979-49.patch"
       },
       "drupal/field_group": {
-        "HTML5 validation for fields which are currently not part of the visible group": "https://www.drupal.org/files/issues/2020-05-28/2787179-highlight-html5-validation-53.patch",
-        "Fields with errors are not visible": "https://www.drupal.org/files/issues/2020-06-11/field_group-open-groups-with-errors-server-side-2894213-15.patch"
+        "HTML5 validation for fields which are currently not part of the visible group": "https://www.drupal.org/files/issues/2020-05-28/2787179-highlight-html5-validation-53.patch"
       }
     }
   },
@@ -186,7 +182,7 @@
     "preferred-install": "dist",
     "sort-packages": true,
     "platform": {
-      "php": "7.0.9"
+      "php": "7.3"
     }
   }
 }

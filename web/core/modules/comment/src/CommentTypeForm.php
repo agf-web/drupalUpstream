@@ -2,10 +2,10 @@
 
 namespace Drupal\comment;
 
-use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\language\Entity\ContentLanguageSettings;
 use Psr\Log\LoggerInterface;
@@ -17,14 +17,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @internal
  */
 class CommentTypeForm extends EntityForm {
-  use DeprecatedServicePropertyTrait;
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $deprecatedProperties = [
-    'entityManager' => 'entity.manager',
-  ];
 
   /**
    * Entity type manager service.
@@ -59,17 +51,17 @@ class CommentTypeForm extends EntityForm {
   }
 
   /**
-   * Constructs a CommentTypeFormController
+   * Constructs a CommentTypeFormController.
    *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager service.
    * @param \Psr\Log\LoggerInterface $logger
    *   A logger instance.
    * @param \Drupal\comment\CommentManagerInterface $comment_manager
    *   The comment manager.
    */
-  public function __construct(EntityTypeManagerInterface $entity_manager, LoggerInterface $logger, CommentManagerInterface $comment_manager) {
-    $this->entityTypeManager = $entity_manager;
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, LoggerInterface $logger, CommentManagerInterface $comment_manager) {
+    $this->entityTypeManager = $entity_type_manager;
     $this->logger = $logger;
     $this->commentManager = $comment_manager;
   }
@@ -108,11 +100,14 @@ class CommentTypeForm extends EntityForm {
 
     if ($comment_type->isNew()) {
       $options = [];
+      // Only expose entities that have field UI enabled, only those can
+      // get comment fields added in the UI. Also, ensure to include only
+      // entities that have integer id.
       foreach ($this->entityTypeManager->getDefinitions() as $entity_type) {
-        // Only expose entities that have field UI enabled, only those can
-        // get comment fields added in the UI.
-        if ($entity_type->get('field_ui_base_route')) {
-          $options[$entity_type->id()] = $entity_type->getLabel();
+        if ($this->entityTypeSupportsComments($entity_type)) {
+          if ($entity_type->get('field_ui_base_route')) {
+            $options[$entity_type->id()] = $entity_type->getLabel();
+          }
         }
       }
       $form['target_entity_type_id'] = [
@@ -158,6 +153,19 @@ class CommentTypeForm extends EntityForm {
     ];
 
     return $form;
+  }
+
+  /**
+   * Wraps _comment_entity_uses_integer_id().
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   Entity type being tested.
+   *
+   * @return bool
+   *   TRUE if entity-type uses integer IDs.
+   */
+  protected function entityTypeSupportsComments(EntityTypeInterface $entity_type) {
+    return $entity_type->entityClassImplements(FieldableEntityInterface::class) && _comment_entity_uses_integer_id($entity_type->id());
   }
 
   /**

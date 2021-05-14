@@ -13,14 +13,25 @@ use Drupal\Component\Render\FormattableMarkup;
  */
 class ContactTest extends RerouteEmailTestBase {
 
-  public static $modules = ['reroute_email', 'contact'];
+  /**
+   * {@inheritdoc}
+   */
+  protected static $modules = ['reroute_email', 'contact'];
 
+  /**
+   * Contact form confirmation message text.
+   *
+   * @var string
+   */
   protected $confirmationMessage;
 
   /**
    * Enable modules and create user with specific permissions.
+   *
+   * @throws \Behat\Mink\Exception\ExpectationException
+   *   Thrown when the requested page status code is a different one.
    */
-  public function setUp() {
+  public function setUp(): void {
 
     // Add more permissions to be able to manipulate the contact forms.
     $this->permissions[] = 'administer contact forms';
@@ -31,14 +42,15 @@ class ContactTest extends RerouteEmailTestBase {
 
     // Create a "feedback" contact form. Note that the 'message' was added in
     // the 8.2.x series, and is not there in 8.1.x, so this could fail in 8.1.x.
-    $this->drupalPostForm('admin/structure/contact/add', [
+    $this->drupalGet('admin/structure/contact/add');
+    $this->submitForm([
       'label' => 'feedback',
       'id' => 'feedback',
       'recipients' => $this->originalDestination,
       'message' => $this->confirmationMessage,
       'selected' => TRUE,
     ], 'Save');
-    $this->assertResponse(200, 'Contact form named "feedback" added.');
+    $this->assertSession()->statusCodeEquals(200);
 
     // Make sure that the flood controls don't break the test.
     \Drupal::service('config.factory')->getEditable('contact.settings')
@@ -52,6 +64,9 @@ class ContactTest extends RerouteEmailTestBase {
    * The Core Contact email form is submitted several times with different
    * Email Rerouting settings: Rerouting enabled or disabled, Body injection
    * enabled or disabled, several recipients with or without whitelist.
+   *
+   * @throws \Behat\Mink\Exception\ExpectationException
+   *   Thrown when the requested page status code is a different one.
    */
   public function testBasicNotification() {
     // Additional destination email address used for testing the whitelist.
@@ -61,13 +76,18 @@ class ContactTest extends RerouteEmailTestBase {
     $this->configureRerouteEmail(TRUE, $this->rerouteDestination);
 
     // Configure the contact settings to send to $original_destination.
-    $this->drupalPostForm('admin/structure/contact/manage/feedback', ['recipients' => $this->originalDestination], t('Save'));
+    $this->drupalGet('admin/structure/contact/manage/feedback');
+    $this->submitForm(['recipients' => $this->originalDestination], t('Save'));
 
     // Go to the contact page and send an email.
-    $post = ['subject[0][value]' => 'Test test test', 'message[0][value]' => 'This is a test'];
-    $this->drupalPostForm('contact', $post, 'Send message');
-    $this->assertResponse(200, 'Posted contact form successfully.');
-    $this->assertText($this->confirmationMessage);
+    $post = [
+      'subject[0][value]' => 'Test test test',
+      'message[0][value]' => 'This is a test',
+    ];
+    $this->drupalGet('contact');
+    $this->submitForm($post, 'Send message');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains($this->confirmationMessage);
 
     // Check rerouted email.
     $this->assertMail('to', $this->rerouteDestination, new FormattableMarkup('Email was rerouted to @address.', ['@address' => $this->rerouteDestination]));
@@ -79,12 +99,13 @@ class ContactTest extends RerouteEmailTestBase {
     $this->configureRerouteEmail(NULL, $this->rerouteDestination, "{$this->rerouteDestination}, {$additional_destination}");
 
     // Configure the contact settings to point to the additional recipient.
-    $this->drupalPostForm('admin/structure/contact/manage/feedback', ['recipients' => $additional_destination], t('Save'));
+    $this->drupalGet('admin/structure/contact/manage/feedback');
+    $this->submitForm(['recipients' => $additional_destination], t('Save'));
 
     // Go to the contact page and send an email.
-    $post = ['subject[0][value]' => 'Test test test', 'message[0][value]' => 'This is a test'];
-    $this->drupalPostForm('contact', $post, t('Send message'));
-    $this->assertText($this->confirmationMessage);
+    $this->drupalGet('contact');
+    $this->submitForm($post, t('Send message'));
+    $this->assertSession()->pageTextContains($this->confirmationMessage);
     $this->assertMail('to', $additional_destination, 'Email was not rerouted because destination was in whitelist.');
 
     // Now change the configuration to disable reroute and set the default
@@ -92,12 +113,13 @@ class ContactTest extends RerouteEmailTestBase {
     $this->configureRerouteEmail(FALSE);
 
     // Set the contact form to send to original_destination.
-    $this->drupalPostForm('admin/structure/contact/manage/feedback', ['recipients' => $this->originalDestination], t('Save'));
+    $this->drupalGet('admin/structure/contact/manage/feedback');
+    $this->submitForm(['recipients' => $this->originalDestination], t('Save'));
 
     // Go to the contact page and send an email.
-    $post = ['subject[0][value]' => 'Test test test', 'message[0][value]' => 'This is a test'];
-    $this->drupalPostForm('contact', $post, t('Send message'));
-    $this->assertText($this->confirmationMessage);
+    $this->drupalGet('contact');
+    $this->submitForm($post, t('Send message'));
+    $this->assertSession()->pageTextContains($this->confirmationMessage);
 
     // Mail should not be rerouted - should go to $original_destination.
     $this->assertMail('to', $this->originalDestination, 'Mail not rerouted - sent to original destination.');
@@ -106,16 +128,16 @@ class ContactTest extends RerouteEmailTestBase {
     $this->configureRerouteEmail(TRUE, $this->rerouteDestination, '', FALSE);
 
     // Go to the contact page and send an email.
-    $post = ['subject[0][value]' => 'Test test test', 'message[0][value]' => 'This is a test'];
-    $this->drupalPostForm('contact', $post, t('Send message'));
-    $this->assertText($this->confirmationMessage);
+    $this->drupalGet('contact');
+    $this->submitForm($post, t('Send message'));
+    $this->assertSession()->pageTextContains($this->confirmationMessage);
     $mails = $this->getMails();
     $mail = end($mails);
 
     // There should be nothing in the body except the contact message - no
     // body injection like 'Originally to'.
     $this->assertTrue(strpos($mail['body'], 'Originally to') === FALSE, 'Body does not contain "Originally to".');
-    $this->assertEqual($mail['headers']['X-Rerouted-Original-To'], $this->originalDestination, 'X-Rerouted-Original-To is correctly set to the original destination email.');
+    $this->assertEquals($mail['headers']['X-Rerouted-Original-To'], $this->originalDestination, 'X-Rerouted-Original-To is correctly set to the original destination email.');
   }
 
 }

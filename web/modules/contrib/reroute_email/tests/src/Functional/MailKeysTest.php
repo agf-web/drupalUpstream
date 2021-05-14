@@ -21,7 +21,8 @@ class MailKeysTest extends RerouteEmailTestBase {
     $this->configureRerouteEmail(TRUE, $this->rerouteDestination);
 
     // Submit a test email (should be rerouted).
-    $this->drupalPostForm('admin/config/development/reroute_email/test', ['to' => $this->originalDestination], t('Send email'));
+    $this->drupalGet('admin/config/development/reroute_email/test');
+    $this->submitForm(['to' => $this->originalDestination], t('Send email'));
 
     // Check if the email was rerouted properly.
     $this->assertEmailOriginallyTo();
@@ -31,7 +32,8 @@ class MailKeysTest extends RerouteEmailTestBase {
     $this->configureRerouteEmail(NULL, NULL, NULL, NULL, NULL, 'not_existed_module');
 
     // Submit a test email (should not be rerouted).
-    $this->drupalPostForm('admin/config/development/reroute_email/test', ['to' => $this->originalDestination], t('Send email'));
+    $this->drupalGet('admin/config/development/reroute_email/test');
+    $this->submitForm(['to' => $this->originalDestination], t('Send email'));
 
     // Check if the email was not rerouted.
     $this->assertMail('to', $this->originalDestination, new FormattableMarkup('Email was properly sent the email addresses: @destination.', ['@destination' => $this->originalDestination]));
@@ -40,7 +42,8 @@ class MailKeysTest extends RerouteEmailTestBase {
     $this->configureRerouteEmail(NULL, NULL, NULL, NULL, NULL, 'reroute_email_test_email_form');
 
     // Submit a test email (should be rerouted).
-    $this->drupalPostForm('admin/config/development/reroute_email/test', ['to' => $this->originalDestination], t('Send email'));
+    $this->drupalGet('admin/config/development/reroute_email/test');
+    $this->submitForm(['to' => $this->originalDestination], t('Send email'));
 
     // Check if the email was rerouted properly.
     $this->assertEmailOriginallyTo();

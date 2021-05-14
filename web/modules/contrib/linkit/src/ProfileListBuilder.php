@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\linkit\ProfileListBuilder.
- */
-
 namespace Drupal\linkit;
 
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
@@ -22,11 +17,11 @@ class ProfileListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildHeader() {
-      $header['title'] = t('Profile');
-      $header['description'] = [
-          'data' => t('Description'),
-          'class' => [RESPONSIVE_PRIORITY_MEDIUM],
-      ];
+    $header['title'] = $this->t('Profile');
+    $header['description'] = [
+      'data' => $this->t('Description'),
+      'class' => [RESPONSIVE_PRIORITY_MEDIUM],
+    ];
     return $header + parent::buildHeader();
   }
 
@@ -48,22 +43,14 @@ class ProfileListBuilder extends ConfigEntityListBuilder {
     $operations = parent::getDefaultOperations($entity);
 
     if (isset($operations['edit'])) {
-      $operations['edit']['title'] = t('Edit profile');
+      $operations['edit']['title'] = $this->t('Edit profile');
     }
 
     $operations['matchers'] = [
-      'title' => t('Manage matchers'),
+      'title' => $this->t('Manage matchers'),
       'weight' => 10,
       'url' => Url::fromRoute('linkit.matchers', [
-        'linkit_profile' => $entity->id()
-      ]),
-    ];
-
-    $operations['attributes'] = [
-      'title' => t('Manage attributes'),
-      'weight' => 20,
-      'url' => Url::fromRoute('linkit.attributes', [
-        'linkit_profile' => $entity->id()
+        'linkit_profile' => $entity->id(),
       ]),
     ];
 

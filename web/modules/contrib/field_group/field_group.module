@@ -255,7 +255,6 @@ function field_group_form_alter(array &$form, FormStateInterface $form_state) {
 
       field_group_attach_groups($form, $context);
       $form['#process'][] = [FormatterHelper::class, 'formProcess'];
-      $form['#pre_render'][] = 'field_group_form_pre_render';
     }
   }
 
@@ -343,56 +342,17 @@ function field_group_entity_view_alter(&$build, EntityInterface $entity, EntityD
 }
 
 /**
- * Pre render callback for rendering groups in forms.
+ * Pre render callback for rendering groups.
  *
  * @param array $element
  *   Form that is being rendered.
  *
+ * @deprecated Use field_group_form_process instead.
+ *
  * @return array
  */
 function field_group_form_pre_render(array $element) {
-  // Open any closed field groups that contain elements with errors.
-  if (!empty($element['#fieldgroups'])) {
-    foreach ($element['#fieldgroups'] as $fieldgroup) {
-      $closed = isset($element[$fieldgroup->group_name]['#open']) && !$element[$fieldgroup->group_name]['#open'];
-      if ($closed) {
-        foreach ($fieldgroup->children as $child) {
-          if (field_group_elements_contain_errors($element[$child])) {
-            $element[$fieldgroup->group_name]['#open'] = TRUE;
-            break;
-          }
-        }
-      }
-    }
-  }
-
-  return $element;
-}
-
-/**
- * Determines if an elements array contains validation errors.
- *
- * @param array $elements
- *   The elements array to check for errors.
- *
- * @return bool
- *   TRUE if the elements array contains validation errors, otherwise FALSE.
- */
-function field_group_elements_contain_errors(array $elements) {
-  // Any errors at this level of the elements array?
-  if (!empty($elements['#errors']) || !empty($elements['#children_errors'])) {
-    return TRUE;
-  }
-
-  // Dive down.
-  foreach (Element::children($elements) as $child) {
-    if (field_group_elements_contain_errors($elements[$child])) {
-      return TRUE;
-    }
-  }
-
-  // No errors.
-  return FALSE;
+  return field_group_form_process($element);
 }
 
 /**

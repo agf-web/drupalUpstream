@@ -95,7 +95,7 @@ class ConfigNamesMapperTest extends UnitTestCase {
    */
   protected $eventDispatcher;
 
-  protected function setUp() {
+  protected function setUp(): void {
     $this->routeProvider = $this->createMock('Drupal\Core\Routing\RouteProviderInterface');
 
     $this->pluginDefinition = [
@@ -328,7 +328,8 @@ class ConfigNamesMapperTest extends UnitTestCase {
     $route_match = new RouteMatch('example', new Route('/test/{langcode}'), ['langcode' => 'xx']);
     $this->configNamesMapper->populateFromRouteMatch($route_match);
 
-    $expected = ['langcode' => 'xx'];    $result = $this->configNamesMapper->getDeleteRouteParameters();
+    $expected = ['langcode' => 'xx'];
+    $result = $this->configNamesMapper->getDeleteRouteParameters();
     $this->assertSame($expected, $result);
   }
 
@@ -611,7 +612,7 @@ class ConfigNamesMapperTest extends UnitTestCase {
   }
 
   /**
-   * Provides data for for ConfigNamesMapperTest::testHasTranslation().
+   * Provides data for ConfigNamesMapperTest::testHasTranslation().
    *
    * @return array
    *   An array of arrays, where each inner array has an array of values that

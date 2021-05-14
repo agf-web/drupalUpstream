@@ -13,7 +13,7 @@ template: false
 archive: false
 id: test_element_description_tooltip
 title: 'Test: Element: Description tooltip'
-description: 'Test element eescription tooltip.'
+description: 'Test element description tooltip.'
 category: 'Test: Element'
 elements: |
   basic_elements:
@@ -166,9 +166,9 @@ elements: |
           '#type': textfield
           '#title': Name
           '#title_display': invisible
-        gender:
+        sex:
           '#type': select
-          '#title': Gender
+          '#title': Sex
           '#title_display': invisible
           '#options':
             Male: Male
@@ -488,7 +488,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
-  form_remote_addr: true
+  form_disable_remote_addr: false
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false

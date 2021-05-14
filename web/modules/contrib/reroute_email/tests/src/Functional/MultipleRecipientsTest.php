@@ -23,12 +23,13 @@ class MultipleRecipientsTest extends RerouteEmailTestBase {
 
     // Make sure configured emails were set properly.
     $reroute_to = 'user1@example.com,user2@example.com,user@example.com';
-    $this->assertEqual($this->rerouteConfig->get(REROUTE_EMAIL_ADDRESS), $reroute_to, 'Reroute email address was set.');
-    $this->assertEqual($this->rerouteConfig->get(REROUTE_EMAIL_WHITELIST), $this->whitelistedDomain, 'Whitelisted value was set.');
+    $this->assertEquals($this->rerouteConfig->get(REROUTE_EMAIL_ADDRESS), $reroute_to, 'Reroute email address was set.');
+    $this->assertEquals($this->rerouteConfig->get(REROUTE_EMAIL_WHITELIST), $this->whitelistedDomain, 'Whitelisted value was set.');
 
     // Submit a test email (should be rerouted).
     $to = 'some@not-exist.domain, whitelisted@example.com';
-    $this->drupalPostForm('admin/config/development/reroute_email/test', ['to' => $to], t('Send email'));
+    $this->drupalGet('admin/config/development/reroute_email/test');
+    $this->submitForm(['to' => $to], t('Send email'));
 
     // Check if the email was rerouted properly.
     $this->assertEmailOriginallyTo($to);
@@ -36,7 +37,8 @@ class MultipleRecipientsTest extends RerouteEmailTestBase {
 
     // Submit a test email (should not be rerouted).
     $to = 'whitelisted@example.com, user2@example.com, allowed@example.com';
-    $this->drupalPostForm('admin/config/development/reroute_email/test', ['to' => $to], t('Send email'));
+    $this->drupalGet('admin/config/development/reroute_email/test');
+    $this->submitForm(['to' => $to], t('Send email'));
 
     // Check if the email was not rerouted.
     $this->assertMail('to', $to, new FormattableMarkup('Email was properly sent the email addresses: @destination.', ['@destination' => $to]));

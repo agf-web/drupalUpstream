@@ -16,12 +16,15 @@ use Drupal\Component\Render\FormattableMarkup;
  */
 class DefaultAddressesTest extends RerouteEmailTestBase {
 
-  public static $modules = ['reroute_email', 'dblog'];
+  /**
+   * {@inheritdoc}
+   */
+  protected static $modules = ['reroute_email', 'dblog'];
 
   /**
    * Enable modules and create user with specific permissions.
    */
-  public function setUp() {
+  protected function setUp(): void {
     // Add more permissions to access recent log messages in test.
     $this->permissions[] = 'access site reports';
     parent::setUp();
@@ -48,19 +51,20 @@ class DefaultAddressesTest extends RerouteEmailTestBase {
 
     // Load the Reroute Email Settings form page. Ensure rerouting is enabled.
     $this->drupalGet('admin/config/development/reroute_email');
-    $this->assertFieldChecked('edit-enable', 'Email rerouting was programmatically successfully enabled.');
+    $this->assertSession()->checkboxChecked('edit-enable');
     $this->assertTrue($this->rerouteConfig->get(REROUTE_EMAIL_ENABLE), 'Rerouting is enabled.');
 
     // Email addresses field default value is system.site.mail.
-    $this->assertFieldByName(REROUTE_EMAIL_ADDRESS, $site_mail, new FormattableMarkup('reroute_email_address default value on form is system.site.mail value: @site_mail.', ['@site_mail' => $site_mail]));
+    $this->assertSession()->fieldValueEquals(REROUTE_EMAIL_ADDRESS, $site_mail);
 
     // Ensure reroute_email_address is actually empty at this point.
     $this->assertNull($this->rerouteConfig->get(REROUTE_EMAIL_ADDRESS), 'Reroute email destination address is not configured.');
 
     // Submit a test email, check if it is rerouted to system.site.mail address.
-    $this->drupalPostForm('admin/config/development/reroute_email/test', ['to' => 'to@example.com'], 'Send email');
-    $this->assertText(t('Test email submitted for delivery from test form.'));
-    $this->assert(count($this->getMails()) === 1, 'Exactly one email captured.');
+    $this->drupalGet('admin/config/development/reroute_email/test');
+    $this->submitForm(['to' => 'to@example.com'], 'Send email');
+    $this->assertSession()->pageTextContains(t('Test email submitted for delivery from test form.'));
+    $this->assertTrue(count($this->getMails()) === 1, 'Exactly one email captured.');
     $this->verboseEmail();
 
     // Check rerouted email is the site email address.
@@ -83,14 +87,13 @@ class DefaultAddressesTest extends RerouteEmailTestBase {
     \Drupal::state()->set('system.test_mail_collector', []);
 
     // Submit a test email to check if it is aborted.
-    $this->drupalPostForm('admin/config/development/reroute_email/test', ['to' => 'to@example.com'], t('Send email'));
+    $this->drupalGet('admin/config/development/reroute_email/test');
+    $this->submitForm(['to' => 'to@example.com'], t('Send email'));
     $mails = $this->getMails();
-    $mail = end($mails);
     $this->assertTrue(count($mails) == 0, 'Email sending was properly aborted because rerouting email address is an empty string.');
 
     // Check status message is displayed properly after email form submission.
-    $this->assertPattern(t('/@message_id.*was aborted by reroute email/', ['@message_id' => $mail['id']]),
-      new FormattableMarkup('Status message displayed as expected to the user with the mail ID <em>(@message_id)</em> and a link to recent log entries.', ['@message_id' => $mail['id']]));
+    $this->assertSession()->responseMatches(t('/@message_id.*was aborted by reroute email/', ['@message_id' => 'reroute_email_test_email_form']));
 
     // Check the watchdog entry logged with aborted email message.
     $this->drupalGet('admin/reports/dblog');
@@ -104,8 +107,7 @@ class DefaultAddressesTest extends RerouteEmailTestBase {
     $this->clickLink($link_label);
 
     // Ensure the correct email is logged with default 'to' placeholder.
-    $this->assertPattern(t('/Aborted email sending for.*@message_id.*Detailed email data/', ['@message_id' => $mail['id']]),
-      new FormattableMarkup('The dblog entry recorded by Reroute Email contains a dump of the aborted email message <em>@message_id</em> and is formatted as expected.', ['@message_id' => $mail['id']]));
+    $this->assertSession()->responseMatches(t('/Aborted email sending for.*@message_id.*Detailed email data/', ['@message_id' => 'reroute_email_test_email_form']));
   }
 
 }

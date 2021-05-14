@@ -27,7 +27,7 @@ class TestEmailFormTest extends RerouteEmailTestBase {
 
     // Check Subject field default value.
     $this->drupalGet('admin/config/development/reroute_email/test');
-    $this->assertFieldByName('subject', t('Reroute Email Test'), 'The expected default value was found for the Subject field.');
+    $this->assertSession()->fieldValueEquals('subject', t('Reroute Email Test'));
 
     // Submit the Test Email form to send an email to be rerouted.
     $post = [
@@ -37,8 +37,9 @@ class TestEmailFormTest extends RerouteEmailTestBase {
       'subject' => 'Test Reroute Email Test Email Form',
       'body' => 'Testing email rerouting and the Test Email form',
     ];
-    $this->drupalPostForm('admin/config/development/reroute_email/test', $post, t('Send email'));
-    $this->assertText(t('Test email submitted for delivery from test form.'));
+    $this->drupalGet('admin/config/development/reroute_email/test');
+    $this->submitForm($post, t('Send email'));
+    $this->assertSession()->pageTextContains(t('Test email submitted for delivery from test form.'));
     $mails = $this->getMails();
     $mail = end($mails);
 
@@ -70,10 +71,11 @@ class TestEmailFormTest extends RerouteEmailTestBase {
       'cc' => 'Cc address invalid format',
       'bcc' => 'Bcc address invalid format',
     ];
-    $this->drupalPostForm('admin/config/development/reroute_email/test', $post, t('Send email'));
+    $this->drupalGet('admin/config/development/reroute_email/test');
+    $this->submitForm($post, t('Send email'));
 
     // Successful submission with email rerouting enabled.
-    $this->assertText(t('Test email submitted for delivery from test form.'));
+    $this->assertSession()->pageTextContains(t('Test email submitted for delivery from test form.'));
 
     // Check rerouted email to.
     $this->assertMail('to', $this->rerouteDestination, new FormattableMarkup('To email address was rerouted to @address.', ['@address' => $this->rerouteDestination]));
@@ -90,7 +92,8 @@ class TestEmailFormTest extends RerouteEmailTestBase {
     $this->configureRerouteEmail(FALSE);
 
     // Submit the test email form again with previously used invalid addresses.
-    $this->drupalPostForm('admin/config/development/reroute_email/test', $post, t('Send email'));
+    $this->drupalGet('admin/config/development/reroute_email/test');
+    $this->submitForm($post, t('Send email'));
 
     // Check invalid email addresses are still passed to the mail system.
     $mails = $this->getMails();
@@ -98,7 +101,9 @@ class TestEmailFormTest extends RerouteEmailTestBase {
 
     // Check rerouted email to.
     $this->assertMail('to', $post['to'], new FormattableMarkup('To email address is correctly set to submitted value: @address.', ['@address' => $post['to']]));
-    $this->verbose(new FormattableMarkup('Sent email values: <pre>@mail</pre>', ['@mail' => var_export($mail, TRUE)]));
+    $this->verbose(new FormattableMarkup('Sent email values: <pre>@mail</pre>', [
+      '@mail' => var_export($mail, TRUE),
+    ]));
 
     // Check the Cc and Bcc headers are the ones submitted through the form.
     $this->assertTrue($mail['headers']['Cc'] == $post['cc'], new FormattableMarkup('Cc is correctly set to submitted value: @address', ['@address' => $post['cc']]));

@@ -16,14 +16,18 @@ use Drupal\Component\Render\FormattableMarkup;
  */
 class UnusualMessageFieldsTest extends RerouteEmailTestBase {
 
-  public static $modules = ['reroute_email', 'reroute_email_test', 'dblog'];
+  /**
+   * {@inheritdoc}
+   */
+  protected static $modules = ['reroute_email', 'reroute_email_test', 'dblog'];
 
   /**
    * Enable modules and create user with specific permissions.
    */
-  public function setUp() {
+  protected function setUp(): void {
     // Add more permissions to access recent log messages in test.
     $this->permissions[] = 'access site reports';
+
     // Include hidden test helper sub-module.
     parent::setUp();
   }
@@ -62,7 +66,9 @@ class UnusualMessageFieldsTest extends RerouteEmailTestBase {
     \Drupal::getContainer()
       ->get('plugin.manager.mail')
       ->mail('reroute_email_test', 'test_reroute_email', $test_message['to'], $langcode, $test_message['params']);
-    $this->verbose(new FormattableMarkup('Test email message values: <pre>@test_message</pre>', ['@test_message' => var_export($test_message, TRUE)]));
+    $this->verbose(new FormattableMarkup('Test email message values: <pre>@test_message</pre>', [
+      '@test_message' => var_export($test_message, TRUE),
+    ]));
 
     $mails = $this->getMails();
     $mail = end($mails);
@@ -78,7 +84,7 @@ class UnusualMessageFieldsTest extends RerouteEmailTestBase {
 
     // Check the watchdog entry logged by reroute_email_test_mail_alter.
     $this->drupalGet('admin/reports/dblog');
-    $this->assertRaw(t('A String was detected in the body'), 'Recorded in recent log messages: a String was detected in the body.');
+    $this->assertSession()->responseContains(t('A String was detected in the body'), 'Recorded in recent log messages: a String was detected in the body.');
 
     // Test the robustness of the CC and BCC keys in headers.
     $this->assertTrue($mail['headers']['X-Rerouted-Original-Cc'] == $test_message['params']['headers'][$test_cc_key], new FormattableMarkup('X-Rerouted-Original-Cc is correctly set to @test_cc_address, although Cc header message key provided was: @test_cc_key', [
