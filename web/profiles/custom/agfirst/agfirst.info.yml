@@ -5,7 +5,7 @@ version: VERSION
 distribution:
   name: AgFirst Core
 core: 8.x
-https://www.knowitall.org/
+core_version_requirement: ^8 || ^9
 dependencies:
   - address
   - admin_toolbar
