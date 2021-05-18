@@ -159,8 +159,9 @@ function agfirst_feed_layer_preprocess_paragraph(array &$variables) {
     '#object' => $paragraph,
     "#is_multiple" => TRUE,
   ];
-  $nodes = entity_load_multiple('node', $results);
-  $render_arrays = entity_view_multiple($nodes, 'feed_teaser');
+  $nodes = \Drupal::entityTypeManager()->getStorage('node')->loadMultiple($results);
+  $builder = \Drupal::entityTypeManager()->getViewBuilder('node'); 
+  $render_arrays = $builder->viewMultiple($nodes, 'feed_teaser');
 
   $variables['content']['field_curated_content'] = array_merge($field_wrapper, $render_arrays);
 }
