@@ -90,7 +90,7 @@ class AgFirstContentLogExportController extends ControllerBase {
         if (array_key_exists($result->entity_id, $files)) {
           $entity_link = Link::fromTextAndUrl(
             $result->entity_title,
-            Url::fromUri($files[$result->entity_id]->url())
+            Url::fromUri($files[$result->entity_id]->createFileUrl(FALSE))
           );
         }
       }
@@ -193,9 +193,7 @@ class AgFirstContentLogExportController extends ControllerBase {
         }
       }elseif ($result->entity_type == 'file') {
         if (array_key_exists($result->entity_id, $files)) {
-          $entity_url = Url::fromUri($files[$result->entity_id]->url(), [
-            'absolute' => TRUE
-          ])->toString();
+          $entity_url = $files[$result->entity_id]->createFileUrl(FALSE);
         }
       }
 
