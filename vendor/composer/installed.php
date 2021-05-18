@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => 'e1378f7e78d800486d809b03a0f451745fc82eea',
+    'reference' => '728a2e3fd8bd49d7fe7632585d1feacc6892216f',
     'name' => 'agfirst/pantheon-upstream',
   ),
   'versions' => 
@@ -18,7 +18,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => 'e1378f7e78d800486d809b03a0f451745fc82eea',
+      'reference' => '728a2e3fd8bd49d7fe7632585d1feacc6892216f',
     ),
     'alchemy/zippy' => 
     array (
@@ -1367,6 +1367,15 @@
       array (
       ),
       'reference' => '8.x-1.8',
+    ),
+    'drupal/quick_node_clone' => 
+    array (
+      'pretty_version' => '1.14.0',
+      'version' => '1.14.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '8.x-1.14',
     ),
     'drupal/quickedit' => 
     array (

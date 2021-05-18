@@ -48,6 +48,7 @@
     "drupal/module_filter": "^3.0",
     "drupal/paragraphs": "^1.1",
     "drupal/pathauto": "^1.0",
+    "drupal/quick_node_clone": "^1.14",
     "drupal/rabbit_hole": "^1.0@beta",
     "drupal/rebuild_cache_access": "^1.6",
     "drupal/redirect": "^1.0@alpha",
