@@ -3,6 +3,7 @@ type: module
 description: 'Provides the base content types for AgFirst sites.'
 package: "AgFirst"
 core: '8.x'
+core_version_requirement: ^8 || ^9
 dependencies:
   - address
   - agfirst_base_content

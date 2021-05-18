@@ -3,5 +3,5 @@ type: module
 description: Create and administer alerts for the site.
 package: Cyberwoven
 core: 8.x
-
+core_version_requirement: ^8 || ^9
 configure: cyberwoven_alert_bar.settings

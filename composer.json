@@ -164,7 +164,8 @@
       "drupal/core": {
         "Notice: Undefined index: type in drupal_process_states()": "https://www.drupal.org/files/issues/2020-03-11/2700667-104.patch",
         "Files widget with states": "patches/states_not_affecting-2847425-24.patch",
-        "Image handling patch": "https://www.drupal.org/files/issues/2020-02-20/drupalimage_ckeditor-2771837-50.patch"
+        "Image handling patch": "https://www.drupal.org/files/issues/2020-02-20/drupalimage_ckeditor-2771837-50.patch",
+	"Routing Patch": "https://www.drupal.org/files/issues/2020-06-04/3145563-23.patch"
       },
       "drupal/draggableviews": {
         "Allow sort handler to select the view that stored the order": "https://www.drupal.org/files/issues/2019-12-17/draggableviews-sort_handler_specify_order_view-2767437-66.patch"

@@ -41,7 +41,7 @@
 
 {% set media_type = content.field_media_type.0['#markup']|lower %}
 {% set media_side = content.field_media_side.0['#markup']|lower %}
-{% set has_media = media_type is not sameas('none') %}
+{% set has_media = media_type is not same as('none') %}
 
 {% set headAttr = create_attribute() %}
 {% set bodyAttr = create_attribute() %}

@@ -107,7 +107,14 @@ class Router extends UrlMatcher implements RequestMatcherInterface, RouterInterf
    * {@inheritdoc}
    */
   public function matchRequest(Request $request) {
-    $collection = $this->getInitialRouteCollection($request);
+    try {
+      $collection = $this->getInitialRouteCollection($request);
+    }
+    // PHP serialization has changed between 7.3 and 7.4. Causing errors.
+    catch (\TypeError $e) {
+      \Drupal::service('router.builder')->rebuild();
+      $collection = $this->getInitialRouteCollection($request);
+    }
     if ($collection->count() === 0) {
       throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $this->currentPath->getPath()));
     }

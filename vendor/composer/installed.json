@@ -3716,7 +3716,8 @@
                 },
                 "patches_applied": {
                     "Notice: Undefined index: type in drupal_process_states()": "https://www.drupal.org/files/issues/2020-03-11/2700667-104.patch",
-                    "Files widget with states": "patches/states_not_affecting-2847425-24.patch"
+                    "Files widget with states": "patches/states_not_affecting-2847425-24.patch",
+                    "Routing Patch": "https://www.drupal.org/files/issues/2020-06-04/3145563-23.patch"
                 }
             },
             "installation-source": "dist",
@@ -4197,8 +4198,8 @@
                     "dev-1.x": "1.x-dev"
                 },
                 "drupal": {
-                    "version": "8.x-1.2+9-dev",
-                    "datestamp": "1590497946",
+                    "version": "8.x-1.x-dev",
+                    "datestamp": "1605126193",
                     "security-coverage": {
                         "status": "not-covered",
                         "message": "Dev releases are not covered by Drupal security advisories."

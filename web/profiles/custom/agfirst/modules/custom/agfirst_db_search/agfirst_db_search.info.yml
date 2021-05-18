@@ -2,6 +2,7 @@ name: 'AgFirst Database Search'
 type: module
 description: 'Provides configuration for MySQL-indexed search.'
 core: 8.x
+core_version_requirement: ^8 || ^9
 package: 'AgFirst'
 dependencies:
   - search_api

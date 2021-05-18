@@ -32,7 +32,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => '990af8ecbacf2cc8829075cbf40a575994c3eddd',
+    'reference' => 'e1378f7e78d800486d809b03a0f451745fc82eea',
     'name' => 'agfirst/pantheon-upstream',
   ),
   'versions' => 
@@ -44,7 +44,7 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => '990af8ecbacf2cc8829075cbf40a575994c3eddd',
+      'reference' => 'e1378f7e78d800486d809b03a0f451745fc82eea',
     ),
     'alchemy/zippy' => 
     array (
@@ -2150,8 +2150,8 @@ private static $installed = array (
     array (
       'provided' => 
       array (
-        0 => '1.0',
-        1 => '^1.0',
+        0 => '^1.0',
+        1 => '1.0',
       ),
     ),
     'psr/event-dispatcher' => 

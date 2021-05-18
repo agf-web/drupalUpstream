@@ -2,5 +2,6 @@ name: 'AgFirst Embedded Forms'
 type: module
 description: 'Provides embedded form handling for AgFirst sites.'
 core: 8.x
+core_version_requirement: ^8 || ^9
 package: 'AgFirst'
 dependencies: { }

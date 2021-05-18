@@ -2,4 +2,5 @@ name: 'AgFirst Editor Experience'
 type: module
 description: 'Improvements to the editor experience specific to AgFirst sites.'
 core: 8.x
+core_version_requirement: ^8 || ^9
 package: 'AgFirst'

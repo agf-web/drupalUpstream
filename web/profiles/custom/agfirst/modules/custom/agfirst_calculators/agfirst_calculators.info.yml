@@ -2,4 +2,5 @@ name: 'AgFirst Calculators'
 type: module
 description: 'Provides blocks containing shared calculators for AgFirst sites.'
 core: 8.x
+core_version_requirement: ^8 || ^9
 package: 'AgFirst'

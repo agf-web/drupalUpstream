@@ -3,4 +3,5 @@ description: Branch Locator provided in a block (client-side vue app)
 package: AgFirst
 type: module
 core: 8.x
+core_version_requirement: ^8 || ^9
 configure: agfirst_branch_locator.settings

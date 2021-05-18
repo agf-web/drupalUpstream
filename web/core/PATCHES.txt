@@ -13,3 +13,7 @@ Image handling patch
 Source: https://www.drupal.org/files/issues/2020-02-20/drupalimage_ckeditor-2771837-50.patch
 
 
+Routing Patch
+Source: https://www.drupal.org/files/issues/2020-06-04/3145563-23.patch
+
+

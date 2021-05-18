@@ -2,6 +2,7 @@ name: 'AgFirst Feed Layer Support'
 type: module
 description: 'Provides support for the AgFirst Feed layer'
 core: 8.x
+core_version_requirement: ^8 || ^9
 package: 'AgFirst'
 dependencies:
   - paragraphs
